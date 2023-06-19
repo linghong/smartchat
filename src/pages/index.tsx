@@ -9,23 +9,15 @@ const HomePage = () => {
   const [userInput, setUserInput] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  /*const [chatHistory, setChatHistory] = useState<Message[]>([
+  const [chatHistory, setChatHistory] = useState<Message[]>([
     {
       question: '', 
       answer:'Hi, How can I assist you?'
-    }])*/
+    }])
 
   const handleSubmit = () => {
 
   }
-
-  const chatHistory = [ {
-    question: '', 
-    answer:'Hi, How can I assist you?'
-  }, {
-    question: 'Hello', 
-    answer:'Hi, How can I assist you?'
-  }]
 
   return  (
     <div className="flex flex-col">
@@ -63,6 +55,11 @@ const HomePage = () => {
           />
           <ArrowButton disabled={userInput===''} />
         </form>
+        {error && (
+          <div className="p-4">
+            <p className="font-bold text-red-500">{error}</p>
+          </div>
+        )}
       </div>
     </div> 
   )  
