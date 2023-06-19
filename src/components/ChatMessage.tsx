@@ -1,5 +1,5 @@
-import Image from 'next/image';
-import { Message } from '@/src/types/chat';
+import Image from 'next/image'
+import { Message } from '@/src/types/chat'
 
 type ChatMessageProps = {
   message: Message
@@ -39,7 +39,7 @@ const ChatMessage: React.FC<ChatMessageProps>  = ({message, lastIndex, loading})
         <p>{message.answer}</p>     
       </div>}
     </>
-  );
+  )
 }
 
-export default ChatMessage;
+export default ChatMessage

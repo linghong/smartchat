@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app'
-import Layout from '@/src/components/Layout';
+import Layout from '@/src/components/Layout'
 import '@/src/styles/globals.css'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
@@ -7,7 +7,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     <Layout>
       <Component {...pageProps}/>
     </Layout>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp

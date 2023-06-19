@@ -1,4 +1,4 @@
-import {useState, useRef } from 'react'
+import {useState, useRef, useCallback, useEffect } from 'react'
 import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import { Message } from '@/src/types/chat'
@@ -15,9 +15,50 @@ const HomePage = () => {
       answer:'Hi, How can I assist you?'
     }])
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault()
+  
+    const question : string = userInput.trim()
+    // prevent form submission if no text is entered
+    if(question.length === 0) return
+  
+    setChatHistory([...chatHistory.slice(-1), {question: userInput, answer: ''}])
+    setError(null)
+    setLoading(true)
+    setUserInput('')
 
+    handleAPI(question)
+  }, [userInput])
+
+  const handleAPI = async (question: string) => {
+    console.log("API call")
   }
+
+  useEffect(() => {
+    const keyDownHandler = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter') return
+      e.preventDefault()
+
+      //insert newline /when using shift + enter
+      if ( e.shiftKey) {       
+        setUserInput(prevState => prevState + "\n")
+      } else {
+        //submit question
+        handleSubmit(e as any)
+      }
+    }
+
+    if (textAreaRef.current) {
+      textAreaRef.current.addEventListener('keydown', keyDownHandler)
+    }
+  
+    return () => {
+      if (textAreaRef.current) {
+        textAreaRef.current.removeEventListener('keydown', keyDownHandler)
+      }
+    }
+  
+  }, [handleSubmit])
 
   return  (
     <div className="flex flex-col">
