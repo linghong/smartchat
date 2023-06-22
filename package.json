@@ -9,10 +9,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ingest": "tsx -r dotenv/config src/services/ingestDataToPinecone.ts"
   },
   "dependencies": {
-    "@pinecone-database/pinecone": "^0.1.6", 
+    "@pinecone-database/pinecone": "^0.1.6",
+    "dotenv": "^16.3.1",
     "langchain": "^0.0.96",
     "next": "13.4.6",
     "pdf-parse": "^1.1.1",
@@ -29,6 +31,7 @@
     "eslint": "8.43.0",
     "eslint-config-next": "13.4.6",
     "postcss": "8.4.24",
-    "prettier": "^2.8.4"
+    "prettier": "^2.8.4",
+    "tsx": "^3.12.7"
   }
 }
