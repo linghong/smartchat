@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "ingest": "tsx -r dotenv/config src/services/ingestDataToPinecone.ts"
+    "ingest": "tsx -r dotenv/config src/services/ingestDataToPinecone.ts",
+    "retrieve": "tsx -r dotenv/config src/services/fetchDataFromPinecone.ts"
   },
   "dependencies": {
     "@pinecone-database/pinecone": "^0.1.6",

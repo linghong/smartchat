@@ -5,24 +5,41 @@ const PINECONE_API_KEY = process.env.PINECONE_API_KEY
 if (!PINECONE_ENVIRONMENT) throw new Error('missing Pinecone environment variable')
 if (!PINECONE_API_KEY) throw new Error('missing Pinecone api key');
 
-const pineconeClient = new PineconeClient();
-try {
-  await pineconeClient.init({
-    environment: PINECONE_ENVIRONMENT,
-    apiKey: PINECONE_API_KEY,
-  })
-} catch (e) {
-  throw new Error('Something wrong when initializing Pinecone client')
+
+const initPinecone = async () => {
+  const pinecone = new PineconeClient();
+  try {
+    await pinecone.init({
+      environment: PINECONE_ENVIRONMENT,
+      apiKey: PINECONE_API_KEY,
+    })
+    return pinecone
+
+  } catch (e) {
+    throw new Error('Something wrong when initializing Pinecone client')
+  }
 }
 
-const createPineconeIndex = async (pineconeClient : any) => {
+export const pineconeClient = await initPinecone()
+
+
+export const createPineconeIndex = async (pineconeClient : any, indexName: string) => {
   await pineconeClient.createIndex({
     createRequest: {
-      name: "example-index",
+      name: indexName,
       dimension: 1536
     },
   })
 }
 
-export { pineconeClient, createPineconeIndex }
+
+
+
+
+
+
+
+
+
+
 
