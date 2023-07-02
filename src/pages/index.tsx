@@ -47,7 +47,8 @@ const HomePage = () => {
       });
 
       const data = await response.json();
-      setChatHistory([...chatHistory.slice(-1), {question: userInput, answer: data.text}]);
+
+      setChatHistory([...chatHistory.slice(-1), {question: userInput, answer: data}]);
       setLoading(false);
 
     } catch (error) {
