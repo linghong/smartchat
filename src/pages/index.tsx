@@ -3,6 +3,8 @@ import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import { Message } from '@/src/types/chat'
 
+const nameSpace = process.env.NAME_SPACE?? ''
+
 const HomePage = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -12,7 +14,7 @@ const HomePage = () => {
   const [chatHistory, setChatHistory] = useState<Message[]>([
     {
       question: '', 
-      answer:'Hi, How can I assist you?'
+      answer:'Hi, how can I assist you?'
     }])
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -27,11 +29,32 @@ const HomePage = () => {
     setLoading(true)
     setUserInput('')
 
-    handleAPI(question)
+    handleAPI(question, nameSpace)
   }, [userInput])
 
-  const handleAPI = async (question: string) => {
-    console.log("API call")
+  const handleAPI = async (question: string, nameSpace: string) => {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question,
+          chatHistory,
+          nameSpace
+        }),
+      });
+
+      const data = await response.json();
+      setChatHistory([...chatHistory.slice(-1), {question: userInput, answer: data.text}]);
+      setLoading(false);
+
+    } catch (error) {
+      setLoading(false);
+      setError('An error occurred while fetching the data. Please try again.');
+      console.log('error', error);
+    }
   }
 
   useEffect(() => {
@@ -89,7 +112,7 @@ const HomePage = () => {
             maxLength={512}
             id="userInput"
             name="userInput"
-            placeholder="Click to send a message, and click shift + enter to go to the next line."
+            placeholder="Click to send a message, and push Shift + Enter to move to the next line."
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             className={`w-80vw placeholder-gray-400 focus: p-2 ${loading && 'opacity-50'}focus:ring-stone-100 focus:outline-none`}
