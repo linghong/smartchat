@@ -3,7 +3,7 @@ import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import { Message } from '@/src/types/chat'
 
-const nameSpace = process.env.NAME_SPACE?? ''
+const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE?? ''
 
 const HomePage = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
@@ -54,7 +54,7 @@ const HomePage = () => {
     } catch (error) {
       setLoading(false);
       setError('An error occurred while fetching the data. Please try again.');
-      console.log('error', error);
+      console.error('error', error);
     }
   }
 

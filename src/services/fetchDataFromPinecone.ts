@@ -1,30 +1,43 @@
-
 import { pineconeClient } from './pineconeClient'
-import { createEmbedding } from './openai'
+interface Metadata {
+  'loc.lines.from'?: number;
+  'loc.lines.to'?: number;
+  'loc.pageNumber'?: number;
+  'pdf.info.CreationDate'?: string;
+  'pdf.info.Creator'?: string;
+  'pdf.info.IsAcroFormPresent'?: boolean;
+  'pdf.info.IsXFAPresent'?: boolean;
+  'pdf.info.PDFFormatVersion'?: string;
+  'pdf.info.Producer'?: string;
+  'pdf.totalPages'?: number;
+  'pdf.version'?: string;
+  source?: string;
+  text?: string;
+}
 
 const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME
 if (! PINECONE_INDEX_NAME) throw new Error('Missing Pinecone index name')
 
-export const fetchDataFromPinecone = async (querryText: string, nameSpace: string) => {
-  const embeddedQuerry = await createEmbedding(querryText)
+export const fetchDataFromPinecone = async (embeddedQuery: number[], nameSpace: string) => {
+ 
   const index = pineconeClient.Index(PINECONE_INDEX_NAME)
   const queryRequest = {
-    vector: embeddedQuerry,
+    vector: embeddedQuery,
     topK: 3,
     includeValues: true,
     includeMetadata: true,
     namespace: nameSpace,
   }
-  try {
-      let queryResponse = await index.query({ queryRequest })
-      if (queryResponse && queryResponse.matches) {
-        console.log('result', queryResponse.matches)
-        return queryResponse.matches
-      } else {
-        console.log('Something went wrong when fetching data from pinecone')
-        return null
-      }
-  } catch(e) {
-    throw Error("Something went wrong when fetching from prinecone")
+  let queryResponse = await index.query({ queryRequest })
+
+  if (queryResponse && queryResponse.matches) {
+    const message = queryResponse.matches.reduce((sum, match) => {
+      const metaData : Metadata | undefined = match.metadata
+      const text = metaData?.text?? ''
+      return sum + '\n' + text
+    }, '')
+    return message
+  } else {
+    throw new Error('Something went wrong when fetching data from pinecone')
   }
 }

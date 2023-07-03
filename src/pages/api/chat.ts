@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getChatResponse } from '@/src/services/openai'
+import {  createEmbedding, getChatResponse } from '@/src/services/openai'
+import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone'
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,7 +10,7 @@ export default async function handler(
 
   //only accept post requests
   if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method not allowed' })
+    return res.status(405).json({ error: 'Method not allowed' })
   }
 
   if (!question) {
@@ -19,13 +20,16 @@ export default async function handler(
   const sanitizedQuestion = question.trim().replaceAll('\n', ' ')
 
   try {
-    const chatResponse = await getChatResponse(sanitizedQuestion)
-    const chatAnswer = chatResponse?.content || 'I am sorry. I can\'t find an answer to your question.'
-    console.log('AI response', chatAnswer);
+    const embeddedQuery = await createEmbedding(question)
+    const fetchedText = await fetchDataFromPinecone(embeddedQuery, nameSpace)
+
+    const chatResponse = await getChatResponse(sanitizedQuestion + '\n' + fetchedText)
+
+    const chatAnswer = chatResponse?? 'I am sorry. I can\'t find an answer to your question.'
     res.status(200).json(chatAnswer);
   
   } catch (error: any) {
-    console.log('error', error);
+    console.error('error', error);
     res.status(500).json({ error: error.message || 'Something went wrong' });
   }
 }
