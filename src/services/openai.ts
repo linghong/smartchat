@@ -29,7 +29,7 @@ export const getChatResponse = async (userMessage : string): Promise<string | un
         top_p: 1,
         messages: [
           {role: "system", 
-          content: "You are an AI assistant and an expert. You should use both the information provided by the user and your pre-existing knowledge to answer the questions."
+          content: "You are an AI assistant and an expert. You have access to specific knowledge provided in this conversation, fetched from a saved data source, and also have a broad base of pre-existing knowledge. Use the information fetched from the data source only if it's relevant to the user's question and you can find the answer from it. If the information is not relevant, rely on your pre-existing knowledge to provide the best possible answer."
           }, { 
           role: "user", 
           content: userMessage
