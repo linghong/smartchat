@@ -24,7 +24,7 @@ const HomePage = () => {
     // prevent form submission if no text is entered
     if(question.length === 0) return
   
-    setChatHistory([...chatHistory.slice(-1), {question: userInput, answer: ''}])
+    setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: ''}])
     setError(null)
     setLoading(true)
     setUserInput('')
@@ -48,7 +48,7 @@ const HomePage = () => {
 
       const data = await response.json();
 
-      setChatHistory([...chatHistory.slice(-1), {question: userInput, answer: data}]);
+      setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: data}]);
       setLoading(false);
 
     } catch (error) {
