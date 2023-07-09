@@ -1,4 +1,4 @@
-import {useState, useRef, useCallback, useEffect } from 'react'
+import {useState, useRef, useCallback, useEffect, ChangeEvent } from 'react'
 import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import { Message } from '@/src/types/chat'
@@ -11,6 +11,7 @@ const HomePage = () => {
   const [userInput, setUserInput] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const [rows, setRows] = useState<number>(1)
   const [chatHistory, setChatHistory] = useState<Message[]>([
     {
       question: '', 
@@ -58,6 +59,12 @@ const HomePage = () => {
     }
   }
 
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setUserInput(newValue);
+    setRows((newValue.match(/\n/g) || ['\n']).length + 1)
+  }
+
   useEffect(() => {
     const keyDownHandler = (e: KeyboardEvent) => {
       if (e.key !== 'Enter') return
@@ -66,9 +73,11 @@ const HomePage = () => {
       //insert newline /when using shift + enter
       if ( e.shiftKey) {       
         setUserInput(prevState => prevState + "\n")
+        setRows(rows => rows + 1)
       } else {
         //submit question
         handleSubmit(e as any)
+        setRows(1)
       }
     }
 
@@ -109,13 +118,13 @@ const HomePage = () => {
             ref={textAreaRef}
             disabled={loading}
             autoFocus={false}
-            rows={1}
+            rows={rows}
             maxLength={512}
             id="userInput"
             name="userInput"
             placeholder="Click to send a message, and push Shift + Enter to move to the next line."
             value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
+            onChange={handleInputChange}
             className={`w-80vw placeholder-gray-400 focus: p-2 ${loading && 'opacity-50'}focus:ring-stone-100 focus:outline-none`}
           />
           <ArrowButton disabled={userInput===''} />
