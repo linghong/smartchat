@@ -62,7 +62,8 @@ const HomePage = () => {
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setUserInput(newValue);
-    setRows((newValue.match(/\n/g) || ['\n']).length + 1)
+    const newRows = newValue.match(/\n/g)?.length ?? 0
+    setRows(newRows + 1)
   }
 
   useEffect(() => {
@@ -83,6 +84,7 @@ const HomePage = () => {
 
     if (textAreaRef.current) {
       textAreaRef.current.addEventListener('keydown', keyDownHandler)
+      textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
     }
   
     return () => {
@@ -98,9 +100,9 @@ const HomePage = () => {
       <h1 className="text-2xl font-bold text-center">
         Chat With AI
       </h1>
-      <div className="flex flex-col items-center justify-between">
-        <div className={`w-80vw h-80vh bg-white border-2 border-indigo-100 rounded-lg`}>
-          <div className="w-full h-full overflow-y-scroll rounded-lg">
+      <div className="flex flex-col h-80vh items-center justify-between">
+        <div className={`w-80vw grow bg-white border-2 border-indigo-100 rounded-lg`}>
+          <div  className="w-full h-full overflow-y-scroll rounded-lg">
             {chatHistory.map((chat, index) => 
               <ChatMessage
                 key={index}
@@ -119,13 +121,12 @@ const HomePage = () => {
             disabled={loading}
             autoFocus={false}
             rows={rows}
-            maxLength={512}
             id="userInput"
             name="userInput"
             placeholder="Click to send a message, and push Shift + Enter to move to the next line."
             value={userInput}
             onChange={handleInputChange}
-            className={`w-80vw placeholder-gray-400 focus: p-2 ${loading && 'opacity-50'}focus:ring-stone-100 focus:outline-none`}
+            className={`w-80vw max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
           />
           <ArrowButton disabled={userInput===''} />
         </form>
