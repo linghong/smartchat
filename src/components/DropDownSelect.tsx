@@ -13,9 +13,6 @@ interface DropDownSelectProps {
   label: string;
 }
 
-// Define the options for the select dropdown
-
-
 // Styles for the dropdown
 const customStyles: StylesConfig<OptionType, false> = {
   option: (provided: CSSObjectWithLabel, props: OptionProps<OptionType, false, GroupBase<OptionType>>) => ({

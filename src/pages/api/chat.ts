@@ -6,7 +6,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, nameSpace, chatHistory } = req.body
+  const { question, nameSpace, selectedModel, chatHistory } = req.body
+
+  if (!selectedModel.value) return res.status(500).json('Something went wrong')
 
   //only accept post requests
   if (req.method !== 'POST') {
@@ -23,13 +25,13 @@ export default async function handler(
     const embeddedQuery = await createEmbedding(question)
     const fetchedText = await fetchDataFromPinecone(embeddedQuery, nameSpace)
 
-    const chatResponse = await getChatResponse(sanitizedQuestion + '\n' + fetchedText)
+    const chatResponse = await getChatResponse(sanitizedQuestion + '\n' + fetchedText, selectedModel.value)
 
     const chatAnswer = chatResponse?? 'I am sorry. I can\'t find an answer to your question.'
-    res.status(200).json(chatAnswer);
+    res.status(200).json(chatAnswer)
   
   } catch (error: any) {
     console.error('error', error);
-    res.status(500).json({ error: error.message || 'Something went wrong' });
+    res.status(500).json({ error: error.message || 'Something went wrong' })
   }
 }

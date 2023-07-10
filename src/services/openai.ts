@@ -18,10 +18,10 @@ export const createEmbedding = async (text: string): Promise<number[]> => {
   return embedding.data.data[0].embedding;
 }
 
-export const getChatResponse = async (userMessage : string): Promise<string | undefined> => {
+export const getChatResponse = async (userMessage : string, selectedModel: string): Promise<string | undefined> => {
   try {
     const chatCompletion = await openaiClient.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: selectedModel,
         temperature: 0,
         max_tokens: 2048,
         frequency_penalty: 0,

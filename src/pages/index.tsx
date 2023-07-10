@@ -6,9 +6,10 @@ import DropDownSelect, { OptionType } from '@/src/components/DropDownSelect'
 
 const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE?? ''
 
-const modelOptions: OptionType[] = [
-  { value: 'GPT-3.5', label: 'GPT-3.5' },
-  { value: 'GPT-4', label: 'GPT-4' },
+const options: OptionType[] = [
+  { value: 'gpt-3.5-turbo', label: 'GPT-3.5' },
+  { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5-16k' },
+  { value: 'gpt-4', label: 'GPT-4' },
 ];
 
 const HomePage = () => {
@@ -18,14 +19,14 @@ const HomePage = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [rows, setRows] = useState<number>(1)
-  const [selectedModel, setSelectedModel] = useState<OptionType | null>(modelOptions[0])
+  const [selectedModel, setSelectedModel] = useState<OptionType | null>(options[0])
   const [chatHistory, setChatHistory] = useState<Message[]>([
     {
       question: '', 
       answer:'Hi, how can I assist you?'
     }])
 
-  const handleAPI = async (question: string, nameSpace: string) => {
+  const fetchChatResponse = async (question: string, nameSpace: string) => {
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -38,7 +39,16 @@ const HomePage = () => {
           nameSpace,
           selectedModel
         }),
-      });
+      })
+
+      //handling server-side errors
+      if (!response.ok) {
+        const errorData = await response.json();
+
+        setError("There is a server side error. Try it again later.");
+        setLoading(false);
+        return;
+      }
 
       const data = await response.json()
 
@@ -64,7 +74,7 @@ const HomePage = () => {
     setLoading(true)
     setUserInput('')
 
-    handleAPI(question, nameSpace)
+    fetchChatResponse(question, nameSpace)
   }, [userInput])
 
   const handleModelChange = (selectedOption: OptionType | null) => {
@@ -115,7 +125,7 @@ const HomePage = () => {
       <DropDownSelect 
         selectedOption={selectedModel} 
         onChange={handleModelChange}
-        options={modelOptions}
+        options={options}
         label='Choose AI Model:'
       />
       <div className="flex flex-col h-80vh items-center justify-between">
