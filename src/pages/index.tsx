@@ -2,8 +2,14 @@ import {useState, useRef, useCallback, useEffect, ChangeEvent } from 'react'
 import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import { Message } from '@/src/types/chat'
+import DropDownSelect, { OptionType } from '@/src/components/DropDownSelect'
 
 const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE?? ''
+
+const modelOptions: OptionType[] = [
+  { value: 'GPT-3.5', label: 'GPT-3.5' },
+  { value: 'GPT-4', label: 'GPT-4' },
+];
 
 const HomePage = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
@@ -12,11 +18,39 @@ const HomePage = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [rows, setRows] = useState<number>(1)
+  const [selectedModel, setSelectedModel] = useState<OptionType | null>(modelOptions[0])
   const [chatHistory, setChatHistory] = useState<Message[]>([
     {
       question: '', 
       answer:'Hi, how can I assist you?'
     }])
+
+  const handleAPI = async (question: string, nameSpace: string) => {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question,
+          chatHistory,
+          nameSpace,
+          selectedModel
+        }),
+      });
+
+      const data = await response.json()
+
+      setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: data}])
+      setLoading(false)
+
+    } catch (error) {
+      setLoading(false)
+      setError('An error occurred while fetching the data. Please try again.')
+      console.error('error', error)
+    }
+  }
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,35 +67,13 @@ const HomePage = () => {
     handleAPI(question, nameSpace)
   }, [userInput])
 
-  const handleAPI = async (question: string, nameSpace: string) => {
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question,
-          chatHistory,
-          nameSpace
-        }),
-      });
-
-      const data = await response.json();
-
-      setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: data}]);
-      setLoading(false);
-
-    } catch (error) {
-      setLoading(false);
-      setError('An error occurred while fetching the data. Please try again.');
-      console.error('error', error);
-    }
+  const handleModelChange = (selectedOption: OptionType | null) => {
+    setSelectedModel(selectedOption)
   }
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
-    setUserInput(newValue);
+    setUserInput(newValue)
     const newRows = newValue.match(/\n/g)?.length ?? 0
     setRows(newRows + 1)
   }
@@ -100,6 +112,12 @@ const HomePage = () => {
       <h1 className="text-2xl font-bold text-center">
         Chat With AI
       </h1>
+      <DropDownSelect 
+        selectedOption={selectedModel} 
+        onChange={handleModelChange}
+        options={modelOptions}
+        label='Choose AI Model:'
+      />
       <div className="flex flex-col h-80vh items-center justify-between">
         <div className={`w-80vw grow bg-white border-2 border-indigo-100 rounded-lg`}>
           <div  className="w-full h-full overflow-y-scroll rounded-lg">
@@ -140,4 +158,3 @@ const HomePage = () => {
   )  
 }
 export default HomePage
-
