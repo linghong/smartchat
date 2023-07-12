@@ -93,7 +93,7 @@ const HomePage = () => {
       if (e.key !== 'Enter') return
       e.preventDefault()
 
-      //insert newline /when using shift + enter
+      //insert newline \n when using shift + enter
       if ( e.shiftKey) {       
         setUserInput(prevState => prevState + "\n")
         setRows(rows => rows + 1)
@@ -119,9 +119,6 @@ const HomePage = () => {
 
   return  (
     <div className="flex flex-col">
-      <h1 className="text-2xl font-bold text-center">
-        Chat With AI
-      </h1>
       <DropDownSelect 
         selectedOption={selectedModel} 
         onChange={handleModelChange}

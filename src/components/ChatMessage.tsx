@@ -11,7 +11,7 @@ const ChatMessage: React.FC<ChatMessageProps>  = ({message, lastIndex, loading})
 
   return (
     <>
-      {message.question.length !== 0 && 
+      {message?.question?.length !== 0 && 
         <div 
           className="flex p-3 text-black"
         >
