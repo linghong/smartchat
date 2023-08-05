@@ -1,6 +1,6 @@
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { PineconeStore } from 'langchain/vectorstores/pinecone'
-import { pineconeClient } from './pineconeClient'
+import { pineconeClient, checkIndexExists, createPineconeIndex } from './pineconeClient'
 import loadAndSplit from '../utils/pdfLoadAndSplit'
 
 const ingestDataToPinecone = async (filePath: string, nameSpace: string, indexName: string) => {
@@ -11,12 +11,17 @@ const ingestDataToPinecone = async (filePath: string, nameSpace: string, indexNa
       console.error('No Chunks returned.')
       return
     }
-    console.log('creating vector store...')
+    
+    const isIndexExsited = await checkIndexExists(indexName)
+    if (!isIndexExsited){
+        await createPineconeIndex(pineconeClient, indexName)
+    }
 
+    console.log('creating vector store...')
     const embeddings = new OpenAIEmbeddings()
     const index = pineconeClient.Index(indexName)
 
-    //embed the PDF documents
+    //embed the chunks to pinecone
     await PineconeStore.fromDocuments(chunks, embeddings, {
       pineconeIndex: index,
       namespace: nameSpace,
@@ -32,7 +37,7 @@ const ingestDataToPinecone = async (filePath: string, nameSpace: string, indexNa
 export default ingestDataToPinecone;
 
 //the below lines are for manual testing during development
-//const filePath = 'docs/form1040i.pdf'
-//const indexName = process.env.PINECONE_INDEX_NAME ?? ''
-//const nameSpace = 'test'
-//await ingestDataToPinecone(filePath, nameSpace,indexName )
+/*const filePath = 'docs/form1040i.pdf'
+const indexName = process.env.PINECONE_INDEX_NAME ?? ''
+const nameSpace = 'taxform1040'
+await ingestDataToPinecone(filePath, nameSpace,indexName )*/
