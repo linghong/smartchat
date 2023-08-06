@@ -14,6 +14,7 @@ const options: OptionType[] = [
 
 const HomePage = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const messagesRef = useRef<HTMLDivElement | null> (null)
 
   const [userInput, setUserInput] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -117,6 +118,12 @@ const HomePage = () => {
   
   }, [handleSubmit])
 
+  useEffect(() => {
+    if(messagesRef.current !== null) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [chatHistory])
+
   return  (
     <div className="flex flex-col">
       <DropDownSelect 
@@ -126,8 +133,11 @@ const HomePage = () => {
         label='Choose AI Model:'
       />
       <div className="flex flex-col h-80vh items-center justify-between">
-        <div className={`w-80vw grow bg-white border-2 border-indigo-100 rounded-lg`}>
-          <div  className="w-full h-full overflow-y-scroll rounded-lg">
+        <div className={`w-80vw grow bg-white border-2 border-indigo-100 rounded-lg chat-container`}>
+          <div  
+            className="w-full h-full overflow-y-scroll rounded-lg"
+            ref={messagesRef}
+          >
             {chatHistory.map((chat, index) => 
               <ChatMessage
                 key={index}
