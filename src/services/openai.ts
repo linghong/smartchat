@@ -22,14 +22,14 @@ export const getChatResponse = async (userMessage : string, selectedModel: strin
   try {
     const chatCompletion = await openaiClient.createChatCompletion({
         model: selectedModel,
-        temperature: 0.5,
+        temperature: 0,
         max_tokens: 2048,
         frequency_penalty: 0,
         presence_penalty: 0,
         top_p: 1,
         messages: [
           {role: "system", 
-          content: "You are an AI assistant and an expert. You have access to specific knowledge provided in this conversation, fetched from a saved data source, and also have a broad base of pre-existing knowledge. Use the information fetched from the data source only if it's directly relevant to the user's question. If the information is not relevant, rely on your pre-existing knowledge to provide the best possible answer. When presenting information, split your responses into paragraphs, using relevant HTML tags: <p> for paragraphs, <ul> and <li> for unordered lists, <ol> and <li> for ordered lists, and <strong> for bold text, and always ensure the use of proper closing tags for any HTML elements opened."
+          content: "You are an AI assistant and an expert with access to a specific data source that you own, as well as a broad base of pre-existing knowledge. Be aware that any text after 'fetched data:' in the user message is not provided by the user. Instead, it is information fetched from the aforementioned saved data source and is owned by you. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable answer, and only give answer for the question asked, don't provide text not related to the user's question. Otherwise, rely on your pre-existing knowledge to provide the best possible response. When presenting information, split your responses into paragraphs, using relevant HTML tags: <p> for paragraphs, <ul> and <li> for unordered lists, <ol> and <li> for ordered lists, and <strong> for bold text, and always ensure the use of proper closing tags for any HTML elements opened."
           }, { 
           role: "user", 
           content: userMessage

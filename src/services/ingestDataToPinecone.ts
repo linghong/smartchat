@@ -39,5 +39,5 @@ export default ingestDataToPinecone;
 //the below lines are for manual testing during development
 /*const filePath = 'docs/form1040i.pdf'
 const indexName = process.env.PINECONE_INDEX_NAME ?? ''
-const nameSpace = 'taxform1040'
+const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE
 await ingestDataToPinecone(filePath, nameSpace,indexName )*/

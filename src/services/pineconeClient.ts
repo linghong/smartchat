@@ -13,7 +13,6 @@ const initPinecone = async () => {
       environment: PINECONE_ENVIRONMENT,
       apiKey: PINECONE_API_KEY,
     })
-    console.log('pinecone inited')
     return pinecone
 
   } catch (e) {
