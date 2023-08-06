@@ -20,3 +20,7 @@ html, body {
   color: var(--foreground-rgb);
   background: white;
 }
+
+.bot-response p {
+  padding: 0px 0px 10px 0px;
+}

@@ -22,21 +22,26 @@ export const getChatResponse = async (userMessage : string, selectedModel: strin
   try {
     const chatCompletion = await openaiClient.createChatCompletion({
         model: selectedModel,
-        temperature: 0,
+        temperature: 0.5,
         max_tokens: 2048,
         frequency_penalty: 0,
         presence_penalty: 0,
         top_p: 1,
         messages: [
           {role: "system", 
-          content: "You are an AI assistant and an expert. You have access to specific knowledge provided in this conversation, fetched from a saved data source, and also have a broad base of pre-existing knowledge. Use the information fetched from the data source only if it's relevant to the user's question and you can find the answer from it. If the information is not relevant, rely on your pre-existing knowledge to provide the best possible answer."
+          content: "You are an AI assistant and an expert. You have access to specific knowledge provided in this conversation, fetched from a saved data source, and also have a broad base of pre-existing knowledge. Use the information fetched from the data source only if it's directly relevant to the user's question. If the information is not relevant, rely on your pre-existing knowledge to provide the best possible answer. When presenting information, split your responses into paragraphs, using relevant HTML tags: <p> for paragraphs, <ul> and <li> for unordered lists, <ol> and <li> for ordered lists, and <strong> for bold text, and always ensure the use of proper closing tags for any HTML elements opened."
           }, { 
           role: "user", 
           content: userMessage
         }],
     });
-    const message = chatCompletion.data.choices[0].message
-    return message?.content
+    const res = chatCompletion.data;
+    if (!res) throw new Error('Chat completion data is undefined.')
+    if (!res.usage) throw new Error('Chat completion data is undefined.')
+    if(res.choices[0].finish_reason !== 'stop') console.log('AI message isn\'t complete.')
+    const message = res.choices[0].message?.content?? ''
+    const totalTokens = res.usage.total_tokens
+    return message
 
   } catch(error: any) {
     console.error(error.response.data)

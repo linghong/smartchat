@@ -36,7 +36,7 @@ const ChatMessage: React.FC<ChatMessageProps>  = ({message, lastIndex, loading})
           className={`h-full mr-4 rounded-sm ${loading && lastIndex &&'animate-pulse'}`}
           priority
         />
-        <p>{message.answer}</p>     
+        <div className ="bot-responses" dangerouslySetInnerHTML={{ __html: message.answer }} />       
       </div>}
     </>
   )
