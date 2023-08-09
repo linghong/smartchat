@@ -25,9 +25,10 @@ export default async function handler(
     const embeddedQuery = await createEmbedding(question)
     const fetchedText = await fetchDataFromPinecone(embeddedQuery, nameSpace)
 
-    const chatResponse = await getChatResponse(sanitizedQuestion + '\n' + 'fetched data: ' + fetchedText, selectedModel.value)
+    const chatResponse = await getChatResponse(chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
 
     const chatAnswer = chatResponse?? 'I am sorry. I can\'t find an answer to your question.'
+    console.log(chatAnswer)
     res.status(200).json(chatAnswer)
   
   } catch (error: any) {
