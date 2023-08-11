@@ -26,15 +26,16 @@ export const createEmbedding = async (text: string): Promise<number[]> => {
 }
 
 const buildChatArray = (systemContent: string, userMessage : string, fetchedText: string, chatHistory: Message[], maxReturnMessageToken: number) => {
+  // after comparing the token count received from OpenAI, it seems that counting tokens in the way shown below matches better with Open AI's token number.
   const tokenCount = (role: ChatCompletionRequestMessageRoleEnum, str: string) => {
-    return encode(`role: ${role},
-    content: ${str}`).length
+    return encode(
+    `role ${role} content ${str} `).length
   }
-
-  let tokenLeft = 4000 - tokenCount('system',
-  systemContent) - tokenCount( "assistant",
-  fetchedText) - tokenCount( "user",
-  userMessage) - maxReturnMessageToken
+  const tokenUsed = tokenCount('system',
+  systemContent) + tokenCount("assistant",
+  fetchedText) + tokenCount("user",
+  userMessage)
+  let tokenLeft = 4000 - tokenUsed - maxReturnMessageToken
 
   let chatArray: ChatType[] = []
 
@@ -58,6 +59,7 @@ const buildChatArray = (systemContent: string, userMessage : string, fetchedText
     chat.answer)
   }
   chatArray.reverse()
+
   return chatArray
 }
 
@@ -100,7 +102,7 @@ export const getChatResponse = async (chatHistory: Message[],userMessage : strin
     if(res.choices[0].finish_reason !== 'stop') console.log('AI message isn\'t complete.')
     let message = res.choices[0].message?.content?? ''
     message = selectedModel === 'gpt-4' ? message : message.replace(/\n/g, '<br>')
-    
+    console.log('123', res)
     return message
 
   } catch(error: any) {
