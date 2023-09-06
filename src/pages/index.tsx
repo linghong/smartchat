@@ -1,4 +1,4 @@
-import {useState, useRef, useCallback, useEffect, ChangeEvent } from 'react'
+import {useState, useRef, useCallback, useEffect, ChangeEvent, FC } from 'react'
 import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import { Message } from '@/src/types/chat'
@@ -9,10 +9,10 @@ const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE?? ''
 const options: OptionType[] = [
   { value: 'gpt-3.5-turbo', label: 'GPT-3.5' },
   { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5-16k' },
-  { value: 'gpt-4', label: 'GPT-4' },
+  { value: 'gpt-4', label: 'GPT-4' }
 ];
 
-const HomePage = () => {
+const HomePage : FC<{isNewChat: boolean}> = ({ isNewChat }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null> (null)
 
@@ -123,6 +123,10 @@ const HomePage = () => {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
   }, [chatHistory])
+
+  useEffect(() => {
+    console.log('isNewChat: ', isNewChat)
+  }, [isNewChat])
 
   return  (
     <div className="flex flex-col">
