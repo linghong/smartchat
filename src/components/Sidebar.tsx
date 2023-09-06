@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import Link from 'next/link'
 import PlusIcon from './PlusIcon'
 
 interface SidebarProps {
@@ -16,8 +17,14 @@ const Sidebar : FC<SidebarProps>= ({ onNewChat }) => {
               <span>New Chat</span>
             </div>
           </li>
-          <li  className="pl-4 py-2 font-semibold hover:bg-slate-400 focus:bg-indigo-100">Manage My AI</li>
-          <li  className="pl-4 py-2 font-semibold hover:bg-slate-400 focus:bg-indigo-100">Chat Messages</li>
+          <li  className="pl-4 py-2 font-semibold hover:bg-slate-400 focus:bg-indigo-100">
+          <Link href="/managemyai">Manage My AI</Link>   
+          </li>
+          <li  className="pl-4 py-2 font-semibold hover:bg-slate-400 focus:bg-indigo-100">
+            <Link href="/">
+              Chat Messages
+            </Link>
+          </li>
           <ul className="px-4 py-2 font-medium">
             <li className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100">Chat 1</li>
             <li className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100">Chat 2</li>
