@@ -12,7 +12,12 @@ const options: OptionType[] = [
   { value: 'gpt-4', label: 'GPT-4' }
 ];
 
-const HomePage : FC<{isNewChat: boolean}> = ({ isNewChat }) => {
+const initialMessage = {
+  question: '', 
+  answer:'Hi, how can I assist you?'
+}
+
+const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}> = ({ isNewChat, setIsNewChat }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null> (null)
 
@@ -21,11 +26,7 @@ const HomePage : FC<{isNewChat: boolean}> = ({ isNewChat }) => {
   const [error, setError] = useState<string | null>(null)
   const [rows, setRows] = useState<number>(1)
   const [selectedModel, setSelectedModel] = useState<OptionType | null>(options[0])
-  const [chatHistory, setChatHistory] = useState<Message[]>([
-    {
-      question: '', 
-      answer:'Hi, how can I assist you?'
-    }])
+  const [chatHistory, setChatHistory] = useState<Message[]>([ initialMessage ])
 
   const fetchChatResponse = async (question: string, nameSpace: string) => {
     try {
@@ -125,7 +126,10 @@ const HomePage : FC<{isNewChat: boolean}> = ({ isNewChat }) => {
   }, [chatHistory])
 
   useEffect(() => {
-    console.log('isNewChat: ', isNewChat)
+    if (isNewChat) {
+      setChatHistory([initialMessage])
+      setIsNewChat(false)
+    }  
   }, [isNewChat])
 
   return  (

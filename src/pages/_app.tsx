@@ -12,7 +12,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   return (
     <Layout onNewChat={handleNewChat}>
-      <Component {...pageProps} isNewChat={isNewChat}/>
+      <Component {...pageProps} isNewChat={isNewChat} setIsNewChat={setIsNewChat}/>
     </Layout>
   )
 }
