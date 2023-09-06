@@ -1,6 +1,7 @@
 import {useState, useRef, useCallback, useEffect, ChangeEvent, FC } from 'react'
 import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
+import Header from '@/src/components/Header'
 import { Message } from '@/src/types/chat'
 import DropDownSelect, { OptionType } from '@/src/components/DropDownSelect'
 
@@ -134,6 +135,7 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
 
   return  (
     <div className="flex flex-col">
+      <Header pageTitle="Chat With AI" />
       <DropDownSelect 
         selectedOption={selectedModel} 
         onChange={handleModelChange}
