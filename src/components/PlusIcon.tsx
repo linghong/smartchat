@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 const PlusIcon: FC= () => (
   <svg 
     xmlns = "http://wwww3.org/2000/svg" 
-    viewBox="0 - 24 24" 
+    viewBox="0 0 24 24" 
     fill="none" 
     stroke="currentcolor" 
     strokeWidth="2"
