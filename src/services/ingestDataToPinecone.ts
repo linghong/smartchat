@@ -17,11 +17,12 @@ const ingestDataToPinecone = async (filePath: string, nameSpace: string, indexNa
         await createPineconeIndex(pineconeClient, indexName)
     }
 
-    console.log('creating vector store...')
-    const embeddings = new OpenAIEmbeddings()
+    console.log('creating embeddings...')
+    const embeddings = new OpenAIEmbeddings()    
+    
+    console.log('embedding chunks to pinecone...')
     const index = pineconeClient.Index(indexName)
 
-    //embed the chunks to pinecone
     await PineconeStore.fromDocuments(chunks, embeddings, {
       pineconeIndex: index,
       namespace: nameSpace,
@@ -36,8 +37,3 @@ const ingestDataToPinecone = async (filePath: string, nameSpace: string, indexNa
 
 export default ingestDataToPinecone;
 
-//the below lines are for manual testing during development
-/*const filePath = 'docs/form1040i.pdf'
-const indexName = process.env.PINECONE_INDEX_NAME ?? ''
-const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE
-await ingestDataToPinecone(filePath, nameSpace,indexName )*/

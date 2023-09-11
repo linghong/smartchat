@@ -31,11 +31,8 @@ const joinBrokenSentence = (pageContent: string): string => {
   return text
 }
 
-const loadAndSplit  = async ( docPath: string) : Promise<Document[]> => {
-
-  const extension = docPath.split('.').pop()?.toLowerCase()
-  if (extension !== 'pdf') throw new Error('File is not a PDF')
-
+const loadAndSplit  = async ( docPath: string ) : Promise<Document[]> => {
+  
   try {
     const loader = new PDFLoader(docPath, { splitPages: false})
     const document = await loader.load()

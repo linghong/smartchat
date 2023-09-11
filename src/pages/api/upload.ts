@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import * as formidable from 'formidable'
 import fs from 'fs'
+import ingestDataToPinecone from '@/src/services/ingestDataToPinecone'
 
 export const config = {
   api: {
@@ -33,12 +34,20 @@ export default async function handler(
         error: 'Something wrong with the uploaded file.'
       })
     } 
-
-    const fileContent = await fs.promises.readFile(uploadedFile.filepath);
-
+   
+    const indexName = process.env.PINECONE_INDEX_NAME
+    const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE
+    if(!indexName) return res.status(500).json({
+     error: "Missing Pinecone index name."
+    })
+    if(!nameSpace) return res.status(500).json({
+      error: "Missing Pinecone name space."
+    })
+    await ingestDataToPinecone(uploadedFile.filepath, nameSpace, indexName)
+  
     // delete the file after using it
     await fs.promises.unlink(uploadedFile.filepath);
-  
+
     res.status(200).json({message: 'File uploaded successfully.', fileName: uploadedFile.originalFilename})
 
   } catch (e) {
