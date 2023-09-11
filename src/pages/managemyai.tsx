@@ -64,8 +64,9 @@ const UploadFile : FC = () => {
         />
         <button
           type="button"
-          className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" 
+          className=  {`bg-transparent hover:bg-blue-500 text-blue-700 font-semibold py-2 px-4 border border-blue-500 hover:border-transparent rounded ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'}`}
           onClick={handlePdfUpload}
+          disabled={isLoading}
         >
           Upload
         </button>
