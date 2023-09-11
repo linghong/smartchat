@@ -9,6 +9,9 @@ type ApiResponse = {
 
 const UploadFile : FC = () => {
   const [selectedFile, setSelectedFile] =useState<File |null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string | null> (null)
+  const [error, setError] = useState<string | null> (null)
 
   const handleFileChange= (e: ChangeEvent<HTMLInputElement>) =>{
     const files = e.target.files
@@ -19,6 +22,9 @@ const UploadFile : FC = () => {
 
   const handlePdfUpload = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+    setIsLoading(true);
+    setSuccessMessage(null);
+    setError(null);
     
     if(selectedFile){
       const formData = new FormData()
@@ -33,13 +39,16 @@ const UploadFile : FC = () => {
         const data: ApiResponse = await res.json() as ApiResponse
 
         if (res.ok) {
-          console.log('Upload success:', data);
+          setSuccessMessage(`Upload success: ${data.message}`);
         } else {
-          console.error('Upload error:', data.error);
+          setError(`Upload error: ${data.error}`);
         }
 
       } catch (error) {
-        console.error('There was a network error when sending file:', error)
+         setError('There was a network error when sending file:')
+         console.log(error)
+      } finally {
+        setIsLoading(false)
       }
     }
   }
@@ -60,6 +69,9 @@ const UploadFile : FC = () => {
         >
           Upload
         </button>
+        {isLoading && <p className="bold">Uploading...</p>}
+        {successMessage && <p className="bold text-green-600">{successMessage}</p>}
+        {error && <p className='bold text-red-600'>{error}</p>}
       </form>      
     </div>
   )
