@@ -1,8 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# SmartChat: A Next.js Chatbot Platform
 
+SmartChat is a state-of-the-art chatbot platform developed using [Next.js](https://nextjs.org/) and TypeScript.  It offers users the ability to upload PDF documents, which are then segmented and stored within the Pinecone vector database. When users pose questions to the chatbot, if their inquiries relate to the uploaded data, the chatbot fetches and references relevant sections from the stored PDF data to provide precise answers.
+
+## Features:
+### PDF Upload: 
+Users can upload their documents in PDF format.
+### Vector Database Storage: 
+Processed data from the PDF is stored in Pinecone's vector database for quick retrievals.
+### Intelligent Responses: 
+The chatbot is capable of referencing specific parts of the uploaded data to answer user questions.
 ## Getting Started
 
-First, run the development server:
+### Clone the Repository and Install Dependency:
+```bash
+yarn install
+```
+
+### Run the Development Server:
 
 ```bash
 npm run dev
@@ -12,23 +26,10 @@ yarn dev
 pnpm dev
 ```
 
+### Access the App
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
+You can deploy the app to any cloud environment, just as you would with other Next.js apps. For a seamless deployment experience, consider using the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), which is recommended by the creators of Next.js.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
