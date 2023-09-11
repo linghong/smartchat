@@ -19,7 +19,7 @@ const UploadFile : FC = () => {
 
   const handlePdfUpload = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-
+    
     if(selectedFile){
       const formData = new FormData()
       formData.append('file', selectedFile)
@@ -29,7 +29,7 @@ const UploadFile : FC = () => {
           method: 'POST',
           body: formData,
         })
-
+        
         const data: ApiResponse = await res.json() as ApiResponse
 
         if (res.ok) {
