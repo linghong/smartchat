@@ -1,6 +1,5 @@
 import { CSSObjectWithLabel, StylesConfig, OptionProps, GroupBase } from 'react-select'
-import Select from 'react-select'
-
+import Select, { ActionMeta, SingleValue} from 'react-select'
 export interface OptionType {
   value: string;
   label: string;
@@ -8,9 +7,10 @@ export interface OptionType {
 
 interface DropDownSelectProps {
   selectedOption: OptionType | null;
-  onChange: (selectedOption: OptionType | null) => void;
+  onChange: (selectedOption: SingleValue<OptionType>, actionMeta: ActionMeta<OptionType>) => void;
   options: OptionType[];
   label: string;
+  name?: string
 }
 
 // Styles for the dropdown
@@ -34,8 +34,8 @@ const customStyles: StylesConfig<OptionType, false> = {
   })
 }
 
-const DropDownSelect: React.FC<DropDownSelectProps> = ({ selectedOption, onChange, options, label }) => {
-  
+const DropDownSelect: React.FC<DropDownSelectProps> = ({ selectedOption, onChange, options, label, name = undefined }) => {
+
   return (
     <div className="flex justify-center items-center my-3 space-x-2">
       <label htmlFor="modelSelect" className="text-base font-bold">{label}</label>
@@ -46,6 +46,7 @@ const DropDownSelect: React.FC<DropDownSelectProps> = ({ selectedOption, onChang
         options={options}
         styles={customStyles} 
         aria-label={label}
+        name={name}
       />
     </div>
   )

@@ -1,6 +1,8 @@
 import { FC, ChangeEvent, MouseEvent, useState } from 'react'
 import Header from '@/src/components/Header'
 import DropDownSelect, { OptionType } from '@/src/components/DropDownSelect'
+import PlusIcon from '@/src/components/PlusIcon'
+import { ActionMeta} from 'react-select'
 
 type ApiResponse = {
   message: string;
@@ -8,13 +10,11 @@ type ApiResponse = {
   error?: string;
 }
 
-const options: OptionType[] = [
+const embeddingModelOptions = [
   { value: 'open-ai', label: 'Open AI embedding' },
 ];
-const fileCategoryOptions: OptionType[] = [
-  { value: 'default', label: 'Default' },
-  { value: 'new', label: 'Add New Category' },
-];
+const defaultFileCategoryOption: OptionType = 
+  { value: 'new', label: 'Add New Category' };
 
 const UploadFile : FC = () => {
   const [selectedFile, setSelectedFile] =useState<File |null>(null)
@@ -22,7 +22,9 @@ const UploadFile : FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null> (null)
   const [error, setError] = useState<string | null> (null)
   const [showAddNewCategory, setShowAddNewCategory] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<OptionType | null>(options[0])
+  const [selectedFileCategory, setSelectedFileCategory] = useState<OptionType>(defaultFileCategoryOption)
+  const [selectedEmbeddingModel, setSelectedModel] = useState<OptionType | null>(embeddingModelOptions[0])
+  const [fileCategoryOptions, setFileCategoryOptions]= useState<OptionType [] >([defaultFileCategoryOption])
 
   const handleFileChange= (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -34,15 +36,31 @@ const UploadFile : FC = () => {
   const handleSubmitChange = ( e: ChangeEvent<HTMLInputElement>) => {
 
   }
+
+  const handleNewCategoryChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSelectedFileCategory({ value, label: value})
+  } 
+   
   const handleAddCategoryToDropDown = () => {
-
+    setFileCategoryOptions([
+      ...fileCategoryOptions, 
+      selectedFileCategory
+    ])
+    setShowAddNewCategory(false)
   }
 
-  const handleCategoryDropDown = (selectedOption: OptionType | null) => {
+  const handleDropDown = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
+    if (selectedOption === null) return;
 
-  }
-  const handleModelDropDown = (selectedOption: OptionType | null) => {
-    setSelectedModel(selectedOption)
+    if(actionMeta.name==='embeddingModel'){
+      setSelectedModel(selectedOption)
+    } else if(actionMeta.name==='fileCategory' &&  selectedOption?.value==='new'){
+      setShowAddNewCategory(true)
+    } else {
+      setShowAddNewCategory(false)
+      setSelectedFileCategory(selectedOption)
+    }    
   }
 
   const handlePdfUpload = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -68,7 +86,6 @@ const UploadFile : FC = () => {
         } else {
           setError(`Upload error: ${data.error}`);
         }
-
       } catch (error) {
          setError('There was a network error when sending file:')
          console.log(error)
@@ -94,23 +111,25 @@ const UploadFile : FC = () => {
           />
         </div>
         <div className="flex flex-row">
-          <DropDownSelect 
-            selectedOption={selectedModel} 
-            onChange={handleCategoryDropDown}
-            options={options}
+          <DropDownSelect
+            name='fileCategory' 
+            selectedOption={selectedFileCategory} 
+            onChange={handleDropDown}
+            options={fileCategoryOptions}
             label='This File Belongs to:'
           />
           {showAddNewCategory && 
             <>
               <label className="font-bold ml-10 mr-5 my-10 py-1.5">
-                Add New Category:
+                New Category:
               </label>
               <input 
                 type="text"
                 name="newFileCategory"
-                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold mr-20 my-10 px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl"
-                onChange={handleAddCategoryToDropDown}
-              />
+                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold my-10 px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl"
+                onChange={handleNewCategoryChange}
+              />  
+              <div className="my-10 py-1.5" onClick={handleAddCategoryToDropDown}><PlusIcon /></div> 
             </>
           }       
         </div>         
@@ -135,10 +154,11 @@ const UploadFile : FC = () => {
           />       
         </div>
         <div className="flex justify-start">
-          <DropDownSelect 
-            selectedOption={selectedModel} 
-            onChange={handleModelDropDown}
-            options={options}
+          <DropDownSelect
+            name='embeddingModel' 
+            selectedOption={selectedEmbeddingModel} 
+            onChange={handleDropDown}
+            options={embeddingModelOptions}
             label='Embedding Model:'
           /> 
         </div>          
