@@ -6,7 +6,7 @@ interface HeaderProps {
 
 const Header : FC<HeaderProps> = ({ pageTitle }) => { 
   return (
-    <header className="text-2xl py-3 font-bold text-center">
+    <header className="text-2xl py-8 font-bold text-center text-3xl">
       <h1>{ pageTitle }</h1>
     </header>
   )

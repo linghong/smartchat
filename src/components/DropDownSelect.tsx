@@ -38,7 +38,7 @@ const DropDownSelect: React.FC<DropDownSelectProps> = ({ selectedOption, onChang
   
   return (
     <div className="flex justify-center items-center my-3 space-x-2">
-      <label htmlFor="modelSelect" className="text-lg font-bold">{label}</label>
+      <label htmlFor="modelSelect" className="text-base font-bold">{label}</label>
       <Select 
         id="modelSelect" 
         onChange={onChange} 
