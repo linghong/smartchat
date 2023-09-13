@@ -1,7 +1,7 @@
 import { FC } from 'react'
 
 interface HeaderProps {
-  pageTitle: string
+  pageTitle: string;
  }
 
 const Header : FC<HeaderProps> = ({ pageTitle }) => { 

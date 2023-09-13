@@ -78,7 +78,7 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
     setUserInput('')
 
     fetchChatResponse(question, nameSpace)
-  }, [userInput])
+  }, [userInput, fetchChatResponse])
 
   const handleModelChange = (selectedOption: OptionType | null) => {
     setSelectedModel(selectedOption)
@@ -106,15 +106,15 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
         setRows(1)
       }
     }
-
-    if (textAreaRef.current) {
-      textAreaRef.current.addEventListener('keydown', keyDownHandler)
-      textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
+    const currentTextArea = textAreaRef.current
+    if (currentTextArea) {
+      currentTextArea.addEventListener('keydown', keyDownHandler)
+      currentTextArea.scrollTop = currentTextArea.scrollHeight;
     }
   
     return () => {
-      if (textAreaRef.current) {
-        textAreaRef.current.removeEventListener('keydown', keyDownHandler)
+      if (currentTextArea) {
+        currentTextArea.removeEventListener('keydown', keyDownHandler)
       }
     }
   
@@ -130,7 +130,8 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
     if (isNewChat) {
       setChatHistory([initialMessage])
       setIsNewChat(false)
-    }  
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps    
   }, [isNewChat])
 
   return  (

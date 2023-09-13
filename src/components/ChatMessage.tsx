@@ -2,9 +2,9 @@ import Image from 'next/image'
 import { Message } from '@/src/types/chat'
 
 type ChatMessageProps = {
-  message: Message
-  lastIndex: boolean, 
-  loading: boolean
+  message: Message;
+  lastIndex: boolean;
+  loading: boolean;
 }
 
 const ChatMessage: React.FC<ChatMessageProps>  = ({message, lastIndex, loading}) => {

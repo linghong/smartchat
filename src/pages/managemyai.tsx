@@ -1,4 +1,4 @@
-import { FC, ChangeEvent, MouseEvent, useState } from 'react'
+import { FC, ChangeEvent, MouseEvent, MouseEventHandler, useState } from 'react'
 import Header from '@/src/components/Header'
 import DropDownSelect, { OptionType } from '@/src/components/DropDownSelect'
 import PlusIcon from '@/src/components/PlusIcon'
@@ -10,21 +10,48 @@ type ApiResponse = {
   error?: string;
 }
 
-const embeddingModelOptions = [
-  { value: 'open-ai', label: 'Open AI embedding' },
-];
-const defaultFileCategoryOption: OptionType = 
-  { value: 'new', label: 'Add New Category' };
+interface InputData {
+  'chunkSize': number,
+  'chunkOverlap': number,
+  'newFileCategory': string
+}
+interface DropDownData {
+  'fileCategory': {
+    value: string;
+    label: string;
+  };
+  'embeddingModel': {
+    value: string;
+    label: string;
+  };
+}
 
-const UploadFile : FC = () => {
+const embeddingModelOptions = [
+  { value: 'openAI', label: 'Open AI embedding' },
+]
+const defaultFileCategoryOption = 
+  { value: 'new', label: 'Add New Category' }
+
+const UploadFile: FC = () => {
+  
   const [selectedFile, setSelectedFile] =useState<File |null>(null)
+
+  const [showAddNewCategory, setShowAddNewCategory] = useState(false)
+  const [fileCategoryOptions, setFileCategoryOptions] = useState<OptionType[]>([defaultFileCategoryOption])
+
+  const [selectedInput, setSelectedInput] = useState<InputData>({
+    'chunkSize': 800,
+    'chunkOverlap': 300,
+    'newFileCategory': ''
+  })
+  const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>({
+    'fileCategory': defaultFileCategoryOption,
+    'embeddingModel': embeddingModelOptions[0],
+  })
+
   const [isLoading, setIsLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null> (null)
   const [error, setError] = useState<string | null> (null)
-  const [showAddNewCategory, setShowAddNewCategory] = useState(false);
-  const [selectedFileCategory, setSelectedFileCategory] = useState<OptionType>(defaultFileCategoryOption)
-  const [selectedEmbeddingModel, setSelectedModel] = useState<OptionType | null>(embeddingModelOptions[0])
-  const [fileCategoryOptions, setFileCategoryOptions]= useState<OptionType [] >([defaultFileCategoryOption])
 
   const handleFileChange= (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -33,45 +60,62 @@ const UploadFile : FC = () => {
     }
   }
 
-  const handleSubmitChange = ( e: ChangeEvent<HTMLInputElement>) => {
-
-  }
-
-  const handleNewCategoryChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setSelectedFileCategory({ value, label: value})
-  } 
-   
-  const handleAddCategoryToDropDown = () => {
+  const handleAddCategoryToDropDown = (e : MouseEventHandler<HTMLDivElement>) => {
+    const newFileCategory = selectedInput.newFileCategory
     setFileCategoryOptions([
       ...fileCategoryOptions, 
-      selectedFileCategory
+      { 
+        'value': newFileCategory.replace(/\s+/g, '').toLowerCase(),
+        'label': newFileCategory
+
+      }
     ])
     setShowAddNewCategory(false)
   }
 
-  const handleDropDown = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name
+    const value = e.target.value
+    setSelectedInput({
+      ...selectedInput,
+      [name]: value
+    })
+  }
+   
+  const handleDropDownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
     if (selectedOption === null) return;
 
-    if(actionMeta.name==='embeddingModel'){
-      setSelectedModel(selectedOption)
-    } else if(actionMeta.name==='fileCategory' &&  selectedOption?.value==='new'){
+    if(actionMeta.name === 'embeddingModel'){
+      setSelectedDropDown({
+        ...selectedDropDown,
+        [actionMeta.name]: selectedOption
+      })
+
+    } else if(actionMeta.name === 'fileCategory' &&  selectedOption?.value === 'new'){
       setShowAddNewCategory(true)
+
     } else {
       setShowAddNewCategory(false)
-      setSelectedFileCategory(selectedOption)
+      setSelectedDropDown({
+        ...selectedDropDown, 
+        'fileCategory': selectedOption
+      })
     }    
   }
 
-  const handlePdfUpload = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     setIsLoading(true);
     setSuccessMessage(null);
     setError(null);
-    
+    console.log(selectedDropDown, selectedInput)
     if(selectedFile){
       const formData = new FormData()
       formData.append('file', selectedFile)
+      formData.append('chunkSize', selectedInput.chunkSize.toString());
+      formData.append('chunkOverlap', selectedInput.chunkOverlap.toString());
+      formData.append('fileCategory', JSON.stringify(selectedDropDown.fileCategory));
+      formData.append('embeddingModel', JSON.stringify(selectedDropDown.embeddingModel));
 
       try {
         const res = await fetch('/api/upload', {
@@ -113,8 +157,8 @@ const UploadFile : FC = () => {
         <div className="flex flex-row">
           <DropDownSelect
             name='fileCategory' 
-            selectedOption={selectedFileCategory} 
-            onChange={handleDropDown}
+            selectedOption={selectedDropDown.fileCategory} 
+            onChange={handleDropDownChange}
             options={fileCategoryOptions}
             label='This File Belongs to:'
           />
@@ -127,7 +171,7 @@ const UploadFile : FC = () => {
                 type="text"
                 name="newFileCategory"
                 className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold my-10 px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl"
-                onChange={handleNewCategoryChange}
+                onChange={handleInputChange}
               />  
               <div className="my-10 py-1.5" onClick={handleAddCategoryToDropDown}><PlusIcon /></div> 
             </>
@@ -141,7 +185,7 @@ const UploadFile : FC = () => {
             type="number"
             name="chunkSize"
             className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl"
-            onChange={handleSubmitChange}
+            onChange={handleInputChange}
           />
           <label className="font-bold mr-5 py-1.5">
             Chunk Overlap Size:
@@ -150,14 +194,14 @@ const UploadFile : FC = () => {
             type="number"
             name="chunkOverlap"
             className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl"
-            onChange={handleSubmitChange}
+            onChange={handleInputChange}
           />       
         </div>
         <div className="flex justify-start">
           <DropDownSelect
             name='embeddingModel' 
-            selectedOption={selectedEmbeddingModel} 
-            onChange={handleDropDown}
+            selectedOption={selectedDropDown.embeddingModel} 
+            onChange={handleDropDownChange}
             options={embeddingModelOptions}
             label='Embedding Model:'
           /> 
@@ -166,7 +210,7 @@ const UploadFile : FC = () => {
           <button
             type="button"
             className=  {`bg-transparent hover:bg-blue-500 text-blue-700 font-semibold mr-10 py-3 px-10 border-2 border-stone-400 hover:border-transparent rounded-3xl ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'}`}
-            onClick={handlePdfUpload}
+            onClick={handleSubmit}
             disabled={isLoading}
           >
             Upload

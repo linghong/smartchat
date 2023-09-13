@@ -3,7 +3,6 @@ import Select, { ActionMeta, SingleValue} from 'react-select'
 
 import dynamic from 'next/dynamic';
 
-
 export interface OptionType {
   value: string;
   label: string;
@@ -14,7 +13,7 @@ interface DropDownSelectProps {
   onChange: (selectedOption: SingleValue<OptionType>, actionMeta: ActionMeta<OptionType>) => void;
   options: OptionType[];
   label: string;
-  name?: string
+  name?: string;
 }
 
 // Styles for the dropdown
