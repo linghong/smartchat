@@ -60,8 +60,9 @@ const UploadFile: FC = () => {
     }
   }
 
-  const handleAddCategoryToDropDown = (e : MouseEventHandler<HTMLDivElement>) => {
+  const handleAddCategoryToDropDown = () => {
     const newFileCategory = selectedInput.newFileCategory
+
     setFileCategoryOptions([
       ...fileCategoryOptions, 
       { 
