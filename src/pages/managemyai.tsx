@@ -62,15 +62,17 @@ const UploadFile: FC = () => {
 
   const handleAddCategoryToDropDown = () => {
     const newFileCategory = selectedInput.newFileCategory
-
-    setFileCategoryOptions([
-      ...fileCategoryOptions, 
-      { 
-        'value': newFileCategory.replace(/\s+/g, '').toLowerCase(),
+    const newCategoryOption = {
+      'value': newFileCategory.replace(/\s+/g, '').toLowerCase(),
         'label': newFileCategory
+    }
 
-      }
-    ])
+    setFileCategoryOptions(previousOptions => [
+      ...previousOptions, newCategoryOption])
+      setSelectedDropDown(prevSelected => ({
+        ...prevSelected,
+        'fileCategory': newCategoryOption
+      }))
     setShowAddNewCategory(false)
   }
 
