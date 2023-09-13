@@ -3,13 +3,7 @@ import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import Header from '@/src/components/Header'
 import { Message } from '@/src/types/chat'
-import { OptionType } from '@/src/components/DropDownSelect'
-
-import dynamic from 'next/dynamic';
-const DynamicDropDownSelect = dynamic(
-  () => import('@/src/components/DropDownSelect'),
-  { ssr: false }
-);
+import DropDownSelect, { OptionType } from '@/src/components/DropDownSelect'
 
 const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE?? ''
 
@@ -142,7 +136,7 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
   return  (
     <div className="flex flex-col">
       <Header pageTitle="Chat With AI" />
-      <DynamicDropDownSelect 
+      <DropDownSelect 
         selectedOption={selectedModel} 
         onChange={handleModelChange}
         options={options}

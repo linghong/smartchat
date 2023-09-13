@@ -1,5 +1,9 @@
 import { CSSObjectWithLabel, StylesConfig, OptionProps, GroupBase } from 'react-select'
 import Select, { ActionMeta, SingleValue} from 'react-select'
+
+import dynamic from 'next/dynamic';
+
+
 export interface OptionType {
   value: string;
   label: string;
@@ -34,7 +38,7 @@ const customStyles: StylesConfig<OptionType, false> = {
   })
 }
 
-const DropDownSelect: React.FC<DropDownSelectProps> = ({ selectedOption, onChange, options, label, name = undefined }) => {
+const DropDownSelectBase: React.FC<DropDownSelectProps> = ({ selectedOption, onChange, options, label, name = undefined }) => {
 
   return (
     <div className="flex justify-center items-center my-3 space-x-2">
@@ -51,6 +55,11 @@ const DropDownSelect: React.FC<DropDownSelectProps> = ({ selectedOption, onChang
     </div>
   )
 }
+
+const DropDownSelect = dynamic<DropDownSelectProps>(
+  () => Promise.resolve(DropDownSelectBase),
+  { ssr: false }
+);
 
 export default DropDownSelect;
 
