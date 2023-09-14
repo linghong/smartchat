@@ -3,10 +3,10 @@ import { PineconeStore } from 'langchain/vectorstores/pinecone'
 import { pineconeClient, checkIndexExists, createPineconeIndex } from './pineconeClient'
 import loadAndSplit from '../utils/pdfLoadAndSplit'
 
-const ingestDataToPinecone = async (filePath: string, nameSpace: string, indexName: string) => {
+const ingestDataToPinecone = async (filePath: string, namespace: string, indexName: string, chunkSize: number, chunkOverlap: number) => {
   try {
     console.log('split files...') 
-    const chunks = await loadAndSplit(filePath)
+    const chunks = await loadAndSplit(filePath, chunkSize, chunkOverlap)
     if(!chunks || chunks.length === 0) {
       console.error('No Chunks returned.')
       return
@@ -22,10 +22,9 @@ const ingestDataToPinecone = async (filePath: string, nameSpace: string, indexNa
     
     console.log('embedding chunks to pinecone...')
     const index = pineconeClient.Index(indexName)
-
     await PineconeStore.fromDocuments(chunks, embeddings, {
       pineconeIndex: index,
-      namespace: nameSpace,
+      namespace: namespace,
       textKey: 'text',
     })
 

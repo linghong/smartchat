@@ -1,7 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import * as formidable from 'formidable'
 import fs from 'fs'
-import ingestDataToPinecone from '@/src/services/ingestDataToPinecone'
+
+import { OptionType } from '@/src/types/common'
+import  ingestDataToPinecone from '@/src/services/ingestDataToPinecone'
 
 export const config = {
   api: {
@@ -17,7 +19,7 @@ export default async function handler(
   }
   
   try {
-    const data = await new Promise<{ fields: any, files: any }> ((resolve, reject) => {
+    const { fields, files } = await new Promise<{ fields: any, files: any }> ((resolve, reject) => {
       const form = new formidable.IncomingForm()
       
       form.parse(req, (err: Error | null, fields: { [key: string]: any }, files: { [key: string]: formidable.File[] | undefined }) => {
@@ -26,24 +28,30 @@ export default async function handler(
       })
     })
 
-    const uploadedFileArray = data.files['file']  
+    const uploadedFileArray = files['file']  
     const uploadedFile = uploadedFileArray && uploadedFileArray[0] || undefined
 
     if(!uploadedFile) {
       return res.status(500).json({
         error: 'Something wrong with the uploaded file.'
       })
-    } 
+    }
+
+    const chunkSize: number = parseInt(fields.chunkSize, 10)
+    const chunkOverlap: number = parseInt(fields.chunkOverlap, 10)
+    const fileCategory: OptionType = JSON.parse(fields.fileCategory).value.toLowerCase()
+    const embeddingModel: OptionType = JSON.parse(fields.embeddingModel).value.toLowerCase()
    
     const indexName = process.env.PINECONE_INDEX_NAME
-    const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE
+    const namespace = fileCategory + '-' + embeddingModel
     if(!indexName) return res.status(500).json({
      error: "Missing Pinecone index name."
     })
-    if(!nameSpace) return res.status(500).json({
+    if(!namespace) return res.status(500).json({
       error: "Missing Pinecone name space."
     })
-    await ingestDataToPinecone(uploadedFile.filepath, nameSpace, indexName)
+    
+    await ingestDataToPinecone(uploadedFile.filepath, namespace, indexName, chunkSize, chunkOverlap)
   
     // delete the file after using it
     await fs.promises.unlink(uploadedFile.filepath);

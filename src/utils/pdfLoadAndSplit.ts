@@ -31,7 +31,7 @@ const joinBrokenSentence = (pageContent: string): string => {
   return text
 }
 
-const loadAndSplit  = async ( docPath: string ) : Promise<Document[]> => {
+const loadAndSplit  = async ( docPath: string, chunkSize:number, chunkOverlap: number ) : Promise<Document[]> => {
   
   try {
     const loader = new PDFLoader(docPath, { splitPages: false})
@@ -46,8 +46,8 @@ const loadAndSplit  = async ( docPath: string ) : Promise<Document[]> => {
     // 2.'\n(?![?)}]|\])': split when newline characters not followed by a question mark and closing brackets - these are unlikely to be at the end of sentences.
     // 3.'(?<![.!] *|[.!]"|[.!] *) ': Matches spaces more likely to be at the end of a sentence -using the same criteria as the first pattern but for spaces instead of newline characters.
     const splitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-      chunkOverlap: 200, 
+      chunkSize,
+      chunkOverlap, 
       keepSeparator: true,
       separators: ['\n\n','(?<![.!] *\)*|[.!]")\n', '\n(?![?)}]|\])', '(?<![.!] *|[.!]"|[.!] *) ', ' ', '']
     })
