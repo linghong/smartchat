@@ -1,4 +1,4 @@
-import { FC, ChangeEvent, MouseEvent, MouseEventHandler, useState } from 'react'
+import { FC, ChangeEvent, MouseEvent, useState } from 'react'
 import Header from '@/src/components/Header'
 import DropDownSelect, { OptionType } from '@/src/components/DropDownSelect'
 import PlusIcon from '@/src/components/PlusIcon'
@@ -52,6 +52,8 @@ const UploadFile: FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null> (null)
   const [error, setError] = useState<string | null> (null)
+
+  const [notification, setNotification] = useState<string | null> (null)
 
   const handleFileChange= (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -129,9 +131,11 @@ const UploadFile: FC = () => {
         const data: ApiResponse = await res.json() as ApiResponse
 
         if (res.ok) {
-          setSuccessMessage(`Upload success: ${data.message}`);
+          setSuccessMessage(`Upload success: ${data.message}`)
+          setNotification(`Upload success: ${data.message}`)
         } else {
-          setError(`Upload error: ${data.error}`);
+          setError(`Upload error: ${data.error}`)
+          setNotification(`Upload error: ${data.error}`)
         }
       } catch (error) {
          setError('There was a network error when sending file:')
@@ -144,17 +148,22 @@ const UploadFile: FC = () => {
 
   return (
     <div className="flex flex-col items-center">
+      <div className="sr-only" aria-live="polite" aria-atomic="true" >
+        {notification}
+      </div>
       <Header pageTitle="Manage My AI" />
-      <form className="flex flex-col h-40vh w-40vw p-10 justify-between bg-slate-50 border border-indigo-100">
+      <form className="flex flex-col h-40vh w-60vw p-10 justify-between bg-slate-50 border border-indigo-100">
         <div>
-          <label className="font-bold text-base mr-5">
+          <label 
+            htmlFor="fileUpload" className="vw-20vw font-bold text-base mr-5">
             Upload File:
           </label>  
           <input 
-            type="file"
-            name="uploadFile" 
-            accept=".pdf"
-            onChange={handleFileChange}
+              type="file"
+              name="uploadFile" 
+              accept=".pdf"
+              onChange={handleFileChange}
+              className="focus:border-blue-500 focus:outline-none"
           />
         </div>
         <div className="flex flex-row">
@@ -167,36 +176,44 @@ const UploadFile: FC = () => {
           />
           {showAddNewCategory && 
             <>
-              <label className="font-bold ml-10 mr-5 my-10 py-1.5">
+              <label htmlFor="newCategoryOption" className="font-bold ml-10 mr-5 my-10 py-1.5">
                 New Category:
               </label>
               <input 
                 type="text"
                 name="newFileCategory"
-                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold my-10 px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl"
+                className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold my-10 px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-blue-500 focus:outline-none"
                 onChange={handleInputChange}
               />  
-              <div className="my-10 py-1.5" onClick={handleAddCategoryToDropDown}><PlusIcon /></div> 
+              <button 
+                className="my-10 py-1.5"
+                aria-label="Add New Category" 
+                onClick={handleAddCategoryToDropDown}
+              >
+                <PlusIcon aria-hidden="true" />
+              </button> 
             </>
           }       
         </div>         
         <div className="flex justify-start">
-          <label className="font-bold mr-5 py-1.5">
+          <label htmlFor="chunkSize" className="font-bold mr-5 py-1.5">
             Chunk Size:
           </label>
           <input 
             type="number"
             name="chunkSize"
-            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl"
+            value={selectedInput.chunkSize}
+            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
             onChange={handleInputChange}
           />
-          <label className="font-bold mr-5 py-1.5">
+          <label htmlFor="chunkOverlapSize" className="font-bold mr-5 py-1.5">
             Chunk Overlap Size:
           </label>
           <input 
             type="number"
             name="chunkOverlap"
-            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl"
+            value={selectedInput.chunkOverlap}
+            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
             onChange={handleInputChange}
           />       
         </div>
@@ -211,17 +228,17 @@ const UploadFile: FC = () => {
         </div>          
         <div className="flex justify-end">
           <button
-            type="button"
-            className=  {`bg-transparent hover:bg-blue-500 text-blue-700 font-semibold mr-10 py-3 px-10 border-2 border-stone-400 hover:border-transparent rounded-3xl ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'}`}
+            type="submit"
+            className=  {`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-10 py-3 px-10 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}
             onClick={handleSubmit}
             disabled={isLoading}
           >
             Upload
           </button>
         </div>         
-        {isLoading && <p className="bold">Uploading...</p>}
-        {successMessage && <p className="bold text-green-600">{successMessage}</p>}
-        {error && <p className='bold text-red-600'>{error}</p>}
+        {isLoading && <p className="bold" role="status">Uploading...</p>}
+        {successMessage && <p className="bold text-green-600" role="status">{successMessage}</p>}
+        {error && <p className="bold text-red-600" role="alert">{error}</p>}
       </form>
       <div className="flex flex-col h-40vh items-center justify-between"></div>      
     </div>

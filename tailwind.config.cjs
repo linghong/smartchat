@@ -13,11 +13,14 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       width: {
+        '20vw': '20vw',
         '40vw': '40vw',
+        '60vw': '60vw',
         '80vw': '80vw',
       },
       height: {
         '40vh': '40vh',
+        '60vh': '60vh',
         '80vh': '80vh',
       },
     },

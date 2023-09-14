@@ -38,17 +38,17 @@ const customStyles: StylesConfig<OptionType, false> = {
 }
 
 const DropDownSelectBase: React.FC<DropDownSelectProps> = ({ selectedOption, onChange, options, label, name = undefined }) => {
+  const dropDownId = `${label.replace(/\s+/g, '-').toLowerCase()}`
 
   return (
     <div className="flex justify-center items-center my-3 space-x-2">
-      <label htmlFor="modelSelect" className="text-base font-bold">{label}</label>
+      <label htmlFor={name} className="text-base font-bold">{label}</label>
       <Select 
-        id="modelSelect" 
+        id={dropDownId} 
         onChange={onChange} 
         value={selectedOption}
         options={options}
         styles={customStyles} 
-        aria-label={label}
         name={name}
       />
     </div>
