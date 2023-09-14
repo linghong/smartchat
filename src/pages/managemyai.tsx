@@ -1,8 +1,11 @@
 import { FC, ChangeEvent, MouseEvent, useState } from 'react'
-import Header from '@/src/components/Header'
-import DropDownSelect, { OptionType } from '@/src/components/DropDownSelect'
-import PlusIcon from '@/src/components/PlusIcon'
 import { ActionMeta} from 'react-select'
+
+import Header from '@/src/components/Header'
+import DropDownSelect from '@/src/components/DropDownSelect'
+import PlusIcon from '@/src/components/PlusIcon'
+import { OptionType } from '@/src/types/common'
+
 
 type ApiResponse = {
   message: string;
@@ -113,7 +116,7 @@ const UploadFile: FC = () => {
     setIsLoading(true);
     setSuccessMessage(null);
     setError(null);
-    console.log(selectedDropDown, selectedInput)
+
     if(selectedFile){
       const formData = new FormData()
       formData.append('file', selectedFile)

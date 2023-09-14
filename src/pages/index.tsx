@@ -3,7 +3,8 @@ import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import Header from '@/src/components/Header'
 import { Message } from '@/src/types/chat'
-import DropDownSelect, { OptionType } from '@/src/components/DropDownSelect'
+import DropDownSelect from '@/src/components/DropDownSelect'
+import { OptionType } from '@/src/types/common'
 
 const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE?? ''
 

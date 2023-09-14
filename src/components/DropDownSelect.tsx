@@ -2,11 +2,7 @@ import { CSSObjectWithLabel, StylesConfig, OptionProps, GroupBase } from 'react-
 import Select, { ActionMeta, SingleValue} from 'react-select'
 
 import dynamic from 'next/dynamic';
-
-export interface OptionType {
-  value: string;
-  label: string;
-}
+import { OptionType } from '@/src/types/common'
 
 interface DropDownSelectProps {
   selectedOption: OptionType | null;
