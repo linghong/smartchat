@@ -1,4 +1,6 @@
-import {useState, useRef, useCallback, useEffect, ChangeEvent, FC } from 'react'
+import {useState, useRef, useCallback, useEffect, ChangeEvent,FormEvent, FC } from 'react'
+import {GetStaticProps} from 'next'
+import { fetchData } from '@/src/utils/fetchData'
 import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import Header from '@/src/components/Header'
@@ -6,31 +8,38 @@ import { Message } from '@/src/types/chat'
 import DropDownSelect from '@/src/components/DropDownSelect'
 import { OptionType } from '@/src/types/common'
 
-const nameSpace = process.env.NEXT_PUBLIC_NAME_SPACE?? ''
-
-const options: OptionType[] = [
+const modelOptions: OptionType[] = [
   { value: 'gpt-3.5-turbo', label: 'GPT-3.5' },
   { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5-16k' },
   { value: 'gpt-4', label: 'GPT-4' }
-];
+]
+
+const initialFileCategory: OptionType = {value: 'none', label: 'None'}
 
 const initialMessage = {
   question: '', 
   answer:'Hi, how can I assist you?'
 }
 
-const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}> = ({ isNewChat, setIsNewChat }) => {
+const HomePage : FC<{
+  isNewChat: boolean, 
+  setIsNewChat: (value: boolean) => void, namespaces: string[]
+}> = ({ isNewChat, setIsNewChat, namespaces = [initialFileCategory.value] }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null> (null)
 
+  const fileCategoryOptions = [ initialFileCategory, ...namespaces.map(ns => ({ value: ns, label: ns }))];
+  const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>( initialFileCategory)
+
+  const [selectedModel, setSelectedModel] = useState<OptionType | null>(modelOptions[0])
+
   const [userInput, setUserInput] = useState<string>('')
+  const [rows, setRows] = useState<number>(1)
+  const [chatHistory, setChatHistory] = useState<Message[]>([ initialMessage ])
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  const [rows, setRows] = useState<number>(1)
-  const [selectedModel, setSelectedModel] = useState<OptionType | null>(options[0])
-  const [chatHistory, setChatHistory] = useState<Message[]>([ initialMessage ])
-
-  const fetchChatResponse = async (question: string, nameSpace: string) => {
+  
+  const fetchChatResponse = async (question: string, namespace: string) => {
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -40,7 +49,7 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
         body: JSON.stringify({
           question,
           chatHistory,
-          nameSpace,
+          namespace,
           selectedModel
         }),
       })
@@ -66,9 +75,9 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
     }
   }
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-  
+
     const question : string = userInput.trim()
     // prevent form submission if no text is entered
     if(question.length === 0) return
@@ -78,11 +87,15 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
     setLoading(true)
     setUserInput('')
 
-    fetchChatResponse(question, nameSpace)
+    fetchChatResponse(question, selectedNamespace?.value || 'None')
   }, [userInput, fetchChatResponse])
 
   const handleModelChange = (selectedOption: OptionType | null) => {
     setSelectedModel(selectedOption)
+  }
+
+  const handleNamespaceChange = (selectedOption: OptionType | null) => {
+    setSelectedNamespace(selectedOption)
   }
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -101,8 +114,8 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
       if ( e.shiftKey) {       
         setUserInput(prevState => prevState + "\n")
         setRows(rows => rows + 1)
+
       } else {
-        //submit question
         handleSubmit(e as any)
         setRows(1)
       }
@@ -138,12 +151,20 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
   return  (
     <div className="flex flex-col">
       <Header pageTitle="Chat With AI" />
-      <DropDownSelect 
-        selectedOption={selectedModel} 
-        onChange={handleModelChange}
-        options={options}
-        label='Choose AI Model:'
-      />
+      <div className="flex flex-row justify-around">
+        <DropDownSelect 
+          selectedOption={selectedModel} 
+          onChange={handleModelChange}
+          options={modelOptions}
+          label='Choose AI Model:'
+        />
+        <DropDownSelect 
+          selectedOption={selectedNamespace} 
+          onChange={handleNamespaceChange}
+          options={fileCategoryOptions}
+          label='Using Saved File:'
+        />
+      </div>     
       <div className="flex flex-col h-80vh items-center justify-between">
         <div className={`w-80vw grow bg-white border-2 border-indigo-100 rounded-lg chat-container`}>
           <div  
@@ -159,7 +180,7 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
               />)}
           </div>
         </div>
-        <form 
+        <form
           onSubmit={handleSubmit} 
           className="flex item-center w-80vw my-4 p-2 border-2 border-indigo-300 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
         >
@@ -172,6 +193,7 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
             name="userInput"
             placeholder="Click to send a message, and push Shift + Enter to move to the next line."
             value={userInput}
+            aria-label="Enter your message here"
             onChange={handleInputChange}
             className={`w-80vw max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
           />
@@ -187,3 +209,14 @@ const HomePage : FC<{isNewChat: boolean, setIsNewChat: (value: boolean) => void}
   )  
 }
 export default HomePage
+
+export const getStaticProps: GetStaticProps = async () => {
+  const { namespaces } = await fetchData('namespaces');
+
+  return {
+    props: {
+      namespaces
+    },
+    revalidate: 60 * 60 *24 // This is optional. It ensures regeneration of the page after every 24 hour
+  }
+};
