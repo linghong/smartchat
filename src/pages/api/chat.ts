@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+
 import {  createEmbedding, getChatResponse } from '@/src/services/openai'
 import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone'
 
@@ -6,11 +7,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, nameSpace, selectedModel, chatHistory } = req.body
+  const { question, namespace, selectedModel, chatHistory } = req.body
 
   if (!selectedModel.value) return res.status(500).json('Something went wrong')
 
-  //only accept post requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
@@ -23,12 +23,11 @@ export default async function handler(
 
   try {
     const embeddedQuery = await createEmbedding(question)
-    const fetchedText = await fetchDataFromPinecone(embeddedQuery, nameSpace)
-
+    const fetchedText = await fetchDataFromPinecone(embeddedQuery, namespace)
     const chatResponse = await getChatResponse(chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
 
     const chatAnswer = chatResponse?? 'I am sorry. I can\'t find an answer to your question.'
-    console.log(chatAnswer)
+
     res.status(200).json(chatAnswer)
   
   } catch (error: any) {

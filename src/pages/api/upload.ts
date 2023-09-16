@@ -52,7 +52,8 @@ export default async function handler(
     })
     
     await ingestDataToPinecone(uploadedFile.filepath, namespace, indexName, chunkSize, chunkOverlap)
-  
+    
+    console.log( 'remove file link ...')
     // delete the file after using it
     await fs.promises.unlink(uploadedFile.filepath);
 

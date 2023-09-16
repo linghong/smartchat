@@ -65,6 +65,23 @@ export const checkIndexExists = async (indexName : string) : Promise<boolean> =>
   }
 }
 
+export const getNamespaces = async (indexName: string): Promise<string[] | undefined> => {
+  try {
+    const index = pineconeClient.Index(indexName)
+    const res = await index.describeIndexStats({
+      describeIndexStatsRequest: {}
+    })
+    
+    const namespacesObj: {[key: string]: { vectorCount?: number | undefined }}  | undefined = res.namespaces
+
+    return namespacesObj? Object.keys(namespacesObj) : undefined
+
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
+    return undefined;
+  }
+}
+
 
 
 
