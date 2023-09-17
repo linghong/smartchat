@@ -1,6 +1,8 @@
 import { FC, ChangeEvent, MouseEvent, useState } from 'react'
+import {GetStaticProps} from 'next'
 import { ActionMeta} from 'react-select'
 
+import { fetchData } from '@/src/utils/fetchData'
 import Header from '@/src/components/Header'
 import DropDownSelect from '@/src/components/DropDownSelect'
 import PlusIcon from '@/src/components/PlusIcon'
@@ -32,15 +34,15 @@ interface DropDownData {
 const embeddingModelOptions = [
   { value: 'openAI', label: 'Open AI embedding' },
 ]
-const defaultFileCategoryOption = 
-  { value: 'new', label: 'Add New Category' }
 
-const UploadFile: FC = () => {
+const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
+
+  const defaultFileCategoryOptions = [ { value: 'new', label: 'Add New Category' }, ...namespaces.map(ns => ({ value: ns, label: ns }))];
   
   const [selectedFile, setSelectedFile] =useState<File |null>(null)
 
-  const [showAddNewCategory, setShowAddNewCategory] = useState(false)
-  const [fileCategoryOptions, setFileCategoryOptions] = useState<OptionType[]>([defaultFileCategoryOption])
+  const [showAddNewCategory, setShowAddNewCategory] = useState(false) 
+  const [fileCategoryOptions, setFileCategoryOptions] = useState<OptionType[]>(defaultFileCategoryOptions)
 
   const [selectedInput, setSelectedInput] = useState<InputData>({
     'chunkSize': 800,
@@ -48,7 +50,7 @@ const UploadFile: FC = () => {
     'newFileCategory': ''
   })
   const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>({
-    'fileCategory': defaultFileCategoryOption,
+    'fileCategory': defaultFileCategoryOptions[0],
     'embeddingModel': embeddingModelOptions[0],
   })
 
@@ -249,3 +251,14 @@ const UploadFile: FC = () => {
 }
 
 export default UploadFile
+
+export const getStaticProps: GetStaticProps = async () => {
+  const { namespaces } = await fetchData('namespaces');
+
+  return {
+    props: {
+      namespaces
+    },
+    revalidate: 60 * 60 *24 // This is optional. It ensures regeneration of the page after every 24 hour
+  }
+};
