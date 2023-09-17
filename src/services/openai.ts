@@ -63,15 +63,16 @@ const buildChatArray = (systemContent: string, userMessage : string, fetchedText
   return chatArray
 }
 
-
 export const getChatResponse = async (chatHistory: Message[],userMessage : string, fetchedText: string, selectedModel: string): Promise<string | undefined> => {
   const maxReturnMessageToken = 1500
 
-  const htmlTagContent = selectedModel === 'gpt-4' ? 'When presenting information, split your responses into paragraphs, using relevant HTML tags: <p> for paragraphs, <ul> and <li> for unordered lists, <ol> and <li> for ordered lists, and <strong> for bold text, and always ensure the use of proper closing tags for any HTML elements opened.' : ''
+  const htmlTagContent = selectedModel === 'gpt-4' ? 'When presenting information, please ensure to split your responses into paragraphs using <p> HTML tag. If you are providing a list, use the <ul> and <li> tags for unordered lists, <ol> and <li> tags for ordered lists. Highlight the important points using <strong> tag for bold text. Always remember to close any HTML tags that you open.' : ''
 
-  const systemContent = "You are an AI assistant and an expert with access to a specific data source that you own, as well as a broad base of pre-existing knowledge. Be aware that the text after 'fetched data:' is information fetched from the aforementioned saved data source and is owned by you. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. Also, only give answer for the question asked, don't provide text not related to the user's question. " + htmlTagContent
+  const systemContent = "You are an AI assistant, skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. Also, only give answer for the question asked, don't provide text not related to the user's question. " + htmlTagContent
 
   const chatArray = buildChatArray(systemContent, userMessage, fetchedText, chatHistory, maxReturnMessageToken)
+
+  const userMessageWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''" : userMessage
 
   try {
     const chatCompletion = await openaiClient.createChatCompletion({
@@ -87,22 +88,18 @@ export const getChatResponse = async (chatHistory: Message[],userMessage : strin
           }, 
           ...chatArray,
           { 
-            role: "assistant", 
-            content: fetchedText
-          }, 
-          { 
           role: "user", 
-          content: userMessage
+          content: userMessageWithFetchedData
         }],
     })
 
     const res = chatCompletion.data;
     if (!res) throw new Error('Chat completion data is undefined.')
     if (!res.usage) throw new Error('Chat completion data is undefined.')
-    if(res.choices[0].finish_reason !== 'stop') console.log('AI message isn\'t complete.')
+    if(res.choices[0].finish_reason !== 'stop') console.log(`AI message isn't complete.`)
     let message = res.choices[0].message?.content?? ''
     message = selectedModel === 'gpt-4' ? message : message.replace(/\n/g, '<br>')
-    console.log('123', res)
+
     return message
 
   } catch(error: any) {

@@ -23,19 +23,18 @@ export const fetchDataFromPinecone = async (embeddedQuery: number[], nameSpace: 
   const index = pineconeClient.Index(PINECONE_INDEX_NAME)
   const queryRequest = {
     vector: embeddedQuery,
-    topK: 3,
+    topK: 1,
     includeValues: true,
     includeMetadata: true,
     namespace: nameSpace,
   }
   let queryResponse = await index.query({ queryRequest })
 
-
   if (queryResponse && queryResponse.matches) {
     const message = queryResponse.matches.reduce((sum, match) => {
       const metaData : Metadata | undefined = match.metadata
       const text = metaData?.text?? ''
-      console.log(text)
+
       return sum + '\n' + text
     }, '')
     return message

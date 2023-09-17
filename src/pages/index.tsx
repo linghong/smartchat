@@ -87,7 +87,7 @@ const HomePage : FC<{
     setLoading(true)
     setUserInput('')
 
-    fetchChatResponse(question, selectedNamespace?.value || 'None')
+    fetchChatResponse(question, selectedNamespace?.value || 'none')
   }, [userInput, fetchChatResponse])
 
   const handleModelChange = (selectedOption: OptionType | null) => {

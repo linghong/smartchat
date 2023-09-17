@@ -6,7 +6,7 @@ if (!PINECONE_ENVIRONMENT) throw new Error('missing Pinecone environment variabl
 if (!PINECONE_API_KEY) throw new Error('missing Pinecone api key');
 
 const initPinecone = async () => {
-  console.log('initing pinecone ...')
+  console.log('Initiating Pinecone ...')
   const pinecone = new PineconeClient();
   try {
     await pinecone.init({
@@ -16,7 +16,7 @@ const initPinecone = async () => {
     return pinecone
 
   } catch (e) {
-    throw new Error('Something wrong when initializing Pinecone client.')
+    throw new Error('Error occurred while initializing the Pinecone client.')
   }
 }
 
@@ -43,7 +43,7 @@ export const listIndexes = async (): Promise<string[] | undefined> => {
       const indexes = await pineconeClient.listIndexes();
       return indexes;
   } catch (error) {
-      console.error(`An error occurred: ${error}`);
+      console.error(`An error occurred when listing index: ${error}`);
       return undefined;
   }
 }
@@ -77,7 +77,7 @@ export const getNamespaces = async (indexName: string): Promise<string[] | undef
     return namespacesObj? Object.keys(namespacesObj) : undefined
 
   } catch (error) {
-    console.error(`An error occurred: ${error}`);
+    console.error(`An error occurred when fetching namespaces: ${error}`);
     return undefined;
   }
 }

@@ -21,9 +21,13 @@ export default async function handler(
   // replacing newlines with spaces
   const sanitizedQuestion = question.trim().replaceAll('\n', ' ')
 
+  let fetchedText = ''
   try {
-    const embeddedQuery = await createEmbedding(question)
-    const fetchedText = await fetchDataFromPinecone(embeddedQuery, namespace)
+    if(namespace !== 'none') {
+      const embeddedQuery = await createEmbedding(question)
+      fetchedText = await fetchDataFromPinecone(embeddedQuery, namespace)
+    }
+
     const chatResponse = await getChatResponse(chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
 
     const chatAnswer = chatResponse?? 'I am sorry. I can\'t find an answer to your question.'
@@ -31,7 +35,7 @@ export default async function handler(
     res.status(200).json(chatAnswer)
   
   } catch (error: any) {
-    console.error('error', error);
+    console.error('An error occurred: ', error);
     res.status(500).json({ error: error.message || 'Something went wrong' })
   }
 }
