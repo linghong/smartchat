@@ -41,7 +41,7 @@ const embeddingModelOptions = [
 
 const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
 
-  const defaultFileCategoryOptions = [ { value: 'new', label: 'Add New Category' }, ...namespaces.map(ns => ({ value: ns, label: ns }))];
+  const defaultFileCategoryOptions = [ { value: 'default', label: 'Add New Category' }, ...namespaces.map(ns => ({ value: ns, label: ns }))];
   
   const [selectedFile, setSelectedFile] =useState<File |null>(null)
 
@@ -65,7 +65,9 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
     chunkSize: null,
     chunkOverlap: null,
     newFileCategory: null,
-    integer: null
+    integer: null,
+    selectedFileCategory: null,
+    upload: null
   });
 
   const [notification, setNotification] = useState<string | null> (null)
@@ -81,7 +83,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
     e.preventDefault()
     const newFileCategory = selectedInput.newFileCategory
 
-     if (!newFileCategory) {
+    if (!newFileCategory) {
       setInputErrors(prev => ({...prev, ['newFileCategory']: "Category name cannot be empty."}))
       return
     } 
@@ -165,7 +167,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
         [actionMeta.name]: selectedOption
       })
 
-    } else if(actionMeta.name === 'fileCategory' &&  selectedOption?.value === 'new'){
+    } else if(actionMeta.name === 'fileCategory' &&  selectedOption?.value === 'default'){
       setShowAddNewCategory(true)
 
     } else {
@@ -174,47 +176,54 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
         ...selectedDropDown, 
         'fileCategory': selectedOption
       })
+      setInputErrors(prev => ({...prev, ['newFileCategory']: null}))
     }    
   }
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+
+    if(!selectedFile) {
+      setInputErrors(prev => ({...prev, ['upload']: 'You must upload a file.'}))
+    }
+  
+    const hasErrors = !selectedFile || Object.values(inputErrors).some(e => e !== null)
+    if(hasErrors) return
+
     setIsLoading(true);
     setSuccessMessage(null);
     setError(null);
 
-    if(selectedFile){
-      const formData = new FormData()
-      formData.append('file', selectedFile)
-      formData.append('chunkSize', selectedInput.chunkSize.toString());
-      formData.append('chunkOverlap', selectedInput.chunkOverlap.toString());
-      formData.append('fileCategory', JSON.stringify(selectedDropDown.fileCategory));
-      formData.append('embeddingModel', JSON.stringify(selectedDropDown.embeddingModel));
+    const formData = new FormData()
+    formData.append('file', selectedFile)
+    formData.append('chunkSize', selectedInput.chunkSize.toString())
+    formData.append('chunkOverlap', selectedInput.chunkOverlap.toString())
+    formData.append('fileCategory', JSON.stringify(selectedDropDown.fileCategory))
+    formData.append('embeddingModel', JSON.stringify(selectedDropDown.embeddingModel))
 
-      try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        })
-        
-        const data: ApiResponse = await res.json() as ApiResponse
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+      
+      const data: ApiResponse = await res.json() as ApiResponse
 
-        if (res.ok) {
-          setSuccessMessage(`Upload success: ${data.message}`)
-          setNotification(`Upload success: ${data.message}`)
-        } else {
-          setError(`Upload error: ${data.error}`)
-          setNotification(`Upload error: ${data.error}`)
-        }
-      } catch (error) {
-         setError('There was a network error when sending file:')
-         console.log(error)
-      } finally {
-        setIsLoading(false)
+      if (res.ok) {
+        setSuccessMessage(`Upload success: ${data.message}`)
+        setNotification(`Upload success: ${data.message}`)
+      } else {
+        setError(`Upload error: ${data.error}`)
+        setNotification(`Upload error: ${data.error}`)
       }
+    } catch (error) {
+        setError('There was a network error when sending file:')
+        console.log(error)
+    } finally {
+      setIsLoading(false)
     }
   }
-  console.log("showAddNewCategory", showAddNewCategory)
+
   return (
     <div className="flex flex-col items-center">
       <div className="sr-only" aria-live="polite" aria-atomic="true" >
@@ -304,12 +313,13 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
             onClick={handleSubmit}
             disabled={isLoading}
           >
-            Upload
+            Submit
           </button>
         </div>         
         {isLoading && <p className="bold" role="status">Uploading...</p>}
         {successMessage && <p className="bold text-green-600" role="status">{successMessage}</p>}
         {error && <p className="bold text-red-600" role="alert">{error}</p>}
+        {inputErrors.upload && <p className="text-red-600">{inputErrors.upload}</p>}
         {inputErrors.chunkSize && <p className="text-red-600">{inputErrors.chunkSize}</p>}
         {inputErrors.chunkOverlap && <p className="text-red-600">{inputErrors.chunkOverlap}</p>}
         {inputErrors.newFileCategory && <p className="text-red-600">{inputErrors.newFileCategory}</p>}
