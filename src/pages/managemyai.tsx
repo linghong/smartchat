@@ -8,7 +8,6 @@ import DropDownSelect from '@/src/components/DropDownSelect'
 import PlusIcon from '@/src/components/PlusIcon'
 import { OptionType } from '@/src/types/common'
 
-
 type ApiResponse = {
   message: string;
   fileName: string;
@@ -31,6 +30,11 @@ interface DropDownData {
   };
 }
 
+const MIN_CHUNK_SIZE = 100 
+const MAX_CHUNK_SIZE = 1500 
+const MIN_CHUNK_OVERLAP = 0
+const MAX_CHUNK_OVERLAP = 800
+
 const embeddingModelOptions = [
   { value: 'openAI', label: 'Open AI embedding' },
 ]
@@ -45,18 +49,24 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
   const [fileCategoryOptions, setFileCategoryOptions] = useState<OptionType[]>(defaultFileCategoryOptions)
 
   const [selectedInput, setSelectedInput] = useState<InputData>({
-    'chunkSize': 800,
-    'chunkOverlap': 300,
-    'newFileCategory': ''
+    chunkSize: 800,
+    chunkOverlap: 300,
+    newFileCategory: ''
   })
   const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>({
-    'fileCategory': defaultFileCategoryOptions[0],
-    'embeddingModel': embeddingModelOptions[0],
+    fileCategory: defaultFileCategoryOptions[0],
+    embeddingModel: embeddingModelOptions[0],
   })
 
   const [isLoading, setIsLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null> (null)
   const [error, setError] = useState<string | null> (null)
+  const [inputErrors, setInputErrors] = useState<{[key: string]: string | null}>({
+    chunkSize: null,
+    chunkOverlap: null,
+    newFileCategory: null,
+    integer: null
+  });
 
   const [notification, setNotification] = useState<string | null> (null)
 
@@ -67,29 +77,83 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
     }
   }
 
-  const handleAddCategoryToDropDown = () => {
+  const handleAddCategoryToDropDown = (e:any) => {
+    e.preventDefault()
     const newFileCategory = selectedInput.newFileCategory
+
+     if (!newFileCategory) {
+      setInputErrors(prev => ({...prev, ['newFileCategory']: "Category name cannot be empty."}))
+      return
+    } 
+
     const newCategoryOption = {
       'value': newFileCategory.replace(/\s+/g, '').toLowerCase(),
-        'label': newFileCategory
+      'label': newFileCategory
+    }
+
+    setSelectedDropDown(prevSelected => ({
+      ...prevSelected,
+      'fileCategory': newCategoryOption
+    }))
+
+    // Check if the new category already exists in namespaces
+    if (namespaces.includes(newFileCategory)) {
+      setInputErrors(prev => ({...prev, ['newFileCategory']: "This category already exists."}))
+      return
     }
 
     setFileCategoryOptions(previousOptions => [
       ...previousOptions, newCategoryOption])
-      setSelectedDropDown(prevSelected => ({
-        ...prevSelected,
-        'fileCategory': newCategoryOption
-      }))
+    setInputErrors(prev => ({...prev, ['newFileCategory']: null}))
     setShowAddNewCategory(false)
   }
 
+  const validateChunkInput = (name: string, value: number) => {
+    if (!Number.isInteger(value)) {
+      setInputErrors(prev => ({...prev, ['integer']: `${name} should be an integer.`}))
+    } else {
+      setInputErrors(prev => ({...prev, ['integer']: null }))
+    }
+    if (name === 'chunkSize') {
+      if (value < MIN_CHUNK_SIZE || value > MAX_CHUNK_SIZE) {
+        setInputErrors(prev => ({...prev, [name]: `Chunk Size must be between ${MIN_CHUNK_SIZE} and ${MAX_CHUNK_SIZE}`}))
+      } else if (value <= selectedInput.chunkOverlap) {
+        setInputErrors(prev => ({...prev, [name]: "Chunk Size must be greater than Chunk Overlap size."}))
+      } else {
+        setInputErrors(prev => ({...prev, [name]: null}))
+      }
+
+    } else if (name === 'chunkOverlap') {
+      if (value < MIN_CHUNK_OVERLAP || value > MAX_CHUNK_OVERLAP) {
+        setInputErrors(prev => ({...prev, [name]: `Chunk Overlap Size must be between ${MIN_CHUNK_OVERLAP} and ${MAX_CHUNK_OVERLAP}`}))
+      } else if (value >= selectedInput.chunkSize) {
+        setInputErrors(prev => ({...prev, [name]: "Chunk Overlap size must be smaller than Chunk Size."}))
+      } else {
+        setInputErrors(prev => ({...prev, [name]: null}))
+      }
+    }
+  } 
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name
-    const value = e.target.value
+    let value = e.target.value
+    
+    // Remove leading zeroes
+    value = value.replace(/^0+/, '');
+
+    if(inputErrors[name]) validateChunkInput(name, parseFloat(value))
+    
     setSelectedInput({
       ...selectedInput,
       [name]: value
     })
+  }
+
+  const handleInputBlur = (e: ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name;
+    const value = parseInt(e.target.value)     
+    
+    validateChunkInput(name, value)
   }
    
   const handleDropDownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
@@ -150,7 +214,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
       }
     }
   }
-
+  console.log("showAddNewCategory", showAddNewCategory)
   return (
     <div className="flex flex-col items-center">
       <div className="sr-only" aria-live="polite" aria-atomic="true" >
@@ -210,6 +274,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
             value={selectedInput.chunkSize}
             className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
             onChange={handleInputChange}
+            onBlur={handleInputBlur}
           />
           <label htmlFor="chunkOverlapSize" className="font-bold mr-5 py-1.5">
             Chunk Overlap Size:
@@ -220,6 +285,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
             value={selectedInput.chunkOverlap}
             className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
             onChange={handleInputChange}
+            onBlur={handleInputBlur}
           />       
         </div>
         <div className="flex justify-start">
@@ -244,6 +310,9 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
         {isLoading && <p className="bold" role="status">Uploading...</p>}
         {successMessage && <p className="bold text-green-600" role="status">{successMessage}</p>}
         {error && <p className="bold text-red-600" role="alert">{error}</p>}
+        {inputErrors.chunkSize && <p className="text-red-600">{inputErrors.chunkSize}</p>}
+        {inputErrors.chunkOverlap && <p className="text-red-600">{inputErrors.chunkOverlap}</p>}
+        {inputErrors.newFileCategory && <p className="text-red-600">{inputErrors.newFileCategory}</p>}
       </form>
       <div className="flex flex-col h-40vh items-center justify-between"></div>      
     </div>
