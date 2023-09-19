@@ -239,8 +239,8 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
         {notification}
       </div>
       <Header pageTitle="Manage My AI" />
-      <form className="flex flex-col h-40vh p-10 justify-between bg-slate-50 border border-indigo-100">
-        <div>
+      <form className="flex flex-col h-60vh lg:h-40vh p-10 justify-between bg-slate-50 border border-indigo-100">
+        <div className="my-2">
           <label 
             htmlFor="fileUpload" className="w-50 font-bold text-base mr-5">
             Upload File:
@@ -254,7 +254,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
           />
         </div>
         <div className="flex flex-col lg:flex-row justify-start"> 
-          <div className="lg:w-50">
+          <div className="lg:w-50 mr-20 my-2">
             <DropDownSelect
               name='fileCategory' 
               selectedOption={selectedDropDown.fileCategory} 
@@ -264,8 +264,8 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
             />
           </div>       
           {showAddNewCategory && 
-            <div className="flex items-center lg:w-50">
-              <label htmlFor="newCategoryOption" className="font-bold ml-10 mr-5">
+            <div className="flex items-center lg:w-50 my-2">
+              <label htmlFor="newCategoryOption" className="font-bold mr-5">
                 New Category:
               </label>
               <input 
@@ -293,27 +293,27 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
               type="number"
               name="chunkSize"
               value={selectedInput.chunkSize}
-              className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+              className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
               onChange={handleInputChange}
               onBlur={handleInputBlur}
             />
           </div>
-          <div className="lg:w-50 my-5">
-            <label htmlFor="chunkOverlapSize" className="font-bold mr-2">
+          <div className="lg:w-50 my-5 justify-start">
+            <label htmlFor="chunkOverlapSize" className="font-bold mr-2 py-1.5">
               Chunk Overlap:
             </label>
             <input 
               type="number"
               name="chunkOverlap"
               value={selectedInput.chunkOverlap}
-              className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+              className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
               onChange={handleInputChange}
               onBlur={handleInputBlur}
             />       
           </div>
           
         </div>
-        <div className="flex justify-start">
+        <div className="flex justify-start my-2">
           <DropDownSelect
             name='embeddingModel' 
             selectedOption={selectedDropDown.embeddingModel} 
@@ -322,7 +322,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
             label='Embedding Model:'
           /> 
         </div>          
-        <div className="flex justify-end">
+        <div className="flex justify-end my-2">
           <button
             type="submit"
             className=  {`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-10 py-3 px-10 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}
