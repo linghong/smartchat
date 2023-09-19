@@ -74,8 +74,17 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
 
   const handleFileChange= (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if(files && files[0]){
+    if(!files) return
+    const file = files[0]
+    if(file){
+      //calculate file size with unit MB
+      const fileSize = (file.size/(1024*1024))
+      if(fileSize > 200) {
+        setInputErrors(prev => ({...prev, ['upload']: "Maxmium file size  to upload is 200MB."}))
+        return
+      }
       setSelectedFile(files[0])
+      if(inputErrors['upload']) setInputErrors(prev => ({...prev, ['upload']: null}))
     }
   }
 
@@ -225,15 +234,15 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
   }
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       <div className="sr-only" aria-live="polite" aria-atomic="true" >
         {notification}
       </div>
       <Header pageTitle="Manage My AI" />
-      <form className="flex flex-col h-40vh w-60vw p-10 justify-between bg-slate-50 border border-indigo-100">
+      <form className="flex flex-col h-40vh p-10 justify-between bg-slate-50 border border-indigo-100">
         <div>
           <label 
-            htmlFor="fileUpload" className="vw-20vw font-bold text-base mr-5">
+            htmlFor="fileUpload" className="w-50 font-bold text-base mr-5">
             Upload File:
           </label>  
           <input 
@@ -244,58 +253,65 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
               className="focus:border-blue-500 focus:outline-none"
           />
         </div>
-        <div className="flex flex-row">
-          <DropDownSelect
-            name='fileCategory' 
-            selectedOption={selectedDropDown.fileCategory} 
-            onChange={handleDropDownChange}
-            options={fileCategoryOptions}
-            label='This File Belongs to:'
-          />
+        <div className="flex flex-col lg:flex-row justify-start"> 
+          <div className="lg:w-50">
+            <DropDownSelect
+              name='fileCategory' 
+              selectedOption={selectedDropDown.fileCategory} 
+              onChange={handleDropDownChange}
+              options={fileCategoryOptions}
+              label='Select File Category:'
+            />
+          </div>       
           {showAddNewCategory && 
-            <>
-              <label htmlFor="newCategoryOption" className="font-bold ml-10 mr-5 my-10 py-1.5">
+            <div className="flex items-center lg:w-50">
+              <label htmlFor="newCategoryOption" className="font-bold ml-10 mr-5">
                 New Category:
               </label>
               <input 
                 type="text"
                 name="newFileCategory"
-                className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold my-10 px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-blue-500 focus:outline-none"
+                className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-blue-500 focus:outline-none"
                 onChange={handleInputChange}
               />  
               <button 
-                className="my-10 py-1.5"
+                className="py-1.5"
                 aria-label="Add New Category" 
                 onClick={handleAddCategoryToDropDown}
               >
                 <PlusIcon aria-hidden="true" />
               </button> 
-            </>
+            </div>
           }       
         </div>         
-        <div className="flex justify-start">
-          <label htmlFor="chunkSize" className="font-bold mr-5 py-1.5">
-            Chunk Size:
-          </label>
-          <input 
-            type="number"
-            name="chunkSize"
-            value={selectedInput.chunkSize}
-            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-          <label htmlFor="chunkOverlapSize" className="font-bold mr-5 py-1.5">
-            Chunk Overlap Size:
-          </label>
-          <input 
-            type="number"
-            name="chunkOverlap"
-            value={selectedInput.chunkOverlap}
-            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />       
+        <div className="flex flex-col lg:flex-row justify-start">
+          <div className="lg:w-50 my-5">
+            <label htmlFor="chunkSize" className="font-bold mr-2 py-1.5">
+              Chunk Size:
+            </label>
+            <input 
+              type="number"
+              name="chunkSize"
+              value={selectedInput.chunkSize}
+              className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+            />
+          </div>
+          <div className="lg:w-50 my-5">
+            <label htmlFor="chunkOverlapSize" className="font-bold mr-2">
+              Chunk Overlap:
+            </label>
+            <input 
+              type="number"
+              name="chunkOverlap"
+              value={selectedInput.chunkOverlap}
+              className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+            />       
+          </div>
+          
         </div>
         <div className="flex justify-start">
           <DropDownSelect
@@ -316,7 +332,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
             Submit
           </button>
         </div>         
-        {isLoading && <p className="bold" role="status">Uploading...</p>}
+        {isLoading && <p className="bold" role="status">Uploading and processing your file. This may take a few minutes. Please wait...</p>}
         {successMessage && <p className="bold text-green-600" role="status">{successMessage}</p>}
         {error && <p className="bold text-red-600" role="alert">{error}</p>}
         {inputErrors.upload && <p className="text-red-600">{inputErrors.upload}</p>}
