@@ -21,8 +21,11 @@ const Sidebar : FC<SidebarProps>= ({ onNewChat }) => {
           <Link href="/managemyai">Manage My AI</Link>   
           </li>
           <li  className="pl-4 py-2 font-semibold hover:bg-slate-400 focus:bg-indigo-100">
+          <Link href="/finetunemodel">Finetune AI Model</Link>   
+          </li>
+          <li  className="pl-4 py-2 font-semibold hover:bg-slate-400 focus:bg-indigo-100">
             <Link href="/">
-              Chat Messages
+              Chat with AI
             </Link>
           </li>
           <ul className="px-4 py-2 font-medium">

@@ -52,15 +52,14 @@ export default async function handler(
     })
     
     await ingestDataToPinecone(uploadedFile.filepath, namespace, indexName, chunkSize, chunkOverlap)
-    
-    console.log( 'remove file link ...')
+
     // delete the file after using it
     await fs.promises.unlink(uploadedFile.filepath);
 
     res.status(200).json({message: 'File uploaded successfully.', fileName: uploadedFile.originalFilename})
-
+    console.log("File ingested.")
   } catch (e) {
-    console.error("Error processing form:", e);
+    console.error("Error: ", e);
     return res.status(500).json({
       error: 'Failed to Upload File.',
     });
