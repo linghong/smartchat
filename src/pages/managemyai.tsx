@@ -6,13 +6,7 @@ import { fetchData } from '@/src/utils/fetchData'
 import Header from '@/src/components/Header'
 import DropDownSelect from '@/src/components/DropDownSelect'
 import PlusIcon from '@/src/components/PlusIcon'
-import { OptionType } from '@/src/types/common'
-
-type ApiResponse = {
-  message: string;
-  fileName: string;
-  error?: string;
-}
+import { OptionType, ApiResponse } from '@/src/types/common'
 
 interface InputData {
   'chunkSize': number,
