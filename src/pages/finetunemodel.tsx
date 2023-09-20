@@ -15,10 +15,14 @@ interface DropDownData {
 }
 
 interface InputData {
-  batchSize: number;
-  epochs: number;
-  learningRateMultiplier: number;
-  promptLossWeight: number;
+  batchSize: string;
+  epochs: string;
+  learningRateMultiplier: string;
+  promptLossWeight: string;
+}
+
+interface InputErrors {
+  [key: string]: string | null
 }
 
 const finetuningOptions = [
@@ -33,10 +37,10 @@ const FinetuneModel: FC = () => {
     finetuning: finetuningOptions[0],
   })
   const [selectedInput, setSelectedInput] = useState<InputData>({
-    batchSize: 4,
-    epochs: 10,
-    learningRateMultiplier: 0.1,
-    promptLossWeight: 0.01
+    batchSize: '4',
+    epochs: '10',
+    learningRateMultiplier: '0.1',
+    promptLossWeight: '0.01'
   })
 
   const [isLoading, setIsLoading] = useState(false)
@@ -44,13 +48,13 @@ const FinetuneModel: FC = () => {
   const [error, setError] = useState<string | null> (null)
 
   const [uploadError, setUploadError] = useState< string | null>(null)
-  const [inputErrors, setInputErrors] = useState<{[key: string]: string | null}>({
+  const [inputErrors, setInputErrors] = useState<InputErrors>({
     batchSize: null,
     epochs: null,
     learningRateMultiplier: null,
     promptLossWeight: null,
     integer: null
-  });
+  })
 
   const [notification, setNotification] = useState<string | null> (null)
 
@@ -66,13 +70,16 @@ const FinetuneModel: FC = () => {
 
   const validateInput = (name: string, value: number) => {
     if (value === null){
-      setInputErrors(prev => ({...prev, ['nullValue']: `${name}'s value cannot be empty.`}))
+      setInputErrors(prev => ({...prev, [name]: `${name}'s value cannot be empty.`}))
+
+    } else if (value <= 0) {
+      setInputErrors(prev => ({...prev, [name]: `${name}'s value cannot be negative or zero.`}))
 
     } else if ((name ==='epochs' || name === 'batchSize') && !Number.isInteger(value)) {
-      setInputErrors(prev => ({...prev, ['integer']: `${name} should be an integer.`}))
+      setInputErrors(prev => ({...prev, [name]: `${name} should be an integer.`}))
 
     } else {
-      setInputErrors(prev => ({...prev, ['integer']: null, ['nullValue']: null }))
+      setInputErrors(prev => ({...prev, [name]: null, ['nullValue']: null }))
     }
   }
 
@@ -114,10 +121,10 @@ const FinetuneModel: FC = () => {
     const formData = new FormData()
     formData.append('file', selectedFile)
     formData.append('finetuning', selectedDropDown.finetuning.value)
-    formData.append('epochs', selectedInput.epochs.toString())
-    formData.append('batchsize', selectedInput.batchSize.toString())
-    formData.append('learningRateMultiplier', selectedInput.learningRateMultiplier.toString())
-    formData.append('promptLossWeight', selectedInput.promptLossWeight.toString())
+    formData.append('epochs', selectedInput.epochs)
+    formData.append('batchsize', selectedInput.batchSize)
+    formData.append('learningRateMultiplier', selectedInput.learningRateMultiplier)
+    formData.append('promptLossWeight', selectedInput.promptLossWeight)
 
     try {
       const res = await fetch('/api/finetune', {
@@ -136,6 +143,7 @@ const FinetuneModel: FC = () => {
       }
     } catch (error) {
         setError('There was a network error when sending file:')
+        setIsLoading(false)
         console.log(error)
     } finally {
       setIsLoading(false)
@@ -201,7 +209,7 @@ const FinetuneModel: FC = () => {
           </label>
           <input 
             type="number"
-            name="learningratemultiplier"
+            name="learningRateMultiplier"
             value={selectedInput.learningRateMultiplier}
             className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
             onChange={handleInputChange}
@@ -216,7 +224,7 @@ const FinetuneModel: FC = () => {
           </label>
           <input 
             type="number"
-            name="promptlossweight"
+            name="promptLossWeight"
             value={selectedInput.promptLossWeight}
             className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
             onChange={handleInputChange}
@@ -238,12 +246,10 @@ const FinetuneModel: FC = () => {
         {isLoading && <p className="bold" role="status">Uploading your data... </p>}
         {successMessage && <p className="bold text-green-600" role="status">{successMessage}</p>}
         {error && <p className="bold text-red-600" role="alert">{error}</p>}
-        {uploadError && <p className="text-red-600">{uploadError}</p>}       
-        {inputErrors.integer && <p className="text-red-600">{inputErrors.integer}</p>}
-        {inputErrors.epochs && <p className="text-red-600">{inputErrors.epochs}</p>}
-        {inputErrors.batchSize && <p className="text-red-600">{inputErrors.batchSize}</p>}
-        {inputErrors.learningRateMultiplier && <p className="text-red-600">{inputErrors.learningRateMultiplier}</p>}
-        {inputErrors.promptLossWeight && <p className="text-red-600">{inputErrors.promptLossWeight}</p>}
+        {uploadError && <p className="text-red-600">{uploadError}</p>}
+        {Object.keys(inputErrors).map((key, i) => 
+          <p key={i} className="text-red-600">{inputErrors[key]}</p>
+        )}       
       </form>
       <div className="flex flex-col h-40vh items-center justify-between"></div>      
     </div>
