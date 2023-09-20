@@ -1,19 +1,101 @@
-import { FC, MouseEvent, useState } from 'react'
+import { FC, ChangeEvent, MouseEvent, useState } from 'react'
+import { ActionMeta} from 'react-select'
 
 import Header from '@/src/components/Header'
 import UploadFile from '@/src/components/UploadFile'
-import { ApiResponse } from '@/src/types/common'
+import Checkbox from '@/src/components/Checkbox'
+import DropDownSelect from '@/src/components/DropDownSelect'
+import { OptionType, ApiResponse } from '@/src/types/common'
+
+interface DropDownData {
+  finetuning: {
+    value: string;
+    label: string;
+  }
+}
+
+interface InputData {
+  batchSize: number;
+  epochs: number;
+  learningRateMultiplier: number;
+  promptLossWeight: number;
+}
+
+const finetuningOptions = [
+  { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo' },
+  { value: 'babbage-002', label: 'babbage-002' },
+  { value: 'davinci-002', label: 'davinci-002' },
+]
 
 const FinetuneModel: FC = () => {
-
   const [selectedFile, setSelectedFile] =useState<File | null>(null)
+  const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>({
+    finetuning: finetuningOptions[0],
+  })
+  const [selectedInput, setSelectedInput] = useState<InputData>({
+    batchSize: 4,
+    epochs: 10,
+    learningRateMultiplier: 0.1,
+    promptLossWeight: 0.01
+  })
 
   const [isLoading, setIsLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null> (null)
   const [error, setError] = useState<string | null> (null)
-  const [uploadError, setUploadError] = useState< string | null>(null);
+
+  const [uploadError, setUploadError] = useState< string | null>(null)
+  const [inputErrors, setInputErrors] = useState<{[key: string]: string | null}>({
+    batchSize: null,
+    epochs: null,
+    learningRateMultiplier: null,
+    promptLossWeight: null,
+    integer: null
+  });
 
   const [notification, setNotification] = useState<string | null> (null)
+
+  const handleDropDownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
+    if (selectedOption === null) return;
+    if(actionMeta.name === 'finetuning'){
+      setSelectedDropDown({
+        ...selectedDropDown,
+        [actionMeta.name]: selectedOption
+      })
+    }
+  }
+
+  const validateInput = (name: string, value: number) => {
+    if (value === null){
+      setInputErrors(prev => ({...prev, ['nullValue']: `${name}'s value cannot be empty.`}))
+
+    } else if ((name ==='epochs' || name === 'batchSize') && !Number.isInteger(value)) {
+      setInputErrors(prev => ({...prev, ['integer']: `${name} should be an integer.`}))
+
+    } else {
+      setInputErrors(prev => ({...prev, ['integer']: null, ['nullValue']: null }))
+    }
+  }
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name
+    let value = e.target.value
+    
+    // Remove leading zeroes
+    value = value.replace(/^0+/, '');
+
+    if(inputErrors[name]) validateInput(name, parseFloat(value))
+    
+    setSelectedInput({
+      ...selectedInput,
+      [name]: value
+    })
+  }
+  const handleInputBlur = (e: ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name;
+    const value = parseInt(e.target.value)     
+    
+    validateInput(name, value)
+  }
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -31,6 +113,11 @@ const FinetuneModel: FC = () => {
 
     const formData = new FormData()
     formData.append('file', selectedFile)
+    formData.append('finetuning', selectedDropDown.finetuning.value)
+    formData.append('epochs', selectedInput.epochs.toString())
+    formData.append('batchsize', selectedInput.batchSize.toString())
+    formData.append('learningRateMultiplier', selectedInput.learningRateMultiplier.toString())
+    formData.append('promptLossWeight', selectedInput.promptLossWeight.toString())
 
     try {
       const res = await fetch('/api/finetune', {
@@ -61,14 +148,83 @@ const FinetuneModel: FC = () => {
         {notification}
       </div>
       <Header pageTitle="Finetune AI Model" />
-      <form className="flex flex-col h-60vh lg:h-40vh p-10 justify-between bg-slate-50 border border-indigo-100">
+      <form className="flex flex-col h-80vh  p-10 justify-start bg-slate-50 border border-indigo-100">
         <UploadFile 
           label="Upload Training Data: "
-          fileType=".csv, .xls, .xlsx, .json, .jsonl"
+          fileType=".jsonl"
           uploadError={uploadError}
           setUploadError={setUploadError}
           setSelectedFile={setSelectedFile}
-        />         
+        /> 
+        <div className="flex justify-start my-5">
+          <DropDownSelect
+            name='filetuningModel' 
+            selectedOption={selectedDropDown.finetuning} 
+            onChange={handleDropDownChange}
+            options={finetuningOptions}
+            label='Select Finetuning Model:'
+          />
+        </div>
+        <div className="my-5">
+          <label htmlFor="epochs" className="font-bold mr-2 py-1.5">
+            Number of Epochs:
+          </label>
+          <input 
+            type="number"
+            name="epochs"
+            value={selectedInput.epochs}
+            className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+           <p>Number of training cycles. Excessive training can lead to overfitting; too few can result in underfitting.</p>
+          <Checkbox label="Let OpenAI decide epochs" />
+        </div>       
+        <div className="my-5">
+          <label htmlFor="batchSize" className="font-bold mr-2 py-1.5">
+            Batch Size:
+          </label>
+          <input 
+            type="number"
+            name="batchSize"
+            value={selectedInput.batchSize}
+            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+          <p>Number of samples processed together. Ensure each batch&apos;s total token count should not exceed the model&apos;s token limit.</p>
+          <Checkbox label="Let OpenAI decide batch size" />
+        </div>
+        <div className="my-5">
+          <label htmlFor="learningRateMultiplier" className="font-bold mr-2 py-1.5">
+            Learning Rate Multiplier:
+          </label>
+          <input 
+            type="number"
+            name="learningratemultiplier"
+            value={selectedInput.learningRateMultiplier}
+            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+          <p>Controls the decay of the model&apos;s learning rate. A higher rate speeds up learning but risks overshooting optimal results.</p>
+          <Checkbox label="Let OpenAI decide learning rate" />
+        </div>
+        <div className="my-5">
+          <label htmlFor="promptLossWeight" className="font-bold mr-2 py-1.5">
+            Prompt Loss Weight:
+          </label>
+          <input 
+            type="number"
+            name="promptlossweight"
+            value={selectedInput.promptLossWeight}
+            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+          <p>controls the balance between model&apos;s adherence to prompts and its text generation capability</p>
+          <Checkbox label="Let OpenAI decide prompt loss weight" />
+        </div>                 
         <div className="flex justify-end my-2">
           <button
             type="submit"
@@ -82,7 +238,12 @@ const FinetuneModel: FC = () => {
         {isLoading && <p className="bold" role="status">Uploading your data... </p>}
         {successMessage && <p className="bold text-green-600" role="status">{successMessage}</p>}
         {error && <p className="bold text-red-600" role="alert">{error}</p>}
-        {uploadError && <p className="text-red-600">{uploadError}</p>}
+        {uploadError && <p className="text-red-600">{uploadError}</p>}       
+        {inputErrors.integer && <p className="text-red-600">{inputErrors.integer}</p>}
+        {inputErrors.epochs && <p className="text-red-600">{inputErrors.epochs}</p>}
+        {inputErrors.batchSize && <p className="text-red-600">{inputErrors.batchSize}</p>}
+        {inputErrors.learningRateMultiplier && <p className="text-red-600">{inputErrors.learningRateMultiplier}</p>}
+        {inputErrors.promptLossWeight && <p className="text-red-600">{inputErrors.promptLossWeight}</p>}
       </form>
       <div className="flex flex-col h-40vh items-center justify-between"></div>      
     </div>

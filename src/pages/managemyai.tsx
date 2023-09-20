@@ -9,16 +9,16 @@ import PlusIcon from '@/src/components/PlusIcon'
 import { OptionType, ApiResponse } from '@/src/types/common'
 
 interface InputData {
-  'chunkSize': number,
-  'chunkOverlap': number,
-  'newFileCategory': string
+  chunkSize: number;
+  chunkOverlap: number;
+  newFileCategory: string;
 }
 interface DropDownData {
-  'fileCategory': {
+  fileCategory: {
     value: string;
     label: string;
   };
-  'embeddingModel': {
+  embeddingModel: {
     value: string;
     label: string;
   };
