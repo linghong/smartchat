@@ -4,7 +4,7 @@ import { ActionMeta} from 'react-select'
 
 import { fetchData } from '@/src/utils/fetchData'
 import Header from '@/src/components/Header'
-import DropDownSelect from '@/src/components/DropDownSelect'
+import DropDownSelect from '@/src/components/DropdownSelect'
 import PlusIcon from '@/src/components/PlusIcon'
 import { OptionType, ApiResponse } from '@/src/types/common'
 

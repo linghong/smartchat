@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { CSSObjectWithLabel, StylesConfig, OptionProps, GroupBase } from 'react-select'
 import Select, { ActionMeta, SingleValue} from 'react-select'
 
@@ -33,7 +34,7 @@ const customStyles: StylesConfig<OptionType, false> = {
   })
 }
 
-const DropDownSelectBase: React.FC<DropDownSelectProps> = ({ selectedOption, onChange, options, label, name = undefined }) => {
+const StaticDropDownSelect: FC<DropDownSelectProps> = ({ selectedOption, onChange, options, label, name = undefined }) => {
   const dropDownId = `${label.replace(/\s+/g, '-').toLowerCase()}`
 
   return (
@@ -52,9 +53,9 @@ const DropDownSelectBase: React.FC<DropDownSelectProps> = ({ selectedOption, onC
 }
 
 const DropDownSelect = dynamic<DropDownSelectProps>(
-  () => Promise.resolve(DropDownSelectBase),
+  () => Promise.resolve(StaticDropDownSelect),
   { ssr: false }
 );
 
-export default DropDownSelect;
+export default DropDownSelect
 

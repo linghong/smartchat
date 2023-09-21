@@ -4,7 +4,7 @@ import { ActionMeta} from 'react-select'
 import Header from '@/src/components/Header'
 import UploadFile from '@/src/components/UploadFile'
 import Checkbox from '@/src/components/Checkbox'
-import DropDownSelect from '@/src/components/DropDownSelect'
+import DropDownSelect from '@/src/components/DropdownSelect'
 import { OptionType, ApiResponse } from '@/src/types/common'
 
 interface DropDownData {
