@@ -1,4 +1,4 @@
-import { FC, ChangeEvent, MouseEvent, useState } from 'react'
+import { FC, ChangeEvent, MouseEvent, useState, useEffect } from 'react'
 import { ActionMeta} from 'react-select'
 
 import Header from '@/src/components/Header'
@@ -30,23 +30,28 @@ const finetuningOptions = [
   { value: 'Llama-13B-GGUF', label: 'Llama-13B-GGUF'},
   { value: 'CodeLlama-13B-GGUF', label: 'CodeLlama-13B-GGUF'}
 ]
+const initialInput = {
+  batchSize: '4',
+  epochs: '10',
+  learningRateMultiplier: '0.1',
+  promptLossWeight: '0.01'
+}
 
+const initialSelectedDropdown = {
+  finetuningModel: finetuningOptions[0],
+}
 const FinetuneModel: FC = () => {
+
   const [selectedFile, setSelectedFile] =useState<File | null>(null)
-  const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>({
-    finetuningModel: finetuningOptions[0],
-  })
-  const [selectedInput, setSelectedInput] = useState<InputData>({
-    batchSize: '4',
-    epochs: '10',
-    learningRateMultiplier: '0.1',
-    promptLossWeight: '0.01'
-  })
+  const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>(initialSelectedDropdown)
+  const [selectedInput, setSelectedInput] = useState<InputData>(initialInput)
 
   // OpenAI no longer allows optional parameter selection except for the number of epochs.
-  const additionalParameters = selectedDropDown.finetuningModel.value === 'gpt-3.5-turbo'? false : true
+  const isOpenAIModel = selectedDropDown.finetuningModel.value === 'gpt-3.5-turbo'
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isChecked, setIsChecked] = useState<boolean>(false)
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [successMessage, setSuccessMessage] = useState<string | null> (null)
   const [error, setError] = useState<string | null> (null)
 
@@ -153,6 +158,20 @@ const FinetuneModel: FC = () => {
     }
   }
 
+  useEffect (() => {
+    if(isChecked){
+      setSelectedInput(prev => ({
+        ...prev,
+        ['epochs']: 'default'
+      }))
+    } else {
+      setSelectedInput(prev => ({
+        ...prev, 
+        ['epochs']: initialInput.epochs
+      }))
+    }
+  }, [isChecked])
+
   return (
     <div className="flex flex-col items-center w-full">
       <div className="sr-only" aria-live="polite" aria-atomic="true" >
@@ -189,10 +208,14 @@ const FinetuneModel: FC = () => {
             onBlur={handleInputBlur}
           />
            <p>Number of training cycles. Excessive training can lead to overfitting; too few can result in underfitting.</p>
-          <Checkbox label="Let OpenAI decide epochs" />
+          { 
+            isOpenAIModel && <Checkbox 
+            label="Let OpenAI decide epochs" 
+            setIsChecked={setIsChecked}/>
+          }
         </div>       
         { 
-          additionalParameters && <div className="my-5">
+          !isOpenAIModel && <div className="my-5">
             <label htmlFor="batchSize" className="font-bold mr-2 py-1.5">
               Batch Size:
             </label>
@@ -208,7 +231,7 @@ const FinetuneModel: FC = () => {
           </div> 
         }
         { 
-          additionalParameters && <div className="my-5">
+          !isOpenAIModel && <div className="my-5">
             <label htmlFor="learningRateMultiplier" className="font-bold mr-2 py-1.5">
               Learning Rate Multiplier:
             </label>
@@ -224,7 +247,7 @@ const FinetuneModel: FC = () => {
           </div>
         }
         {
-          additionalParameters && <div className="my-5">
+          !isOpenAIModel && <div className="my-5">
             <label htmlFor="promptLossWeight" className="font-bold mr-2 py-1.5">
               Prompt Loss Weight:
             </label>
@@ -254,7 +277,7 @@ const FinetuneModel: FC = () => {
         {error && <p className="bold text-red-600" role="alert">{error}</p>}
         {uploadError && <p className="text-red-600">{uploadError}</p>}
         {Object.keys(inputErrors).map((key, i) => 
-          <p key={i} className="text-red-600">{inputErrors[key]}</p>
+          <p key={`${key}-error`} className="text-red-600">{inputErrors[key]}</p>
         )}       
       </form>
       <div className="flex flex-col h-40vh items-center justify-between"></div>      
