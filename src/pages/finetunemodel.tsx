@@ -8,7 +8,7 @@ import DropDownSelect from '@/src/components/DropDownSelect'
 import { OptionType, ApiResponse } from '@/src/types/common'
 
 interface DropDownData {
-  finetuning: {
+  finetuningModel: {
     value: string;
     label: string;
   }
@@ -27,14 +27,14 @@ interface InputErrors {
 
 const finetuningOptions = [
   { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo' },
-  { value: 'babbage-002', label: 'babbage-002' },
-  { value: 'davinci-002', label: 'davinci-002' },
+  { value: 'Llama-13B-GGUF', label: 'Llama-13B-GGUF'},
+  { value: 'CodeLlama-13B-GGUF', label: 'CodeLlama-13B-GGUF'}
 ]
 
 const FinetuneModel: FC = () => {
   const [selectedFile, setSelectedFile] =useState<File | null>(null)
   const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>({
-    finetuning: finetuningOptions[0],
+    finetuningModel: finetuningOptions[0],
   })
   const [selectedInput, setSelectedInput] = useState<InputData>({
     batchSize: '4',
@@ -42,6 +42,9 @@ const FinetuneModel: FC = () => {
     learningRateMultiplier: '0.1',
     promptLossWeight: '0.01'
   })
+
+  // OpenAI no longer allows optional parameter selection except for the number of epochs.
+  const additionalParameters = selectedDropDown.finetuningModel.value === 'gpt-3.5-turbo'? false : true
 
   const [isLoading, setIsLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null> (null)
@@ -60,7 +63,7 @@ const FinetuneModel: FC = () => {
 
   const handleDropDownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
     if (selectedOption === null) return;
-    if(actionMeta.name === 'finetuning'){
+    if(actionMeta.name === 'finetuningModel'){
       setSelectedDropDown({
         ...selectedDropDown,
         [actionMeta.name]: selectedOption
@@ -120,7 +123,7 @@ const FinetuneModel: FC = () => {
 
     const formData = new FormData()
     formData.append('file', selectedFile)
-    formData.append('finetuning', selectedDropDown.finetuning.value)
+    formData.append('finetuning', selectedDropDown.finetuningModel.value)
     formData.append('epochs', selectedInput.epochs)
     formData.append('batchsize', selectedInput.batchSize)
     formData.append('learningRateMultiplier', selectedInput.learningRateMultiplier)
@@ -156,7 +159,7 @@ const FinetuneModel: FC = () => {
         {notification}
       </div>
       <Header pageTitle="Finetune AI Model" />
-      <form className="flex flex-col h-80vh  p-10 justify-start bg-slate-50 border border-indigo-100">
+      <form className="flex flex-col  p-10 justify-start bg-slate-50 border border-indigo-100">
         <UploadFile 
           label="Upload Training Data: "
           fileType=".jsonl"
@@ -166,8 +169,8 @@ const FinetuneModel: FC = () => {
         /> 
         <div className="flex justify-start my-5">
           <DropDownSelect
-            name='filetuningModel' 
-            selectedOption={selectedDropDown.finetuning} 
+            name='finetuningModel' 
+            selectedOption={selectedDropDown.finetuningModel} 
             onChange={handleDropDownChange}
             options={finetuningOptions}
             label='Select Finetuning Model:'
@@ -188,51 +191,54 @@ const FinetuneModel: FC = () => {
            <p>Number of training cycles. Excessive training can lead to overfitting; too few can result in underfitting.</p>
           <Checkbox label="Let OpenAI decide epochs" />
         </div>       
-        <div className="my-5">
-          <label htmlFor="batchSize" className="font-bold mr-2 py-1.5">
-            Batch Size:
-          </label>
-          <input 
-            type="number"
-            name="batchSize"
-            value={selectedInput.batchSize}
-            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-          <p>Number of samples processed together. Ensure each batch&apos;s total token count should not exceed the model&apos;s token limit.</p>
-          <Checkbox label="Let OpenAI decide batch size" />
-        </div>
-        <div className="my-5">
-          <label htmlFor="learningRateMultiplier" className="font-bold mr-2 py-1.5">
-            Learning Rate Multiplier:
-          </label>
-          <input 
-            type="number"
-            name="learningRateMultiplier"
-            value={selectedInput.learningRateMultiplier}
-            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-          <p>Controls the decay of the model&apos;s learning rate. A higher rate speeds up learning but risks overshooting optimal results.</p>
-          <Checkbox label="Let OpenAI decide learning rate" />
-        </div>
-        <div className="my-5">
-          <label htmlFor="promptLossWeight" className="font-bold mr-2 py-1.5">
-            Prompt Loss Weight:
-          </label>
-          <input 
-            type="number"
-            name="promptLossWeight"
-            value={selectedInput.promptLossWeight}
-            className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-          <p>controls the balance between model&apos;s adherence to prompts and its text generation capability</p>
-          <Checkbox label="Let OpenAI decide prompt loss weight" />
-        </div>                 
+        { 
+          additionalParameters && <div className="my-5">
+            <label htmlFor="batchSize" className="font-bold mr-2 py-1.5">
+              Batch Size:
+            </label>
+            <input 
+              type="number"
+              name="batchSize"
+              value={selectedInput.batchSize}
+              className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+            />
+            <p>Number of samples processed together. Ensure each batch&apos;s total token count should not exceed the model&apos;s token limit.</p>
+          </div> 
+        }
+        { 
+          additionalParameters && <div className="my-5">
+            <label htmlFor="learningRateMultiplier" className="font-bold mr-2 py-1.5">
+              Learning Rate Multiplier:
+            </label>
+            <input 
+              type="number"
+              name="learningRateMultiplier"
+              value={selectedInput.learningRateMultiplier}
+              className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+            />
+            <p>Controls the decay of the model&apos;s learning rate. A higher rate speeds up learning but risks overshooting optimal results.</p>
+          </div>
+        }
+        {
+          additionalParameters && <div className="my-5">
+            <label htmlFor="promptLossWeight" className="font-bold mr-2 py-1.5">
+              Prompt Loss Weight:
+            </label>
+            <input 
+              type="number"
+              name="promptLossWeight"
+              value={selectedInput.promptLossWeight}
+              className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+            />
+            <p>controls the balance between model&apos;s adherence to prompts and its text generation capability</p>
+          </div>
+        }                
         <div className="flex justify-end my-2">
           <button
             type="submit"
