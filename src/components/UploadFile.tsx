@@ -1,10 +1,10 @@
-import { FC, ChangeEvent } from 'react'
+import { FC, ChangeEvent, Dispatch, SetStateAction } from 'react'
 
 interface UploadProps {
   label: string;
-  uploadError: string | null
-  setUploadError: any;
-  setSelectedFile: any;
+  uploadError: string | null;
+  setUploadError: Dispatch<SetStateAction<string | null>>;
+  setSelectedFile: Dispatch<SetStateAction<File | null>>;
   fileType: string;
 }
 
@@ -12,7 +12,10 @@ const UploadFile: FC<UploadProps> = ({ label, fileType, uploadError, setUploadEr
 
   const handleFileChange= (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if(!files) return
+    if(!files) {
+      setUploadError("You must load a file.")
+      return
+    }
     const file = files[0]
     if(file){
       //calculate file size with unit MB
