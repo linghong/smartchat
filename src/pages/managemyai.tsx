@@ -5,6 +5,7 @@ import { ActionMeta} from 'react-select'
 import { fetchData } from '@/src/utils/fetchData'
 import Header from '@/src/components/Header'
 import DropDownSelect from '@/src/components/DropdownSelect'
+import UploadFile from '@/src/components/UploadFile'
 import PlusIcon from '@/src/components/PlusIcon'
 import { OptionType } from '@/src/types/common'
 import { useFormSubmission } from '@/src/hooks'
@@ -35,7 +36,7 @@ const embeddingModelOptions = [
   { value: 'openAI', label: 'Open AI embedding' },
 ]
 
-const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
+const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
 
   const defaultFileCategoryOptions = [ { value: 'default', label: 'Add New Category' }, ...namespaces.map(ns => ({ value: ns, label: ns }))];
   
@@ -53,6 +54,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
     fileCategory: defaultFileCategoryOptions[0],
     embeddingModel: embeddingModelOptions[0],
   })
+  const [uploadError, setUploadError] = useState< string | null>(null)
 
   const [inputErrors, setInputErrors] = useState<{[key: string]: string | null}>({
     chunkSize: null,
@@ -60,26 +62,9 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
     newFileCategory: null,
     integer: null,
     selectedFileCategory: null,
-    upload: null
   });
 
   const [notification, setNotification] = useState<string | null> (null)
-
-  const handleFileChange= (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if(!files) return
-    const file = files[0]
-    if(file){
-      //calculate file size with unit MB
-      const fileSize = (file.size/(1024*1024))
-      if(fileSize > 200) {
-        setInputErrors(prev => ({...prev, ['upload']: "Maxmium file size  to upload is 200MB."}))
-        return
-      }
-      setSelectedFile(files[0])
-      if(inputErrors['upload']) setInputErrors(prev => ({...prev, ['upload']: null}))
-    }
-  }
 
   const handleAddCategoryToDropDown = (e:any) => {
     e.preventDefault()
@@ -210,19 +195,13 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
       </div>
       <Header pageTitle="Manage My AI" />
       <form className="flex flex-col h-60vh lg:h-40vh p-10 justify-between bg-slate-50 border border-indigo-100">
-        <div className="my-2">
-          <label 
-            htmlFor="fileUpload" className="w-50 font-bold text-base mr-5">
-            Upload File:
-          </label>  
-          <input 
-              type="file"
-              name="uploadFile" 
-              accept=".pdf"
-              onChange={handleFileChange}
-              className="focus:border-blue-500 focus:outline-none"
-          />
-        </div>
+      <UploadFile 
+          label="Upload Training Data: "
+          fileType=".pdf"
+          uploadError={uploadError}
+          setUploadError={setUploadError}
+          setSelectedFile={setSelectedFile}
+        /> 
         <div className="flex flex-col lg:flex-row justify-start"> 
           <div className="lg:w-50 mr-20 my-2">
             <DropDownSelect
@@ -315,7 +294,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
   )
 }
 
-export default UploadFile
+export default UploadFilePage
 
 export const getStaticProps: GetStaticProps = async () => {
   const { namespaces } = await fetchData('namespaces');
@@ -326,4 +305,4 @@ export const getStaticProps: GetStaticProps = async () => {
     },
     revalidate: 60 * 60 *24 // This is optional. It ensures regeneration of the page after every 24 hour
   }
-};
+}
