@@ -1,14 +1,15 @@
 import { FC, ChangeEvent, MouseEvent, useState, useEffect } from 'react'
 import { ActionMeta} from 'react-select'
 
-import Header from '@/src/components/Header'
-import UploadFile from '@/src/components/UploadFile'
 import Checkbox from '@/src/components/Checkbox'
-import DropDownSelect from '@/src/components/DropdownSelect'
+import DropdownSelect from '@/src/components/DropdownSelect'
+import Header from '@/src/components/Header'
+import Notification from '@/src/components/Notification'
+import UploadFile from '@/src/components/UploadFile'
 import { OptionType } from '@/src/types/common'
 import { useFormSubmission } from '@/src/hooks'
 
-interface DropDownData {
+interface DropdownData {
   finetuningModel: {
     value: string;
     label: string;
@@ -43,12 +44,12 @@ const initialSelectedDropdown = {
 }
 const FinetuneModel: FC = () => {
 
-  const [selectedFile, setSelectedFile] =useState<File | null>(null)
-  const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>(initialSelectedDropdown)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedDropdown, setSelectedDropdown] = useState<DropdownData>(initialSelectedDropdown)
   const [selectedInput, setSelectedInput] = useState<InputData>(initialInput)
 
   // OpenAI no longer allows optional parameter selection except for the number of epochs.
-  const isOpenAIModel = selectedDropDown.finetuningModel.value === 'gpt-3.5-turbo'
+  const isOpenAIModel = selectedDropdown.finetuningModel.value === 'gpt-3.5-turbo'
 
   const [isChecked, setIsChecked] = useState<boolean>(false)
 
@@ -63,11 +64,11 @@ const FinetuneModel: FC = () => {
 
   const [notification, setNotification] = useState<string | null> (null)
 
-  const handleDropDownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
+  const handleDropdownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
     if (selectedOption === null) return;
     if(actionMeta.name === 'finetuningModel'){
-      setSelectedDropDown({
-        ...selectedDropDown,
+      setSelectedDropdown({
+        ...selectedDropdown,
         [actionMeta.name]: selectedOption
       })
     }
@@ -123,7 +124,7 @@ const FinetuneModel: FC = () => {
 
     const formData = new FormData()
     formData.append('file', selectedFile)
-    formData.append('finetuning', selectedDropDown.finetuningModel.value)
+    formData.append('finetuning', selectedDropdown.finetuningModel.value)
     formData.append('epochs', selectedInput.epochs)
     formData.append('batchsize', selectedInput.batchSize)
     formData.append('learningRateMultiplier', selectedInput.learningRateMultiplier)
@@ -161,10 +162,10 @@ const FinetuneModel: FC = () => {
           setSelectedFile={setSelectedFile}
         /> 
         <div className="flex justify-start my-5">
-          <DropDownSelect
+          <DropdownSelect
             name='finetuningModel' 
-            selectedOption={selectedDropDown.finetuningModel} 
-            onChange={handleDropDownChange}
+            selectedOption={selectedDropdown.finetuningModel} 
+            onChange={handleDropdownChange}
             options={finetuningOptions}
             label='Select Finetuning Model:'
           />
@@ -187,7 +188,7 @@ const FinetuneModel: FC = () => {
             label="Let OpenAI decide epochs" 
             setIsChecked={setIsChecked}/>
           }
-        </div>       
+        </div>
         { 
           !isOpenAIModel && <div className="my-5">
             <label htmlFor="batchSize" className="font-bold mr-2 py-1.5">
@@ -225,7 +226,7 @@ const FinetuneModel: FC = () => {
             <label htmlFor="promptLossWeight" className="font-bold mr-2 py-1.5">
               Prompt Loss Weight:
             </label>
-            <input 
+            <input
               type="number"
               name="promptLossWeight"
               value={selectedInput.promptLossWeight}
@@ -235,7 +236,7 @@ const FinetuneModel: FC = () => {
             />
             <p>controls the balance between model&apos;s adherence to prompts and its text generation capability</p>
           </div>
-        }                
+        }
         <div className="flex justify-end my-2">
           <button
             type="submit"
@@ -245,16 +246,16 @@ const FinetuneModel: FC = () => {
           >
             Submit
           </button>
-        </div>         
-        {isLoading && <p className="bold" role="status">Uploading your data... </p>}
-        {successMessage && <p className="bold text-green-600" role="status">{successMessage}</p>}
-        {error && <p className="bold text-red-600" role="alert">{error}</p>}
-        {uploadError && <p className="text-red-600">{uploadError}</p>}
-        {Object.keys(inputErrors).map((key, i) => 
-          <p key={`${key}-error`} className="text-red-600">{inputErrors[key]}</p>
-        )}       
+        </div>
+        { isLoading && <Notification type="loading" message="Uploading your data..." /> }
+        { <Notification type="success" message={successMessage} /> }
+        { <Notification type="error" message={error} /> }
+        { <Notification type="error" message={uploadError} /> }
+        { Object.keys(inputErrors).map((key, i) => 
+          <Notification key={`${key}-error`} type="error" message={inputErrors[key]} />
+        )}
       </form>
-      <div className="flex flex-col h-40vh items-center justify-between"></div>      
+      <div className="flex flex-col h-40vh items-center justify-between"></div>
     </div>
   )
 }

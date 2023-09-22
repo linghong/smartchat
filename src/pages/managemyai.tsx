@@ -2,14 +2,14 @@ import { FC, ChangeEvent, MouseEvent, useState } from 'react'
 import {GetStaticProps} from 'next'
 import { ActionMeta} from 'react-select'
 
-import { fetchData } from '@/src/utils/fetchData'
-import Header from '@/src/components/Header'
 import DropDownSelect from '@/src/components/DropdownSelect'
-import UploadFile from '@/src/components/UploadFile'
+import Header from '@/src/components/Header'
+import Notification from '@/src/components/Notification'
 import PlusIcon from '@/src/components/PlusIcon'
-import { OptionType } from '@/src/types/common'
+import UploadFile from '@/src/components/UploadFile'
 import { useFormSubmission } from '@/src/hooks'
-
+import { OptionType } from '@/src/types/common'
+import { fetchData } from '@/src/utils/fetchData'
 
 interface InputData {
   chunkSize: number;
@@ -187,7 +187,7 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
 
     await handleFormSubmit('/api/upload', formData) 
   }
-
+console.log(inputErrors)
   return (
     <div className="flex flex-col items-center w-full">
       <div className="sr-only" aria-live="polite" aria-atomic="true" >
@@ -281,13 +281,13 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
             Submit
           </button>
         </div>         
-        {isLoading && <p className="bold" role="status">Uploading and processing your file. This may take a few minutes. Please wait...</p>}
-        {successMessage && <p className="bold text-green-600" role="status">{successMessage}</p>}
-        {error && <p className="bold text-red-600" role="alert">{error}</p>}
-        {inputErrors.upload && <p className="text-red-600">{inputErrors.upload}</p>}
-        {inputErrors.chunkSize && <p className="text-red-600">{inputErrors.chunkSize}</p>}
-        {inputErrors.chunkOverlap && <p className="text-red-600">{inputErrors.chunkOverlap}</p>}
-        {inputErrors.newFileCategory && <p className="text-red-600">{inputErrors.newFileCategory}</p>}
+        { isLoading && <Notification type="loading" message="Uploading and processing your file. This may take a few minutes. Please wait..." /> }
+        { < Notification type="success" message={successMessage} /> }
+        { <Notification type="error" message={error} /> }
+        { <Notification type="error" message={uploadError} /> }
+        { Object.keys(inputErrors).map((key, i) =>  
+           <Notification key={`${key}.error`} type="error" message={inputErrors[key]} />
+        )}
       </form>
       <div className="flex flex-col h-40vh items-center justify-between"></div>      
     </div>
