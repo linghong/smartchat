@@ -6,7 +6,9 @@ import { fetchData } from '@/src/utils/fetchData'
 import Header from '@/src/components/Header'
 import DropDownSelect from '@/src/components/DropdownSelect'
 import PlusIcon from '@/src/components/PlusIcon'
-import { OptionType, ApiResponse } from '@/src/types/common'
+import { OptionType } from '@/src/types/common'
+import { useFormSubmission } from '@/src/hooks'
+
 
 interface InputData {
   chunkSize: number;
@@ -52,9 +54,6 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
     embeddingModel: embeddingModelOptions[0],
   })
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [successMessage, setSuccessMessage] = useState<string | null> (null)
-  const [error, setError] = useState<string | null> (null)
   const [inputErrors, setInputErrors] = useState<{[key: string]: string | null}>({
     chunkSize: null,
     chunkOverlap: null,
@@ -182,6 +181,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
       setInputErrors(prev => ({...prev, ['newFileCategory']: null}))
     }    
   }
+  const { handleFormSubmit, isLoading, successMessage, error } = useFormSubmission()
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -193,10 +193,6 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
     const hasErrors = !selectedFile || Object.values(inputErrors).some(e => e !== null)
     if(hasErrors) return
 
-    setIsLoading(true);
-    setSuccessMessage(null);
-    setError(null);
-
     const formData = new FormData()
     formData.append('file', selectedFile)
     formData.append('chunkSize', selectedInput.chunkSize.toString())
@@ -204,27 +200,7 @@ const UploadFile: FC<{namespaces : string[]}> = ({namespaces}) => {
     formData.append('fileCategory', JSON.stringify(selectedDropDown.fileCategory))
     formData.append('embeddingModel', JSON.stringify(selectedDropDown.embeddingModel))
 
-    try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
-      
-      const data: ApiResponse = await res.json() as ApiResponse
-
-      if (res.ok) {
-        setSuccessMessage(`Upload success: ${data.message}`)
-        setNotification(`Upload success: ${data.message}`)
-      } else {
-        setError(`Upload error: ${data.error}`)
-        setNotification(`Upload error: ${data.error}`)
-      }
-    } catch (error) {
-        setError('There was a network error when sending file:')
-        console.log(error)
-    } finally {
-      setIsLoading(false)
-    }
+    await handleFormSubmit('/api/upload', formData) 
   }
 
   return (

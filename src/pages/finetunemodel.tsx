@@ -5,7 +5,8 @@ import Header from '@/src/components/Header'
 import UploadFile from '@/src/components/UploadFile'
 import Checkbox from '@/src/components/Checkbox'
 import DropDownSelect from '@/src/components/DropdownSelect'
-import { OptionType, ApiResponse } from '@/src/types/common'
+import { OptionType } from '@/src/types/common'
+import { useFormSubmission } from '@/src/hooks'
 
 interface DropDownData {
   finetuningModel: {
@@ -50,10 +51,6 @@ const FinetuneModel: FC = () => {
   const isOpenAIModel = selectedDropDown.finetuningModel.value === 'gpt-3.5-turbo'
 
   const [isChecked, setIsChecked] = useState<boolean>(false)
-
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [successMessage, setSuccessMessage] = useState<string | null> (null)
-  const [error, setError] = useState<string | null> (null)
 
   const [uploadError, setUploadError] = useState< string | null>(null)
   const [inputErrors, setInputErrors] = useState<InputErrors>({
@@ -112,19 +109,17 @@ const FinetuneModel: FC = () => {
     validateInput(name, value)
   }
 
+  const { handleFormSubmit, isLoading, successMessage, error } = useFormSubmission()
+
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
 
     if(!selectedFile) {
-      setUploadError('You must upload a file.')
+      setInputErrors(prev => ({...prev, ['upload']: 'You must upload a file.'}))
       return
     }
   
     if(uploadError) return
-
-    setIsLoading(true);
-    setSuccessMessage(null);
-    setError(null);
 
     const formData = new FormData()
     formData.append('file', selectedFile)
@@ -134,28 +129,7 @@ const FinetuneModel: FC = () => {
     formData.append('learningRateMultiplier', selectedInput.learningRateMultiplier)
     formData.append('promptLossWeight', selectedInput.promptLossWeight)
 
-    try {
-      const res = await fetch('/api/finetune', {
-        method: 'POST',
-        body: formData,
-      })
-      
-      const data: ApiResponse = await res.json() as ApiResponse
-
-      if (res.ok) {
-        setSuccessMessage(`Upload success: ${data.message}`)
-        setNotification(`Upload success: ${data.message}`)
-      } else {
-        setError(`Upload error: ${data.error}`)
-        setNotification(`Upload error: ${data.error}`)
-      }
-    } catch (error) {
-        setError('There was a network error when sending file:')
-        setIsLoading(false)
-        console.log(error)
-    } finally {
-      setIsLoading(false)
-    }
+    await handleFormSubmit('/api/finetune', formData)
   }
 
   useEffect (() => {
