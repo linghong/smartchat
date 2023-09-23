@@ -5,7 +5,7 @@ import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import Header from '@/src/components/Header'
 import { Message } from '@/src/types/chat'
-import DropDownSelect from '@/src/components/DropdownSelect'
+import DropdownSelect from '@/src/components/DropdownSelect'
 import { OptionType } from '@/src/types/common'
 
 const modelOptions: OptionType[] = [
@@ -23,7 +23,8 @@ const initialMessage = {
 
 const HomePage : FC<{
   isNewChat: boolean, 
-  setIsNewChat: (value: boolean) => void, namespaces: string[]
+  setIsNewChat: (value: boolean) => void, 
+  namespaces: string[]
 }> = ({ isNewChat, setIsNewChat, namespaces = [initialFileCategory.value] }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null> (null)
@@ -152,13 +153,13 @@ const HomePage : FC<{
     <div className="flex flex-col">
       <Header pageTitle="Chat With AI" />
       <div className="flex flex-row justify-around">
-        <DropDownSelect 
+        <DropdownSelect 
           selectedOption={selectedModel} 
           onChange={handleModelChange}
           options={modelOptions}
           label='Choose AI Model:'
         />
-        <DropDownSelect 
+        <DropdownSelect 
           selectedOption={selectedNamespace} 
           onChange={handleNamespaceChange}
           options={fileCategoryOptions}

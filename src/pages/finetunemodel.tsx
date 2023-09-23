@@ -1,4 +1,4 @@
-import { FC, ChangeEvent, MouseEvent, useState, useEffect } from 'react'
+import { FC, MouseEvent, useState, useEffect } from 'react'
 import { ActionMeta} from 'react-select'
 
 import Checkbox from '@/src/components/Checkbox'
@@ -6,8 +6,8 @@ import DropdownSelect from '@/src/components/DropdownSelect'
 import Header from '@/src/components/Header'
 import Notification from '@/src/components/Notification'
 import UploadFile from '@/src/components/UploadFile'
-import { OptionType } from '@/src/types/common'
-import { useFormSubmission } from '@/src/hooks'
+import { OptionType, InputErrors, InputData } from '@/src/types/common'
+import { useFormSubmission, useInputChange } from '@/src/hooks'
 
 interface DropdownData {
   finetuningModel: {
@@ -16,52 +16,41 @@ interface DropdownData {
   }
 }
 
-interface InputData {
-  batchSize: string;
-  epochs: string;
-  learningRateMultiplier: string;
-  promptLossWeight: string;
-}
-
-interface InputErrors {
-  [key: string]: string | null
-}
-
 const finetuningOptions = [
   { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo' },
   { value: 'Llama-13B-GGUF', label: 'Llama-13B-GGUF'},
   { value: 'CodeLlama-13B-GGUF', label: 'CodeLlama-13B-GGUF'}
 ]
+
 const initialInput = {
-  batchSize: '4',
-  epochs: '10',
-  learningRateMultiplier: '0.1',
-  promptLossWeight: '0.01'
+  batchSize: 4,
+  epochs: 10,
+  learningRateMultiplier: 0.1,
+  promptLossWeight: 0.01
+}
+
+const initialInputErrors = {
+  batchSize: null,
+  epochs: null,
+  learningRateMultiplier: null,
+  promptLossWeight: null,
+  integer: null
 }
 
 const initialSelectedDropdown = {
   finetuningModel: finetuningOptions[0],
 }
-const FinetuneModel: FC = () => {
 
+const FinetuneModel: FC = () => {
+ 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedDropdown, setSelectedDropdown] = useState<DropdownData>(initialSelectedDropdown)
-  const [selectedInput, setSelectedInput] = useState<InputData>(initialInput)
-
+ 
   // OpenAI no longer allows optional parameter selection except for the number of epochs.
   const isOpenAIModel = selectedDropdown.finetuningModel.value === 'gpt-3.5-turbo'
 
   const [isChecked, setIsChecked] = useState<boolean>(false)
-
   const [uploadError, setUploadError] = useState< string | null>(null)
-  const [inputErrors, setInputErrors] = useState<InputErrors>({
-    batchSize: null,
-    epochs: null,
-    learningRateMultiplier: null,
-    promptLossWeight: null,
-    integer: null
-  })
-
   const [notification, setNotification] = useState<string | null> (null)
 
   const handleDropdownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
@@ -74,41 +63,25 @@ const FinetuneModel: FC = () => {
     }
   }
 
-  const validateInput = (name: string, value: number) => {
-    if (value === null){
-      setInputErrors(prev => ({...prev, [name]: `${name}'s value cannot be empty.`}))
+  const validateInput = (name: string, value: number | string) => {
+    if(typeof value === 'string') {
+      setInputErrors((prev: InputErrors) => ({ ...prev, [name]: `${name} must be a number.` }))
+
+    } else if (!value) {
+        setInputErrors((prev: InputErrors) => ({ ...prev, [name]: `${name}'s value cannot be empty.` }))
 
     } else if (value <= 0) {
-      setInputErrors(prev => ({...prev, [name]: `${name}'s value cannot be negative or zero.`}))
+        setInputErrors((prev: InputErrors) => ({ ...prev, [name]: `${name}'s value cannot be negative or zero.` }))
 
-    } else if ((name ==='epochs' || name === 'batchSize') && !Number.isInteger(value)) {
-      setInputErrors(prev => ({...prev, [name]: `${name} should be an integer.`}))
-
+    } else if ((name === 'epochs' || name === 'batchSize') && !Number.isInteger(value)) {
+        setInputErrors((prev: InputErrors) => ({ ...prev, [name]: `${name} should be an integer.` }))
+        
     } else {
-      setInputErrors(prev => ({...prev, [name]: null, ['nullValue']: null }))
+        setInputErrors((prev: InputErrors) => ({ ...prev, [name]: null }));
     }
   }
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.name
-    let value = e.target.value
-    
-    // Remove leading zeroes
-    value = value.replace(/^0+/, '');
-
-    if(inputErrors[name]) validateInput(name, parseFloat(value))
-    
-    setSelectedInput({
-      ...selectedInput,
-      [name]: value
-    })
-  }
-  const handleInputBlur = (e: ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.name;
-    const value = parseInt(e.target.value)     
-    
-    validateInput(name, value)
-  }
+  const { selectedInput, inputErrors, setSelectedInput, setInputErrors, handleInputChange, handleInputBlur } = useInputChange({ initialInput, initialInputErrors, validateInput })
 
   const { handleFormSubmit, isLoading, successMessage, error } = useFormSubmission()
 
@@ -116,36 +89,35 @@ const FinetuneModel: FC = () => {
     e.preventDefault()
 
     if(!selectedFile) {
-      setInputErrors(prev => ({...prev, ['upload']: 'You must upload a file.'}))
+      setInputErrors((prev: InputErrors) => ({...prev, ['upload']: 'You must upload a file.'}))
       return
-    }
-  
+    }  
     if(uploadError) return
 
     const formData = new FormData()
     formData.append('file', selectedFile)
     formData.append('finetuning', selectedDropdown.finetuningModel.value)
-    formData.append('epochs', selectedInput.epochs)
-    formData.append('batchsize', selectedInput.batchSize)
-    formData.append('learningRateMultiplier', selectedInput.learningRateMultiplier)
-    formData.append('promptLossWeight', selectedInput.promptLossWeight)
+    formData.append('epochs', (selectedInput.epochs)?.toString() ?? '')
+    formData.append('batchsize', (selectedInput.batchSize)?.toString() ?? '')
+    formData.append('learningRateMultiplier', (selectedInput.learningRateMultiplier)?.toString() ?? '')
+    formData.append('promptLossWeight', (selectedInput.promptLossWeight)?.toString() ?? '')
 
     await handleFormSubmit('/api/finetune', formData)
   }
 
   useEffect (() => {
     if(isChecked){
-      setSelectedInput(prev => ({
+      setSelectedInput((prev: InputData) => ({
         ...prev,
-        ['epochs']: 'default'
+        ['epochs']: ''
       }))
     } else {
-      setSelectedInput(prev => ({
+      setSelectedInput((prev: InputData)  => ({
         ...prev, 
         ['epochs']: initialInput.epochs
       }))
     }
-  }, [isChecked])
+  }, [isChecked, setSelectedInput])
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -177,7 +149,7 @@ const FinetuneModel: FC = () => {
           <input 
             type="number"
             name="epochs"
-            value={selectedInput.epochs}
+            value={(selectedInput.epochs)?.toString()}
             className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
             onChange={handleInputChange}
             onBlur={handleInputBlur}
@@ -197,7 +169,7 @@ const FinetuneModel: FC = () => {
             <input 
               type="number"
               name="batchSize"
-              value={selectedInput.batchSize}
+              value={selectedInput.batchSize?.toString()}
               className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
               onChange={handleInputChange}
               onBlur={handleInputBlur}
@@ -213,7 +185,7 @@ const FinetuneModel: FC = () => {
             <input 
               type="number"
               name="learningRateMultiplier"
-              value={selectedInput.learningRateMultiplier}
+              value={selectedInput.learningRateMultiplier?.toString()}
               className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
               onChange={handleInputChange}
               onBlur={handleInputBlur}
@@ -229,7 +201,7 @@ const FinetuneModel: FC = () => {
             <input
               type="number"
               name="promptLossWeight"
-              value={selectedInput.promptLossWeight}
+              value={selectedInput.promptLossWeight?.toString()}
               className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
               onChange={handleInputChange}
               onBlur={handleInputBlur}

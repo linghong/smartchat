@@ -5,7 +5,7 @@ import Select, { ActionMeta, SingleValue} from 'react-select'
 import dynamic from 'next/dynamic';
 import { OptionType } from '@/src/types/common'
 
-interface DropDownSelectProps {
+interface DropdownSelectProps {
   selectedOption: OptionType | null;
   onChange: (selectedOption: SingleValue<OptionType>, actionMeta: ActionMeta<OptionType>) => void;
   options: OptionType[];
@@ -34,14 +34,14 @@ const customStyles: StylesConfig<OptionType, false> = {
   })
 }
 
-const StaticDropDownSelect: FC<DropDownSelectProps> = ({ selectedOption, onChange, options, label, name = undefined }) => {
-  const dropDownId = `${label.replace(/\s+/g, '-').toLowerCase()}`
+const StaticDropdownSelect: FC<DropdownSelectProps> = ({ selectedOption, onChange, options, label, name = undefined }) => {
+  const dropdownId = `${label.replace(/\s+/g, '-').toLowerCase()}`
 
   return (
     <div className="flex justify-center items-center my-3 space-x-2">
       <label htmlFor={name} className="text-base font-bold">{label}</label>
       <Select 
-        id={dropDownId} 
+        id={dropdownId} 
         onChange={onChange} 
         value={selectedOption}
         options={options}
@@ -52,10 +52,10 @@ const StaticDropDownSelect: FC<DropDownSelectProps> = ({ selectedOption, onChang
   )
 }
 
-const DropDownSelect = dynamic<DropDownSelectProps>(
-  () => Promise.resolve(StaticDropDownSelect),
+const DropdownSelect = dynamic<DropdownSelectProps>(
+  () => Promise.resolve(StaticDropdownSelect),
   { ssr: false }
 );
 
-export default DropDownSelect
+export default DropdownSelect
 
