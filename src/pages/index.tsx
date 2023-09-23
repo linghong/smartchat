@@ -1,12 +1,15 @@
 import {useState, useRef, useCallback, useEffect, ChangeEvent,FormEvent, FC } from 'react'
 import {GetStaticProps} from 'next'
+
 import { fetchData } from '@/src/utils/fetchData'
 import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
-import Header from '@/src/components/Header'
-import { Message } from '@/src/types/chat'
 import DropdownSelect from '@/src/components/DropdownSelect'
+import Header from '@/src/components/Header'
+import Notification from '@/src/components/Notification'
+import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
+
 
 const modelOptions: OptionType[] = [
   { value: 'gpt-3.5-turbo', label: 'GPT-3.5' },
@@ -200,11 +203,7 @@ const HomePage : FC<{
           />
           <ArrowButton disabled={userInput===''} />
         </form>
-        {error && (
-          <div className="p-4">
-            <p className="font-bold text-red-500">{error}</p>
-          </div>
-        )}
+        { error && <Notification type="error" message={error} /> }
       </div>
     </div> 
   )  

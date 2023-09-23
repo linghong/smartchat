@@ -51,7 +51,6 @@ const FinetuneModel: FC = () => {
 
   const [isChecked, setIsChecked] = useState<boolean>(false)
   const [uploadError, setUploadError] = useState< string | null>(null)
-  const [notification, setNotification] = useState<string | null> (null)
 
   const handleDropdownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
     if (selectedOption === null) return;
@@ -121,9 +120,6 @@ const FinetuneModel: FC = () => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="sr-only" aria-live="polite" aria-atomic="true" >
-        {notification}
-      </div>
       <Header pageTitle="Finetune AI Model" />
       <form className="flex flex-col  p-10 justify-start bg-slate-50 border border-indigo-100">
         <UploadFile 

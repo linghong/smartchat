@@ -22,8 +22,8 @@ interface DropDownData {
   };
 }
 
-const MIN_CHUNK_SIZE = 100 
-const MAX_CHUNK_SIZE = 1500 
+const MIN_CHUNK_SIZE = 50 
+const MAX_CHUNK_SIZE = 4000 
 const MIN_CHUNK_OVERLAP = 0
 const MAX_CHUNK_OVERLAP = 800
 
@@ -58,8 +58,6 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
     embeddingModel: embeddingModelOptions[0],
   })
   const [uploadError, setUploadError] = useState< string | null>(null)
-
-  const [notification, setNotification] = useState<string | null> (null)
 
   const handleAddCategoryToDropDown = (e:any) => {
     e.preventDefault()
@@ -97,6 +95,9 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
 
     } else if (typeof chunkSize !== 'number' || typeof chunkOverlap !== 'number' || typeof value !== 'number'){
       setInputErrors((prev: InputErrors) => ({...prev, [name]: `${name} must be a number.`}))
+
+    } else if (value <= 0) {
+      setInputErrors((prev: InputErrors) => ({ ...prev, [name]: `${name}'s value cannot be negative or zero.` }))
 
     } else if (!Number.isInteger(value)) {
       setInputErrors((prev: InputErrors) => ({...prev, [name]: `${name} must be an integer.`}))
@@ -162,9 +163,6 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="sr-only" aria-live="polite" aria-atomic="true" >
-        {notification}
-      </div>
       <Header pageTitle="Manage My AI" />
       <form className="flex flex-col h-60vh lg:h-40vh p-10 justify-between bg-slate-50 border border-indigo-100">
       <UploadFile 
