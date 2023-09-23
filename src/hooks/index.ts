@@ -1,3 +1,5 @@
 import useFormSubmission  from './useFormSubmission'
+import useInputChange  from './useInputChange'
+import useInput  from './useInputChange'
 
-export { useFormSubmission }
+export { useFormSubmission, useInputChange, useInput }
