@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="flex p-3 text-black"
+  >
+    <img
+      alt="User"
+      class="h-full mr-4 rounded-sm"
+      data-nimg="1"
+      decoding="async"
+      fetchpriority="high"
+      height="30"
+      src="/_next/image?url=%2Fuser.png&w=64&q=75"
+      srcset="/_next/image?url=%2Fuser.png&w=32&q=75 1x, /_next/image?url=%2Fuser.png&w=64&q=75 2x"
+      style="color: transparent;"
+      width="30"
+    />
+    <p>
+      What is AI?
+    </p>
+  </div>
+  <div
+    class="flex p-3 bg-slate-100 color-black ease-in duration-300"
+  >
+    <img
+      alt="AI Bot"
+      class="h-full mr-4 rounded-sm false"
+      data-nimg="1"
+      decoding="async"
+      fetchpriority="high"
+      height="30"
+      src="/_next/image?url=%2Fbot.png&w=64&q=75"
+      srcset="/_next/image?url=%2Fbot.png&w=32&q=75 1x, /_next/image?url=%2Fbot.png&w=64&q=75 2x"
+      style="color: transparent;"
+      width="30"
+    />
+    <div
+      class="bot-responses"
+    >
+      AI stands for Artificial Intelligence.
+    </div>
+  </div>
+</DocumentFragment>
+`;
