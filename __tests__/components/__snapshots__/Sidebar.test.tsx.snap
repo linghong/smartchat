@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sidebar Component Sidebar component snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="w-60 bg-slate-600 text-slate-50"
+  >
+    <ul
+      class="px-4 py-2 m-0"
+    >
+      <li
+        class="flex pl-4 py-5 font-semibold border-b hover:bg-slate-400 focus:bg-indigo-100"
+      >
+        <div
+          class="flex bg-slate-500 rounded-xl pl-4 pr-12 py-1"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentcolor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://wwww3.org/2000/svg"
+          >
+            <line
+              x1="12"
+              x2="12"
+              y1="5"
+              y2="19"
+            />
+            <line
+              x1="5"
+              x2="19"
+              y1="12"
+              y2="12"
+            />
+          </svg>
+          <span>
+            New Chat
+          </span>
+        </div>
+      </li>
+      <li
+        class="pl-4 py-2 font-semibold hover:bg-slate-400 focus:bg-indigo-100"
+      >
+        <a
+          href="/managemyai"
+        >
+          Manage My AI
+        </a>
+      </li>
+      <li
+        class="pl-4 py-2 font-semibold hover:bg-slate-400 focus:bg-indigo-100"
+      >
+        <a
+          href="/finetunemodel"
+        >
+          Finetune AI Model
+        </a>
+      </li>
+      <li
+        class="pl-4 py-2 font-semibold hover:bg-slate-400 focus:bg-indigo-100"
+      >
+        <a
+          href="/"
+        >
+          Chat with AI
+        </a>
+      </li>
+      <ul
+        class="px-4 py-2 font-medium"
+      >
+        <li
+          class="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100"
+        >
+          Chat 1
+        </li>
+        <li
+          class="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100"
+        >
+          Chat 2
+        </li>
+        <li
+          class="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100"
+        >
+          Chat 3
+        </li>
+      </ul>
+    </ul>
+  </div>
+</DocumentFragment>
+`;
