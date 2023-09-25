@@ -5,7 +5,7 @@ interface Props {
   message: string | null;
 }
 
-const Notification: FC<Props> = ({ type = 'status', message }) => {
+const Notification: FC<Props> = ({ type, message }) => {
   if(message === null) return null
   let className = ''
   let role= ''
@@ -15,6 +15,7 @@ const Notification: FC<Props> = ({ type = 'status', message }) => {
     case 'error':
       className = 'bold text-red-600'
       role = 'alert'
+      ariaLive = 'assertive'
       break
     case 'loading':
       className = 'bold text-gray-600'
@@ -27,9 +28,10 @@ const Notification: FC<Props> = ({ type = 'status', message }) => {
       ariaLive = 'polite'
       break
     case 'status':
-      role = 'status'
       className = 'bold text-yellow-600'
+      role = 'status'
       ariaLive = 'polite'
+      break
     default:
       role = ''
       className = ''

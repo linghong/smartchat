@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Notification Component Notification component snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="p-4"
+  >
+    <p
+      aria-live="off"
+      class=""
+      role=""
+    >
+      Default message
+    </p>
+  </div>
+</DocumentFragment>
+`;
