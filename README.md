@@ -2,19 +2,37 @@
 
 SmartChat is a state-of-the-art chatbot platform developed using [Next.js](https://nextjs.org/) and TypeScript.  It offers users the ability to upload PDF documents, which are then segmented and stored within the Pinecone vector database. When users pose questions to the chatbot, if their inquiries relate to the uploaded data, the chatbot fetches and references relevant sections from the stored PDF data to provide precise answers.
 
-## Features:
+## Features
+
 ### PDF Upload: 
-Users can upload their documents in PDF format.
+Users have the ability to upload documents in PDF format, with options to customize how their data is processed to suit their preferences.
+
 ### Vector Database Storage: 
-Processed data from the PDF is stored in Pinecone's vector database for quick retrievals.
+Data extracted from the uploaded PDFs undergoes a series of transformations. It is chunked and embedded using an advanced embedding model before being securely stored in Pinecone, a high-performance vector database, ensuring efficient and precise retrieval of information when needed.
+
 ### Intelligent Responses: 
-The chatbot is capable of referencing specific parts of the uploaded data to answer user questions.
+Empowered by the Retrieval-Augmented Generation (RAG), the chatbot can intelligently reference specific parts of the uploaded data to deliver precise and contextually aware responses to user inquiries.
+
+### AI Model Finetuning: 
+Users can refine AI models to meet their specific needs by uploading training data and selecting appropriate fine-tuning parameters. The fine-tuning requirements are sent to the server, hosted at [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi). This server will process the fine-tuning requirements, allowing for a more tailored user experience.
+
 ## Getting Started
 
 ### Clone the Repository and Install Dependency:
 ```bash
 yarn install
 ```
+
+### Setup OpenAI and Pinecone
+Sign up for an account on OpenAI and Pinecone.
+Generate the necessary API keys from the respective platforms.
+
+### Configure Environment Variables
+Copy the .env.example file and rename it to .env.
+```bash
+cp .env.example .env
+```
+Open the newly created .env file and replace the placeholders with the actual keys you obtained from OpenAI and Pinecone.
 
 ### Run the Development Server:
 
