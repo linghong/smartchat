@@ -13,15 +13,13 @@ const UploadFile: FC<UploadProps> = ({ label, fileType, uploadError, setUploadEr
   const handleFileChange= (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if(!files) {
-      setUploadError("You must load a file.")
-      return
+      throw new Error("Error: Upload Files array becomes null or undefined") 
     }
     const file = files[0]
     if(file){
-      //calculate file size with unit MB
       const fileSize = (file.size/(1024*1024))
-      if(fileSize > 200) {
-        setUploadError("Maxmium file size to upload is 200MB.")
+      if(fileSize > 1000) {
+        setUploadError("Maxmium file size to upload is 1GB.")
         return
       }
       setSelectedFile(files[0])
@@ -31,11 +29,14 @@ const UploadFile: FC<UploadProps> = ({ label, fileType, uploadError, setUploadEr
   return (
     <div className="my-2">
       <label 
-        htmlFor="fileUpload" className="w-50 font-bold text-base mr-5">
+        htmlFor="fileUpload"
+        className="w-50 font-bold text-base mr-5">
         {label}
       </label>  
-      <input 
+      <input
+          id="fileUpload"
           type="file"
+          data-testid="fileInput"
           name="uploadFile" 
           accept={fileType}
           onChange={handleFileChange}
