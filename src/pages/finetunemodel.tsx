@@ -93,15 +93,30 @@ const FinetuneModel: FC = () => {
     }  
     if(uploadError) return
 
+    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL
+    if(!serverUrl) {
+      return {error: 'Url address for posting the data is missing'}
+    }
+    const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
+    if(!serverSecretKey) {
+      return {error: 'Sever secret key is missing'}
+    }
     const formData = new FormData()
     formData.append('file', selectedFile)
     formData.append('finetuning', selectedDropdown.finetuningModel.value)
     formData.append('epochs', (selectedInput.epochs)?.toString() ?? '')
-    formData.append('batchsize', (selectedInput.batchSize)?.toString() ?? '')
-    formData.append('learningRateMultiplier', (selectedInput.learningRateMultiplier)?.toString() ?? '')
-    formData.append('promptLossWeight', (selectedInput.promptLossWeight)?.toString() ?? '')
 
-    await handleFormSubmit('/api/finetune', formData)
+    if(selectedInput.finetuning = "gpt-3.5-turbo") {   
+      await handleFormSubmit(`${serverUrl}/api/finetuning/openai`, formData, serverSecretKey)
+
+    } else {  
+
+      formData.append('batchsize', (selectedInput.batchSize)?.toString() ?? '')
+      formData.append('learningRateMultiplier', (selectedInput.learningRateMultiplier)?.toString() ?? '')
+      formData.append('promptLossWeight', (selectedInput.promptLossWeight)?.toString() ?? '')
+      
+      await handleFormSubmit(`${serverUrl}/api/finetuning/peft`, formData, serverSecretKey)
+    }   
   }
 
   useEffect (() => {
