@@ -4,7 +4,7 @@ import { ActionMeta} from 'react-select'
 
 import DropDownSelect from '@/src/components/DropdownSelect'
 import Header from '@/src/components/Header'
-import Notification from '@/src/components/Notification'
+import Notifications from '@/src/components/Notification'
 import PlusIcon from '@/src/components/PlusIcon'
 import UploadFile from '@/src/components/UploadFile'
 import { useFormSubmission,  useInputChange } from '@/src/hooks'
@@ -257,16 +257,15 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
           >
             Submit
           </button>
-        </div>         
-        { isLoading && <Notification type="loading" message="Uploading and processing your file. This may take a few minutes. Please wait..." /> }
-        { <Notification type="success" message={successMessage} /> }
-        { <Notification type="error" message={error} /> }
-        {Object.keys(uploadErrors).map((key) =>
-          <Notification key={`${key}-error`} type="error" message={uploadErrors[key]} />
-        )}  
-        { Object.keys(inputErrors).map((key, i) =>  
-           <Notification key={`${key}.error`} type="error" message={inputErrors[key]} />
-        )}
+        </div>
+        <Notifications
+          isLoading={isLoading}
+          loadingMessage="Uploading and processing your file. This may take a few minutes. Please wait..."
+          successMessage={successMessage}
+          errorMessage={error}
+          uploadErrors ={uploadErrors}
+          inputErrors={inputErrors}
+        />
       </form>
       <div className="flex flex-col h-40vh items-center justify-between"></div>      
     </div>

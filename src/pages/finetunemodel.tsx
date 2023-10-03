@@ -4,7 +4,7 @@ import { ActionMeta} from 'react-select'
 import Checkbox from '@/src/components/Checkbox'
 import DropdownSelect from '@/src/components/DropdownSelect'
 import Header from '@/src/components/Header'
-import Notification from '@/src/components/Notification'
+import Notifications from '@/src/components/Notification'
 import UploadFile from '@/src/components/UploadFile'
 import { useFormSubmission, useInputChange } from '@/src/hooks'
 import { OptionType, InputErrors, InputData, UploadData, UploadErrors } from '@/src/types/common'
@@ -158,32 +158,6 @@ const FinetuneModel: FC = () => {
 
     await handleFormSubmit(`${serverUrl}/api/finetuning/${endpoint}`, formData, serverSecretKey)   
   }
-
-  const renderNotifications = (isLoading: boolean, successMessage: string | null, errorMessage: string | null, uploadErrors: UploadErrors, inputErrors: InputErrors) => {
-    const notifications = [];
-  
-    if (isLoading) {
-      notifications.push(<Notification type="loading" message="Uploading your data..." />);
-    }
-  
-    if (successMessage) {
-      notifications.push(<Notification type="success" message={successMessage} />);
-    }
-  
-    if (errorMessage) {
-      notifications.push(<Notification type="error" message={errorMessage} />);
-    }
-  
-    Object.keys(uploadErrors).forEach((key) => {
-      notifications.push(<Notification key={`${key}-error`} type="error" message={uploadErrors[key]} />);
-    });
-  
-    Object.keys(inputErrors).forEach((key) => {
-      notifications.push(<Notification key={`${key}-error`} type="error" message={inputErrors[key]} />);
-    });
-  
-    return notifications;
-  };
   
   useEffect (() => {
     if(isChecked){
@@ -321,7 +295,14 @@ const FinetuneModel: FC = () => {
             Submit
           </button>
         </div>
-        {renderNotifications(isLoading, successMessage, error, uploadErrors, inputErrors)}
+        <Notifications
+          isLoading={isLoading}
+          loadingMessage="Uploading your data..."
+          successMessage={successMessage}
+          errorMessage={error}
+          uploadErrors ={uploadErrors}
+          inputErrors={inputErrors}
+        />
       </form>
       <div className="flex flex-col h-40vh items-center justify-between"></div>
     </div>
@@ -329,3 +310,4 @@ const FinetuneModel: FC = () => {
 }
 
 export default FinetuneModel
+

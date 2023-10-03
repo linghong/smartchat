@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 
-interface Props {
+interface Notification {
   type?: 'error' | 'loading' | 'success' | 'status';
   message: string | null;
 }
 
-const Notification: FC<Props> = ({ type, message }) => {
+const Notification: FC<Notification> = ({ type, message }) => {
   if(message === null) return null
   let className = ''
   let role= ''
