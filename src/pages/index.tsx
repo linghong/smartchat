@@ -219,4 +219,4 @@ export const getStaticProps: GetStaticProps = async () => {
     },
     revalidate: 60 * 60 *24 // This is optional. It ensures regeneration of the page after every 24 hour
   }
-};
+}

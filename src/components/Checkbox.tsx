@@ -9,7 +9,7 @@ const Checkbox: FC<CheckboxProps>
  = ({ label, setIsChecked }) => {
   
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(e.target.checked)
+    setIsChecked(e.target.checked)   
   }
 
   return (

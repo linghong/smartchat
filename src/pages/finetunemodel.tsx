@@ -25,6 +25,7 @@ const finetuningOptions = [
 const initialInput = {
   batchSize: 4,
   epochs: 10,
+  suffix: '',
   learningRateMultiplier: 0.1,
   promptLossWeight: 0.01
 }
@@ -32,6 +33,7 @@ const initialInput = {
 const initialInputErrors = {
   batchSize: null,
   epochs: null,
+  suffix: null,
   learningRateMultiplier: null,
   promptLossWeight: null,
   integer: null
@@ -63,7 +65,16 @@ const FinetuneModel: FC = () => {
   }
 
   const validateInput = (name: string, value: number | string) => {
-    if(typeof value === 'string') {
+    if(name === 'suffix'){
+      if(!value) {
+        setSelectedInput((prev) => ({...prev, [name]: ''
+        }))
+      }
+      if(typeof value === 'string' && value.length > 18 ){
+        setInputErrors((prev: InputErrors) => ({ ...prev, [name]: `${name}'s character cannot exceed 18.` }))
+      }
+
+    } else if(typeof value === 'string') {
       setInputErrors((prev: InputErrors) => ({ ...prev, [name]: `${name} must be a number.` }))
 
     } else if (!value) {
@@ -107,6 +118,8 @@ const FinetuneModel: FC = () => {
     formData.append('epochs', (selectedInput.epochs)?.toString() ?? '')
 
     if(selectedInput.finetuning = "gpt-3.5-turbo") {   
+      formData.append('suffix', (selectedInput.suffix)?.toString() ?? '')
+
       await handleFormSubmit(`${serverUrl}/api/finetuning/openai`, formData, serverSecretKey)
 
     } else {  
@@ -165,13 +178,29 @@ const FinetuneModel: FC = () => {
             onChange={handleInputChange}
             onBlur={handleInputBlur}
           />
-           <p>Number of training cycles. Excessive training can lead to overfitting; too few can result in underfitting.</p>
+           <p>Number of training cycles. Excessive training can lead to over-fitting; too few can result in under-fitting.</p>
           { 
             isOpenAIModel && <Checkbox 
             label="Let OpenAI decide epochs" 
             setIsChecked={setIsChecked}/>
           }
         </div>
+        {
+          isOpenAIModel &&<div className="my-5">
+            <label htmlFor="suffix" className="font-bold mr-2 py-1.5">
+              Suffix(Optional):
+            </label>
+            <input 
+              type="text"
+              name="suffix"
+              value={(selectedInput.suffix)?.toString()}
+              className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+            />
+            <p>A string of up to 18 characters that will be added to your fine-tuned model name.</p>
+          </div>
+        }
         { 
           !isOpenAIModel && <div className="my-5">
             <label htmlFor="batchSize" className="font-bold mr-2 py-1.5">
@@ -185,7 +214,7 @@ const FinetuneModel: FC = () => {
               onChange={handleInputChange}
               onBlur={handleInputBlur}
             />
-            <p>Number of samples processed together. Ensure each batch&apos;s total token count should not exceed the model&apos;s token limit.</p>
+            <p>Ensure each batch&apos;s token count should not exceed the model&apos;s token limit.</p>
           </div> 
         }
         { 

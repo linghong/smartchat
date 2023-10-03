@@ -24,11 +24,11 @@ const useInputChange = ({ initialInput, initialInputErrors, validateInput }: Use
   const [inputErrors, setInputErrors] = useState<InputErrors>(initialInputErrors)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const isNumber = !isNaN(Number(value));
-    const parsedValue = isNumber ? parseFloat(value) : value;
+    const { name, value } = e.target
+    const isNumber = !isNaN(Number(value))
+    const parsedValue = isNumber ? parseFloat(value) : value
 
-    setSelectedInput((prev) => ({ ...prev, [name]: parsedValue }));
+    setSelectedInput((prev) => ({ ...prev, [name]: parsedValue }))
     setInputErrors((prev: InputErrors) => ({ ...prev, [name]: null }))
     validateInput(name, parsedValue)
   }

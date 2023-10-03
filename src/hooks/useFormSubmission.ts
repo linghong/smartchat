@@ -28,26 +28,27 @@ const useFormSubmission = () => {
         method: 'POST',
         headers,
         body: formData,
-      });
-    
-      const data: FormSubmissionResponse = await res.json() as FormSubmissionResponse;
+      })
+
+      const data: FormSubmissionResponse = await res.json() as FormSubmissionResponse
+
       if(data.error) {
         setError(data.error)
       }
       setSuccessMessage(data.id)
 
     } catch (error) {
-      console.log(error);
-      setError('There was a network error when sending file.');
+      console.log(error)
+      setError('There was a network error when sending file.')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
   
-  return { handleFormSubmit, isLoading, successMessage, error };
-};
+  return { handleFormSubmit, isLoading, successMessage, error }
+}
 
-export default useFormSubmission;
+export default useFormSubmission
 
 
 
