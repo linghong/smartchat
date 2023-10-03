@@ -6,7 +6,7 @@ import DropdownSelect from '@/src/components/DropdownSelect'
 import Header from '@/src/components/Header'
 import Notification from '@/src/components/Notification'
 import UploadFile from '@/src/components/UploadFile'
-import { OptionType, InputErrors, InputData } from '@/src/types/common'
+import { OptionType, InputErrors, InputData, UploadData, UploadErrors } from '@/src/types/common'
 import { useFormSubmission, useInputChange } from '@/src/hooks'
 
 interface DropdownData {
@@ -38,6 +38,15 @@ const initialInputErrors = {
   promptLossWeight: null,
   integer: null
 }
+const initialUpload = {
+  trainingFile: null,
+  validationFile: null
+}
+
+const initialUploadErrors = {
+  trainingFile: null,
+  validationFile: null
+}
 
 const initialSelectedDropdown = {
   finetuningModel: finetuningOptions[0],
@@ -45,14 +54,15 @@ const initialSelectedDropdown = {
 
 const FinetuneModel: FC = () => {
  
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedUpload, setSelectedUpload] = useState<UploadData>(initialUpload)
+
   const [selectedDropdown, setSelectedDropdown] = useState<DropdownData>(initialSelectedDropdown)
  
   // OpenAI no longer allows optional parameter selection except for the number of epochs.
   const isOpenAIModel = selectedDropdown.finetuningModel.value === 'gpt-3.5-turbo'
-
   const [isChecked, setIsChecked] = useState<boolean>(false)
-  const [uploadError, setUploadError] = useState< string | null>(null)
+
+  const [uploadErrors, setUploadErrors] = useState< UploadErrors>(initialUploadErrors)
 
   const handleDropdownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
     if (selectedOption === null) return;
@@ -91,18 +101,27 @@ const FinetuneModel: FC = () => {
     }
   }
 
+  const validateUpload = (trainingFile: File | null, validationFile: File | null) => {
+    if(!trainingFile) {
+      setUploadErrors((prev: UploadErrors) => ({...prev, ['trainingFile']: 'You must upload a training file.'}))
+      return
+    }
+    if (!(trainingFile instanceof File)) {
+        setUploadErrors((prev: InputErrors) => ({...prev, ['trainingFile']: 'TrainingFile must be a file.'}))
+        return
+    }
+    if (validationFile && !(validationFile instanceof File)) {
+      setUploadErrors((prev: InputErrors) => ({...prev, ['validationFile']: 'ValidationFile must be a file.'}))
+      return
+    }
+  }
+
   const { selectedInput, inputErrors, setSelectedInput, setInputErrors, handleInputChange, handleInputBlur } = useInputChange({ initialInput, initialInputErrors, validateInput })
 
   const { handleFormSubmit, isLoading, successMessage, error } = useFormSubmission()
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-
-    if(!selectedFile) {
-      setInputErrors((prev: InputErrors) => ({...prev, ['upload']: 'You must upload a file.'}))
-      return
-    }  
-    if(uploadError) return
 
     const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL
     if(!serverUrl) {
@@ -112,8 +131,15 @@ const FinetuneModel: FC = () => {
     if(!serverSecretKey) {
       return {error: 'Sever secret key is missing'}
     }
+
+    const {trainingFile, validationFile} = selectedUpload
+
+    validateUpload(trainingFile, validationFile)
+
     const formData = new FormData()
-    formData.append('file', selectedFile)
+    if (trainingFile) formData.append('trainingFile', trainingFile)
+    if (validationFile) formData.append('validationFile', validationFile)
+
     formData.append('finetuning', selectedDropdown.finetuningModel.value)
     formData.append('epochs', (selectedInput.epochs)?.toString() ?? '')
 
@@ -151,11 +177,20 @@ const FinetuneModel: FC = () => {
       <Header pageTitle="Finetune AI Model" />
       <form className="flex flex-col  p-10 justify-start bg-slate-50 border border-indigo-100">
         <UploadFile 
-          label="Upload Training Data: "
+          label="Upload Training File: "
           fileType=".jsonl"
-          uploadError={uploadError}
-          setUploadError={setUploadError}
-          setSelectedFile={setSelectedFile}
+          name="trainingFile"
+          uploadErrors={uploadErrors}
+          setUploadErrors={setUploadErrors}
+          setSelectedUpload={setSelectedUpload}
+        /> 
+        <UploadFile 
+          label="Upload Validation File (optional): "
+          fileType=".jsonl"
+          name="validationFile"
+          uploadErrors={uploadErrors}
+          setUploadErrors={setUploadErrors}
+          setSelectedUpload={setSelectedUpload}
         /> 
         <div className="flex justify-start my-5">
           <DropdownSelect
@@ -262,7 +297,9 @@ const FinetuneModel: FC = () => {
         { isLoading && <Notification type="loading" message="Uploading your data..." /> }
         { <Notification type="success" message={successMessage} /> }
         { <Notification type="error" message={error} /> }
-        { <Notification type="error" message={uploadError} /> }
+        { Object.keys(uploadErrors).map((key, i) => 
+          <Notification key={`${key}-error`} type="error" message={uploadErrors[key]} />
+        )}
         { Object.keys(inputErrors).map((key, i) => 
           <Notification key={`${key}-error`} type="error" message={inputErrors[key]} />
         )}

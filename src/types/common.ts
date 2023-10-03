@@ -20,3 +20,11 @@ export type Input<T> = {
 export type InputData = {
   [key: string]: string | number | null;
 }
+
+export type UploadData  = {
+  [key: string]: File | null;
+}
+
+export type UploadErrors = {
+  [key: string] : string | null
+}

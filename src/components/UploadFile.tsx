@@ -1,16 +1,18 @@
 import { FC, ChangeEvent, Dispatch, SetStateAction } from 'react'
 
+import { UploadData, UploadErrors } from '@/src/types/common'
 interface UploadProps {
   label: string;
-  uploadError: string | null;
-  setUploadError: Dispatch<SetStateAction<string | null>>;
-  setSelectedFile: Dispatch<SetStateAction<File | null>>;
+  uploadErrors: UploadErrors;
+  name: string;
+  setUploadErrors: Dispatch<SetStateAction<UploadErrors>>;
+  setSelectedUpload: Dispatch<SetStateAction<UploadData>>;
   fileType: string;
 }
 
-const UploadFile: FC<UploadProps> = ({ label, fileType, uploadError, setUploadError, setSelectedFile }) => {
+const UploadFile: FC<UploadProps> = ({ label, fileType, name, uploadErrors, setUploadErrors, setSelectedUpload }) => {
 
-  const handleFileChange= (e: ChangeEvent<HTMLInputElement>) => {
+  const handleUploadChange= (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if(!files) {
       throw new Error("Error: Upload Files array becomes null or undefined") 
@@ -19,11 +21,17 @@ const UploadFile: FC<UploadProps> = ({ label, fileType, uploadError, setUploadEr
     if(file){
       const fileSize = (file.size/(1024*1024))
       if(fileSize > 1000) {
-        setUploadError("Maxmium file size to upload is 1GB.")
+        setUploadErrors(prev => ({
+          ...prev, 
+          [name]: "Maxmium file size to upload is 1GB."
+        }))
         return
       }
-      setSelectedFile(files[0])
-      if(uploadError) setUploadError(null)
+      setSelectedUpload(prev => ({...prev, [name]: files[0]}))
+      if(uploadErrors) setUploadErrors(prev =>({
+        ...prev,
+        [name]: null
+      }))
     }
   }
   return (
@@ -36,10 +44,9 @@ const UploadFile: FC<UploadProps> = ({ label, fileType, uploadError, setUploadEr
       <input
           id="fileUpload"
           type="file"
-          data-testid="fileInput"
-          name="uploadFile" 
+          name={name}
           accept={fileType}
-          onChange={handleFileChange}
+          onChange={handleUploadChange}
           className="focus:border-blue-500 focus:outline-none"
       />
     </div>
