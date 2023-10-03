@@ -6,8 +6,8 @@ import DropdownSelect from '@/src/components/DropdownSelect'
 import Header from '@/src/components/Header'
 import Notification from '@/src/components/Notification'
 import UploadFile from '@/src/components/UploadFile'
-import { OptionType, InputErrors, InputData, UploadData, UploadErrors } from '@/src/types/common'
 import { useFormSubmission, useInputChange } from '@/src/hooks'
+import { OptionType, InputErrors, InputData, UploadData, UploadErrors } from '@/src/types/common'
 
 interface DropdownData {
   finetuningModel: {
@@ -55,14 +55,13 @@ const initialSelectedDropdown = {
 const FinetuneModel: FC = () => {
  
   const [selectedUpload, setSelectedUpload] = useState<UploadData>(initialUpload)
+  const [uploadErrors, setUploadErrors] = useState< UploadErrors>(initialUploadErrors)
 
   const [selectedDropdown, setSelectedDropdown] = useState<DropdownData>(initialSelectedDropdown)
  
   // OpenAI no longer allows optional parameter selection except for the number of epochs.
   const isOpenAIModel = selectedDropdown.finetuningModel.value === 'gpt-3.5-turbo'
   const [isChecked, setIsChecked] = useState<boolean>(false)
-
-  const [uploadErrors, setUploadErrors] = useState< UploadErrors>(initialUploadErrors)
 
   const handleDropdownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
     if (selectedOption === null) return;
@@ -120,18 +119,7 @@ const FinetuneModel: FC = () => {
 
   const { handleFormSubmit, isLoading, successMessage, error } = useFormSubmission()
 
-  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-
-    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL
-    if(!serverUrl) {
-      return {error: 'Url address for posting the data is missing'}
-    }
-    const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
-    if(!serverSecretKey) {
-      return {error: 'Sever secret key is missing'}
-    }
-
+  const prepareFormData = () => {
     const {trainingFile, validationFile} = selectedUpload
 
     validateUpload(trainingFile, validationFile)
@@ -145,19 +133,58 @@ const FinetuneModel: FC = () => {
 
     if(selectedInput.finetuning = "gpt-3.5-turbo") {   
       formData.append('suffix', (selectedInput.suffix)?.toString() ?? '')
-
-      await handleFormSubmit(`${serverUrl}/api/finetuning/openai`, formData, serverSecretKey)
-
     } else {  
-
       formData.append('batchsize', (selectedInput.batchSize)?.toString() ?? '')
       formData.append('learningRateMultiplier', (selectedInput.learningRateMultiplier)?.toString() ?? '')
       formData.append('promptLossWeight', (selectedInput.promptLossWeight)?.toString() ?? '')
-      
-      await handleFormSubmit(`${serverUrl}/api/finetuning/peft`, formData, serverSecretKey)
     }   
+    return formData
   }
 
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+
+    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL
+    const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
+    if(!serverUrl) {
+      return {error: 'Url address for posting the data is missing'}
+    }
+    if(!serverSecretKey) {
+      return {error: 'Sever secret key is missing'}
+    }
+
+    const formData = await prepareFormData()
+    const endpoint = selectedInput.finetuning === "gpt-3.5-turbo" ? 'openai'  : 'peft'
+
+    await handleFormSubmit(`${serverUrl}/api/finetuning/${endpoint}`, formData, serverSecretKey)   
+  }
+
+  const renderNotifications = (isLoading: boolean, successMessage: string | null, errorMessage: string | null, uploadErrors: UploadErrors, inputErrors: InputErrors) => {
+    const notifications = [];
+  
+    if (isLoading) {
+      notifications.push(<Notification type="loading" message="Uploading your data..." />);
+    }
+  
+    if (successMessage) {
+      notifications.push(<Notification type="success" message={successMessage} />);
+    }
+  
+    if (errorMessage) {
+      notifications.push(<Notification type="error" message={errorMessage} />);
+    }
+  
+    Object.keys(uploadErrors).forEach((key) => {
+      notifications.push(<Notification key={`${key}-error`} type="error" message={uploadErrors[key]} />);
+    });
+  
+    Object.keys(inputErrors).forEach((key) => {
+      notifications.push(<Notification key={`${key}-error`} type="error" message={inputErrors[key]} />);
+    });
+  
+    return notifications;
+  };
+  
   useEffect (() => {
     if(isChecked){
       setSelectedInput((prev: InputData) => ({
@@ -294,15 +321,7 @@ const FinetuneModel: FC = () => {
             Submit
           </button>
         </div>
-        { isLoading && <Notification type="loading" message="Uploading your data..." /> }
-        { <Notification type="success" message={successMessage} /> }
-        { <Notification type="error" message={error} /> }
-        { Object.keys(uploadErrors).map((key, i) => 
-          <Notification key={`${key}-error`} type="error" message={uploadErrors[key]} />
-        )}
-        { Object.keys(inputErrors).map((key, i) => 
-          <Notification key={`${key}-error`} type="error" message={inputErrors[key]} />
-        )}
+        {renderNotifications(isLoading, successMessage, error, uploadErrors, inputErrors)}
       </form>
       <div className="flex flex-col h-40vh items-center justify-between"></div>
     </div>
@@ -310,4 +329,3 @@ const FinetuneModel: FC = () => {
 }
 
 export default FinetuneModel
-

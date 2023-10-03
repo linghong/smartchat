@@ -1,5 +1,5 @@
 import { FC, MouseEvent, useState } from 'react'
-import {GetStaticProps} from 'next'
+import { GetStaticProps } from 'next'
 import { ActionMeta} from 'react-select'
 
 import DropDownSelect from '@/src/components/DropdownSelect'
@@ -8,7 +8,7 @@ import Notification from '@/src/components/Notification'
 import PlusIcon from '@/src/components/PlusIcon'
 import UploadFile from '@/src/components/UploadFile'
 import { useFormSubmission,  useInputChange } from '@/src/hooks'
-import { OptionType, InputErrors } from '@/src/types/common'
+import { OptionType, InputErrors, UploadData, UploadErrors } from '@/src/types/common'
 import { fetchData } from '@/src/utils/fetchData'
 
 interface DropDownData {
@@ -46,46 +46,20 @@ const initialInputErrors = {
 
 const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
 
-  const defaultFileCategoryOptions = [ { value: 'default', label: 'Add New Category' }, ...namespaces.map(ns => ({ value: ns, label: ns }))];
-  
-  const [selectedFile, setSelectedFile] =useState<File |null>(null)
+  const defaultFileCategoryOptions = [ { value: 'default', label: 'Add New Category' }, ...namespaces.map(ns => ({ value: ns, label: ns }))]
 
-  const [showAddNewCategory, setShowAddNewCategory] = useState(false) 
   const [fileCategoryOptions, setFileCategoryOptions] = useState<OptionType[]>(defaultFileCategoryOptions)
+  const [showAddNewCategory, setShowAddNewCategory] = useState(false) 
+
+  const [selectedUpload, setSelectedUpload] =useState<UploadData>({
+    ['file']: null
+  })
+  const [uploadErrors, setUploadErrors] = useState< UploadErrors>({['file']: null})
 
   const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>({
     fileCategory: defaultFileCategoryOptions[0],
     embeddingModel: embeddingModelOptions[0],
   })
-  const [uploadError, setUploadError] = useState< string | null>(null)
-
-  const handleAddCategoryToDropDown = (e:any) => {
-    e.preventDefault()
-
-    const newFileCategory = selectedInput.newFileCategory
-    if(typeof newFileCategory !== 'string') return
-
-    const newCategoryOption = {
-      'value': newFileCategory.replace(/\s+/g, '').toLowerCase(),
-      'label': newFileCategory
-    }
-
-    setSelectedDropDown(prevSelected => ({
-      ...prevSelected,
-      'fileCategory': newCategoryOption
-    }))
-
-    // Check if the new category already exists in namespaces
-    if (namespaces.includes(newFileCategory)) {
-      setInputErrors((prev: InputErrors) => ({...prev, ['newFileCategory']: "This category already exists."}))
-      return
-    }
-
-    setFileCategoryOptions(previousOptions => [
-      ...previousOptions, newCategoryOption])
-    setInputErrors((prev: InputErrors) => ({...prev, ['newFileCategory']: null}))
-    setShowAddNewCategory(false)
-  }
 
   const validateInput = (name: string, value: number | string) => {
     const {chunkSize, chunkOverlap, newFileCategory } = selectedInput
@@ -118,6 +92,34 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
 
   const { selectedInput, inputErrors, setSelectedInput, setInputErrors, handleInputChange, handleInputBlur } = useInputChange({ initialInput, initialInputErrors, validateInput })
 
+  const handleAddCategoryToDropDown = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+
+    const newFileCategory = selectedInput?.newFileCategory
+    if(typeof newFileCategory !== 'string') return
+
+    const newCategoryOption = {
+      'value': newFileCategory.replace(/\s+/g, '').toLowerCase(),
+      'label': newFileCategory
+    }
+
+    setSelectedDropDown(prevSelected => ({
+      ...prevSelected,
+      'fileCategory': newCategoryOption
+    }))
+
+    // Check if the new category already exists in namespaces
+    if (namespaces.includes(newFileCategory)) {
+      setInputErrors((prev: InputErrors) => ({...prev, ['newFileCategory']: "This category already exists."}))
+      return
+    }
+
+    setFileCategoryOptions(previousOptions => [
+      ...previousOptions, newCategoryOption])
+    setInputErrors((prev: InputErrors) => ({...prev, ['newFileCategory']: null}))
+    setShowAddNewCategory(false)
+  }
+
   const handleDropDownChange = (selectedOption: OptionType | null, actionMeta: ActionMeta<OptionType>) => {
     if (selectedOption === null) return;
 
@@ -141,23 +143,27 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
   }
   const { handleFormSubmit, isLoading, successMessage, error } = useFormSubmission()
 
-  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-
-    if(!selectedFile) {
-      setInputErrors((prev: InputErrors) => ({...prev, ['upload']: 'You must upload a file.'}))
-    }
-  
-    const hasErrors = !selectedFile || Object.values(inputErrors).some(e => e !== null)
-    if(hasErrors) return
-
+  const prepareFormData = () => {
     const formData = new FormData()
-    formData.append('file', selectedFile)
+    if(selectedUpload.file) formData.append('file', selectedUpload.file)
     formData.append('chunkSize', (selectedInput.chunkSize)?.toString() ?? '')
     formData.append('chunkOverlap', (selectedInput.chunkOverlap)?.toString() ?? '')
     formData.append('fileCategory', JSON.stringify(selectedDropDown.fileCategory))
     formData.append('embeddingModel', JSON.stringify(selectedDropDown.embeddingModel))
+    return  formData
+  }
 
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+
+    if(!selectedUpload) {
+      setUploadErrors((prev: InputErrors) => ({...prev, ['file']: 'You must upload a file.'}))
+    }
+  
+    const hasErrors = !selectedUpload || Object.values(inputErrors).some(e => e !== null)
+    if(hasErrors) return
+
+    const formData = await  prepareFormData()
     await handleFormSubmit('/api/upload', formData) 
   }
 
@@ -168,9 +174,10 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
       <UploadFile 
           label="Upload Training Data: "
           fileType=".pdf"
-          uploadError={uploadError}
-          setUploadError={setUploadError}
-          setSelectedFile={setSelectedFile}
+          name='uploadFile'
+          uploadErrors={uploadErrors}
+          setUploadErrors={setUploadErrors}
+          setSelectedUpload={setSelectedUpload}
         /> 
         <div className="flex flex-col lg:flex-row justify-start"> 
           <div className="lg:w-50 mr-20 my-2">
@@ -252,9 +259,11 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
           </button>
         </div>         
         { isLoading && <Notification type="loading" message="Uploading and processing your file. This may take a few minutes. Please wait..." /> }
-        { < Notification type="success" message={successMessage} /> }
+        { <Notification type="success" message={successMessage} /> }
         { <Notification type="error" message={error} /> }
-        { <Notification type="error" message={uploadError} /> }
+        {Object.keys(uploadErrors).map((key) =>
+          <Notification key={`${key}-error`} type="error" message={uploadErrors[key]} />
+        )}  
         { Object.keys(inputErrors).map((key, i) =>  
            <Notification key={`${key}.error`} type="error" message={inputErrors[key]} />
         )}
