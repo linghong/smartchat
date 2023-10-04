@@ -45,6 +45,7 @@ const UploadFile: FC<UploadProps> = ({ label, fileType, name, uploadErrors, setU
           id="fileUpload"
           type="file"
           name={name}
+          data-testid="fileInput"
           accept={fileType}
           onChange={handleUploadChange}
           className="focus:border-blue-500 focus:outline-none"

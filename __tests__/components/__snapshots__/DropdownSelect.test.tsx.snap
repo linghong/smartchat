@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DropdownSelect Component Dropdown component snapshot 1`] = `
+exports[`DropdownSelect Component displays Dropdown component snapshot 1`] = `
 <DocumentFragment>
   <div
     class="flex justify-center items-center my-3 space-x-2"

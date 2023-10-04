@@ -11,7 +11,7 @@ describe('Checkbox Component', () => {
   })
 
   afterEach(() => {
-    setIsChecked.mockClear();
+    setIsChecked.mockClear()
   })
 
   it('renders Checkbox component correctly', () => {

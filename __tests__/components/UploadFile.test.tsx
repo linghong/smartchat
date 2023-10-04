@@ -6,26 +6,36 @@ import UploadFile from '@/src/components/UploadFile'
 // Mock component props
 const label = "Upload Training Data: "
 const fileType = ".pdf"
-const uploadError = null
+const name="uploadFile"
+const uploadErrors = {'file': null}
 
 const setup = () => {
-  const setUploadError = jest.fn()
-  const setSelectedFile = jest.fn()
+  const setUploadErrors = jest.fn()
+  const setSelectedUpload = jest.fn()
 
-  render(<UploadFile label={label} fileType={fileType} uploadError={uploadError} setUploadError={setUploadError} setSelectedFile={setSelectedFile} />)
+  render (
+    <UploadFile 
+      label={label} 
+      fileType={fileType} 
+      name={name} 
+      uploadErrors={uploadErrors} 
+      setUploadErrors={setUploadErrors} 
+      setSelectedUpload={setSelectedUpload} 
+    />
+  )
   
-  const input = screen.getByTestId('fileInput') as HTMLInputElement;
+  const input = screen.getByTestId('fileInput') as HTMLInputElement
   return {
     input,
-    setUploadError,
-    setSelectedFile,
+    setUploadErrors,
+    setSelectedUpload,
   }
 }
 
 describe('UploadFile Component', () => {
   afterEach(() => {
     jest.clearAllMocks()
-  });
+  })
 
   it('renders UploadFile component', () => {
     const { input } = setup()
@@ -33,11 +43,17 @@ describe('UploadFile Component', () => {
   })
 
   test('handles file change event', async() => {
-    const { input, setSelectedFile, setUploadError } = setup()
+    const { input, setSelectedUpload, setUploadErrors } = setup()
     const file = new File(['dummy content'], 'example.pdf', { type: 'application/pdf' })
     await userEvent.upload(input, file)
 
-    expect(setSelectedFile).toHaveBeenCalledWith(file)
+    expect(setSelectedUpload).toHaveBeenCalledWith(expect.any(Function))
+
+     // Grab the callback function and test it
+     const callback = setSelectedUpload.mock.calls[0][0] // get the first argument of the first call
+     const dummyPrevState = {}
+     const newState = callback(dummyPrevState)
+     expect(newState[name]).toBe(file)
   })
 
   /*test('handles file size error', () => {
@@ -52,7 +68,15 @@ describe('UploadFile Component', () => {
   })*/
   
   test('UploadFile component snapshot', () => {
-    const { asFragment } = render(<UploadFile label={label} fileType={fileType} uploadError={uploadError} setUploadError={jest.fn} setSelectedFile={jest.fn} />)
+    const { asFragment } = render(
+    <UploadFile 
+      label={label} 
+      fileType={fileType}
+      name={name}
+      uploadErrors={uploadErrors} 
+      setUploadErrors={jest.fn} 
+      setSelectedUpload={jest.fn} 
+    />)
 
     expect(asFragment()).toMatchSnapshot()
   })

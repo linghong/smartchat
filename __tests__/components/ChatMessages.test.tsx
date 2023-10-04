@@ -24,20 +24,20 @@ describe('ChatMessage Component', () => {
     expect(screen.getByText('AI stands for Artificial Intelligence.')).toBeInTheDocument()
   })
 
-  it('applies animate-pulse class when loading and is the last index', async () => {
-    await act (() => {
+  it('applies animate-pulse class when loading and is the last index', () => {
+    act (() => {
       render(<ChatMessage message={message} lastIndex={true} loading={true} />)
     })
     const botImages = screen.getAllByAltText('AI Bot') as HTMLElement[]
     expect(botImages[botImages.length - 1]).toHaveClass('animate-pulse')
   })
 
-  it('does not apply animate-pulse class when not loading', async () => {
-    await act (() => {
+  it('does not apply animate-pulse class when not loading', () => {
+    act (() => {
       render(<ChatMessage message={message} lastIndex={true} loading={false} />)
     })
    
-    const botImages = await screen.getAllByAltText('AI Bot') as HTMLElement[]
+    const botImages = screen.getAllByAltText('AI Bot') as HTMLElement[]
     expect(botImages[botImages.length - 1]).not.toHaveClass('animate-pulse')
   })
   

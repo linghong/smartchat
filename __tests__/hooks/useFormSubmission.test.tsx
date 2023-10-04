@@ -9,14 +9,14 @@ describe('useFormSubmission Hook', () => {
   let url: string, formData: FormData
   
   beforeEach(() => {
-    resetMocks();
+    resetMocks()
     url = 'http://example.com/submit'
     formData = new FormData()
     formData.append('key', 'value')
   })
 
   it('should handle a successful form submission', async () => {
-    const successResponse = { success: true, message: 'Form submitted successfully', error: null }
+    const successResponse = { success: true, id: '12345', error: null }
     mockResponseOnce(JSON.stringify(successResponse))
 
     const { result, waitForNextUpdate } = renderHook(() => useFormSubmission())
@@ -31,12 +31,12 @@ describe('useFormSubmission Hook', () => {
 
     // Expect isLoading to be false and successMessage to be set after successful form submission
     expect(result.current.isLoading).toBeFalsy()
-    expect(result.current.successMessage).toBe(successResponse.message)
+    expect(result.current.successMessage).toBe(successResponse.id)
     expect(result.current.error).toBeNull()
   });
 
   it('should handle an unsuccessful form submission', async () => {
-    const errorResponse = { success: false, message: null, error: 'Form submission failed' }
+    const errorResponse = { success: false, id: null, error: 'Form submission failed' }
     mockResponseOnce(JSON.stringify(errorResponse))
 
     const { result, waitForNextUpdate } = renderHook(() => useFormSubmission())
