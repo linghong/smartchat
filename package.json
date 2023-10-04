@@ -17,6 +17,7 @@
   "dependencies": {
     "@pinecone-database/pinecone": "^0.1.6",
     "@types/testing-library__user-event": "^4.2.0",
+    "aws-sdk": "^2.1470.0",
     "dotenv": "^16.3.1",
     "formidable": "^3.5.1",
     "fs": "^0.0.1-security",
@@ -28,6 +29,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-select": "^5.7.3",
+    "ssh2": "^1.14.0",
     "tailwindcss": "3.3.2",
     "typescript": "5.1.3"
   },
