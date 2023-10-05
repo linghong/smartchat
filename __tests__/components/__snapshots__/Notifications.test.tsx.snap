@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Notifications Component matches the snapshot 1`] = `
+<div>
+  <div
+    className="p-4"
+  >
+    <p
+      aria-live="polite"
+      className="bold text-green-600"
+      role="status"
+    >
+      Success
+    </p>
+  </div>
+  <div
+    className="p-4"
+  >
+    <p
+      aria-live="assertive"
+      className="bold text-red-600"
+      role="alert"
+    >
+      Error
+    </p>
+  </div>
+   
+</div>
+`;
