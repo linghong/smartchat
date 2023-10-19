@@ -14,7 +14,9 @@ import { OptionType } from '@/src/types/common'
 const modelOptions: OptionType[] = [
   { value: 'gpt-3.5-turbo', label: 'GPT-3.5' },
   { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5-16k' },
-  { value: 'gpt-4', label: 'GPT-4' }
+  { value: 'gpt-4', label: 'GPT-4' },
+  { value: 'meta-llama/Llama-2-7b-chat-hf', label: 'Llama-2-7b-chat-hf' },
+  { value: 'microsoft/phi-1_5', label: 'phi-1_5' }
 ]
 
 const initialFileCategory: OptionType = {value: 'none', label: 'None'}

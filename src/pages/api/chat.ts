@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 import {  createEmbedding, getChatResponse } from '@/src/services/openai'
 import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone'
+import chatResponseFromOpensource from '@/src/services/opensourceai'
 
 export default async function handler(
   req: NextApiRequest,
@@ -27,9 +28,16 @@ export default async function handler(
       const embeddedQuery = await createEmbedding(question)
       fetchedText = await fetchDataFromPinecone(embeddedQuery, namespace)
     }
+    const { value } = selectedModel
+    let chatResponse;
 
-    const chatResponse = await getChatResponse(chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
+    if(value === 'gpt-3.5-turbo' || selectedModel === 'gpt-3.5-turbo-16k' || selectedModel === 'gpt-4') {
+      chatResponse = await getChatResponse(chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
 
+    } else {
+        chatResponse = await chatResponseFromOpensource(chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
+    }
+   
     const chatAnswer = chatResponse?? 'I am sorry. I can\'t find an answer to your question.'
 
     res.status(200).json(chatAnswer)
