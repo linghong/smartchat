@@ -8,7 +8,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, namespace, selectedModel, chatHistory } = req.body
+  const { basePrompt, question, namespace, selectedModel, chatHistory } = req.body
 
   if (!selectedModel.value) return res.status(500).json('Something went wrong')
 
@@ -24,18 +24,20 @@ export default async function handler(
 
   let fetchedText = ''
   try {
+    //fetch text from vector database
     if(namespace !== 'none') {
       const embeddedQuery = await createEmbedding(question)
       fetchedText = await fetchDataFromPinecone(embeddedQuery, namespace)
     }
+
+    // get response from AI
     const { value } = selectedModel
     let chatResponse;
-
     if(value === 'gpt-3.5-turbo' || selectedModel === 'gpt-3.5-turbo-16k' || selectedModel === 'gpt-4') {
-      chatResponse = await getChatResponse(chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
+      chatResponse = await getChatResponse(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
 
     } else {
-        chatResponse = await chatResponseFromOpensource(chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
+        chatResponse = await chatResponseFromOpensource(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
     }
    
     const chatAnswer = chatResponse?? 'I am sorry. I can\'t find an answer to your question.'

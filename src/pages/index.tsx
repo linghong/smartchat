@@ -38,6 +38,7 @@ const HomePage : FC<{
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>( initialFileCategory)
 
   const [selectedModel, setSelectedModel] = useState<OptionType | null>(modelOptions[0])
+  const [basePrompt, setBasePrompt] = useState('')
 
   const [userInput, setUserInput] = useState<string>('')
   const [rows, setRows] = useState<number>(1)
@@ -45,7 +46,7 @@ const HomePage : FC<{
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   
-  const fetchChatResponse = async (question: string, namespace: string) => {
+  const fetchChatResponse = async (basePrompt:string, question: string, namespace: string) => {
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -53,6 +54,7 @@ const HomePage : FC<{
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          basePrompt,
           question,
           chatHistory,
           namespace,
@@ -87,13 +89,13 @@ const HomePage : FC<{
     const question : string = userInput.trim()
     // prevent form submission if no text is entered
     if(question.length === 0) return
-  
+    
     setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: ''}])
     setError(null)
     setLoading(true)
     setUserInput('')
 
-    fetchChatResponse(question, selectedNamespace?.value || 'none')
+    fetchChatResponse(basePrompt, question, selectedNamespace?.value || 'none')
   }, [userInput, fetchChatResponse])
 
   const handleModelChange = (selectedOption: OptionType | null) => {
@@ -104,6 +106,10 @@ const HomePage : FC<{
     setSelectedNamespace(selectedOption)
   }
 
+  const handleBasePromptChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const basePrompt= e.target.value
+    setBasePrompt(basePrompt.trim())
+  }
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setUserInput(newValue)
@@ -157,7 +163,8 @@ const HomePage : FC<{
   return  (
     <div className="flex flex-col">
       <Header pageTitle="Chat With AI" />
-      <div className="flex flex-row justify-around">
+      <div className="flex flex-col  items-center justify-center">
+      <div className="flex flex-row w-80vw justify-around">
         <DropdownSelect 
           selectedOption={selectedModel} 
           onChange={handleModelChange}
@@ -170,7 +177,19 @@ const HomePage : FC<{
           options={fileCategoryOptions}
           label='Using Saved File:'
         />
-      </div>     
+      </div>
+      <div  className="flex flex-col w-80vw item-center p-2"
+      >
+        <label className="text-base font-bold">Enter text here for AI to remember throughout the chat:</label>
+        <textarea 
+          rows={3} 
+          name='userSystemPrompt'
+          onChange={handleBasePromptChange}
+          value={basePrompt}
+          className={`w-full placeholder-gray-400 my-2 border-2 border-indigo-300 rounded focus:ring-stone-100 focus:outline-none hover:bg-stone-50`}
+        />   
+      </div>
+       
       <div className="flex flex-col h-80vh items-center justify-between">
         <div className={`w-80vw grow bg-white border-2 border-indigo-100 rounded-lg chat-container`}>
           <div  
@@ -206,6 +225,7 @@ const HomePage : FC<{
           <ArrowButton disabled={userInput===''} />
         </form>
         { error && <Notification type="error" message={error} /> }
+        </div>
       </div>
     </div> 
   )  

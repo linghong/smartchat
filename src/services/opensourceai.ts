@@ -1,7 +1,7 @@
 import {Configuration,  OpenAIApi, ChatCompletionRequestMessageRoleEnum } from "openai"
 import { Message } from '@/src/types/chat'
 
-const chatResponseFromOpensource = async (chatHistory: Message[], userMessage : string, fetchedText: string, selectedModel: string) : Promise<string | undefined> => {
+const chatResponseFromOpensource = async (basePrompt: string, chatHistory: Message[], userMessage : string, fetchedText: string, selectedModel: string) : Promise<string | undefined> => {
   const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL
   const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
   if(!serverUrl) {
@@ -22,6 +22,7 @@ const chatResponseFromOpensource = async (chatHistory: Message[], userMessage : 
         Authorization: 'Bearer ' + serverSecretKey
       },
       body: JSON.stringify({
+        basePrompt,
         chatHistory,
         question: userMessage,
         selectedModel,

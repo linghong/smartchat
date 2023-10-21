@@ -63,7 +63,7 @@ const buildChatArray = (systemContent: string, userMessage : string, fetchedText
   return chatArray
 }
 
-export const getChatResponse = async (chatHistory: Message[],userMessage : string, fetchedText: string, selectedModel: string): Promise<string | undefined> => {
+export const getChatResponse = async (basePrompt: string, chatHistory: Message[],userMessage : string, fetchedText: string, selectedModel: string): Promise<string | undefined> => {
   const maxReturnMessageToken = 1500
 
   const htmlTagContent = selectedModel === 'gpt-4' ? 'When presenting information, please ensure to split your responses into paragraphs using <p> HTML tag. If you are providing a list, use the <ul> and <li> tags for unordered lists, <ol> and <li> tags for ordered lists. Highlight the important points using <strong> tag for bold text. Always remember to close any HTML tags that you open.' : ''
@@ -72,7 +72,7 @@ export const getChatResponse = async (chatHistory: Message[],userMessage : strin
 
   const chatArray = buildChatArray(systemContent, userMessage, fetchedText, chatHistory, maxReturnMessageToken)
 
-  const userMessageWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''" : userMessage
+  const userMessageWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''"+ '\n'+ basePrompt : userMessage +'\n' + basePrompt
 
   try {
     const chatCompletion = await openaiClient.createChatCompletion({
