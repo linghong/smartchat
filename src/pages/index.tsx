@@ -10,7 +10,6 @@ import Notification from '@/src/components/Notification'
 import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
-
 const modelOptions: OptionType[] = [
   { value: 'gpt-3.5-turbo', label: 'GPT-3.5' },
   { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5-16k' },
@@ -178,20 +177,20 @@ const HomePage : FC<{
           label='Using Saved File:'
         />
       </div>
-      <div  className="flex flex-col w-80vw item-center p-2"
+      <div  className="flex flex-col w-80vw item-center py-2"
       >
         <label className="text-base font-bold">Enter text here for AI to remember throughout the chat:</label>
         <textarea 
-          rows={3} 
+          rows={2} 
           name='userSystemPrompt'
           onChange={handleBasePromptChange}
           value={basePrompt}
-          className={`w-full placeholder-gray-400 my-2 border-2 border-indigo-300 rounded focus:ring-stone-100 focus:outline-none hover:bg-stone-50`}
+          className={`w-full placeholder-gray-400 my-2 p-2 border-2 border-indigo-300 rounded focus:ring-stone-100 focus:outline-none hover:bg-stone-50`}
         />   
       </div>
        
-      <div className="flex flex-col h-80vh items-center justify-between">
-        <div className={`w-80vw grow bg-white border-2 border-indigo-100 rounded-lg chat-container`}>
+      <div className="flex flex-col w-80vw h-60vh items-center justify-between">
+        <div className={`w-80vw grow bg-white border-2 border-stone-200 overflow-y-auto`}>
           <div  
             className="w-full h-full overflow-y-scroll rounded-lg"
             ref={messagesRef}

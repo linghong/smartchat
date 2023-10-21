@@ -13,7 +13,7 @@ const ChatMessage: React.FC<ChatMessageProps>  = ({message, lastIndex, loading})
     <>
       {message?.question?.length !== 0 && 
         <div 
-          className="flex p-3 text-black"
+          className="flex px-3 py-2 text-black"
         >
           <Image
             src="/user.png"
@@ -26,7 +26,7 @@ const ChatMessage: React.FC<ChatMessageProps>  = ({message, lastIndex, loading})
           <p>{message.question}</p>
         </div>}
       {<div 
-        className="flex p-3 bg-slate-100 color-black ease-in duration-300"
+        className="flex px-3 py-2 bg-slate-100 color-black ease-in duration-300"
       >
         <Image
           src="/bot.png"
