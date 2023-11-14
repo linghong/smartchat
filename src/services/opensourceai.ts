@@ -1,33 +1,27 @@
-import {Configuration,  OpenAIApi, ChatCompletionRequestMessageRoleEnum } from "openai"
 import { Message } from '@/src/types/chat'
 
-const chatResponseFromOpensource = async (basePrompt: string, chatHistory: Message[], userMessage : string, fetchedText: string, selectedModel: string) : Promise<string | undefined> => {
-  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL
+const chatResponseFromOpensource = async (basePrompt: string, chatHistory: Message[], userMessage : string, fetchedText: string, selectedModel: string, serverURL: string) : Promise<string | undefined> => {
   const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
-  if(!serverUrl) {
-    return 'Url address for posting the data is missing'
-  }
   if(!serverSecretKey) {
     return 'Sever secret key is missing'
   }
 
-  const endpoint = 'chat/opensourcemodel'
-  const url = `${serverUrl}/api/${endpoint}`
+  const data = {
+    question: userMessage,
+    basePrompt,
+    chatHistory,      
+    selectedModel,
+    fetchedText
+  }
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(serverURL, {
       method: 'POST',
       headers:{
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + serverSecretKey
       },
-      body: JSON.stringify({
-        basePrompt,
-        chatHistory,
-        question: userMessage,
-        selectedModel,
-        fetchedText
-      })
+      body: JSON.stringify(data)
     })
 
     if (!res.ok) {

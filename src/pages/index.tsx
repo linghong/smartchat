@@ -18,8 +18,8 @@ const modelOptions: OptionType[] = [
   { value: 'gpt-4-vision-preview', label: 'GPT-4-128k-Vision-Preview', category: 'openai' },
   { value: 'gpt-4', label: 'GPT-4', category: 'openai' },
   { value: 'gpt-4-32k', label: 'GPT-4-32k', category: 'openai' },
-  { value: 'meta-llama/Llama-2-7b-chat-hf', label: 'Llama-2-7b-chat-hf', category:'hf-small' },
-  { value: 'microsoft/phi-1_5', label: 'phi-1_5',  category:"hf-large" }
+  { value: 'meta-llama/Llama-2-7b-chat-hf', label: 'Llama-2-7b-chat-hf', category:'hf-large' },
+  { value: 'microsoft/phi-1_5', label: 'phi-1_5',  category:"hf-small" }
 ]
 
 const initialFileCategory: OptionType = {value: 'none', label: 'None'}

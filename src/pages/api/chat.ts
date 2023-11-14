@@ -8,6 +8,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+ 
   const { basePrompt, question, namespace, selectedModel, chatHistory } = req.body
 
   if (!selectedModel.value) return res.status(500).json('Something went wrong')
@@ -21,7 +22,7 @@ export default async function handler(
   }
   // replacing newlines with spaces
   const sanitizedQuestion = question.trim().replaceAll('\n', ' ')
-
+ 
   let fetchedText = ''
   try {
     //fetch text from vector database
@@ -36,8 +37,23 @@ export default async function handler(
     if(category === 'openai') {
       chatResponse = await getChatResponse(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
 
+    } else if (category === 'hf-small'){  
+      
+      const baseUrl= process.env.NEXT_PUBLIC_SERVER_URL
+
+      if(!baseUrl) {
+        return `Url address for posting the data to ${selectedModel} is missing`
+      }
+      const url = `${baseUrl}/api/chat_cpu`
+      chatResponse = await chatResponseFromOpensource(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value, url)
+
     } else {
-        chatResponse = await chatResponseFromOpensource(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
+      const baseUrl = process.env.NEXT_PUBLIC_SERVER_GPU_URL
+      if(!baseUrl) {
+        return `Url address for posting the data to ${selectedModel} is missing.`
+      }
+      const url = `${baseUrl}/api/chat_gpu`
+      chatResponse = await chatResponseFromOpensource(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value, url)
     }
    
     const chatAnswer = chatResponse?? 'I am sorry. I can\'t find an answer to your question.'
