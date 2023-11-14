@@ -11,12 +11,12 @@ export const openaiClient = new OpenAI({
 });
 
 export const createEmbedding = async (text: string): Promise<number[]> => {
-  const embedding = await openaiClient.createEmbedding({
+  const embedding = await openaiClient.embeddings.create({
     model: "text-embedding-ada-002",
     input: text,
   });
 
-  return embedding.data.data[0].embedding;
+  return embedding.data[0].embedding;
 }
 
 const buildChatArray = (systemContent: string, userMessage : string, fetchedText: string, chatHistory: Message[], maxReturnMessageToken: number) => {
