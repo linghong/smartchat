@@ -1,20 +1,14 @@
-import {Configuration,  OpenAIApi, ChatCompletionRequestMessageRoleEnum } from "openai"
+import { OpenAI } from "openai"
 import  { encode } from 'gpt-tokenizer'
-import { Message } from '@/src/types/chat'
+import { Message, ChatType, ChatRole } from '@/src/types/chat'
+
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 if (!OPENAI_API_KEY) throw new Error('Missing OpenAI API key');
 
-type ChatType = {
-  role: ChatCompletionRequestMessageRoleEnum,
-  content: string
-}
-
-const configuration = new Configuration({
+export const openaiClient = new OpenAI({
   apiKey: OPENAI_API_KEY,
 });
-
-export const openaiClient = new OpenAIApi(configuration);
 
 export const createEmbedding = async (text: string): Promise<number[]> => {
   const embedding = await openaiClient.createEmbedding({
@@ -27,31 +21,31 @@ export const createEmbedding = async (text: string): Promise<number[]> => {
 
 const buildChatArray = (systemContent: string, userMessage : string, fetchedText: string, chatHistory: Message[], maxReturnMessageToken: number) => {
   // after comparing the token count received from OpenAI, it seems that counting tokens in the way shown below matches better with Open AI's token number.
-  const tokenCount = (role: ChatCompletionRequestMessageRoleEnum, str: string) => {
+  const tokenCount = (role: ChatRole, str: string) => {
     return encode(
     `role ${role} content ${str} `).length
   }
   const tokenUsed = tokenCount('system',
-  systemContent) + tokenCount("assistant",
-  fetchedText) + tokenCount("user",
+  systemContent) + tokenCount('assistant',
+  fetchedText) + tokenCount('user',
   userMessage)
   let tokenLeft = 4000 - tokenUsed - maxReturnMessageToken
 
   let chatArray: ChatType[] = []
 
   let len = chatHistory.length
-  tokenLeft -= tokenCount("user",
-  chatHistory[len-1].question)  + tokenCount("assistant",
+  tokenLeft -= tokenCount('user',
+  chatHistory[len-1].question)  + tokenCount('assistant',
   chatHistory[len-1].answer)
 
   for (let i = chatHistory.length - 1; i >= 0 && tokenLeft > 0; i--) {
     const chat = chatHistory[i]
     chatArray.push({
-      role: "assistant",
+      role: 'assistant',
       content: chat.answer
     })
     chatArray.push( {
-      role:"user",
+      role: 'user',
       content: chat.question
     })
     tokenLeft -= tokenCount("user",
@@ -74,8 +68,8 @@ export const getChatResponse = async (basePrompt: string, chatHistory: Message[]
 
   const userMessageWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''"+ '\n'+ basePrompt : userMessage +'\n' + basePrompt
 
-  try {
-    const chatCompletion = await openaiClient.createChatCompletion({
+  try { 
+    const completion = await openaiClient.chat.completions.create({
         model: selectedModel,
         temperature: 0,
         max_tokens: maxReturnMessageToken,
@@ -92,12 +86,11 @@ export const getChatResponse = async (basePrompt: string, chatHistory: Message[]
           content: userMessageWithFetchedData
         }],
     })
-
-    const res = chatCompletion.data;
-    if (!res) throw new Error('Chat completion data is undefined.')
-    if (!res.usage) throw new Error('Chat completion data is undefined.')
-    if(res.choices[0].finish_reason !== 'stop') console.log(`AI message isn't complete.`)
-    let message = res.choices[0].message?.content?? ''
+  
+    if (!completion) throw new Error('Chat completion data is undefined.')
+    if (!completion.usage) throw new Error('Chat completion data is undefined.')
+    if(completion.choices[0].finish_reason !== 'stop') console.log(`AI message isn't complete.`)
+    let message = completion.choices[0].message?.content?? ''
     message = selectedModel === 'gpt-4' ? message : message.replace(/\n/g, '<br>')
 
     return message

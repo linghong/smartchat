@@ -2,6 +2,7 @@
 export type OptionType = {
   value: string;
   label: string;
+  category?: string;
 }
 
 export type ApiResponse = {

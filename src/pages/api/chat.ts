@@ -31,9 +31,9 @@ export default async function handler(
     }
 
     // get response from AI
-    const { value } = selectedModel
+    const { category } = selectedModel
     let chatResponse;
-    if(value === 'gpt-3.5-turbo' || selectedModel === 'gpt-3.5-turbo-16k' || selectedModel === 'gpt-4') {
+    if(category === 'openai') {
       chatResponse = await getChatResponse(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
 
     } else {

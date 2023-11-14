@@ -11,11 +11,15 @@ import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
 const modelOptions: OptionType[] = [
-  { value: 'gpt-3.5-turbo', label: 'GPT-3.5' },
-  { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5-16k' },
-  { value: 'gpt-4', label: 'GPT-4' },
-  { value: 'meta-llama/Llama-2-7b-chat-hf', label: 'Llama-2-7b-chat-hf' },
-  { value: 'microsoft/phi-1_5', label: 'phi-1_5' }
+  { value: 'gpt-3.5-turbo', label: 'GPT-3.5', category: 'openai' },
+  { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5-16k', category: 'openai' },
+  { value: 'gpt-3.5-turbo-1106', label: 'GPT-3.5-16k-Latest', category: 'openai' },
+  { value: 'gpt-4-1106-preview', label: 'GPT-4-128k-Preview', category: 'openai' },
+  { value: 'gpt-4-vision-preview', label: 'GPT-4-128k-Vision-Preview', category: 'openai' },
+  { value: 'gpt-4', label: 'GPT-4', category: 'openai' },
+  { value: 'gpt-4-32k', label: 'GPT-4-32k', category: 'openai' },
+  { value: 'meta-llama/Llama-2-7b-chat-hf', label: 'Llama-2-7b-chat-hf', category:'hf-small' },
+  { value: 'microsoft/phi-1_5', label: 'phi-1_5',  category:"hf-large" }
 ]
 
 const initialFileCategory: OptionType = {value: 'none', label: 'None'}
@@ -33,7 +37,7 @@ const HomePage : FC<{
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null> (null)
 
-  const fileCategoryOptions = [ initialFileCategory, ...namespaces.map(ns => ({ value: ns, label: ns }))];
+  const fileCategoryOptions = [ initialFileCategory, ...namespaces.map(ns => ({ value: ns, label: ns}))];
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>( initialFileCategory)
 
   const [selectedModel, setSelectedModel] = useState<OptionType | null>(modelOptions[0])
@@ -233,7 +237,7 @@ export default HomePage
 
 export const getStaticProps: GetStaticProps = async () => {
   const { namespaces } = await fetchData('namespaces');
-
+    
   return {
     props: {
       namespaces
