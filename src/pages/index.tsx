@@ -111,7 +111,7 @@ const HomePage : FC<{
 
   const handleBasePromptChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const basePrompt= e.target.value
-    setBasePrompt(basePrompt.trim())
+    setBasePrompt(basePrompt)
   }
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
