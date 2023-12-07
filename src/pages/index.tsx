@@ -33,11 +33,12 @@ const HomePage : FC<{
   isNewChat: boolean, 
   setIsNewChat: (value: boolean) => void, 
   namespaces: string[]
-}> = ({ isNewChat, setIsNewChat, namespaces = [initialFileCategory.value] }) => {
+}> = ({ isNewChat, setIsNewChat, namespaces}) => {
+
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null> (null)
 
-  const fileCategoryOptions = [ initialFileCategory, ...namespaces.map(ns => ({ value: ns, label: ns}))];
+  const fileCategoryOptions = namespaces === null ?[ initialFileCategory]: [ initialFileCategory, ...namespaces.map(ns => ({ value: ns, label: ns}))];
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>( initialFileCategory)
 
   const [selectedModel, setSelectedModel] = useState<OptionType | null>(modelOptions[0])
@@ -236,12 +237,14 @@ const HomePage : FC<{
 export default HomePage
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { namespaces } = await fetchData('namespaces');
-    
+
+  const response = await fetchData('namespaces')
+  const namespaces = response?.namespaces || null // default to null if undefined
+
   return {
     props: {
       namespaces
     },
-    revalidate: 60 * 60 *24 // This is optional. It ensures regeneration of the page after every 24 hour
+    revalidate: 60 * 60 * 24 // Regenerate the page after every 24 hours
   }
 }
