@@ -3,6 +3,10 @@
 SmartChat is a state-of-the-art chatbot platform developed using [Next.js](https://nextjs.org/) and TypeScript.  It offers users the ability to upload PDF documents, which are then segmented and stored within the Pinecone vector database. When users pose questions to the chatbot, if their inquiries relate to the uploaded data, the chatbot fetches and references relevant sections from the stored PDF data to provide precise answers.
 
 ## Features
+### Chatbot Using Various AI Models
+This AI chat platform can allow you to select from various OpenAI LLM models, and then forward user messages to OpenAI to generate responses.
+
+The platform can also relay messages to a remote backend (refer to the SmartChat-fastAPI repository), which, once configured, can run open-source AI models.
 
 ### PDF Upload: 
 Users have the ability to upload documents in PDF format, with options to customize how their data is processed to suit their preferences.
@@ -11,11 +15,11 @@ Users have the ability to upload documents in PDF format, with options to custom
 Data extracted from the uploaded PDFs undergoes a series of transformations. It is chunked and embedded using an advanced embedding model before being securely stored in Pinecone, a high-performance vector database, ensuring efficient and precise retrieval of information when needed.
 
 ### Intelligent Responses: 
-Empowered by the Retrieval-Augmented Generation (RAG), the chatbot can intelligently reference specific parts of the uploaded data to deliver precise and contextually aware responses to user inquiries.
+Empowered by the Retrieval-Augmented Generation (RAG), the chatbot can intelligently reference specific parts of the uploaded data to deliver contextually aware responses to user inquiries.
 
 ### AI Model Finetuning: 
-Users can refine AI models to meet their specific needs by uploading training data and selecting appropriate fine-tuning parameters. The fine-tuning requirements are sent to the server, hosted at [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi). This server will process the fine-tuning requirements, allowing for a more tailored user experience.
-
+Users can refine AI models to meet their specific needs by uploading training data and selecting appropriate fine-tuning parameters. The fine-tuning requirements are sent to the server, which can be set up using the code at [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi). This server processes the fine-tuning requirements, allowing for a more tailored user experience.
+ 
 ## Getting Started
 
 ### Clone the Repository and Install Dependency:
@@ -26,6 +30,9 @@ yarn install
 ### Setup OpenAI and Pinecone
 Sign up for an account on OpenAI and Pinecone.
 Generate the necessary API keys from the respective platforms.
+
+### Create Pinecone Index
+Access your Pinecone account and establish an index with the dimension set to 1536 and the metric set to cosine.
 
 ### Configure Environment Variables
 Copy the .env.example file and rename it to .env.
