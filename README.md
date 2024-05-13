@@ -19,6 +19,25 @@ Empowered by the Retrieval-Augmented Generation (RAG), the chatbot can intellige
 
 ### AI Model Finetuning: 
 Users can refine AI models to meet their specific needs by uploading training data and selecting appropriate fine-tuning parameters. The fine-tuning requirements are sent to the server, which can be set up using the code at [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi). This server processes the fine-tuning requirements, allowing for a more tailored user experience.
+
+## Screenshots
+Here are some screenshots that illustrate various features of the SmartChat platform:
+
+### SmartChat Home Interface
+![SmartChat Home](images/chat-no-rag.png)  
+*The SmartChat home screen showing the chat interface without RAG initiated.*
+
+### PDF Upload Feature
+![PDF Upload Feature](images/pdf-upload.png)  
+*Screenshot of the PDF upload interface, which allows users to process documents for chatbot interaction.*
+
+### RAG Response Generation
+![RAG Response Generation](images/chat-with-rag.png)  
+*Example of the chatbot generating a response using the embedded data.*
+
+### Finetuning Data Submissions Page
+![Finetuning Data Submissions Page](images/finetuning.png)  
+*This interface allows users to submit data for fine-tuning OpenAI models, tailored to specific needs.*
  
 ## Getting Started
 
