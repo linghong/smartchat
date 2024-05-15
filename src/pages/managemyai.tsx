@@ -170,94 +170,99 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
   return (
     <div className="flex flex-col items-center w-full">
       <Header pageTitle="Manage My AI" />
-      <form className="flex flex-col h-60vh lg:h-40vh p-10 justify-between bg-slate-50 border border-indigo-100">
-      <UploadFile 
-          label="Upload Training Data: "
-          fileType=".pdf"
-          name='uploadFile'
-          uploadErrors={uploadErrors}
-          setUploadErrors={setUploadErrors}
-          setSelectedUpload={setSelectedUpload}
-        /> 
-        <div className="flex flex-col lg:flex-row justify-start"> 
-          <div className="lg:w-50 mr-20 my-2">
-            <DropDownSelect
-              name='fileCategory' 
-              selectedOption={selectedDropDown.fileCategory} 
-              onChange={handleDropDownChange}
-              options={fileCategoryOptions}
-              label='Select File Category:'
-            />
-          </div>       
-          {showAddNewCategory && 
-            <div className="flex items-center lg:w-50 my-2">
-              <label htmlFor="newCategoryOption" className="font-bold mr-5">
-                New Category:
+      <form className="flex flex-col h-60vh lg:h-40vh p-3 justify-between ">        
+        <div className="flex flex-col my-5 p-5 bg-slate-50  border border-indigo-100 shadow-md rounded">
+          <UploadFile 
+            label="Upload File: "
+            fileType=".pdf"
+            name='uploadFile'
+            uploadErrors={uploadErrors}
+            setUploadErrors={setUploadErrors}
+            setSelectedUpload={setSelectedUpload}
+          /> 
+          <div className="flex flex-col lg:flex-row justify-start"> 
+            <div className="lg:w-50 mr-20 my-2">
+              <DropDownSelect
+                name='fileCategory' 
+                selectedOption={selectedDropDown.fileCategory} 
+                onChange={handleDropDownChange}
+                options={fileCategoryOptions}
+                label='Select File Category:'
+              />
+            </div>       
+            {showAddNewCategory && 
+              <div className="flex items-center lg:w-50 my-2">
+                <label htmlFor="newCategoryOption" className="font-bold mr-5">
+                  New Category:
+                </label>
+                <input 
+                  type="text"
+                  name="newFileCategory"
+                  className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-blue-500 focus:outline-none"
+                  onChange={handleInputChange}
+                />  
+                <button 
+                  className="py-1.5"
+                  aria-label="Add New Category" 
+                  onClick={handleAddCategoryToDropDown}
+                >
+                  <PlusIcon aria-hidden="true" />
+                </button> 
+              </div>
+            }       
+          </div> 
+        </div>
+        <div className="flex flex-col my-5 p-5 bg-slate-50  border border-indigo-100 shadow-md rounded">
+          <div className="flex flex-col lg:flex-row justify-start">
+            <div className="lg:w-50 my-5">
+              <label htmlFor="chunkSize" className="font-bold mr-2 py-1.5">
+                Chunk Size:
               </label>
               <input 
-                type="text"
-                name="newFileCategory"
-                className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-blue-500 focus:outline-none"
+                type="number"
+                name="chunkSize"
+                value={selectedInput.chunkSize?.toString()}
+                className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
                 onChange={handleInputChange}
-              />  
-              <button 
-                className="py-1.5"
-                aria-label="Add New Category" 
-                onClick={handleAddCategoryToDropDown}
-              >
-                <PlusIcon aria-hidden="true" />
-              </button> 
+                onBlur={handleInputBlur}
+              />
             </div>
-          }       
-        </div>         
-        <div className="flex flex-col lg:flex-row justify-start">
-          <div className="lg:w-50 my-5">
-            <label htmlFor="chunkSize" className="font-bold mr-2 py-1.5">
-              Chunk Size:
-            </label>
-            <input 
-              type="number"
-              name="chunkSize"
-              value={selectedInput.chunkSize?.toString()}
-              className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-            />
-          </div>
-          <div className="lg:w-50 my-5 justify-start">
-            <label htmlFor="chunkOverlapSize" className="font-bold mr-2 py-1.5">
-              Chunk Overlap:
-            </label>
-            <input 
-              type="number"
-              name="chunkOverlap"
-              value={selectedInput.chunkOverlap?.toString()}
-              className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-            />       
-          </div>
-          
+            <div className="lg:w-50 my-5 justify-start">
+              <label htmlFor="chunkOverlapSize" className="font-bold mr-2 py-1.5">
+                Chunk Overlap:
+              </label>
+              <input 
+                type="number"
+                name="chunkOverlap"
+                value={selectedInput.chunkOverlap?.toString()}
+                className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+              />       
+            </div>          
+          </div>               
         </div>
-        <div className="flex justify-start my-2">
-          <DropDownSelect
-            name='embeddingModel' 
-            selectedOption={selectedDropDown.embeddingModel} 
-            onChange={handleDropDownChange}
-            options={embeddingModelOptions}
-            label='Embedding Model:'
-          /> 
-        </div>          
-        <div className="flex justify-end my-2">
-          <button
-            type="submit"
-            className=  {`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-10 py-3 px-10 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}
-            onClick={handleSubmit}
-            disabled={isLoading}
-          >
-            Submit
-          </button>
+        <div className="flex flex-col my-5 p-5 bg-slate-50  border border-indigo-100 shadow-md rounded">
+          <div className="flex justify-start">
+            <DropDownSelect
+              name='embeddingModel' 
+              selectedOption={selectedDropDown.embeddingModel} 
+              onChange={handleDropDownChange}
+              options={embeddingModelOptions}
+              label='Embedding Model:'
+            /> 
+          </div>  
         </div>
+      <div className="flex justify-end my-10">
+        <button
+          type="submit"
+          className=  {`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-5 py-4 px-20 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}
+          onClick={handleSubmit}
+          disabled={isLoading}
+        >
+          Submit
+        </button>
+        </div>        
         <Notifications
           isLoading={isLoading}
           loadingMessage="Uploading and processing your file. This may take a few minutes. Please wait..."
