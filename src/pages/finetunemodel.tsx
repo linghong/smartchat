@@ -3,12 +3,12 @@ import { ActionMeta} from 'react-select'
 
 import Checkbox from '@/src/components/Checkbox'
 import DropdownSelect from '@/src/components/DropdownSelect'
+import FieldSet from '@/src/components/FieldSet'
 import Header from '@/src/components/Header'
 import Notifications from '@/src/components/Notification'
 import UploadFile from '@/src/components/UploadFile'
 import { useFormSubmission, useInputChange } from '@/src/hooks'
 import { OptionType, InputErrors, InputData, UploadData, UploadErrors } from '@/src/types/common'
-
 interface DropdownData {
   finetuningModel: {
     value: string;
@@ -176,119 +176,129 @@ const FinetuneModel: FC = () => {
   return (
     <div className="flex flex-col items-center w-full">
       <Header pageTitle="Finetune AI Model" />
-      <form className="flex flex-col  p-10 justify-start bg-slate-50 border border-indigo-100">
-        <UploadFile 
-          label="Upload Training File: "
-          fileType=".jsonl"
-          name="trainingFile"
-          uploadErrors={uploadErrors}
-          setUploadErrors={setUploadErrors}
-          setSelectedUpload={setSelectedUpload}
-        /> 
-        <UploadFile 
-          label="Upload Validation File (optional): "
-          fileType=".jsonl"
-          name="validationFile"
-          uploadErrors={uploadErrors}
-          setUploadErrors={setUploadErrors}
-          setSelectedUpload={setSelectedUpload}
-        /> 
-        <div className="flex justify-start my-5">
-          <DropdownSelect
-            name='finetuningModel' 
-            selectedOption={selectedDropdown.finetuningModel} 
-            onChange={handleDropdownChange}
-            options={finetuningOptions}
-            label='Select Finetuning Model:'
+      <form className="flex flex-col justify-start">
+        <FieldSet>
+        <div className="flex justify-start my-3">
+          <UploadFile 
+            label="Upload Training File: "
+            fileType=".jsonl"
+            name="trainingFile"
+            uploadErrors={uploadErrors}
+            setUploadErrors={setUploadErrors}
+            setSelectedUpload={setSelectedUpload}
           />
-        </div>
-        <div className="my-5">
-          <label htmlFor="epochs" className="font-bold mr-2 py-1.5">
-            Number of Epochs:
-          </label>
-          <input 
-            type="number"
-            name="epochs"
-            value={(selectedInput.epochs)?.toString()}
-            className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-           <p>Number of training cycles. Excessive training can lead to over-fitting; too few can result in under-fitting.</p>
-          { 
-            isOpenAIModel && <Checkbox 
-            label="Let OpenAI decide epochs" 
-            setIsChecked={setIsChecked}/>
-          }
-        </div>
-        {
-          isOpenAIModel &&<div className="my-5">
-            <label htmlFor="suffix" className="font-bold mr-2 py-1.5">
-              Suffix(Optional):
+          </div>
+          <div className="flex justify-start my-3">
+            <UploadFile 
+              label="Upload Validation File (optional): "
+              fileType=".jsonl"
+              name="validationFile"
+              uploadErrors={uploadErrors}
+              setUploadErrors={setUploadErrors}
+              setSelectedUpload={setSelectedUpload}
+            /> 
+          </div> 
+          
+        </FieldSet>
+        <FieldSet> 
+          <div className="flex justify-start my-3">
+            <DropdownSelect
+              name='finetuningModel' 
+              selectedOption={selectedDropdown.finetuningModel} 
+              onChange={handleDropdownChange}
+              options={finetuningOptions}
+              label='Select Finetuning Model:'
+            />
+          </div>
+          <div className="my-3">
+            <label htmlFor="epochs" className="font-bold mr-2 py-1.5">
+              Number of Epochs:
             </label>
             <input 
-              type="text"
-              name="suffix"
-              value={(selectedInput.suffix)?.toString()}
+              type="number"
+              name="epochs"
+              value={(selectedInput.epochs)?.toString()}
               className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
               onChange={handleInputChange}
               onBlur={handleInputBlur}
             />
-            <p>A string of up to 18 characters that will be added to your fine-tuned model name.</p>
+            <p>Number of training cycles. Excessive training can lead to over-fitting; too few can result in under-fitting.</p>
+            { 
+              isOpenAIModel && <Checkbox 
+              label="Let OpenAI decide epochs" 
+              setIsChecked={setIsChecked}/>
+            }
           </div>
-        }
-        { 
-          !isOpenAIModel && <div className="my-5">
-            <label htmlFor="batchSize" className="font-bold mr-2 py-1.5">
-              Batch Size:
-            </label>
-            <input 
-              type="number"
-              name="batchSize"
-              value={selectedInput.batchSize?.toString()}
-              className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-            />
-            <p>Ensure each batch&apos;s token count should not exceed the model&apos;s token limit.</p>
-          </div> 
-        }
-        { 
-          !isOpenAIModel && <div className="my-5">
-            <label htmlFor="learningRateMultiplier" className="font-bold mr-2 py-1.5">
-              Learning Rate Multiplier:
-            </label>
-            <input 
-              type="number"
-              name="learningRateMultiplier"
-              value={selectedInput.learningRateMultiplier?.toString()}
-              className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-            />
-            <p>Controls the decay of the model&apos;s learning rate. A higher rate speeds up learning but risks overshooting optimal results.</p>
-          </div>
-        }
-        {
-          !isOpenAIModel && <div className="my-5">
-            <label htmlFor="promptLossWeight" className="font-bold mr-2 py-1.5">
-              Prompt Loss Weight:
-            </label>
-            <input
-              type="number"
-              name="promptLossWeight"
-              value={selectedInput.promptLossWeight?.toString()}
-              className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-            />
-            <p>controls the balance between model&apos;s adherence to prompts and its text generation capability</p>
-          </div>
-        }
-        <div className="flex justify-end my-2">
+          {
+            isOpenAIModel &&<div className="my-3">
+              <label htmlFor="suffix" className="font-bold mr-2 py-1.5">
+                Suffix(Optional):
+              </label>
+              <input 
+                type="text"
+                name="suffix"
+                value={(selectedInput.suffix)?.toString()}
+                className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+              />
+              <p>A string of up to 18 characters that will be added to your fine-tuned model name.</p>
+            </div>
+          }
+          { 
+            !isOpenAIModel && <div className="my-3">
+              <label htmlFor="batchSize" className="font-bold mr-2 py-1.5">
+                Batch Size:
+              </label>
+              <input 
+                type="number"
+                name="batchSize"
+                value={selectedInput.batchSize?.toString()}
+                className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+              />
+              <p>Ensure each batch&apos;s token count should not exceed the model&apos;s token limit.</p>
+            </div> 
+          }
+          { 
+            !isOpenAIModel && <div className="my-3">
+              <label htmlFor="learningRateMultiplier" className="font-bold mr-2 py-1.5">
+                Learning Rate Multiplier:
+              </label>
+              <input 
+                type="number"
+                name="learningRateMultiplier"
+                value={selectedInput.learningRateMultiplier?.toString()}
+                className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+              />
+              <p>Controls the decay of the model&apos;s learning rate. A higher rate speeds up learning but risks overshooting optimal results.</p>
+            </div>
+          }
+          {
+            !isOpenAIModel && <div className="my-3">
+              <label htmlFor="promptLossWeight" className="font-bold mr-2 py-1.5">
+                Prompt Loss Weight:
+              </label>
+              <input
+                type="number"
+                name="promptLossWeight"
+                value={selectedInput.promptLossWeight?.toString()}
+                className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+              />
+              <p>controls the balance between model&apos;s adherence to prompts and its text generation capability</p>
+            </div>
+          }
+        </FieldSet>
+       
+        <div className="flex justify-end my-10">
           <button
             type="submit"
-            className=  {`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-10 py-3 px-10 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}
+            className=  {`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-5 py-4 px-20 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}
             onClick={handleSubmit}
             disabled={isLoading}
           >
@@ -304,7 +314,7 @@ const FinetuneModel: FC = () => {
           inputErrors={inputErrors}
         />
       </form>
-      <div className="flex flex-col h-40vh items-center justify-between"></div>
+      <div className="flex flex-col h-20vh items-center"></div>
     </div>
   )
 }
