@@ -24,20 +24,28 @@ Users can refine AI models to meet their specific needs by uploading training da
 Here are some screenshots that illustrate various features of the SmartChat platform:
 
 ### SmartChat Home Interface
-![SmartChat Home](images/chat-no-rag.png)  
+<div align="center" padding: 10px;">
+  <img src="images/chat-no-rag.png" width="90%" alt="SmartChat Home">
+</div>  
 *The SmartChat home screen showing the chat interface without RAG initiated.*
 
+### RAG Response Generation
+<div align="center" padding: 10px;">
+  <img src="images/chat-with-rag.png" width="90%" alt="RAG Response Generation">
+</div> 
+*Example of the chatbot generating a response using embedded data.*
+
 ### PDF Upload Feature
-![PDF Upload Feature](images/pdf-upload.png)  
+<div align="center" padding: 10px;">
+  <img src="images/pdf-upload.png" width="90%" alt="PDF Upload Feature">
+</div>  
 *Screenshot of the PDF upload interface, which allows users to process documents for chatbot interaction.*
 
-### RAG Response Generation
-![RAG Response Generation](images/chat-with-rag.png)  
-*Example of the chatbot generating a response using the embedded data.*
-
 ### Finetuning Data Submissions Page
-![Finetuning Data Submissions Page](images/finetuning.png)  
-*This interface allows users to submit data for fine-tuning OpenAI models, tailored to specific needs.*
+<div align="center" padding: 10px;">
+  <img src="images/finetuning.png" width="90%" alt="Finetuning Data Submissions Page">
+</div>
+*This interface allows users to submit data to OpenAI for fine-tuning OpenAI models or to the SmartChat-FastAPI server for fine-tuning using open-source generative models hosted on the GPU, tailored to specific needs.*
  
 ## Getting Started
 
