@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Notifications Component matches the snapshot 1`] = `
-<div>
+[
   <div
     className="p-4"
   >
@@ -12,7 +12,7 @@ exports[`Notifications Component matches the snapshot 1`] = `
     >
       Success
     </p>
-  </div>
+  </div>,
   <div
     className="p-4"
   >
@@ -23,7 +23,6 @@ exports[`Notifications Component matches the snapshot 1`] = `
     >
       Error
     </p>
-  </div>
-   
-</div>
+  </div>,
+]
 `;

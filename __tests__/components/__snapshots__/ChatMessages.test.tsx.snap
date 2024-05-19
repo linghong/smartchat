@@ -3,7 +3,7 @@
 exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="flex p-3 text-black"
+    class="flex px-3 py-2 text-black"
   >
     <img
       alt="User"
@@ -22,7 +22,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
     </p>
   </div>
   <div
-    class="flex p-3 bg-slate-100 color-black ease-in duration-300"
+    class="flex px-3 py-2 bg-slate-100 color-black ease-in duration-300"
   >
     <img
       alt="AI Bot"
