@@ -1,18 +1,19 @@
 import React, { FC } from 'react'
 import MenuItem from './MenuItem'
 import PlusIcon from './PlusIcon'
+import { useRouter } from 'next/router'
 
-interface SidebarProps {
-  onNewChat: () => void;
-}
-
-const Sidebar : FC<SidebarProps>= ({ onNewChat }) => {
+const Sidebar : FC<SidebarProps>= () => {
+  const router = useRouter()
+  const onNewChat = () => {
+    router.push('/')
+  };
 
   return (
     <div className="w-80 bg-slate-600 text-slate-50">
-       <ul className="px-4 py-2 m-0">
-          <li  id="newChat" className="newChat flex pl-4 py-5 font-semibold hover:bg-slate-400 focus:bg-indigo-100">
-            <div className="flex bg-slate-500 rounded-xl pl-4 pr-12 py-1" onClick = { onNewChat }>
+       <ul className="px-2  py-5 mr-4">
+          <li  id="newChat" className="flex justify-center p-2 py-1 font-semibold hover:bg-slate-400 hover:rounded focus:bg-indigo-100">
+            <div id="newChatDiv" className="flex w-full justify-center px-5 py-2 bg-slate-500 rounded-xl" onClick = { onNewChat }>
               <PlusIcon /> 
               <span>New Chat</span>
             </div>
