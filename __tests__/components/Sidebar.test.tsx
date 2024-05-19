@@ -1,47 +1,68 @@
 import React from 'react'
-import { render, screen, fireEvent, RenderResult } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import Sidebar from '@/src/components/Sidebar' 
+import { render, fireEvent, screen } from '@testing-library/react'
+import { act } from 'react-dom/test-utils'
+import Sidebar from '@/src/components/Sidebar' // Adjust the import path as needed
+
+
+jest.mock('next/router', () => require('next-router-mock'))
 
 describe('Sidebar Component', () => {
-  
-  let mockOnNewChat: jest.Mock
-  let renderedComponent : RenderResult
-  
+  const mockOnNewChat = jest.fn()
+
   beforeEach(() => {
-    mockOnNewChat = jest.fn()
-    renderedComponent = render(<Sidebar onNewChat={mockOnNewChat} />)
+    // Reset mock and render the component before each test
+    mockOnNewChat.mockReset()
+    
+    act(() => {
+      render(<Sidebar onNewChat={mockOnNewChat} />)
+    })
   })
 
-  test('renders Sidebar component', () => {
+  test('renders Sidebar component with all expected elements', () => {
     expect(screen.getByText('New Chat')).toBeInTheDocument()
     expect(screen.getByText('Manage My AI')).toBeInTheDocument()
     expect(screen.getByText('Finetune AI Model')).toBeInTheDocument()
     expect(screen.getByText('Chat with AI')).toBeInTheDocument()
   })
 
-  test('calls onNewChat when New Chat is clicked', () => {
-    fireEvent.click(screen.getByText('New Chat'))
+  test('initially renders child menu items correctly based on defaultOpen state', () => {
+    expect(screen.queryByText('File1')).toBeNull()
+    expect(screen.queryByText('My Model1')).toBeNull()
+    expect(screen.getByText('Chat 1')).toBeInTheDocument() // Visible because defaultOpen is true
+  })
+
+  test('invokes onNewChat callback when the New Chat button is clicked', async () => {
+    await act(async () => {
+      fireEvent.click(screen.getByText('New Chat'))
+    })
     expect(mockOnNewChat).toHaveBeenCalledTimes(1)
   })
 
-  test('renders navigation links with correct href', () => {
-    expect(screen.getByText('Manage My AI').closest('a')).toHaveAttribute('href', '/managemyai')
-    expect(screen.getByText('Finetune AI Model').closest('a')).toHaveAttribute('href', '/finetunemodel')
-    expect(screen.getByText('Chat with AI').closest('a')).toHaveAttribute('href', '/')
+  test('hovering over New Chat should show visual feedback', async () => {
+    const newChatButton = document.querySelector('#newChat')
+    expect(newChatButton.className).toMatch(/hover/)
   })
 
-  test('hovering over items should change their background color', () => {
-    const chat1 = screen.getByText('Chat 1')
-    expect(chat1.className).toMatch(/hover/)
+  test('focusing on New Chat should change its background color', async () => {
+    const newChatButton = document.querySelector('#newChat')
+    expect(newChatButton.className).toMatch(/focus/)
   })
 
-  test('focusing on items should change their background color', () => {
-    const chat2 = screen.getByText('Chat 2')
-    expect(chat2.className).toMatch(/focus/)
+  test('Each menuItem has the correct href', () => {
+    const manageMyAILink = screen.getByText('Manage My AI').closest('a')
+    expect(manageMyAILink).toHaveAttribute('href', '/managemyai')
+
+    const finetuneModelLink = screen.getByText('Finetune AI Model').closest('a')
+    expect(finetuneModelLink).toHaveAttribute('href', '/finetunemodel')
+
+    const chatWithAILink = screen.getByText('Chat with AI').closest('a')
+    expect(chatWithAILink).toHaveAttribute('href', '/')
   })
 
-  test('Sidebar component snapshot', () => {
-    expect(renderedComponent.asFragment()).toMatchSnapshot()
+  test('Sidebar component matches snapshot', () => {
+    act(() => {
+      const { asFragment } = render(<Sidebar onNewChat={mockOnNewChat} />);
+      expect(asFragment()).toMatchSnapshot()
+    })
   })
 })
