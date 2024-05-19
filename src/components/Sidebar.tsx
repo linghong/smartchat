@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import PlusIcon from './PlusIcon'
 
 interface SidebarProps {
@@ -7,6 +8,9 @@ interface SidebarProps {
 }
 
 const Sidebar : FC<SidebarProps>= ({ onNewChat }) => {
+
+  const router = useRouter()
+  const isActive = (route: string) => router.pathname === route ? 'bg-slate-400 text-indigo-900' : '';
 
   return (
     <div className="w-80 bg-slate-600 text-slate-50">
@@ -17,7 +21,7 @@ const Sidebar : FC<SidebarProps>= ({ onNewChat }) => {
               <span>New Chat</span>
             </div>
           </li>
-          <li  className="pl-4 py-2 mt-5 mr-8 font-semibold border-b text-slate-50 hover:bg-slate-400 focus:bg-indigo-100">
+          <li className={`pl-4 py-2 mt-5 mr-8 font-semibold border-b text-slate-50 hover:bg-slate-400 focus:bg-indigo-100 ${isActive('/managemyai')}`}>
           <Link href="/managemyai">Manage My AI</Link>   
           </li>
           <ul className="px-4 py-2 font-medium text-slate-200">
@@ -25,7 +29,7 @@ const Sidebar : FC<SidebarProps>= ({ onNewChat }) => {
             <li className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100">File 2</li>
             <li className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100">File 3</li>
           </ul>
-          <li  className="pl-4 py-2 mt-5 mr-8 font-semibold border-b text-slate-50 hover:bg-slate-400 focus:bg-indigo-100">       
+          <li className={`pl-4 py-2 mt-5 mr-8 font-semibold border-b text-slate-50 hover:bg-slate-400 focus:bg-indigo-100 ${isActive('/finetunemodel')}`}>       
           <Link href="/finetunemodel">Finetune AI Model</Link>   
           </li>
           <ul className="px-4 py-2 font-medium text-slate-200">
@@ -33,7 +37,7 @@ const Sidebar : FC<SidebarProps>= ({ onNewChat }) => {
             <li className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100">My Model 2</li>
             <li className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100">My Model 3</li>
           </ul>
-          <li  className="pl-4 py-2 mt-5 mr-8 font-semibold border-b text-slate-50 hover:bg-slate-400 focus:bg-indigo-100">
+          <li className={`pl-4 py-2 mt-5 mr-8 font-semibold border-b text-slate-50 hover:bg-slate-400 focus:bg-indigo-100 ${isActive('/')}`}>
             <Link href="/">
               Chat with AI
             </Link>
