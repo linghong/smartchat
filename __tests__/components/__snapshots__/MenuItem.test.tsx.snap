@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MenuItem Component MenuItem component matches snapshot 1`] = `
+<DocumentFragment>
+  <li
+    class="mt-5 my-8 font-semibold"
+  >
+    <div
+      class="flex justify-between items-center px-1 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
+    >
+      <a
+        class="flex-grow px-2 hover:underline "
+        href="/test-link"
+      >
+        Test Title
+      </a>
+      <span
+        class="cursor-pointer"
+        role="button"
+      >
+        <svg
+          fill="currentColor"
+          height="1em"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
+          />
+        </svg>
+      </span>
+    </div>
+  </li>
+</DocumentFragment>
+`;
