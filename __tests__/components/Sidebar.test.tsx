@@ -1,20 +1,34 @@
 import React from 'react'
 import { render, fireEvent, screen } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
-import Sidebar from '@/src/components/Sidebar' // Adjust the import path as needed
+import Sidebar from '@/src/components/Sidebar'
+import { useRouter } from 'next/router';
 
 
-jest.mock('next/router', () => require('next-router-mock'))
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}))
+const mockPush = jest.fn()
+
 
 describe('Sidebar Component', () => {
-  const mockOnNewChat = jest.fn()
 
   beforeEach(() => {
-    // Reset mock and render the component before each test
-    mockOnNewChat.mockReset()
-    
+    // reset the state of all mocks to to their initial state (clears call history, 
+    // instances, return values, and implementations)
+    jest.resetAllMocks()
+
+    // Must apply the type assertion before attempting to call any methods
+    // Chaining method calls directly on type assertions can produce errors
+    // (useRouter as jest.Mock).mockReturnValue({ push: mockPush })  --error
+    const mockedUseRouter = useRouter as jest.Mock
+
+    // Set the mock to return a specified value telling the mock that whenever useRouter() is called
+    // it should return an object with a push method (mockPush)
+    mockedUseRouter.mockReturnValue({ push: mockPush })
+
     act(() => {
-      render(<Sidebar onNewChat={mockOnNewChat} />)
+      render(<Sidebar />)
     })
   })
 
@@ -31,11 +45,13 @@ describe('Sidebar Component', () => {
     expect(screen.getByText('Chat 1')).toBeInTheDocument() // Visible because defaultOpen is true
   })
 
-  test('invokes onNewChat callback when the New Chat button is clicked', async () => {
+  test('Clicking onNewChat button navigate to the home page', async () => {
     await act(async () => {
-      fireEvent.click(screen.getByText('New Chat'))
+      const newChatDiv = document.querySelector('#newChatDiv')
+      fireEvent.click(newChatDiv)
     })
-    expect(mockOnNewChat).toHaveBeenCalledTimes(1)
+    expect(mockPush).toHaveBeenCalledTimes(1)
+    expect(mockPush).toHaveBeenCalledWith('/')
   })
 
   test('hovering over New Chat should show visual feedback', async () => {
@@ -61,7 +77,7 @@ describe('Sidebar Component', () => {
 
   test('Sidebar component matches snapshot', () => {
     act(() => {
-      const { asFragment } = render(<Sidebar onNewChat={mockOnNewChat} />);
+      const { asFragment } = render(<Sidebar />);
       expect(asFragment()).toMatchSnapshot()
     })
   })
