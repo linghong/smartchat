@@ -13,6 +13,11 @@ describe('useFormSubmission Hook', () => {
     url = 'http://example.com/submit'
     formData = new FormData()
     formData.append('key', 'value')
+    jest.spyOn(console, 'log').mockImplementation(() => {}) // Mock console.log
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks() // Restore console.log after each test
   })
 
   it('should handle a successful form submission', async () => {
@@ -26,7 +31,7 @@ describe('useFormSubmission Hook', () => {
     })
 
     // Expect isLoading to be true after form submission is initiated
-    expect(result.current.isLoading).toBeTruthy();
+    expect(result.current.isLoading).toBeTruthy()
     await waitForNextUpdate()
 
     // Expect isLoading to be false and successMessage to be set after successful form submission
