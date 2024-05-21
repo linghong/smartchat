@@ -19,7 +19,7 @@ export const createEmbedding = async (text: string): Promise<number[]> => {
   return embedding.data[0].embedding;
 }
 
-const buildChatArray = (systemContent: string, userMessage : string, fetchedText: string, chatHistory: Message[], maxReturnMessageToken: number) => {
+export const buildChatArray = (systemContent: string, userMessage : string, fetchedText: string, chatHistory: Message[], maxReturnMessageToken: number) => {
   // after comparing the token count received from OpenAI, it seems that counting tokens in the way shown below matches better with Open AI's token number.
   const tokenCount = (role: ChatRole, str: string) => {
     return encode(
@@ -58,7 +58,7 @@ const buildChatArray = (systemContent: string, userMessage : string, fetchedText
 }
 
 export const getChatResponse = async (basePrompt: string, chatHistory: Message[],userMessage : string, fetchedText: string, selectedModel: string): Promise<string | undefined> => {
-  const maxReturnMessageToken = 1500
+  const maxReturnMessageToken = 2000
 
   const htmlTagContent = selectedModel === 'gpt-4' ? 'When presenting information, please ensure to split your responses into paragraphs using <p> HTML tag. If you are providing a list, use the <ul> and <li> tags for unordered lists, <ol> and <li> tags for ordered lists. Highlight the important points using <strong> tag for bold text. Always remember to close any HTML tags that you open.' : ''
 
