@@ -48,13 +48,13 @@ describe('DropdownSelect Component', () => {
   })
 
   it('applies custom styles when selected', () => {
-      const optionElement = screen.getByText(options[0].label);
+      const optionElement = screen.getByText(options[0].label)
       const originalStyles = window.getComputedStyle(optionElement)
 
       // Fire a click event to select the element
       userEvent.click(optionElement);
 
-      const appliedStyles = window.getComputedStyle(optionElement);
+      const appliedStyles = window.getComputedStyle(optionElement)
       expect(appliedStyles).not.toBe(originalStyles)
   })
 

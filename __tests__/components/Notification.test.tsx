@@ -24,7 +24,7 @@ describe('Notification Component', () => {
     expect(messageElement).toHaveClass('bold', 'text-gray-600')
     expect(messageElement).toHaveAttribute('role', 'status')
     expect(messageElement).toHaveAttribute('aria-live', 'assertive')
-  });
+  })
 
   test('renders with success type correctly', () => {
     render(<Notification type="success" message="Success message" />)

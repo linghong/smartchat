@@ -25,7 +25,7 @@ describe('ArrowButton Component', () => {
   test('renders SVG with correct attributes', () => {
     const { container } = render(<ArrowButton disabled={false} />)
     const svg = container.querySelector('svg')
-    const title = container.querySelector('svg title');
+    const title = container.querySelector('svg title')
 
     expect(svg).toHaveAttribute('viewBox', '0 0 18 18')
     expect(title).toHaveTextContent('Arrow Submit Button')

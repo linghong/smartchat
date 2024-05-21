@@ -21,11 +21,11 @@ describe('FieldSet Component', () => {
       </FieldSet>
     );
 
-    expect(container.firstChild).toHaveClass('flex');
-    expect(container.firstChild).toHaveClass('flex-col');
-    expect(container.firstChild).toHaveClass('bg-slate-50');
-    expect(container.firstChild).toHaveClass('shadow-md');
-    expect(container.firstChild).toHaveClass('rounded');
+    expect(container.firstChild).toHaveClass('flex')
+    expect(container.firstChild).toHaveClass('flex-col')
+    expect(container.firstChild).toHaveClass('bg-slate-50')
+    expect(container.firstChild).toHaveClass('shadow-md')
+    expect(container.firstChild).toHaveClass('rounded')
   });
 
   test('matches the snapshot', () => {
@@ -35,6 +35,6 @@ describe('FieldSet Component', () => {
       </FieldSet>
     );
 
-    expect(asFragment()).toMatchSnapshot();
-  });
-});
+    expect(asFragment()).toMatchSnapshot()
+  })
+})

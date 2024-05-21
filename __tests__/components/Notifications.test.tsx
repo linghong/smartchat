@@ -1,6 +1,6 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import renderer from 'react-test-renderer';
+import React from 'react'
+import { render } from '@testing-library/react'
+import renderer from 'react-test-renderer'
 import Notifications from '@/src/components/Notifications'
 
 describe('Notifications Component', () => {
