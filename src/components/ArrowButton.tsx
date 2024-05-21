@@ -9,7 +9,7 @@ const ArrowButton : FC<ButtonProps> = ({disabled = false}) => {
     <button
       type="submit"
       disabled={disabled}
-      className={`p-1 border-none hover:stone-600 disabled: opacity-60 disabled:cursor-not-allowed`}
+      className={`p-1 border-none opacity-60 hover:stone-600 disabled:cursor-not-allowed`}
     >
       <svg
         viewBox="0 0 18 18"
