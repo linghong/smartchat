@@ -19,8 +19,16 @@ const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME
 if (! PINECONE_INDEX_NAME) throw new Error('Missing Pinecone index name')
 
 export const fetchDataFromPinecone = async (embeddedQuery: number[], nameSpace: string) => {
- 
+
+  if (!Array.isArray(embeddedQuery) || embeddedQuery.length === 0) {
+    throw new Error('Invalid or empty query vector provided.')
+  }
+
   const index = pineconeClient.Index(PINECONE_INDEX_NAME)
+  if (!index) {
+    throw new Error('Unable to fetch Pinecone index');
+  }
+
   const queryRequest = {
     vector: embeddedQuery,
     topK: 1,
@@ -28,17 +36,23 @@ export const fetchDataFromPinecone = async (embeddedQuery: number[], nameSpace: 
     includeMetadata: true,
     namespace: nameSpace,
   }
-  let queryResponse = await index.query({ queryRequest })
 
-  if (queryResponse && queryResponse.matches) {
-    const message = queryResponse.matches.reduce((sum, match) => {
-      const metaData : Metadata | undefined = match.metadata
-      const text = metaData?.text?? ''
-
-      return sum + '\n' + text
-    }, '')
-    return message
-  } else {
-    throw new Error('Something went wrong when fetching data from pinecone')
+  let queryResponse 
+  try{
+    queryResponse = await index.query({ queryRequest }) 
+    //console.log('Query Response:', queryResponse?.matches?.[0]?.metadata?.text)
+  } catch (error) {
+    throw new Error(`Failed to fetch data from Pinecone: ${error.message}`)
   }
+
+  if (!queryResponse?.matches || queryResponse?.matches?.length === 0) {
+    throw new Error('No matches found');
+  }
+
+  const message = queryResponse.matches.reduce((sum, match) => {
+    const text = match.metadata?.text?? ''
+
+    return sum + '\n' + text
+  }, '')
+  return message
 }
