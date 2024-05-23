@@ -17,9 +17,11 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
       style="color: transparent;"
       width="30"
     />
-    <p>
+    <div
+      class="space-wrap"
+    >
       What is AI?
-    </p>
+    </div>
   </div>
   <div
     class="flex px-3 py-2 bg-slate-100 color-black ease-in duration-300"
@@ -37,7 +39,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
       width="30"
     />
     <div
-      class="bot-responses"
+      class="bot-responses answer space-wrap"
     >
       AI stands for Artificial Intelligence.
     </div>

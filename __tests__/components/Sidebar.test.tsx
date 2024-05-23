@@ -2,7 +2,7 @@ import React from 'react'
 import { render, fireEvent, screen } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import Sidebar from '@/src/components/Sidebar'
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router'
 
 
 jest.mock('next/router', () => ({
@@ -77,7 +77,7 @@ describe('Sidebar Component', () => {
 
   test('Sidebar component matches snapshot', () => {
     act(() => {
-      const { asFragment } = render(<Sidebar />);
+      const { asFragment } = render(<Sidebar />)
       expect(asFragment()).toMatchSnapshot()
     })
   })
