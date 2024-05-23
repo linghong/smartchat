@@ -101,6 +101,7 @@ const HomePage : FC<{
     setError(null)
     setLoading(true)
     setUserInput('')
+    setRows(1) // Reset the textarea rows to initial state
 
     fetchChatResponse(basePrompt, question, selectedNamespace?.value || 'none')
   }, [userInput, fetchChatResponse])
