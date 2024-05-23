@@ -9,6 +9,10 @@ type ChatMessageProps = {
 
 const ChatMessage: React.FC<ChatMessageProps>  = ({message, lastIndex, loading}) => {
 
+  const convertNewlinesToBreaks = (text: string) => {
+    return text.replace(/\n/g, '<br>')
+  }
+
   return (
     <>
       {message?.question?.length !== 0 && 
@@ -23,7 +27,7 @@ const ChatMessage: React.FC<ChatMessageProps>  = ({message, lastIndex, loading})
             className="h-full mr-4 rounded-sm"
             priority
           />
-          <p>{message.question}</p>
+          <div className="space-wrap" dangerouslySetInnerHTML={{ __html: convertNewlinesToBreaks(message.question)}} />
         </div>}
       {<div 
         className="flex px-3 py-2 bg-slate-100 color-black ease-in duration-300"
@@ -36,7 +40,7 @@ const ChatMessage: React.FC<ChatMessageProps>  = ({message, lastIndex, loading})
           className={`h-full mr-4 rounded-sm ${loading && lastIndex &&'animate-pulse'}`}
           priority
         />
-        <div className ="bot-responses" dangerouslySetInnerHTML={{ __html: message.answer }} />       
+        <div className = "bot-responses answer space-wrap" dangerouslySetInnerHTML={{ __html: convertNewlinesToBreaks(message.answer) }} />       
       </div>}
     </>
   )
