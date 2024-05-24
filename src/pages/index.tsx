@@ -6,6 +6,7 @@ import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import DropdownSelect from '@/src/components/DropdownSelect'
 import Header from '@/src/components/Header'
+import ImageUploadIcon from '@/src/components/ImageUploadIcon'
 import Notification from '@/src/components/Notification'
 import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
@@ -125,6 +126,11 @@ const HomePage : FC<{
     setRows(newRows + 1)
   }
 
+  const handleImageUpload = (file: File) => {
+    console.log('Uploaded file:', file.name);
+  
+  };
+
   useEffect(() => {
     const keyDownHandler = (e: KeyboardEvent) => {
       if (e.key !== 'Enter') return
@@ -230,6 +236,7 @@ const HomePage : FC<{
             onChange={handleInputChange}
             className={`w-80vw max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
           />
+          <ImageUploadIcon onImageUpload={handleImageUpload} />
           <ArrowButton disabled={userInput===''} />
         </form>
         { error && <Notification type="error" message={error} /> }
