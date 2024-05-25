@@ -51,6 +51,9 @@ const HomePage : FC<{
   const [userInput, setUserInput] = useState<string>('')
   const [rows, setRows] = useState<number>(1)
   const [chatHistory, setChatHistory] = useState<Message[]>([ initialMessage ])
+
+  const [imageSrc, setImageSrc] = useState<string[]>([]);
+
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   
@@ -72,11 +75,11 @@ const HomePage : FC<{
 
       //handling server-side errors
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json()
 
-        setError("There is a server side error. Try it again later.");
-        setLoading(false);
-        return;
+        setError("There is a server side error. Try it again later.")
+        setLoading(false)
+        return
       }
 
       const data = await response.json()
@@ -128,6 +131,13 @@ const HomePage : FC<{
 
   const handleImageUpload = (file: File) => {
     console.log('Uploaded file:', file.name);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageSrc([...imageSrc,reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    }
   
   };
 
@@ -162,7 +172,7 @@ const HomePage : FC<{
 
   useEffect(() => {
     if(messagesRef.current !== null) {
-      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight
     }
   }, [chatHistory])
 
@@ -219,10 +229,24 @@ const HomePage : FC<{
               />)}
           </div>
         </div>
+        <div className="flex flex-row justify-start w-80vw pt-2 px-2">
+          {
+            imageSrc.map((imgSrc, i) => (
+              <div key={i} 
+              style={{
+                backgroundImage: imageSrc ? `url(${imgSrc})` : 'none',  backgroundRepeat: 'no-repeat', 
+                backgroundPosition: 'center', // Centers the background image
+                backgroundSize: 'contain',             
+                minHeight: '50px',
+                height: '100%',
+                width: '10%' }} 
+              />)
+          )}
+        </div>  
         <form
           onSubmit={handleSubmit} 
           className="flex item-center w-80vw my-4 p-2 border-2 border-indigo-300 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
-        >
+        >     
           <textarea
             ref={textAreaRef}
             disabled={loading}
