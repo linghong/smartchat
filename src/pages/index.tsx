@@ -7,6 +7,7 @@ import ChatMessage from '@/src/components/ChatMessage'
 import DropdownSelect from '@/src/components/DropdownSelect'
 import Header from '@/src/components/Header'
 import ImageUploadIcon from '@/src/components/ImageUploadIcon'
+import ImageModal from '@/src/components/ImageModal'
 import Notification from '@/src/components/Notification'
 import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
@@ -53,6 +54,8 @@ const HomePage : FC<{
   const [chatHistory, setChatHistory] = useState<Message[]>([ initialMessage ])
 
   const [imageSrc, setImageSrc] = useState<string[]>([]);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<string>('');
 
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -130,16 +133,23 @@ const HomePage : FC<{
   }
 
   const handleImageUpload = (file: File) => {
-    console.log('Uploaded file:', file.name);
     if (file) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onloadend = () => {
-        setImageSrc([...imageSrc,reader.result as string]);
+        setImageSrc([...imageSrc,reader.result as string])
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file)
     }
-  
-  };
+  }
+
+  const openModal = (imgSrc: string) => {
+    setSelectedImage(imgSrc)
+    setModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setModalOpen(false)
+  }
 
   useEffect(() => {
     const keyDownHandler = (e: KeyboardEvent) => {
@@ -159,7 +169,7 @@ const HomePage : FC<{
     const currentTextArea = textAreaRef.current
     if (currentTextArea) {
       currentTextArea.addEventListener('keydown', keyDownHandler)
-      currentTextArea.scrollTop = currentTextArea.scrollHeight;
+      currentTextArea.scrollTop = currentTextArea.scrollHeight
     }
   
     return () => {
@@ -202,22 +212,26 @@ const HomePage : FC<{
           label='Using Saved File:'
         />
       </div>
+      
       <div  className="flex flex-col w-80vw item-center py-2"
       >
-        <label className="text-base font-bold">Enter text here for AI to remember throughout the chat:</label>
-        <textarea 
+        <label htmlFor="userSystemPrompt" className="text-base font-bold">Enter text here for AI to remember throughout the chat:</label>
+        <textarea
+          id="userSystemPrompt"
           rows={2} 
           name='userSystemPrompt'
           onChange={handleBasePromptChange}
           value={basePrompt}
           className={`w-full placeholder-gray-400 my-2 p-2 border-2 border-indigo-300 rounded focus:ring-stone-100 focus:outline-none hover:bg-stone-50`}
+          aria-label="Enter text here for AI to remember throughout the chat"
         />   
-      </div>
-       
+      </div>      
       <div className="flex flex-col w-80vw h-60vh items-center justify-between">
         <div className={`w-80vw grow bg-white border-2 border-stone-200 overflow-y-auto`}>
           <div  
             className="w-full h-full overflow-y-scroll rounded-lg"
+            aria-live="polite"
+            aria-atomic="true"
             ref={messagesRef}
           >
             {chatHistory.map((chat, index) => 
@@ -229,20 +243,28 @@ const HomePage : FC<{
               />)}
           </div>
         </div>
-        <div className="flex flex-row justify-start w-80vw pt-2 px-2">
+        <div className="flex flex-row justify-start w-80vw pt-3 px-3">
           {
             imageSrc.map((imgSrc, i) => (
-              <div key={i} 
-              style={{
-                backgroundImage: imageSrc ? `url(${imgSrc})` : 'none',  backgroundRepeat: 'no-repeat', 
-                backgroundPosition: 'center', // Centers the background image
-                backgroundSize: 'contain',             
-                minHeight: '50px',
-                height: '100%',
-                width: '10%' }} 
-              />)
+              <div 
+                key={i} 
+                className="w-20 h-full mx-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100" 
+                onClick={()=>openModal(imgSrc)}
+                onKeyDown={(e) => e.key==='Enter' && openModal(imgSrc)}
+                tabIndex={0}
+                role="button"
+                aria-label={`Click to view larger image ${i + 1}`}
+                title={`Uploaded image thumbnail ${i + 1}`}
+              >
+                <div 
+                  className={`bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer`} 
+                  style={{ backgroundImage: imageSrc ? `url(${imgSrc})` : 'none'}}                
+                />
+              </div>
+            )
           )}
-        </div>  
+        </div>
+        {modalOpen && <ImageModal src={selectedImage} onClose={closeModal} />}    
         <form
           onSubmit={handleSubmit} 
           className="flex item-center w-80vw my-4 p-2 border-2 border-indigo-300 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
@@ -254,19 +276,19 @@ const HomePage : FC<{
             rows={rows}
             id="userInput"
             name="userInput"
+            className={`w-80vw max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
             placeholder="Click to send a message, and push Shift + Enter to move to the next line."
             value={userInput}
-            aria-label="Enter your message here"
             onChange={handleInputChange}
-            className={`w-80vw max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
+            aria-label="Enter your message here"
           />
           <ImageUploadIcon onImageUpload={handleImageUpload} />
           <ArrowButton disabled={userInput===''} />
         </form>
-        { error && <Notification type="error" message={error} /> }
+        { error && <Notification type="error" message={error} /> }      
         </div>
-      </div>
-    </div> 
+      </div>       
+    </div>    
   )  
 }
 export default HomePage
