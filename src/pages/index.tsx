@@ -1,5 +1,6 @@
 import {useState, useRef, useCallback, useEffect, ChangeEvent,FormEvent, FC } from 'react'
 import {GetStaticProps} from 'next'
+import { BsTrash3 } from "react-icons/bs";
 
 import { fetchData } from '@/src/utils/fetchData'
 import ArrowButton  from '@/src/components/ArrowButton'
@@ -142,6 +143,11 @@ const HomePage : FC<{
     }
   }
 
+  const handleImageDelete = (e: any) =>{
+    const deletedID = parseInt(e.currentTarget.dataset.id)
+    setImageSrc([...imageSrc.slice(0, deletedID), ...imageSrc.slice(deletedID+1)])
+  }
+
   const openModal = (imgSrc: string) => {
     setSelectedImage(imgSrc)
     setModalOpen(true)
@@ -246,19 +252,26 @@ const HomePage : FC<{
         <div className="flex flex-row justify-start w-80vw pt-3 px-3">
           {
             imageSrc.map((imgSrc, i) => (
-              <div 
-                key={i} 
-                className="w-20 h-full mx-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100" 
-                onClick={()=>openModal(imgSrc)}
-                onKeyDown={(e) => e.key==='Enter' && openModal(imgSrc)}
-                tabIndex={0}
-                role="button"
-                aria-label={`Click to view larger image ${i + 1}`}
-                title={`Uploaded image thumbnail ${i + 1}`}
-              >
-                <div 
-                  className={`bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer`} 
-                  style={{ backgroundImage: imageSrc ? `url(${imgSrc})` : 'none'}}                
+              <div key = {i}>
+                <div              
+                  className="w-20 h-full mx-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100" 
+                  onClick={()=>openModal(imgSrc)}
+                  onKeyDown={(e) => e.key==='Enter' && openModal(imgSrc)}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Click to view larger image ${i + 1}`}
+                  title={`Uploaded image thumbnail ${i + 1}`}
+                >
+                  <div 
+                    className={`bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer`} 
+                    style={{ backgroundImage: imageSrc ? `url(${imgSrc})` : 'none'}}                
+                  />
+                </div>
+                <BsTrash3 
+                  data-id={i.toString()} 
+                  onClick={handleImageDelete}
+                  className="text-grey-600 cursor-pointer float-right"
+                  aria-label={`Delete image ${i + 1}`}
                 />
               </div>
             )
