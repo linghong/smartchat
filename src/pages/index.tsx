@@ -1,14 +1,13 @@
 import {useState, useRef, useCallback, useEffect, ChangeEvent,FormEvent, FC } from 'react'
 import {GetStaticProps} from 'next'
-import { BsTrash3 } from "react-icons/bs";
 
 import { fetchData } from '@/src/utils/fetchData'
 import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import DropdownSelect from '@/src/components/DropdownSelect'
 import Header from '@/src/components/Header'
+import ImageListWithModal from '@/src/components/ImageListWithModal'
 import ImageUploadIcon from '@/src/components/ImageUploadIcon'
-import ImageModal from '@/src/components/ImageModal'
 import Notification from '@/src/components/Notification'
 import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
@@ -54,9 +53,8 @@ const HomePage : FC<{
   const [rows, setRows] = useState<number>(1)
   const [chatHistory, setChatHistory] = useState<Message[]>([ initialMessage ])
 
-  const [imageSrc, setImageSrc] = useState<string[]>([]);
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [selectedImage, setSelectedImage] = useState<string>('');
+  const [imageSrc, setImageSrc] = useState<string[]>([])
+  const [imageSrcHistory, setImageSrcHistory] = useState<string[][]>([[]])
 
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -89,6 +87,7 @@ const HomePage : FC<{
       const data = await response.json()
 
       setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: data}])
+
       setLoading(false)
 
     } catch (error) {
@@ -103,16 +102,19 @@ const HomePage : FC<{
 
     const question : string = userInput.trim()
     // prevent form submission if no text is entered
-    if(question.length === 0) return
+    if(question.length === 0 && imageSrc.length === 0) return
+
+    setImageSrcHistory([...imageSrcHistory, imageSrc])
     
     setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: ''}])
     setError(null)
     setLoading(true)
     setUserInput('')
+    setImageSrc([])
     setRows(1) // Reset the textarea rows to initial state
 
     fetchChatResponse(basePrompt, question, selectedNamespace?.value || 'none')
-  }, [userInput, fetchChatResponse])
+  }, [userInput, imageSrc, fetchChatResponse])
 
   const handleModelChange = (selectedOption: OptionType | null) => {
     setSelectedModel(selectedOption)
@@ -143,18 +145,8 @@ const HomePage : FC<{
     }
   }
 
-  const handleImageDelete = (e: any) =>{
-    const deletedID = parseInt(e.currentTarget.dataset.id)
-    setImageSrc([...imageSrc.slice(0, deletedID), ...imageSrc.slice(deletedID+1)])
-  }
-
-  const openModal = (imgSrc: string) => {
-    setSelectedImage(imgSrc)
-    setModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setModalOpen(false)
+  const handleImageDelete = (id: number) =>{
+    setImageSrc([...imageSrc.slice(0, id), ...imageSrc.slice(id+1)])
   }
 
   useEffect(() => {
@@ -217,8 +209,7 @@ const HomePage : FC<{
           options={fileCategoryOptions}
           label='Using Saved File:'
         />
-      </div>
-      
+      </div>      
       <div  className="flex flex-col w-80vw item-center py-2"
       >
         <label htmlFor="userSystemPrompt" className="text-base font-bold">Enter text here for AI to remember throughout the chat:</label>
@@ -241,43 +232,24 @@ const HomePage : FC<{
             ref={messagesRef}
           >
             {chatHistory.map((chat, index) => 
-              <ChatMessage
-                key={index}
+              <div key={index}>                
+                <ChatMessage
                 message={chat}
                 lastIndex={index===chatHistory.length-1?true:false}
                 loading={loading}
-              />)}
+                imageSrc={imageSrcHistory[index]}
+                handleImageDelete={handleImageDelete}
+              />
+              </div>
+              )
+            }
           </div>
         </div>
-        <div className="flex flex-row justify-start w-80vw pt-3 px-3">
-          {
-            imageSrc.map((imgSrc, i) => (
-              <div key = {i}>
-                <div              
-                  className="w-20 h-full mx-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100" 
-                  onClick={()=>openModal(imgSrc)}
-                  onKeyDown={(e) => e.key==='Enter' && openModal(imgSrc)}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`Click to view larger image ${i + 1}`}
-                  title={`Uploaded image thumbnail ${i + 1}`}
-                >
-                  <div 
-                    className={`bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer`} 
-                    style={{ backgroundImage: imageSrc ? `url(${imgSrc})` : 'none'}}                
-                  />
-                </div>
-                <BsTrash3 
-                  data-id={i.toString()} 
-                  onClick={handleImageDelete}
-                  className="text-grey-600 cursor-pointer float-right"
-                  aria-label={`Delete image ${i + 1}`}
-                />
-              </div>
-            )
-          )}
-        </div>
-        {modalOpen && <ImageModal src={selectedImage} onClose={closeModal} />}    
+         <ImageListWithModal
+           imageSrc={imageSrc}
+           handleImageDelete={handleImageDelete}
+           isDeleteIconShow={true}
+          />
         <form
           onSubmit={handleSubmit} 
           className="flex item-center w-80vw my-4 p-2 border-2 border-indigo-300 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
@@ -296,7 +268,7 @@ const HomePage : FC<{
             aria-label="Enter your message here"
           />
           <ImageUploadIcon onImageUpload={handleImageUpload} />
-          <ArrowButton disabled={userInput===''} />
+          <ArrowButton disabled={userInput==='' && imageSrc.length === 0} />
         </form>
         { error && <Notification type="error" message={error} /> }      
         </div>
