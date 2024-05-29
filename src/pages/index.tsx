@@ -13,6 +13,8 @@ import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
 const modelOptions: OptionType[] = [
+  { value: 'gpt-4o', label: 'GPT-4o', category: 'openai' },
+  { value: 'gpt-4-turbo', label: 'GPT-4 Turbo', category: 'openai' },
   { value: 'gpt-3.5-turbo', label: 'GPT-3.5', category: 'openai' },
   { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5-16k', category: 'openai' },
   { value: 'gpt-3.5-turbo-1106', label: 'GPT-3.5-16k-Latest', category: 'openai' },
@@ -59,7 +61,8 @@ const HomePage : FC<{
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   
-  const fetchChatResponse = async (basePrompt:string, question: string, namespace: string) => {
+  const fetchChatResponse = async (basePrompt:string, question: string, imageSrc: string[], selectedModel: OptionType | null, namespace: string) => {
+    
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -69,6 +72,7 @@ const HomePage : FC<{
         body: JSON.stringify({
           basePrompt,
           question,
+          imageSrc,
           chatHistory,
           namespace,
           selectedModel
@@ -113,7 +117,7 @@ const HomePage : FC<{
     setImageSrc([])
     setRows(1) // Reset the textarea rows to initial state
 
-    fetchChatResponse(basePrompt, question, selectedNamespace?.value || 'none')
+    fetchChatResponse(basePrompt, question, imageSrc, selectedModel, selectedNamespace?.value || 'none')
   }, [userInput, imageSrc, fetchChatResponse])
 
   const handleModelChange = (selectedOption: OptionType | null) => {
@@ -135,14 +139,17 @@ const HomePage : FC<{
     setRows(newRows + 1)
   }
 
-  const handleImageUpload = (file: File) => {
-    if (file) {
+  const handleImageUpload =async (file: File) => {
+    if (!file) return;
+    try{
       const reader = new FileReader()
-      reader.onloadend = () => {
+      reader.onloadend = async() => {
         setImageSrc([...imageSrc,reader.result as string])
       };
       reader.readAsDataURL(file)
-    }
+    } catch {
+      throw new Error('Failed to read the file.')
+    }       
   }
 
   const handleImageDelete = (id: number) =>{
@@ -267,7 +274,7 @@ const HomePage : FC<{
             onChange={handleInputChange}
             aria-label="Enter your message here"
           />
-          <ImageUploadIcon onImageUpload={handleImageUpload} />
+          {(selectedModel?.value==="gpt-4o" || selectedModel?.value==="gpt-4-turbo") && <ImageUploadIcon onImageUpload={handleImageUpload} /> }
           <ArrowButton disabled={userInput==='' && imageSrc.length === 0} />
         </form>
         { error && <Notification type="error" message={error} /> }      

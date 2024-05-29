@@ -14,7 +14,7 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { basePrompt, question, namespace, selectedModel, chatHistory } = req.body
+  const { basePrompt, question, namespace, selectedModel, chatHistory, imageSrc } = req.body
   
   if (!question) {
     return res.status(400).json({ message: 'No question in the request' })
@@ -24,6 +24,8 @@ export default async function handler(
     return res.status(500).json('Something went wrong')
   }
 
+  const base64Images = imageSrc?.map((imgSrc : string) => imgSrc.split(',')[1])
+  
   // replacing newlines with spaces
   const sanitizedQuestion = question.trim().replaceAll('\n', ' ')
  
@@ -42,7 +44,7 @@ export default async function handler(
 
     switch(category){
       case 'openai':
-        chatResponse = await getChatResponse(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
+        chatResponse = await getChatResponse(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value, base64Images)
         break
       
       case 'groq':
