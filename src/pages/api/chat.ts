@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import {  createEmbedding, getOpenAIChatCompletion } from '@/src/services/openai'
 import {  getGroqChatCompletion } from '@/src/services/groq'
 import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone'
-import chatResponseFromOpensource from '@/src/services/opensourceai'
+import getOpenModelChatCompletion from '@/src/services/opensourceai'
 
 export default async function handler(
   req: NextApiRequest,
@@ -44,11 +44,11 @@ export default async function handler(
 
     switch(category){
       case 'openai':
-        chatResponse = await getOpenAIChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value, base64Images)
+        chatResponse = await getOpenAIChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel?.value, base64Images)
         break
       
       case 'groq':
-        chatResponse = await getGroqChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value)
+        chatResponse = await getGroqChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel?.value)
         break
 
       case 'hf-small':
@@ -60,7 +60,7 @@ export default async function handler(
             return res.status(500).json(`Url address for posting the data to ${selectedModel} is missing`)
           }
           const url = `${baseUrl}/api/chat_${category === 'hf-small' ? 'cpu' : 'gpu'}`
-          chatResponse = await chatResponseFromOpensource(basePrompt, chatHistory, sanitizedQuestion, fetchedText, modelValue, url)
+          chatResponse = await getOpenModelChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel?.vodelValue, url)
           break
           
       default:

@@ -1,6 +1,6 @@
 import { Message } from '@/src/types/chat'
 
-const chatResponseFromOpensource = async (basePrompt: string, chatHistory: Message[], userMessage : string, fetchedText: string, selectedModel: string, serverURL: string) : Promise<string | undefined> => {
+const getOpenModelChatCompletion = async (basePrompt: string, chatHistory: Message[], userMessage : string, fetchedText: string, selectedModel: string, serverURL: string) : Promise<string | undefined> => {
   const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
   if(!serverSecretKey) {
     return 'Sever secret key is missing'
@@ -36,4 +36,4 @@ const chatResponseFromOpensource = async (basePrompt: string, chatHistory: Messa
   }
 }
 
-export default chatResponseFromOpensource
+export default getOpenModelChatCompletion
