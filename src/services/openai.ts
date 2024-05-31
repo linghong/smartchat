@@ -8,7 +8,20 @@ if (!OPENAI_API_KEY) throw new Error('Missing OpenAI API key');
 
 export const openaiClient = new OpenAI({
   apiKey: OPENAI_API_KEY,
-});
+})
+
+const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
+if(!serverSecretKey) throw new Error('Sever secret key is missing')
+
+type ContentForUserMessageProps = {
+  type: string;
+  text: string; 
+} | {
+  type: string;
+  image_url: {
+    url: string;
+  } ;
+}
 
 export const createEmbedding = async (text: string): Promise<number[]> => {
   const embedding = await openaiClient.embeddings.create({
@@ -57,17 +70,48 @@ export const buildChatArray = (systemContent: string, userMessage : string, fetc
   return chatArray
 }
 
-export const getChatResponse = async (basePrompt: string, chatHistory: Message[],userMessage : string, fetchedText: string, selectedModel: string): Promise<string | undefined> => {
+const contentForUserWithImageMessage = (
+  base64Images: string[],
+  userTextWithFetchedData: string,
+) =>{
+  let contentForUserMessage: ContentForUserMessageProps[] = [{
+    "type": "text",
+    "text":  userTextWithFetchedData
+  }]
+  base64Images.map(base64Img => {
+    contentForUserMessage.push({
+      "type": "image_url",
+      "image_url": {
+        "url": `data:image/jpeg;base64,${base64Img}`
+      }
+    })
+  
+  })
+  return contentForUserMessage
+}
+
+
+export const getOpenAIChatCompletion = async (
+  basePrompt: string, 
+  chatHistory: Message[],
+  userMessage : string, 
+  fetchedText: string, 
+  selectedModel: string,
+  base64Images: string[]
+): Promise<string | undefined> => {
   const maxReturnMessageToken = 2000
+
+  const baseSystemContent = "You are an AI assistant, skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. Also, only give answer for the question asked, don't provide text not related to the user's question. "
 
   const htmlTagContent = selectedModel === 'gpt-4' ? 'When presenting information, please ensure to split your responses into paragraphs using <p> HTML tag. If you are providing a list, use the <ul> and <li> tags for unordered lists, <ol> and <li> tags for ordered lists. Highlight the important points using <strong> tag for bold text. Always remember to close any HTML tags that you open.' : ''
 
-  const systemContent = "You are an AI assistant, skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. Also, only give answer for the question asked, don't provide text not related to the user's question. " + htmlTagContent
+  const systemContent = baseSystemContent + htmlTagContent
 
   const chatArray = buildChatArray(systemContent, userMessage, fetchedText, chatHistory, maxReturnMessageToken)
 
-  const userMessageWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''"+ '\n'+ basePrompt : userMessage +'\n' + basePrompt
+  const userTextWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''"+ '\n'+ basePrompt : userMessage +'\n' + basePrompt
 
+  
   try { 
     const completion = await openaiClient.chat.completions.create({
         model: selectedModel,
@@ -81,10 +125,11 @@ export const getChatResponse = async (basePrompt: string, chatHistory: Message[]
           content: systemContent
           }, 
           ...chatArray,
-          { 
-          role: "user", 
-          content: userMessageWithFetchedData
-        }],
+          {
+            "role": "user",
+            "content":base64Images.length !== 0?
+            contentForUserWithImageMessage(base64Images, userTextWithFetchedData) : userTextWithFetchedData
+          }],
     })
   
     if (!completion) throw new Error('Chat completion data is undefined.')
@@ -100,8 +145,3 @@ export const getChatResponse = async (basePrompt: string, chatHistory: Message[]
     throw error
   }
 }
-
-
-
-
-

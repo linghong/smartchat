@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import {  createEmbedding, getChatResponse } from '@/src/services/openai'
+import {  createEmbedding, getOpenAIChatCompletion } from '@/src/services/openai'
 import {  getGroqChatCompletion } from '@/src/services/groq'
 import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone'
 import chatResponseFromOpensource from '@/src/services/opensourceai'
@@ -44,7 +44,7 @@ export default async function handler(
 
     switch(category){
       case 'openai':
-        chatResponse = await getChatResponse(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value, base64Images)
+        chatResponse = await getOpenAIChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel.value, base64Images)
         break
       
       case 'groq':
