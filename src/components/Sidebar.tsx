@@ -3,6 +3,10 @@ import MenuItem from './MenuItem'
 import PlusIcon from './PlusIcon'
 import { useRouter } from 'next/router'
 
+interface SidebarProps {
+  onNewChat: () => void;
+}
+
 const Sidebar : FC<SidebarProps>= () => {
   const router = useRouter()
   const onNewChat = () => {
