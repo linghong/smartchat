@@ -13,20 +13,18 @@ import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
 const modelOptions: OptionType[] = [
-  { value: 'gpt-4o', label: 'GPT-4o', category: 'openai' },
-  { value: 'gpt-4-turbo', label: 'GPT-4 Turbo', category: 'openai' },
-  { value: 'gpt-3.5-turbo', label: 'GPT-3.5', category: 'openai' },
-  { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5-16k', category: 'openai' },
-  { value: 'gpt-3.5-turbo-1106', label: 'GPT-3.5-16k-Latest', category: 'openai' },
-  { value: 'gpt-4-1106-preview', label: 'GPT-4-128k-Preview', category: 'openai' },
-  { value: 'gpt-4-vision-preview', label: 'GPT-4-128k-Vision-Preview', category: 'openai' },
-  { value: 'gpt-4', label: 'GPT-4', category: 'openai' },
-  { value: 'gpt-4-32k', label: 'GPT-4-32k', category: 'openai' },
-  { value: 'meta-llama/Llama-2-7b-chat-hf', label: 'Llama-2-7b-chat-hf', category:'hf-large' }, 
-  { value: 'llama3-8b-8192', label: 'LLaMA3 8b',  category:'groq' },
-  { value: 'llama3-70b-8192', label: 'LLaMA3 70b',  category:'groq' },
-  { value: 'mixtral-8x7b-32768', label: 'Mixtral 8x7b',  category:'groq' },
-  { value: 'gemma-7b-it', label: 'Gemma 7b',  category:'groq' }
+  { value: 'gpt-4o', label: 'GPT-4o', category: 'openai', contextWindow: 128000 },
+  { value: 'gpt-4-turbo', label: 'GPT-4 Turbo', category: 'openai', contextWindow: 128000 },
+  { value: 'gpt-3.5-turbo', label: 'GPT-3.5', category: 'openai', contextWindow: 16385 },
+  { value: 'gpt-4', label: 'GPT-4', category: 'openai', contextWindow: 8192 },
+  { value: 'gemini-1.5-flash', label: 'Gemini-1.5 Flash', category: 'google', contextWindow: 128000 },
+  { value: 'gemini-1.5-pro', label: 'Gemini-1.5 Pro', category: 'google', contextWindow: 128000 },
+  { value: 'meta-llama/Llama-2-7b-chat-hf', label: 'Llama-2-7b-chat-hf', category:'hf-large', contextWindow: 4000 }, 
+  { value: 'microsoft/phi-1_5', label: 'phi-1_5', category: 'hf-small', contextWindow:1000},
+  { value: 'llama3-8b-8192', label: 'LLaMA3 8b',  category:'groq', contextWindow: 8192 },
+  { value: 'llama3-70b-8192', label: 'LLaMA3 70b',  category:'groq', contextWindow: 8192 },
+  { value: 'mixtral-8x7b-32768', label: 'Mixtral 8x7b',  category:'groq', contextWindow: 32768 },
+  { value: 'gemma-7b-it', label: 'Gemma 7b',  category:'groq', contextWindow: 8192 }
 ]
 
 const initialFileCategory: OptionType = {value: 'none', label: 'None'}
@@ -200,7 +198,7 @@ const HomePage : FC<{
   }, [isNewChat])
 
   return  (
-    <div className="flex flex-col">
+    <div className="flex flex-col p-2">
       <Header pageTitle="Chat With AI" />
       <div className="flex flex-col  items-center justify-center">
       <div className="flex flex-row w-80vw justify-around">
@@ -260,7 +258,8 @@ const HomePage : FC<{
         <form
           onSubmit={handleSubmit} 
           className="flex item-center w-80vw my-4 p-2 border-2 border-indigo-300 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
-        >     
+        > 
+          {(selectedModel?.value==="gpt-4o" || selectedModel?.value==="gpt-4-turbo") && <ImageUploadIcon onImageUpload={handleImageUpload} /> }   
           <textarea
             ref={textAreaRef}
             disabled={loading}
@@ -274,7 +273,7 @@ const HomePage : FC<{
             onChange={handleInputChange}
             aria-label="Enter your message here"
           />
-          {(selectedModel?.value==="gpt-4o" || selectedModel?.value==="gpt-4-turbo") && <ImageUploadIcon onImageUpload={handleImageUpload} /> }
+         
           <ArrowButton disabled={userInput==='' && imageSrc.length === 0} />
         </form>
         { error && <Notification type="error" message={error} /> }      

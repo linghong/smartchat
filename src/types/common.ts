@@ -3,6 +3,7 @@ export type OptionType = {
   value: string;
   label: string;
   category?: string;
+  contextWindow?: number;
 }
 
 export type ApiResponse = {
