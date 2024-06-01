@@ -1,6 +1,15 @@
 import { Message } from '@/src/types/chat'
+import { OptionType } from '@/src/types/common'
 
-const getOpenModelChatCompletion = async (basePrompt: string, chatHistory: Message[], userMessage : string, fetchedText: string, selectedModel: string, serverURL: string) : Promise<string | undefined> => {
+const getOpenModelChatCompletion = async (
+  basePrompt: string, 
+  chatHistory: Message[], 
+  userMessage : string, 
+  fetchedText: string, 
+  selectedModel: OptionType, 
+  serverURL: string
+) : Promise<string | undefined> => {
+
   const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
   if(!serverSecretKey) {
     return 'Sever secret key is missing'
@@ -10,7 +19,7 @@ const getOpenModelChatCompletion = async (basePrompt: string, chatHistory: Messa
     question: userMessage,
     basePrompt,
     chatHistory,      
-    selectedModel,
+    selectedModel: selectedModel.value,
     fetchedText
   }
 

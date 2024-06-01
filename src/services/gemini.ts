@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI, Part } from "@google/generative-ai"
 
 import { Message } from '@/src/types/chat'
+import { OptionType } from '@/src/types/common'
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 if(!GEMINI_API_KEY) throw new Error('Missing Google Gemini API key')
@@ -57,7 +58,7 @@ const getGeminiChatCompletion = async (
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
-  selectedModel: string,
+  selectedModel: OptionType,
   base64Images: string[]
 ) => {
  
@@ -70,7 +71,7 @@ const getGeminiChatCompletion = async (
   const userTextWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''"+ '\n'+ basePrompt : userMessage +'\n' + basePrompt
 
  const model = genAI.getGenerativeModel({ 
-    model: selectedModel,
+    model: selectedModel.value,
     systemInstruction: systemContent
   })
 
