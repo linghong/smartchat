@@ -1,12 +1,25 @@
 # SmartChat: A Next.js Chatbot Platform
 
-SmartChat is a state-of-the-art chatbot platform developed using [Next.js](https://nextjs.org/) and TypeScript.  It offers users the ability to upload PDF documents, which are then segmented and stored within the Pinecone vector database. When users pose questions to the chatbot, if their inquiries relate to the uploaded data, the chatbot fetches and references relevant sections from the stored PDF data to provide precise answers.
+SmartChat is a cutting-edge chatbot platform and full-stack application developed with Next.js[Next.js](https://nextjs.org/) and TypeScript. It offers users the ability to upload PDF documents, which are then segmented and stored within the Pinecone vector database. When users pose questions related to the uploaded data, the chatbot fetches and references the relevant sections from the stored PDF data to provide precise answers.
 
 ## Features
 ### Chatbot Using Various AI Models
-This AI chat platform can allow you to select from various OpenAI LLM models, and then forward user messages to OpenAI to generate responses.
+This AI chat platform allows you to select from a variety of Generative AI models, including: 
+1.OpenAI's GPT-4o, GPT4 Turbo, GPT-4, and GPT-3.5
+2.Googles' Gemini-1.5-flash and Gemini-1.5-pro
+3.Open-source models hosted on Groq: 
+Meta's LLaMA3-8b and LLaMa3-70b
+Mistral's Mixtral 8x7b
+Google's Gemma 7b
 
-The platform can also relay messages to a remote backend (refer to the SmartChat-fastAPI repository), which, once configured, can run open-source AI models.
+The platform can also relay messages to a remote backend (refer to the [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi))repository, Once configured, this backend server can run open-source AI models.
+
+These models generate responses to user messages, and send back to the SmatChat platform. 
+
+### Multimodal Response
+Users can upload one or more images and ask questions about them, or combine them with text input, including fetched information from Retrieval-Augmented Generation (RAG). The chatbot can then provide a comprehensive response.
+
+The following models support those capabilities:  GPT-4o and GPT4 Turbo, Gemini-1.5-Flash and Gemini-1.5-Pro.
 
 ### PDF Upload: 
 Users have the ability to upload documents in PDF format, with options to customize how their data is processed to suit their preferences.
@@ -66,7 +79,7 @@ Copy the .env.example file and rename it to .env.
 ```bash
 cp .env.example .env
 ```
-Open the newly created .env file and replace the placeholders with the actual keys you obtained from OpenAI and Pinecone.
+Open the newly created .env file and replace the placeholders with the actual keys you obtained from OpenAI, Google Gemini, Groq, and Pinecone.
 
 ### Run the Development Server:
 
