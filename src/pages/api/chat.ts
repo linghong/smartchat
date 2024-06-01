@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import {  createEmbedding, getOpenAIChatCompletion } from '@/src/services/openai'
+import   getGeminiChatCompletion  from '@/src/services/gemini'
 import {  getGroqChatCompletion } from '@/src/services/groq'
 import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone'
 import getOpenModelChatCompletion from '@/src/services/opensourceai'
@@ -49,6 +50,10 @@ export default async function handler(
       
       case 'groq':
         chatResponse = await getGroqChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel?.value)
+        break
+
+      case 'google':
+        chatResponse = await getGeminiChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel?.value, base64Images)
         break
 
       case 'hf-small':

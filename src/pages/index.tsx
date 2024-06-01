@@ -17,8 +17,8 @@ const modelOptions: OptionType[] = [
   { value: 'gpt-4-turbo', label: 'GPT-4 Turbo', category: 'openai', contextWindow: 128000 },
   { value: 'gpt-3.5-turbo', label: 'GPT-3.5', category: 'openai', contextWindow: 16385 },
   { value: 'gpt-4', label: 'GPT-4', category: 'openai', contextWindow: 8192 },
-  { value: 'gemini-1.5-flash', label: 'Gemini-1.5 Flash', category: 'google', contextWindow: 128000 },
   { value: 'gemini-1.5-pro', label: 'Gemini-1.5 Pro', category: 'google', contextWindow: 128000 },
+  { value: 'gemini-1.5-flash', label: 'Gemini-1.5 Flash', category: 'google', contextWindow: 128000 },
   { value: 'meta-llama/Llama-2-7b-chat-hf', label: 'Llama-2-7b-chat-hf', category:'hf-large', contextWindow: 4000 }, 
   { value: 'microsoft/phi-1_5', label: 'phi-1_5', category: 'hf-small', contextWindow:1000},
   { value: 'llama3-8b-8192', label: 'LLaMA3 8b',  category:'groq', contextWindow: 8192 },
@@ -259,7 +259,7 @@ const HomePage : FC<{
           onSubmit={handleSubmit} 
           className="flex item-center w-80vw my-4 p-2 border-2 border-indigo-300 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
         > 
-          {(selectedModel?.value==="gpt-4o" || selectedModel?.value==="gpt-4-turbo") && <ImageUploadIcon onImageUpload={handleImageUpload} /> }   
+          {(selectedModel?.value==="gpt-4o" || selectedModel?.value==="gpt-4-turbo" || selectedModel?.value==="gemini-1.5-flash" || selectedModel?.value==="gemini-1.5-pro") && <ImageUploadIcon onImageUpload={handleImageUpload} /> }   
           <textarea
             ref={textAreaRef}
             disabled={loading}
