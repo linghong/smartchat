@@ -2,6 +2,7 @@
 import { buildChatArray } from './openai'
 import { Groq } from "groq-sdk"
 
+import { GROQ_API_KEY } from '@/config/env'
 import { Message } from '@/src/types/chat'
 import { OptionType } from'@/src/types/common'
 
@@ -38,8 +39,7 @@ export const getGroqChatCompletion = async (
   selectedModel: OptionType
 ) => {
 
-  const GROQ_API_KEY = process.env.GROQ_API_KEY;
-  if (!GROQ_API_KEY) throw new Error('Missing GROQ API key')
+  if(!GROQ_API_KEY) return undefined
 
   const groq = new Groq({
     apiKey: GROQ_API_KEY

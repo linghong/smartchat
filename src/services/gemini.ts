@@ -1,10 +1,9 @@
 import { GoogleGenerativeAI, Part } from "@google/generative-ai"
 
+import { GEMINI_API_KEY } from '@/config/env'
 import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY
-if(!GEMINI_API_KEY) throw new Error('Missing Google Gemini API key')
 
 const getCurrentUserParts = async (imageSrc: string[], userMessage: string) => {
   if(imageSrc.length === 0) return  userMessage
@@ -14,8 +13,8 @@ const getCurrentUserParts = async (imageSrc: string[], userMessage: string) => {
 
     return tempParts.push({
       inlineData: {
-        data: image, // Remove the base64 prefix
-        mimeType: "image/png", // Adjust if your images have a different MIME type
+        data: image, 
+        mimeType: "image/png", 
       }
     })
   })
@@ -61,8 +60,9 @@ const getGeminiChatCompletion = async (
   selectedModel: OptionType,
   base64Images: string[]
 ) => {
+  if(!GEMINI_API_KEY) return undefined
  
-  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY as string);
  
   const maxReturnMessageToken = 10000
 

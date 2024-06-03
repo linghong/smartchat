@@ -1,7 +1,8 @@
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { PineconeStore } from 'langchain/vectorstores/pinecone'
-import { pineconeClient, checkIndexExists, createPineconeIndex } from './pineconeClient'
-import loadAndSplit from '../utils/pdfLoadAndSplit'
+
+import { pineconeClient, checkIndexExists, createPineconeIndex } from '@/src/services/pineconeClient'
+import loadAndSplit from '@/src/utils/pdfLoadAndSplit'
 
 const ingestDataToPinecone = async (filePath: string, namespace: string, indexName: string, chunkSize: number, chunkOverlap: number) => {
   try {

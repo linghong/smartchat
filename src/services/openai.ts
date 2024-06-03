@@ -1,12 +1,10 @@
 import { OpenAI } from "openai"
 import  { encode } from 'gpt-tokenizer'
 
+import { OPENAI_API_KEY } from '@/config/env'
 import { Message, ChatType, ChatRole } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-if (!OPENAI_API_KEY) throw new Error('Missing OpenAI API key')
 
 export const openaiClient = new OpenAI({
   apiKey: OPENAI_API_KEY,
@@ -143,6 +141,7 @@ export const getOpenAIChatCompletion = async (
     if (!completion.usage) throw new Error('Chat completion data is undefined.')
     if(completion.choices[0].finish_reason !== 'stop') console.log(`AI message isn't complete.`)
     let message = completion.choices[0].message?.content?? ''
+
     message = selectedModel.value === 'gpt-4' ? message : message.replace(/\n/g, '<br>')
 
     return message

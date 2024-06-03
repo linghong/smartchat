@@ -1,3 +1,4 @@
+import { NEXT_PUBLIC_SERVER_SECRET_KEY } from '@/config/env'
 import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
@@ -10,11 +11,8 @@ const getOpenModelChatCompletion = async (
   serverURL: string
 ) : Promise<string | undefined> => {
 
-  const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
-  if(!serverSecretKey) {
-    return 'Sever secret key is missing'
-  }
-
+  if(!NEXT_PUBLIC_SERVER_SECRET_KEY) return undefined
+  
   const data = {
     question: userMessage,
     basePrompt,
@@ -28,7 +26,7 @@ const getOpenModelChatCompletion = async (
       method: 'POST',
       headers:{
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + serverSecretKey
+        Authorization: 'Bearer ' + NEXT_PUBLIC_SERVER_SECRET_KEY
       },
       body: JSON.stringify(data)
     })

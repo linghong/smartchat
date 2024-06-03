@@ -73,7 +73,7 @@ export default async function handler(
         return res.status(500).json('Invalid model category')
     }
    
-    const chatAnswer = chatResponse ?? 'I am sorry. I can\'t find an answer to your question.'
+    const chatAnswer = chatResponse ?? 'Sorry, I\'m having trouble finding an answer to your question.'
 
     res.status(200).json(chatAnswer)
   

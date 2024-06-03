@@ -1,4 +1,5 @@
-import { pineconeClient } from './pineconeClient'
+import { PINECONE_INDEX_NAME } from '@/config/env'
+import { pineconeClient } from '@/src/services/pineconeClient'
 interface Metadata {
   'loc.lines.from'?: number;
   'loc.lines.to'?: number;
@@ -15,8 +16,6 @@ interface Metadata {
   text?: string;
 }
 
-const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME
-if (! PINECONE_INDEX_NAME) throw new Error('Missing Pinecone index name')
 
 export const fetchDataFromPinecone = async (embeddedQuery: number[], nameSpace: string) => {
 
@@ -24,7 +23,7 @@ export const fetchDataFromPinecone = async (embeddedQuery: number[], nameSpace: 
     throw new Error('Invalid or empty query vector provided.')
   }
 
-  const index = pineconeClient.Index(PINECONE_INDEX_NAME)
+  const index = pineconeClient.Index(PINECONE_INDEX_NAME as string)
   if (!index) {
     throw new Error('Unable to fetch Pinecone index')
   }

@@ -1,8 +1,10 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+import { NEXT_PUBLIC_API_URL } from '@/config/env'
+
 
 export const fetchData = async (endpoint: string) => {
+  
   try {
-    const response = await fetch(`${API_URL}/api/${endpoint}`)
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/${endpoint}`)
 
     if (!response.ok) {
       throw new Error(`Error fetching ${endpoint}: ${response.statusText}`)
