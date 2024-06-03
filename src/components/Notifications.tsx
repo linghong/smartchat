@@ -28,13 +28,13 @@ const Notifications: FC<Notifications> = ({isLoading, successMessage, errorMessa
 
   if(uploadErrors) Object.keys(uploadErrors).forEach((key) => {
     notifications.push(<Notification key={`uploaderror-${key}`} type="error" message={uploadErrors[key]} />)
-  });
+  })
 
   if(inputErrors) Object.keys(inputErrors).forEach((key) => {
     notifications.push(<Notification key={`inputerror-${key}`} type="error" message={inputErrors[key]} />)
-  });
+  })
 
   return notifications
-};
+}
 
 export default Notifications

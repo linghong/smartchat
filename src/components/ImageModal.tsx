@@ -9,7 +9,6 @@ interface ImageModalProps {
 
 const ImageModal: React.FC<ImageModalProps> = ({ src, onClose }) => {
 
-  
   return (
     <div className="w-full fixed p-10 inset-0 bg-slate-500 bg-opacity-90 flex items-center justify-center z-100"
       role="dialog"
