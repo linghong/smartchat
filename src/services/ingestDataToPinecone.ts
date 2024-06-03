@@ -34,7 +34,7 @@ const ingestDataToPinecone = async (filePath: string, namespace: string, indexNa
     console.error('error', error)
     throw new Error('Failed to ingest your data')
   }
-};
+}
 
-export default ingestDataToPinecone;
+export default ingestDataToPinecone
 

@@ -26,23 +26,22 @@ export const fetchDataFromPinecone = async (embeddedQuery: number[], nameSpace: 
 
   const index = pineconeClient.Index(PINECONE_INDEX_NAME)
   if (!index) {
-    throw new Error('Unable to fetch Pinecone index');
+    throw new Error('Unable to fetch Pinecone index')
   }
 
   const queryRequest = {
     vector: embeddedQuery,
-    topK: 1,
+    topK: 3,
     includeValues: true,
-    includeMetadata: true,
-    namespace: nameSpace,
+    includeMetadata: true
   }
 
   let queryResponse 
   try{
-    queryResponse = await index.query({ queryRequest }) 
-    //console.log('Query Response:', queryResponse?.matches?.[0]?.metadata?.text)
+    queryResponse = await index.namespace(nameSpace).query(queryRequest) 
+
   } catch (error) {
-    throw new Error(`Failed to fetch data from Pinecone: ${error.message}`)
+    throw new Error(`Failed to fetch data from Pinecone: ${error}`)
   }
 
   if (!queryResponse?.matches || queryResponse?.matches?.length === 0) {

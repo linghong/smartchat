@@ -6,7 +6,7 @@ import { OptionType } from '@/src/types/common'
 
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-if (!OPENAI_API_KEY) throw new Error('Missing OpenAI API key');
+if (!OPENAI_API_KEY) throw new Error('Missing OpenAI API key')
 
 export const openaiClient = new OpenAI({
   apiKey: OPENAI_API_KEY,
@@ -29,9 +29,9 @@ export const createEmbedding = async (text: string): Promise<number[]> => {
   const embedding = await openaiClient.embeddings.create({
     model: "text-embedding-ada-002",
     input: text,
-  });
+  })
 
-  return embedding.data[0].embedding;
+  return embedding.data[0].embedding
 }
 
 export const buildChatArray = (
@@ -106,9 +106,8 @@ export const getOpenAIChatCompletion = async (
   userMessage : string, 
   fetchedText: string, 
   selectedModel: OptionType,
-  base64Images: string[]
+  base64Images: string[] | undefined
 ): Promise<string | undefined> => {
-
   const maxReturnMessageToken = selectedModel.value === 'gpt-4'? 4000 : 10000
 
   const baseSystemContent = "You are an AI assistant, skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. Also, only give answer for the question asked, don't provide text not related to the user's question. "
@@ -121,10 +120,9 @@ export const getOpenAIChatCompletion = async (
 
   const userTextWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''"+ '\n'+ basePrompt : userMessage +'\n' + basePrompt
 
-  
   try { 
     const completion = await openaiClient.chat.completions.create({
-        model: selectedModel,
+        model: selectedModel.value,
         temperature: 0,
         max_tokens: maxReturnMessageToken,
         frequency_penalty: 0,
@@ -137,7 +135,7 @@ export const getOpenAIChatCompletion = async (
           ...chatArray,
           {
             "role": "user",
-            "content":base64Images.length !== 0?
+            "content":base64Images && base64Images?.length !== 0?
             contentForUserWithImageMessage(base64Images, userTextWithFetchedData) : userTextWithFetchedData
           }],
     })

@@ -1,18 +1,18 @@
-import { PineconeClient } from '@pinecone-database/pinecone'
+import { Pinecone, IndexStatsNamespaceSummary, IndexModel } from '@pinecone-database/pinecone'
 
 const PINECONE_ENVIRONMENT = process.env.PINECONE_ENVIRONMENT
 const PINECONE_API_KEY = process.env.PINECONE_API_KEY
 if (!PINECONE_ENVIRONMENT) throw new Error('missing Pinecone environment variable')
-if (!PINECONE_API_KEY) throw new Error('missing Pinecone api key');
+if (!PINECONE_API_KEY) throw new Error('missing Pinecone api key')
 
 const initPinecone = async () => {
   console.log('Initiating Pinecone ...')
-  const pinecone = new PineconeClient();
+ 
   try {
-    await pinecone.init({
-      environment: PINECONE_ENVIRONMENT,
-      apiKey: PINECONE_API_KEY,
-    })
+    const pinecone = new Pinecone({
+      apiKey: PINECONE_API_KEY
+    });
+   
     return pinecone
 
   } catch (e) {
@@ -22,63 +22,67 @@ const initPinecone = async () => {
 
 export const pineconeClient = await initPinecone()
 
-export const createPineconeIndex = async (pineconeClient : PineconeClient, indexName: string) => {
+export const createPineconeIndex = async (pineconeClient : Pinecone, indexName: string) => {
   try{
-    console.log(`Creating index ${indexName}...`);
+    console.log(`Creating index ${indexName}...`)
     const res = await pineconeClient.createIndex({
-      createRequest: {
         name: indexName,
         dimension: 1536,
-        metric: 'cosine'
+        metric: 'cosine',
+        spec: {
+          serverless: {
+            cloud: 'aws',
+            region: 'us-east-1'
+          }
+        }
       },
-    })
+    )
   } catch (error) {
-    console.error(`An error occurred while creating the index: ${error}`);
-    throw error;
+    console.error(`An error occurred while creating the index: ${error}`)
+    throw error
   }
 }
 
-export const listIndexes = async (): Promise<string[] | undefined> => {
+export const listIndexes = async (): Promise<IndexModel[] | undefined> => {
   try {
-      const indexes = await pineconeClient.listIndexes();
-      return indexes;
+      const indexes = await pineconeClient.listIndexes()
+      return indexes.indexes
+
   } catch (error) {
-      console.error(`An error occurred when listing index: ${error}`);
-      return undefined;
+      console.error(`An error occurred when listing index: ${error}`)
+      return undefined
   }
 }
 
 export const checkIndexExists = async (indexName : string) : Promise<boolean> => {
   try {
-      const response = await pineconeClient.describeIndex({ indexName: indexName });
+      const response = await pineconeClient.describeIndex(indexName)
       
       if(response?.status?.state === 'Ready') {
-        console.log(`Index ${indexName} exists.`);
-        return true;
+        console.log(`Index ${indexName} exists.`)
+        return true
     } else {
-        console.log(`Index ${indexName} does not exist.`);
-        return false;
+        console.log(`Index ${indexName} does not exist.`)
+        return false
     }
   } catch (error) {
-      console.error(`Failed to check if index exists: ${error}`);
-      return false;
+      console.error(`Failed to check if index exists: ${error}`)
+      return false
   }
 }
 
 export const getNamespaces = async (indexName: string): Promise<string[] | undefined> => {
   try {
     const index = pineconeClient.Index(indexName)
-    const res = await index.describeIndexStats({
-      describeIndexStatsRequest: {}
-    })
-    
-    const namespacesObj: {[key: string]: { vectorCount?: number | undefined }}  | undefined = res.namespaces
+    const res = await index.describeIndexStats()
+
+    const namespacesObj: {[key: string]:IndexStatsNamespaceSummary} | undefined = res.namespaces
 
     return namespacesObj? Object.keys(namespacesObj) : undefined
 
   } catch (error) {
-    console.error(`An error occurred when fetching namespaces: ${error}`);
-    return undefined;
+    console.error(`An error occurred when fetching namespaces: ${error}`)
+    return undefined
   }
 }
 

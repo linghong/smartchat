@@ -38,6 +38,7 @@ export default async function handler(
     if(namespace && namespace !== 'none') {
       const embeddedQuery = await createEmbedding(question)
       fetchedText = await fetchDataFromPinecone(embeddedQuery, namespace)
+      console.log(fetchedText)
     }
 
     // get response from AI
