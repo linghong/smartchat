@@ -99,7 +99,6 @@ const contentForUserWithImageMessage = (
   return contentForUserMessage
 }
 
-
 export const getOpenAIChatCompletion = async (
   basePrompt: string, 
   chatHistory: Message[],
@@ -108,7 +107,7 @@ export const getOpenAIChatCompletion = async (
   selectedModel: OptionType,
   base64Images: string[] | undefined
 ): Promise<string | undefined> => {
-  const maxReturnMessageToken = selectedModel.value === 'gpt-4'? 4000 : 10000
+  const maxReturnMessageToken = selectedModel.contextWindow ? 4096 : 2000
 
   const baseSystemContent = "You are an AI assistant, skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. Also, only give answer for the question asked, don't provide text not related to the user's question. "
 
@@ -139,7 +138,7 @@ export const getOpenAIChatCompletion = async (
             contentForUserWithImageMessage(base64Images, userTextWithFetchedData) : userTextWithFetchedData
           }],
     })
-  
+
     if (!completion) throw new Error('Chat completion data is undefined.')
     if (!completion.usage) throw new Error('Chat completion data is undefined.')
     if(completion.choices[0].finish_reason !== 'stop') console.log(`AI message isn't complete.`)
