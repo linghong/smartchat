@@ -1,4 +1,3 @@
-
 export type OptionType = {
   value: string;
   label: string;
@@ -15,6 +14,7 @@ export type ApiResponse = {
 export type InputErrors = {
   [key: string]: string | null;
 }
+
 export type Input<T> = {
   [key: string]: T;
 }

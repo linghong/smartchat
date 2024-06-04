@@ -62,7 +62,7 @@ const getGeminiChatCompletion = async (
 ) => {
   if(!GEMINI_API_KEY) return undefined
  
-  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY as string);
+  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY as string)
  
   const maxReturnMessageToken = 10000
 
@@ -85,8 +85,8 @@ const getGeminiChatCompletion = async (
       },
     });
   
-    const result = await chat.sendMessage(currentUserParts);
-    const text = result.response.text();
+    const result = await chat.sendMessage(currentUserParts)
+    const text = result.response.text()
 
     return text 
 

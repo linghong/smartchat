@@ -14,7 +14,7 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 type Document = {
   pageContent: string,
   metadata: Record<string, any>
-};
+}
 
 const joinBrokenSentence = (pageContent: string): string => {
   // Handle words that got split between lines, or two words that are combined into one.

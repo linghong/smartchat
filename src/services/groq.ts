@@ -62,7 +62,7 @@ export const getGroqChatCompletion = async (
       })
 
       if (!completion || !completion.choices || !completion.choices.length) {
-        throw new Error('No completion choices returned from the server.');
+        throw new Error('No completion choices returned from the server.')
       }
 
     return completion.choices[0]?.message?.content
