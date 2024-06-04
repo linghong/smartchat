@@ -4,18 +4,19 @@ import { InputErrors, UploadErrors } from '@/src/types/common'
 import Notification from '@/src/components/Notification'
 
 interface Notifications {
-  isLoading: boolean; 
+  isLoading: boolean;
+  loadingMessage: string; 
   successMessage: string | null;
   errorMessage: string | null; 
   uploadErrors?: UploadErrors; 
   inputErrors?: InputErrors;
 }
 
-const Notifications: FC<Notifications> = ({isLoading, successMessage, errorMessage, uploadErrors, inputErrors}: Notifications) => {
+const Notifications: FC<Notifications> = ({isLoading, loadingMessage="Uploading your data...", successMessage, errorMessage,  uploadErrors, inputErrors}) => {
   const notifications = []
 
   if (isLoading) {
-    notifications.push(<Notification key={"isLoading"} type="loading" message="Uploading your data..." />)
+    notifications.push(<Notification key="loading" type="loading" message={loadingMessage} />)
   }
 
   if (successMessage) {
