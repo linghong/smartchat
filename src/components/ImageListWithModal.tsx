@@ -1,4 +1,4 @@
-import { useState, FC, KeyboardEvent } from 'react'
+import { useState, FC } from 'react'
 import { BsTrash3 } from "react-icons/bs"
 
 import ImageModal from '@/src/components/ImageModal'

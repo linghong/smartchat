@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ImageListWithModal should match snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="flex flex-row justify-start w-80vw pt-3 px-3"
+  >
+    <div
+      class="w-20 h-full mx-2"
+    >
+      <div
+        aria-label="Click to view larger image 1"
+        class="mr-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100"
+        role="button"
+        tabindex="0"
+        title="Uploaded image thumbnail 1"
+      >
+        <div
+          class="bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer"
+          style="background-image: url(http://example.com/image1.jpg);"
+        />
+      </div>
+    </div>
+    <div
+      class="w-20 h-full mx-2"
+    >
+      <div
+        aria-label="Click to view larger image 2"
+        class="mr-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100"
+        role="button"
+        tabindex="0"
+        title="Uploaded image thumbnail 2"
+      >
+        <div
+          class="bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer"
+          style="background-image: url(http://example.com/image2.jpg);"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
