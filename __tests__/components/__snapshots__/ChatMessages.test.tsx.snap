@@ -2,11 +2,12 @@
 
 exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
 <DocumentFragment>
-  <div
+  <article
+    aria-label="user-message"
     class="flex px-3 py-2 text-black"
   >
     <img
-      alt="User"
+      alt="User avatar"
       class="h-full mr-4 rounded-sm"
       data-nimg="1"
       decoding="async"
@@ -18,16 +19,57 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
       width="30"
     />
     <div
-      class="space-wrap"
+      class="user-question"
     >
-      What is AI?
+      <div
+        class="space-wrap"
+      >
+        What is AI?
+      </div>
+      <div
+        class="flex flex-row justify-start w-80vw pt-3 px-3"
+      >
+        <div
+          class="w-20 h-full mx-2"
+        >
+          <div
+            aria-label="Click to view larger image 1"
+            class="mr-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100"
+            role="button"
+            tabindex="0"
+            title="Uploaded image thumbnail 1"
+          >
+            <div
+              class="bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer"
+              style="background-image: url(/path/to/image1.png);"
+            />
+          </div>
+        </div>
+        <div
+          class="w-20 h-full mx-2"
+        >
+          <div
+            aria-label="Click to view larger image 2"
+            class="mr-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100"
+            role="button"
+            tabindex="0"
+            title="Uploaded image thumbnail 2"
+          >
+            <div
+              class="bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer"
+              style="background-image: url(path/to/image2.png);"
+            />
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div
+  </article>
+  <article
+    aria-labelledby="ai-response"
     class="flex px-3 py-2 bg-slate-100 color-black ease-in duration-300"
   >
     <img
-      alt="AI Bot"
+      alt="AI bot avatar"
       class="h-full mr-4 rounded-sm false"
       data-nimg="1"
       decoding="async"
@@ -39,10 +81,10 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
       width="30"
     />
     <div
-      class="bot-responses answer space-wrap"
+      class="bot-response answer space-wrap"
     >
       AI stands for Artificial Intelligence.
     </div>
-  </div>
+  </article>
 </DocumentFragment>
 `;
