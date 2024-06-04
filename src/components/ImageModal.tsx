@@ -10,7 +10,8 @@ interface ImageModalProps {
 const ImageModal: React.FC<ImageModalProps> = ({ src, onClose }) => {
 
   return (
-    <div className="w-full fixed p-10 inset-0 bg-slate-500 bg-opacity-90 flex items-center justify-center z-100"
+    <div 
+      className="w-full fixed p-10 inset-0 bg-slate-500 bg-opacity-90 flex items-center justify-center z-100"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modalTitle"
@@ -18,8 +19,8 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, onClose }) => {
     >     
       <Image 
         src={src} 
-        layout="fill" 
-        objectFit="contain" 
+        fill
+        style={{ objectFit: 'contain' }}
         alt="Expanded view"
         className="p-6"    
       />
