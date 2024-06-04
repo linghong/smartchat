@@ -1,11 +1,11 @@
 require('@testing-library/jest-dom')
-process.env.PINECONE_API_KEY='fake-pinecone'
-process.env.PINECONE_INDEX_NAME = 'test-index'
-process.env.OPENAI_API_KEY = 'test'
-process.env.GROQ_API_KEY = 'fake-api-key'
-process.env.GEMINI_API_KEY = 'fake-gemini'
+process.env.PINECONE_API_KEY='fake-pinecone-api'
+process.env.PINECONE_INDEX_NAME = 'fake-pinecone-index'
+process.env.OPENAI_API_KEY = 'fake-openai-api'
+process.env.GROQ_API_KEY = 'fake-groq-api'
+process.env.GEMINI_API_KEY = 'fake-gemini-api'
 process.env.NEXT_PUBLIC_API_URL='http://localhost:3000'
-process.env.NEXT_PUBLIC_SERVER_SECRET_KEY='fake'
+process.env.NEXT_PUBLIC_SERVER_SECRET_KEY='fake-server-secret'
 
 const { TextEncoder, TextDecoder } = require('util');
 global.TextEncoder = TextEncoder
