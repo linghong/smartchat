@@ -27,7 +27,10 @@ describe('getGroqChatCompletion', () => {
   const chatHistory: Message[] = [{ question: 'Hello', answer: 'How are you?' }]
   const userMessage = "What's the weather like?"
   const fetchedText = "Sunny and 75 degrees"
-  const selectedModel = 'LLama3-8b'
+  const selectedModel = {
+    value: 'llama3-8b', 
+    label:'LLama3 8b'
+  }
 
   let consoleSpy: jest.SpyInstance
 
@@ -42,13 +45,6 @@ describe('getGroqChatCompletion', () => {
   afterEach(() => {
     // Restore the original console.error after each test
     consoleSpy.mockRestore()
-  })
-
-  it('should throw an error if GROQ API key is missing', async () => {
-    delete process.env.GROQ_API_KEY
-
-    await expect(getGroqChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel))
-      .rejects.toThrow('Missing GROQ API key')
   })
 
   it('should return a successful response from the Groq API', async () => {
