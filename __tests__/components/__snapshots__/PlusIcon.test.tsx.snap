@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PlusIcon should match snapshot 1`] = `
+<DocumentFragment>
+  <svg
+    class="w-6 h-6"
+    data-id="plus-icon"
+    fill="none"
+    stroke="currentcolor"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    xmlns="http://wwww3.org/2000/svg"
+  >
+    <line
+      x1="12"
+      x2="12"
+      y1="5"
+      y2="19"
+    />
+    <line
+      x1="5"
+      x2="19"
+      y1="12"
+      y2="12"
+    />
+  </svg>
+</DocumentFragment>
+`;
