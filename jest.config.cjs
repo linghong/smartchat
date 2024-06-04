@@ -7,6 +7,6 @@ module.exports = {
     '^.+\\.(ts|tsx)$': 'babel-jest',
   },
   moduleNameMapper: {
-    '^@/src/(.*)$': '<rootDir>/src/$1',
+    '^@/(.*)$': '<rootDir>/$1',
   }
 }
