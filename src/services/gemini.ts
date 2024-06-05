@@ -5,7 +5,7 @@ import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
 
-const getCurrentUserParts = async (imageSrc: string[], userMessage: string) => {
+export const getCurrentUserParts = async (imageSrc: string[], userMessage: string) => {
   if(imageSrc.length === 0) return  userMessage
     let tempParts : string | (string | Part)[] = [userMessage]
 
@@ -22,31 +22,21 @@ const getCurrentUserParts = async (imageSrc: string[], userMessage: string) => {
   return tempParts
 }
 
-const buildChatArray = (chatHistory: Message[]) => {
+export const buildChatArray = (chatHistory: Message[]) => {
   const len = chatHistory.length
-  
+  let chatArray = []
   // Gemini chatHistory starts with user
-  let chatArray = [{
-    role:'user',
-    parts: [{text: chatHistory[0].question}]
-  }]
+  for ( let i = 0; i < len; i++) {
+    chatArray.push ({
+      role:'user',
+      parts: [{text: chatHistory[i].question}]
+    })
 
-  for ( let i = 1; i < len - 1; i++) {
     chatArray.push({
       role: 'model',
       parts: [{text: chatHistory[i].answer}]
     })
-    chatArray.push( {
-      role: 'user',
-      parts: [{text: chatHistory[i].question}]
-    })
   }
-
-  //Gemini chatHistory ends with model
-  chatArray.push({
-    role: 'model',
-    parts: [{text: chatHistory[len - 1].answer}]
-  })
 
   return chatArray
 }
@@ -61,7 +51,7 @@ const getGeminiChatCompletion = async (
   base64Images: string[]
 ) => {
   if(!GEMINI_API_KEY) return undefined
- 
+
   const genAI = new GoogleGenerativeAI(GEMINI_API_KEY as string)
  
   const maxReturnMessageToken = 10000
@@ -91,9 +81,8 @@ const getGeminiChatCompletion = async (
     return text 
 
   } catch(error) {
-    throw new Error(`Failed to fetch response from Google ${selectedModel} model, ${error}`)
+    throw new Error(`Failed to fetch response from Google ${selectedModel.value} model, ${error}`)
   }
-
 }
 
 export default getGeminiChatCompletion
