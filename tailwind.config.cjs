@@ -14,14 +14,27 @@ module.exports = {
       },
       width: {
         '20vw': '20vw',
+        '30vw': '30vw',
         '40vw': '40vw',
+        '50vw': '50vw',
         '60vw': '60vw',
+        '70vw': '70vw',
         '80vw': '80vw',
       },
       height: {
         '40vh': '40vh',
         '60vh': '60vh',
         '80vh': '80vh',
+      },
+      screens: {
+        'ms': '360px', //micro small device 
+        'xs': '480px', //extra small device
+        // otherwise, use Tailwind's defaults
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
       },
     },
   },

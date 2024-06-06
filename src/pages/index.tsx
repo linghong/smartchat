@@ -1,5 +1,6 @@
 import {useState, useRef, useCallback, useEffect, ChangeEvent,FormEvent, FC } from 'react'
 import {GetStaticProps} from 'next'
+import { RiScreenshot2Fill } from "react-icons/ri";//screenshot
 
 import { modelOptions } from '@/config/modellist'
 import ArrowButton  from '@/src/components/ArrowButton'
@@ -47,7 +48,7 @@ const HomePage : FC<{
   const [error, setError] = useState<string | null>(null)
   
   const fetchChatResponse = async (basePrompt:string, question: string, imageSrc: string[], selectedModel: OptionType | null, namespace: string) => {
-    
+    console.log("chat response")
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -141,6 +142,23 @@ const HomePage : FC<{
     setImageSrc([...imageSrc.slice(0, id), ...imageSrc.slice(id+1)])
   }
 
+
+  const handleScreenCapture = async () => {
+    try {
+      const response = await fetch('/api/screenshot', { method: 'POST' })
+      const result = await response.json();
+      if (response.ok) {
+        const newImagePath = `${result.imgPath}?timestamp=${new Date().getTime()}`
+        setImageSrc([...imageSrc, newImagePath])
+      } else {
+        alert(result.message)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('An error occurred while capturing the screen')
+    }
+  }
+
   useEffect(() => {
     const keyDownHandler = (e: KeyboardEvent) => {
       if (e.key !== 'Enter') return
@@ -185,10 +203,10 @@ const HomePage : FC<{
   }, [isNewChat])
 
   return  (
-    <div className="flex flex-col p-2">
+    <div className="flex w-full lg:w-70vw flex-col px-2  items-center justify-center mx-auto">
       <Header pageTitle="Chat With AI" />
-      <div className="flex flex-col  items-center justify-center">
-      <div className="flex flex-row w-80vw justify-around">
+      <div className="flex flex-col  items-center justify-center w-full">
+      <div className="flex flex-col sm:flex-row w-full justify-around">
         <DropdownSelect 
           selectedOption={selectedModel} 
           onChange={handleModelChange}
@@ -202,7 +220,7 @@ const HomePage : FC<{
           label='Using Saved File:'
         />
       </div>      
-      <div  className="flex flex-col w-80vw item-center py-2"
+      <div  className="flex flex-col w-full items-center py-2"
       >
         <label htmlFor="userSystemPrompt" className="text-base font-bold">Enter text here for AI to remember throughout the chat:</label>
         <textarea
@@ -215,8 +233,8 @@ const HomePage : FC<{
           aria-label="Enter text here for AI to remember throughout the chat"
         />   
       </div>      
-      <div className="flex flex-col w-80vw h-60vh items-center justify-between">
-        <div className={`w-80vw grow bg-white border-2 border-stone-200 overflow-y-auto`}>
+      <div className="flex flex-col w-full h-60vh items-center">
+        <div className={`w-full grow bg-white border-2 border-stone-200 overflow-y-auto`}>
           <div  
             className="w-full h-full overflow-y-scroll rounded-lg"
             aria-live="polite"
@@ -237,32 +255,53 @@ const HomePage : FC<{
             }
           </div>
         </div>
-         <ImageListWithModal
-           imageSrc={imageSrc}
-           handleImageDelete={handleImageDelete}
-           isDeleteIconShow={true}
-          />
-        <form
-          onSubmit={handleSubmit} 
-          className="flex item-center w-80vw my-4 p-2 border-2 border-indigo-300 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
-        > 
-          {(selectedModel?.value==="gpt-4o" || selectedModel?.value==="gpt-4-turbo" || selectedModel?.value==="gemini-1.5-flash" || selectedModel?.value==="gemini-1.5-pro") && <ImageUploadIcon onImageUpload={handleImageUpload} /> }   
-          <textarea
-            ref={textAreaRef}
-            disabled={loading}
-            autoFocus={false}
-            rows={rows}
-            id="userInput"
-            name="userInput"
-            className={`w-80vw max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
-            placeholder="Click to send a message, and push Shift + Enter to move to the next line."
-            value={userInput}
-            onChange={handleInputChange}
-            aria-label="Enter your message here"
-          />
-         
-          <ArrowButton disabled={userInput==='' && imageSrc.length === 0} />
-        </form>
+        <ImageListWithModal
+          imageSrc={imageSrc}
+          handleImageDelete={handleImageDelete}
+          isDeleteIconShow={true}
+        />
+        <div className="flex w-full justify-around items-center mx-2 my-1 border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg ">
+          <div className="flex w-3/12 ms-2/12 xs:w-1/12  items-center justify-around mx-1">
+            <button 
+              onClick={handleScreenCapture} 
+              className="font-bold px-1 rounded cursor-pointer"
+              aria-label="Capture Screenshot"
+            >
+              <RiScreenshot2Fill size={32} />
+            </button>
+            {(selectedModel?.value==="gpt-4o" || 
+              selectedModel?.value==="gpt-4-turbo" || 
+              selectedModel?.value==="gemini-1.5-flash" || 
+              selectedModel?.value==="gemini-1.5-pro") && 
+              <ImageUploadIcon 
+                onImageUpload={handleImageUpload}
+                aria-label="Upload Image"
+              /> 
+            }  
+          </div>    
+          <form
+            onSubmit={handleSubmit} 
+            className="flex items-center w-8/12 ms:w-9/12 xs:w-10/12 xl:w-11/12 px-2 py-1 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
+          >          
+            <textarea
+              ref={textAreaRef}
+              disabled={loading}
+              autoFocus={false}
+              rows={rows}
+              id="userInput"
+              name="userInput"
+              className={`w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
+              placeholder="Click to send. Shift + Enter for a new line."
+              value={userInput}
+              onChange={handleInputChange}
+              aria-label="Enter your message here"
+            />         
+            <ArrowButton 
+              disabled={userInput==='' && imageSrc.length === 0}
+              aria-label="Send" 
+            />
+          </form>
+        </div>
         { error && <Notification type="error" message={error} /> }      
         </div>
       </div>       

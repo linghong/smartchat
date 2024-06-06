@@ -21,7 +21,7 @@ const ImageUploadIcon: FC<ImageUploadIconProps> = ({ onImageUpload }) => {
 
   return ( 
     <label 
-      className="flex items-center justify-center  text-white font-bold py-2 px-2 rounded cursor-pointer"
+      className="flex items-center justify-center  text-white font-bold px-2 rounded cursor-pointer"
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && handleIconClick()}
     >
