@@ -33,6 +33,7 @@
     "react-router-dom": "^6.23.1",
     "react-select": "^5.7.3",
     "react-test-renderer": "^18.2.0",
+    "screenshot-desktop": "^1.15.0",
     "ssh2": "^1.14.0",
     "tailwindcss": "3.3.2",
     "typescript": "5.4.5"
@@ -51,6 +52,7 @@
     "@types/react": "18.3.2",
     "@types/react-dom": "18.3.0",
     "@types/react-test-renderer": "18.3.0",
+    "@types/screenshot-desktop": "^1.12.3",
     "@types/testing-library__user-event": "^4.2.0",
     "autoprefixer": "10.4.14",
     "babel-jest": "^29.7.0",
