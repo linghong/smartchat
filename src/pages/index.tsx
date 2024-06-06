@@ -46,6 +46,11 @@ const HomePage : FC<{
 
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+
+  const isVisionModel = selectedModel?.value==="gpt-4o" ||
+  selectedModel?.value==="gpt-4-turbo" ||
+  selectedModel?.value==="gemini-1.5-flash" ||
+  selectedModel?.value!=="gemini-1.5-pro"
   
   const fetchChatResponse = async (basePrompt:string, question: string, imageSrc: string[], selectedModel: OptionType | null, namespace: string) => {
     console.log("chat response")
@@ -126,6 +131,7 @@ const HomePage : FC<{
   }
 
   const handleImageUpload =async (file: File) => {
+    if(!isVisionModel) return;
     if (!file) return;
     try{
       const reader = new FileReader()
@@ -248,6 +254,7 @@ const HomePage : FC<{
                 lastIndex={index===chatHistory.length-1?true:false}
                 loading={loading}
                 imageSrc={imageSrcHistory[index]}
+                modelName={selectedModel?.value||'gpt-4o'}
                 handleImageDelete={handleImageDelete}
               />
               </div>
@@ -262,22 +269,33 @@ const HomePage : FC<{
         />
         <div className="flex w-full justify-around items-center mx-2 my-1 border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg ">
           <div className="flex w-3/12 ms-2/12 xs:w-1/12  items-center justify-around mx-1">
-            <button 
-              onClick={handleScreenCapture} 
-              className="font-bold px-1 rounded cursor-pointer"
-              aria-label="Capture Screenshot"
-            >
-              <RiScreenshot2Fill size={32} />
-            </button>
-            {(selectedModel?.value==="gpt-4o" || 
-              selectedModel?.value==="gpt-4-turbo" || 
-              selectedModel?.value==="gemini-1.5-flash" || 
-              selectedModel?.value==="gemini-1.5-pro") && 
-              <ImageUploadIcon 
-                onImageUpload={handleImageUpload}
-                aria-label="Upload Image"
-              /> 
-            }  
+            <div className="screen-capture">
+              <button 
+                onClick={handleScreenCapture} 
+                className="flex items-center justify-center font-bold px-1 rounded cursor-pointer disabled:cursor-not-allowed"
+                aria-label="Capture Screenshot"
+                disabled={!isVisionModel}
+              >
+                <RiScreenshot2Fill size={30} />
+              </button>
+              <span 
+                className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 hidden group-hover:block bg-gray-100 text-black text-xs rounded py-1 px-5 whitespace-nowrap">
+                { isVisionModel? 
+                  `Capture Screenshot`
+                  :  `${selectedModel?.value} does not have vision feature `}
+              </span>
+            </div>
+            <div className="image-upload">
+            <ImageUploadIcon 
+              onImageUpload={handleImageUpload}
+              aria-label="Upload Image"
+            />
+             <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-6 hidden group-hover:block bg-gray-100 text-black text-xs rounded py-1 px-5 whitespace-nowrap">
+              { isVisionModel ? 
+                'Upload Image'
+                : `${selectedModel?.value} does not have vision feature` }
+            </span>
+            </div>   
           </div>    
           <form
             onSubmit={handleSubmit} 
