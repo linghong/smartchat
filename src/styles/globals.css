@@ -19,6 +19,7 @@
 html, body {
   color: var(--foreground-rgb);
   background: white;
+  height:100%;
 }
 
 .bot-response p {
@@ -31,3 +32,8 @@ html, body {
   padding: 10px; /* Optional: padding around text */
   border-radius: 4px; /* Optional: rounded corners for the chat bubble */
 }
+
+html, body, #__next, .flex-grow {
+  height: 100%;
+}
+

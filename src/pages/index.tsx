@@ -6,7 +6,6 @@ import { modelOptions } from '@/config/modellist'
 import ArrowButton  from '@/src/components/ArrowButton'
 import ChatMessage from '@/src/components/ChatMessage'
 import DropdownSelect from '@/src/components/DropdownSelect'
-import Header from '@/src/components/Header'
 import ImageListWithModal from '@/src/components/ImageListWithModal'
 import ImageUploadIcon from '@/src/components/ImageUploadIcon'
 import Notification from '@/src/components/Notification'
@@ -23,10 +22,10 @@ const initialMessage = {
 }
 
 const HomePage : FC<{
+  namespaces: string[]
   isNewChat: boolean, 
   setIsNewChat: (value: boolean) => void, 
-  namespaces: string[]
-}> = ({ isNewChat, setIsNewChat, namespaces}) => {
+}> = ({ namespaces, isNewChat, setIsNewChat}) => {
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null> (null)
@@ -53,7 +52,7 @@ const HomePage : FC<{
   selectedModel?.value!=="gemini-1.5-pro"
   
   const fetchChatResponse = async (basePrompt:string, question: string, imageSrc: string[], selectedModel: OptionType | null, namespace: string) => {
-    console.log("chat response")
+ 
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -148,7 +147,6 @@ const HomePage : FC<{
     setImageSrc([...imageSrc.slice(0, id), ...imageSrc.slice(id+1)])
   }
 
-
   const handleScreenCapture = async () => {
     try {
       const response = await fetch('/api/screenshot', { method: 'POST' })
@@ -209,8 +207,7 @@ const HomePage : FC<{
   }, [isNewChat])
 
   return  (
-    <div className="flex w-full lg:w-70vw flex-col px-2  items-center justify-center mx-auto">
-      <Header pageTitle="Chat With AI" />
+    <div className="flex flex-col px-2 items-center justify-center mx-auto">
       <div className="flex flex-col  items-center justify-center w-full">
       <div className="flex flex-col sm:flex-row w-full justify-around">
         <DropdownSelect 

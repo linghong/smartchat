@@ -21,20 +21,20 @@ const MenuItem: FC<MenuItemProps> = ({ title, link, itemList, defaultOpen = fals
 
   return (
     <li className="mt-5 my-8 font-semibold" >
-      <div className={`flex justify-between items-center px-1 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer ${isActive ? 'bg-slate-500 text-indigo-200 rounded-sm' : 'text-slate-50'}`} >
+      <div className={`flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer ${isActive ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-50'}`} >
         {link ? (
           <Link href={link} className={`flex-grow px-2 hover:underline `}>
             {title}
           </Link>
         ) : (
-          <span className="flex-grow text-slate-50">{title}</span>
+          <span className="flex-grow text-slate-50 ">{title}</span>
         )}
         <span role="button" className="cursor-pointer" onClick={toggle}>
           {isOpen ? <MdExpandLess /> : <MdExpandMore />}
         </span>
       </div>
       {isOpen && (
-        <ul className="px-4 py-2 font-medium text-slate-200">
+        <ul className="px-6 py-2 font-medium text-slate-200">
           { itemList.map((item)=>
             <li key={item} className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100">
             {item}

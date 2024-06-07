@@ -1,3 +1,4 @@
+
 import { FC, MouseEvent, useState } from 'react'
 import { GetStaticProps } from 'next'
 import { ActionMeta} from 'react-select'
@@ -170,7 +171,6 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <Header pageTitle="Manage My AI" />
       <form className="flex flex-col h-60vh lg:h-40vh p-3 justify-between ">        
       <FieldSet>
         <UploadFile 
@@ -273,7 +273,10 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
           inputErrors={inputErrors}
         />
       </form>
-      <div className="flex flex-col h-40vh items-center justify-between"></div>      
+      <div className="flex flex-col h-40vh items-center justify-between">
+      Not happy about the closed embedding model, find an
+      <a href="https://huggingface.co/spaces/mteb/leaderboard" className="text-blue-500">  embedding models in hugging face</a>
+      </div> use <a href="github.com/linghong/smartchat-fastapi">SmartChat-FastAPI</a> to host or finetune an existing model for embedding
     </div>
   )
 }
@@ -289,4 +292,6 @@ export const getStaticProps: GetStaticProps = async () => {
     },
     revalidate: 60 * 60 *24 // This is optional. It ensures regeneration of the page after every 24 hour
   }
+
+  
 }

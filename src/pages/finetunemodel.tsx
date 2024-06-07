@@ -175,7 +175,6 @@ const FinetuneModel: FC = () => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <Header pageTitle="Finetune AI Model" />
       <form className="flex flex-col justify-start">
         <FieldSet>
         <div className="flex justify-start my-3">
