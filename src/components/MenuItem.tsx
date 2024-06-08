@@ -1,6 +1,6 @@
 import React, { useState, FC, ReactNode } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'; 
+import { useRouter } from 'next/router'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md' 
 
 interface MenuItemProps {
@@ -8,22 +8,33 @@ interface MenuItemProps {
   link?: string;
   itemList: string[];
   defaultOpen?: boolean;
+  setIsSidebarOpen?: (isSidebarOpen: boolean) => void; 
 }
 
-const MenuItem: FC<MenuItemProps> = ({ title, link, itemList, defaultOpen = false }) => {
+const MenuItem: FC<MenuItemProps> = ({ title, link, itemList, defaultOpen = false, setIsSidebarOpen }) => {
 
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const router = useRouter()
   const isActive = link && router.pathname === link
 
-  const toggle = () => setIsOpen(!isOpen);
+  const toggle = () => setIsOpen(!isOpen)
+
+  const handleLinkClick = () => {
+    if (setIsSidebarOpen) {
+      setIsSidebarOpen(false)
+    }
+  }
 
   return (
     <li className="mt-5 my-8 font-semibold" >
       <div className={`flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer ${isActive ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-50'}`} >
         {link ? (
-          <Link href={link} className={`flex-grow px-2 hover:underline `}>
+          <Link 
+          href={link} 
+          className={`flex-grow px-2 hover:underline `}
+          onClick={handleLinkClick}
+          >
             {title}
           </Link>
         ) : (

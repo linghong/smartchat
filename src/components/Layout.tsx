@@ -11,8 +11,7 @@ const Layout: FC<{ children: ReactNode}>  = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false)
  
   useEffect(() => {
-const checkIsMobile = () => {
-  console.log("width", window.innerWidth)
+    const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 480)
     }
 
@@ -33,28 +32,37 @@ const checkIsMobile = () => {
         setIsSidebarOpen={setIsSidebarOpen}
       />
       <div className="flex flex-row">
-        { 
-        isMobile && isSidebarOpen  && 
-        <Sidebar isSidebarOpen={isSidebarOpen}/>}
+        {isMobile && isSidebarOpen  && 
+          <Sidebar 
+            isSidebarOpen={isSidebarOpen}  
+            setIsSidebarOpen={setIsSidebarOpen}
+          />
+        }
         {isMobile && !isSidebarOpen && 
-         <main className ="w-full lg:w-70vw ">
+          <main className="w-full lg:w-70vw ">
             {children}
             <Footer />  
-          </main>}
-          { !isMobile && isSidebarOpen && 
+          </main>
+        }
+        { !isMobile && isSidebarOpen && 
           <>
-            <Sidebar isSidebarOpen={isSidebarOpen}/>
-            <main className ="w-full sm:w-90vw lg:w-70vw justify-center items-center mx-auto">
+            <Sidebar 
+              isSidebarOpen={isSidebarOpen}
+              setIsSidebarOpen={setIsSidebarOpen}
+            />
+            <main className="w-full sm:w-90vw lg:w-70vw justify-center items-center mx-auto">
               {children}
               <Footer />  
             </main>
-          </>}
-          {!isMobile && !isSidebarOpen &&  
-          <main className ="w-full lg:w-70vw mx-auto">
+          </>
+        }
+        {!isMobile && !isSidebarOpen &&  
+          <main className="w-full lg:w-70vw mx-auto">
             {children}
             <Footer />  
-          </main>}     
-         </div>
+          </main>
+        }     
+      </div>
     </div>
   )
 }
