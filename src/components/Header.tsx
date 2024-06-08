@@ -3,11 +3,11 @@ import { FaBars, FaPlus } from 'react-icons/fa'
 import { useRouter } from 'next/router'
 
 interface HeaderProps {
-  setIsSidebarOpen: (isSideBarOpen:boolean) => void
+  setIsSidebarOpen: (isSideBarOpen: boolean) => void
   isSidebarOpen: boolean
  }
 
-const TopMenu : FC<HeaderProps> = ({  isSidebarOpen, setIsSidebarOpen }) => { 
+const Header : FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => { 
   const router = useRouter();
   const pathName =router.pathname
  
@@ -44,4 +44,4 @@ const TopMenu : FC<HeaderProps> = ({  isSidebarOpen, setIsSidebarOpen }) => {
   )
 }
 
-export default TopMenu
+export default Header

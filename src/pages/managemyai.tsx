@@ -2,6 +2,7 @@
 import { FC, MouseEvent, useState } from 'react'
 import { GetStaticProps } from 'next'
 import { ActionMeta} from 'react-select'
+import Link from 'next/link'
 
 import DropDownSelect from '@/src/components/DropdownSelect'
 import FieldSet from '@/src/components/FieldSet'
@@ -170,7 +171,7 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
   }
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col px-2 items-center justify-center mx-auto">
       <form className="flex flex-col h-60vh lg:h-40vh p-3 justify-between ">        
       <FieldSet>
         <UploadFile 
@@ -214,7 +215,7 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
         </div> 
       </FieldSet>
       <FieldSet>
-        <div className="flex flex-col lg:flex-row justify-start">
+        <div className="flex flex-col justify-start ">
           <div className="lg:w-50 my-5">
             <label htmlFor="chunkSize" className="font-bold mr-2 py-1.5">
               Chunk Size:
@@ -252,9 +253,12 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
             options={embeddingModelOptions}
             label='Embedding Model:'
           /> 
-        </div>  
+        </div>
+        <span className="text-sm">
+        Are you dissatisfied with closed embedding models? Discover a variety of <a href="https://huggingface.co/spaces/mteb/leaderboard" className="text-blue-500">embedding models</a> on Hugging Face. You can host the model using <a href="github.com/linghong/smartchat-fastapi" className="text-blue-500"> SmartChat-FastAPI </a>, or submit finetune your model on <Link href='/finetunemodel' className="text-blue-500">Finetune AI model page.</Link>
+      </span>  
       </FieldSet>
-      <div className="flex justify-end my-10">
+      <div className="flex justify-end my-10 mr-5">
         <button
           type="submit"
           className=  {`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-5 py-4 px-20 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}
@@ -273,10 +277,7 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
           inputErrors={inputErrors}
         />
       </form>
-      <div className="flex flex-col h-40vh items-center justify-between">
-      Not happy about the closed embedding model, find an
-      <a href="https://huggingface.co/spaces/mteb/leaderboard" className="text-blue-500">  embedding models in hugging face</a>
-      </div> use <a href="github.com/linghong/smartchat-fastapi">SmartChat-FastAPI</a> to host or finetune an existing model for embedding
+      <div className="flex flex-col h-80vh items-center justify-between"></div>
     </div>
   )
 }

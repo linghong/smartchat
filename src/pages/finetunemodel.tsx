@@ -174,7 +174,7 @@ const FinetuneModel: FC = () => {
   }, [isChecked, setSelectedInput])
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center justify-center mx-auto">
       <form className="flex flex-col justify-start">
         <FieldSet>
         <div className="flex justify-start my-3">
@@ -294,7 +294,7 @@ const FinetuneModel: FC = () => {
           }
         </FieldSet>
        
-        <div className="flex justify-end my-10">
+        <div className="flex justify-end my-10 mr-5">
           <button
             type="submit"
             className=  {`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-5 py-4 px-20 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}

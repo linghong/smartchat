@@ -25,17 +25,17 @@ const checkIsMobile = () => {
       window.removeEventListener('resize', checkIsMobile)
     }
   }, [])
-console.log("isMobile", isMobile)
 
   return (
-    <div className='flex flex-col w-screen h-screen' >
+    <div className='flex flex-col h-screen' >
       <Header 
         isSidebarOpen={isSidebarOpen} 
         setIsSidebarOpen={setIsSidebarOpen}
       />
       <div className="flex flex-row">
         { 
-        isMobile && isSidebarOpen  && <Sidebar isSidebarOpen={isSidebarOpen}/>}
+        isMobile && isSidebarOpen  && 
+        <Sidebar isSidebarOpen={isSidebarOpen}/>}
         {isMobile && !isSidebarOpen && 
          <main className ="w-full lg:w-70vw ">
             {children}
@@ -44,7 +44,7 @@ console.log("isMobile", isMobile)
           { !isMobile && isSidebarOpen && 
           <>
             <Sidebar isSidebarOpen={isSidebarOpen}/>
-            <main className ="w-full lg:w-70vw mx-auto">
+            <main className ="w-full sm:w-90vw lg:w-70vw justify-center items-center mx-auto">
               {children}
               <Footer />  
             </main>
