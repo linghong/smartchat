@@ -19,6 +19,9 @@ const Header : FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
   const onNewChat = () => {
     router.push('/')
+    if (window.innerWidth <= 480) {
+      setIsSidebarOpen(false)
+    }
   }
 
   const toggleSidebar = (e: any) => {
