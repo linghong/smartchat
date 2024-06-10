@@ -81,7 +81,7 @@ const HomePage : FC<{
 
       const data = await response.json()
 
-      setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: data}])
+      setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: data.answer}])
 
       setLoading(false)
 

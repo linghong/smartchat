@@ -6,6 +6,7 @@ import   getGeminiChatCompletion  from '@/src/services/gemini'
 import {  getGroqChatCompletion } from '@/src/services/groq'
 import {  createEmbedding, getOpenAIChatCompletion } from '@/src/services/openai'
 import getOpenModelChatCompletion from '@/src/services/opensourceai'
+import {extractMessageContent,extractSubjectTitle } from '@/src/utils/chatMessageHelper'
 
 export default async function handler(
   req: NextApiRequest,
@@ -75,9 +76,18 @@ export default async function handler(
         return res.status(500).json('Invalid model category')
     }
    
-    const chatAnswer = chatResponse ?? 'Sorry, I\'m having trouble finding an answer to your question.'
+    let answer
+    let subject
+    if(!chatResponse) {
+      answer ='Sorry, I\'m having trouble finding an answer to your question.'
+      subject = "Unknown"
 
-    res.status(200).json(chatAnswer)
+    } else{
+      answer = extractMessageContent(chatResponse)
+      subject = extractSubjectTitle(chatResponse)
+    }
+    
+    res.status(200).json({ answer,subject })
   
   } catch (error: any) {
     console.error('An error occurred: ', error);
