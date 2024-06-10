@@ -7,10 +7,10 @@ import { OptionType } from '@/src/types/common'
 
 export const getCurrentUserParts = async (imageSrc: string[], userMessage: string) => {
   if(imageSrc.length === 0) return  userMessage
-    let tempParts : string | (string | Part)[] = [userMessage]
-
+  
+  let tempParts : string | (string | Part)[] = [userMessage]
+  
   imageSrc.forEach((image:string) => {
-
     return tempParts.push({
       inlineData: {
         data: image, 

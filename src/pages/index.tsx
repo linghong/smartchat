@@ -12,6 +12,7 @@ import Notification from '@/src/components/Notification'
 import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 import { fetchData } from '@/src/utils/fetchData'
+import {fetchImageAsBase64 } from '@/src/utils/fileFetchAndConversion'
 
 
 const initialFileCategory: OptionType = {value: 'none', label: 'None'}
@@ -152,8 +153,8 @@ const HomePage : FC<{
       const response = await fetch('/api/screenshot', { method: 'POST' })
       const result = await response.json();
       if (response.ok) {
-        const newImagePath = `${result.imgPath}?timestamp=${new Date().getTime()}`
-        setImageSrc([...imageSrc, newImagePath])
+        const newImage = await fetchImageAsBase64(result.imgPath)
+        setImageSrc([...imageSrc, newImage])
       } else {
         alert(result.message)
       }

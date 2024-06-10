@@ -10,9 +10,6 @@ export const openaiClient = new OpenAI({
   apiKey: OPENAI_API_KEY,
 })
 
-const serverSecretKey= process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
-if(!serverSecretKey) throw new Error('Sever secret key is missing')
-
 type ContentForUserMessageProps = {
   type: string;
   text: string; 
