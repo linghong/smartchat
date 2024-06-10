@@ -46,7 +46,7 @@ export const getGroqChatCompletion = async (
   })
   const maxReturnMessageToken = 4000
 
-  const systemContent = "You are an AI assistant, skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. For difficult problems, solve step-by-step." 
+  const systemContent = "You are an AI assistant, skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. For difficult problems, solve step-by-step. Always include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}." 
   
   const messages = buildChatMessages(basePrompt,systemContent, userMessage, fetchedText, chatHistory, selectedModel, maxReturnMessageToken)
 

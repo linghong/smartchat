@@ -56,7 +56,14 @@ const getGeminiChatCompletion = async (
  
   const maxReturnMessageToken = 10000
 
-  const systemContent = "You are an AI assistant, skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. For difficult problems, solve step-by-step."
+  const systemContent = `You are a responsible and knowledgeable AI assistant. You have access to a vast amount of general knowledge. In addition, for some user questions, the system may provide you with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the markers "'''fetchedStart" and "fetchedEnd'''".
+
+  Your Task: 
+  Your primary goal is to provide the best possible answer to the user's question. If the text between "'''fetchedStart" and "fetchedEnd'''" is directly relevant and useful, incorporate it into your answer. If the provided text is not relevant or if no such text is provided, rely on your general knowledge to answer completely. For challenging or multi-step questions, break down your reasoning or solution process into clear steps.
+  
+  Formatting: 
+  Always include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}.
+  `
 
   const userTextWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''"+ '\n'+ basePrompt : userMessage +'\n' + basePrompt
 
