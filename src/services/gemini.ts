@@ -62,7 +62,7 @@ const getGeminiChatCompletion = async (
   Your primary goal is to provide the best possible answer to the user's question. If the text between "'''fetchedStart" and "fetchedEnd'''" is directly relevant and useful, incorporate it into your answer. If the provided text is not relevant or if no such text is provided, rely on your general knowledge to answer completely. For challenging or multi-step questions, break down your reasoning or solution process into clear steps.
   
   Formatting: 
-  Always include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}.
+  You must always include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}.
   `
 
   const userTextWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''"+ '\n'+ basePrompt : userMessage +'\n' + basePrompt

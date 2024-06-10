@@ -4,7 +4,7 @@
  * @returns The message content without the <meta> tags.
  */
 export const extractMessageContent = (message: string): string => {
-  return message.replace(/\{\{\{.*\}\}\}$/, '').trim()
+  return message.trim().replace(/\{\{\{.*\}\}\}$/, '').trim()
 }
 
 /**
@@ -13,6 +13,6 @@ export const extractMessageContent = (message: string): string => {
  * @returns The subject title if found, otherwise an empty string.
  */
 export const extractSubjectTitle = (message: string): string => {
-  const match = message.match(/\{\{\{(.*)\}\}\}$/)
+  const match = message.trim().match(/\{\{\{(.*)\}\}\}$/)
   return match ? match[1].trim() : ''
 }
