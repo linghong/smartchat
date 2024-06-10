@@ -47,7 +47,7 @@ describe('MenuItem Component', () => {
     render(<MenuItem title="Test Title" link="/current-path" itemList={['Item 1', 'Item 2']} />)
 
     const menuItem = screen.getByText('Test Title').parentElement
-    expect(menuItem).toHaveClass('bg-slate-500 text-indigo-200 rounded-sm')
+    expect(menuItem).toHaveClass('bg-slate-400 text-indigo-200 rounded-sm')
   })
 
   test('does not apply active class when the link does not match the current pathname', () => {

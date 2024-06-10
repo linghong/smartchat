@@ -21,7 +21,7 @@ const MenuItem: FC<MenuItemProps> = ({ title, link, itemList, defaultOpen = fals
   const toggle = () => setIsOpen(!isOpen)
 
   const handleLinkClick = () => {
-    if (setIsSidebarOpen) {
+    if (setIsSidebarOpen && window.innerWidth <= 480) {
       setIsSidebarOpen(false)
     }
   }

@@ -6,7 +6,7 @@ exports[`MenuItem Component MenuItem component matches snapshot 1`] = `
     class="mt-5 my-8 font-semibold"
   >
     <div
-      class="flex justify-between items-center px-1 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
+      class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
     >
       <a
         class="flex-grow px-2 hover:underline "
