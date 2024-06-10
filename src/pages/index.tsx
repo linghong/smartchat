@@ -12,7 +12,7 @@ import Notification from '@/src/components/Notification'
 import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 import { fetchData } from '@/src/utils/fetchData'
-import {fetchImageAsBase64 } from '@/src/utils/fileFetchAndConversion'
+import {fileToBase64, fetchImageAsBase64 } from '@/src/utils/fileFetchAndConversion'
 
 
 const initialFileCategory: OptionType = {value: 'none', label: 'None'}
@@ -96,12 +96,13 @@ const HomePage : FC<{
     e.preventDefault()
 
     const question : string = userInput.trim()
-    // prevent form submission if no text is entered
+    // prevent form submission if nothing is entered
     if(question.length === 0 && imageSrc.length === 0) return
 
     setImageSrcHistory([...imageSrcHistory, imageSrc])
     
     setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: ''}])
+   
     setError(null)
     setLoading(true)
     setUserInput('')
@@ -123,6 +124,7 @@ const HomePage : FC<{
     const basePrompt= e.target.value
     setBasePrompt(basePrompt)
   }
+
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setUserInput(newValue)
@@ -134,11 +136,8 @@ const HomePage : FC<{
     if(!isVisionModel) return;
     if (!file) return;
     try{
-      const reader = new FileReader()
-      reader.onloadend = async() => {
-        setImageSrc([...imageSrc,reader.result as string])
-      };
-      reader.readAsDataURL(file)
+      const newImage = await fileToBase64(file)
+      setImageSrc([...imageSrc, newImage])
     } catch {
       throw new Error('Failed to read the file.')
     }       
@@ -246,15 +245,18 @@ const HomePage : FC<{
             ref={messagesRef}
           >
             {chatHistory.map((chat, index) => 
-              <div key={index}>                
-                <ChatMessage
-                message={chat}
-                lastIndex={index===chatHistory.length-1?true:false}
-                loading={loading}
-                imageSrc={imageSrcHistory[index]}
-                modelName={selectedModel?.value||'gpt-4o'}
-                handleImageDelete={handleImageDelete}
-              />
+               <div key={index}>                
+               <ChatMessage
+               index={index}
+               message={chat}
+               lastIndex={index===chatHistory.length-1?true:false}
+               loading={loading}
+               imageSrc={imageSrcHistory[index]}
+               modelName={selectedModel?.value||'gpt-4o'}
+               handleImageDelete={handleImageDelete}
+             />
+            
+             
               </div>
               )
             }

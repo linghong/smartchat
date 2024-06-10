@@ -6,20 +6,24 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
     aria-label="user-message"
     class="flex px-3 py-2 text-black"
   >
-    <img
-      alt="User avatar"
-      class="h-full mr-4 rounded-sm"
-      data-nimg="1"
-      decoding="async"
-      fetchpriority="high"
-      height="30"
-      src="/_next/image?url=%2Fuser.png&w=64&q=75"
-      srcset="/_next/image?url=%2Fuser.png&w=32&q=75 1x, /_next/image?url=%2Fuser.png&w=64&q=75 2x"
-      style="color: transparent;"
-      width="30"
-    />
     <div
-      class="user-question"
+      class="w-16 flex flex-col justify-start items-center ai-answer"
+    >
+      <img
+        alt="User avatar"
+        class="h-8 w-8 mr-4 rounded-sm"
+        data-nimg="1"
+        decoding="async"
+        fetchpriority="high"
+        height="30"
+        src="/_next/image?url=%2Fuser.png&w=64&q=75"
+        srcset="/_next/image?url=%2Fuser.png&w=32&q=75 1x, /_next/image?url=%2Fuser.png&w=64&q=75 2x"
+        style="color: transparent;"
+        width="30"
+      />
+    </div>
+    <div
+      class="w-11/12 user-question"
     >
       <div
         class="space-wrap"
@@ -27,7 +31,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
         What is AI?
       </div>
       <div
-        class="flex flex-row justify-start w-80vw pt-3 px-3"
+        class="flex flex-row justify-start w-full pt-3 px-3"
       >
         <div
           class="w-20 h-full mx-2"
@@ -68,20 +72,27 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
     aria-labelledby="ai-response"
     class="flex px-3 py-2 bg-slate-100 color-black ease-in duration-300"
   >
-    <img
-      alt="AI bot avatar"
-      class="h-full mr-4 rounded-sm false"
-      data-nimg="1"
-      decoding="async"
-      fetchpriority="high"
-      height="30"
-      src="/_next/image?url=%2Fbot.png&w=64&q=75"
-      srcset="/_next/image?url=%2Fbot.png&w=32&q=75 1x, /_next/image?url=%2Fbot.png&w=64&q=75 2x"
-      style="color: transparent;"
-      width="30"
-    />
     <div
-      class="bot-response answer space-wrap"
+      class="w-16 flex flex-col justify-start items-center ai-answer"
+    >
+      <img
+        alt="AI bot avatar"
+        class="h-8 w-8 mr-4 rounded-sm false"
+        data-nimg="1"
+        decoding="async"
+        fetchpriority="high"
+        height="30"
+        src="/_next/image?url=%2Fbot.png&w=64&q=75"
+        srcset="/_next/image?url=%2Fbot.png&w=32&q=75 1x, /_next/image?url=%2Fbot.png&w=64&q=75 2x"
+        style="color: transparent;"
+        width="30"
+      />
+      <label
+        class="text-xs"
+      />
+    </div>
+    <div
+      class=" bot-response answer space-wrap"
     >
       AI stands for Artificial Intelligence.
     </div>

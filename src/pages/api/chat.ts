@@ -18,7 +18,7 @@ export default async function handler(
 
   const { basePrompt, question, namespace, selectedModel, chatHistory, imageSrc } = req.body
   
-  if (!question) {
+  if (!question && imageSrc.length === 0) {
     return res.status(400).json({ message: 'No question in the request' })
   }
 
@@ -26,6 +26,8 @@ export default async function handler(
     return res.status(500).json('Something went wrong')
   }
 
+  //remove prefix
+  // original image looks like: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..." 
   const base64Images = imageSrc?.map((imgSrc : string) => imgSrc.split(',')[1])
   
   // replacing newlines with spaces

@@ -3,6 +3,7 @@ import { Message } from '@/src/types/chat'
 import ImageListWithModal from '@/src/components/ImageListWithModal'
 
 type ChatMessageProps = {
+  index: number;
   message: Message;
   lastIndex: boolean;
   loading: boolean;
@@ -11,7 +12,7 @@ type ChatMessageProps = {
   handleImageDelete: (e:any) => void;
 }
 
-const ChatMessage: React.FC<ChatMessageProps>  = ({message, imageSrc, lastIndex, modelName,loading, handleImageDelete}) => {
+const ChatMessage: React.FC<ChatMessageProps>  = ({index, message, imageSrc, lastIndex, modelName,loading, handleImageDelete}) => {
 
   const convertNewlinesToBreaks = (text: string) => {
     return text.replace(/\n/g, '<br>')
@@ -19,7 +20,7 @@ const ChatMessage: React.FC<ChatMessageProps>  = ({message, imageSrc, lastIndex,
 
   return (
     <>
-      {message?.question?.length !== 0 && 
+      {index !== 0 && 
         <article className="flex px-3 py-2 text-black" aria-label="user-message">
           <div className="w-16 flex flex-col justify-start items-center ai-answer" >
             <Image
