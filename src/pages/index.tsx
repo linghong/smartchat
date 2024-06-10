@@ -14,6 +14,13 @@ import { OptionType } from '@/src/types/common'
 import { fetchData } from '@/src/utils/fetchData'
 import {fileToBase64, fetchImageAsBase64 } from '@/src/utils/fileFetchAndConversion'
 
+interface HomeProps {
+  namespaces: string[]
+  isNewChat: boolean, 
+  setIsNewChat: (value: boolean) => void,
+  messageSubjectList: string[],
+  setMessageSubjectList: (messageSubjectList:string[]) => void
+}
 
 const initialFileCategory: OptionType = {value: 'none', label: 'None'}
 
@@ -22,11 +29,7 @@ const initialMessage = {
   answer:'Hi, how can I assist you?'
 }
 
-const HomePage : FC<{
-  namespaces: string[]
-  isNewChat: boolean, 
-  setIsNewChat: (value: boolean) => void, 
-}> = ({ namespaces, isNewChat, setIsNewChat}) => {
+const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, messageSubjectList, setMessageSubjectList}) => {
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null> (null)
@@ -82,6 +85,7 @@ const HomePage : FC<{
       const data = await response.json()
 
       setChatHistory([...chatHistory.slice(0, chatHistory.length), {question: userInput, answer: data.answer}])
+      setMessageSubjectList([...messageSubjectList, data.subject])
 
       setLoading(false)
 

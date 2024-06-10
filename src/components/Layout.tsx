@@ -6,7 +6,7 @@ const Footer = () => {
   return <footer className='py-3 text-center opacity-40'>Chatbot responses are AI-generated and may be inaccurate, so always verify critical information.</footer>
 }
 
-const Layout: FC<{ children: ReactNode}>  = ({ children }) => {
+const Layout: FC<{ children: ReactNode, messageSubjectList:string[]}>  = ({ children, messageSubjectList }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
  
@@ -36,6 +36,7 @@ const Layout: FC<{ children: ReactNode}>  = ({ children }) => {
           <Sidebar 
             isSidebarOpen={isSidebarOpen}  
             setIsSidebarOpen={setIsSidebarOpen}
+            messageSubjectList={messageSubjectList}
           />
         }
         {isMobile && !isSidebarOpen && 
@@ -49,6 +50,7 @@ const Layout: FC<{ children: ReactNode}>  = ({ children }) => {
             <Sidebar 
               isSidebarOpen={isSidebarOpen}
               setIsSidebarOpen={setIsSidebarOpen}
+              messageSubjectList={messageSubjectList}
             />
             <main className="w-full sm:w-90vw lg:w-70vw justify-center items-center mx-auto">
               {children}

@@ -1,4 +1,5 @@
 import Image from 'next/image'
+
 import { Message } from '@/src/types/chat'
 import ImageListWithModal from '@/src/components/ImageListWithModal'
 

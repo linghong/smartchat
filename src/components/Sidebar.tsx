@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
+
 import MenuItem from './MenuItem'
 
 interface SidebarProps {
-  isSidebarOpen: boolean;
   setIsSidebarOpen: (isSidebarOpen: boolean) => void;
+  messageSubjectList: string[]
 }
 
-const Sidebar : FC<SidebarProps>= ({isSidebarOpen, setIsSidebarOpen}) => {
+const Sidebar : FC<SidebarProps>= ({ setIsSidebarOpen, messageSubjectList }) => {
 
   return (
     <div className="bg-slate-500 text-slate-50 h-full w-full xs:w-60 sm:w-80 md:w-72 lg:w-56 xl:w-56">
@@ -26,7 +27,7 @@ const Sidebar : FC<SidebarProps>= ({isSidebarOpen, setIsSidebarOpen}) => {
           <MenuItem 
             title="Chat with AI" 
             link="/" 
-            itemList={["Chat 1", "Chat 2", "Chat 3"]}
+            itemList={[messageSubjectList[0]]}
             setIsSidebarOpen={setIsSidebarOpen}
             defaultOpen={true}
           />
