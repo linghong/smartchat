@@ -1,4 +1,4 @@
-import React, { useState, FC, ReactNode } from 'react'
+import React, { useState, FC } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md' 
@@ -20,10 +20,15 @@ const MenuItem: FC<MenuItemProps> = ({ title, link, itemList, defaultOpen = fals
 
   const toggle = () => setIsOpen(!isOpen)
 
-  const handleLinkClick = () => {
-    if (setIsSidebarOpen && window.innerWidth <= 480) {
-      setIsSidebarOpen(false)
-    }
+  const handleLinkClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if(link){
+      // await its completion to ensure that any state changes occur after navigating, so that the sidebar won't open before the navigation completes
+      await router.push(link)
+      if (setIsSidebarOpen && window.innerWidth <= 480) {
+        setIsSidebarOpen(false)
+      }
+    } 
   }
 
   return (

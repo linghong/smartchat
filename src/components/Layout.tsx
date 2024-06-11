@@ -33,8 +33,7 @@ const Layout: FC<{ children: ReactNode, messageSubjectList:string[]}>  = ({ chil
       />
       <div className="flex flex-row">
         {isMobile && isSidebarOpen  && 
-          <Sidebar 
-            isSidebarOpen={isSidebarOpen}  
+          <Sidebar  
             setIsSidebarOpen={setIsSidebarOpen}
             messageSubjectList={messageSubjectList}
           />
@@ -48,7 +47,6 @@ const Layout: FC<{ children: ReactNode, messageSubjectList:string[]}>  = ({ chil
         { !isMobile && isSidebarOpen && 
           <>
             <Sidebar 
-              isSidebarOpen={isSidebarOpen}
               setIsSidebarOpen={setIsSidebarOpen}
               messageSubjectList={messageSubjectList}
             />

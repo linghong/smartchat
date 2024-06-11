@@ -77,27 +77,25 @@ describe('Header Component', () => {
     it('should navigate to the home page when NewChat button is clicked', async () => {
       render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
 
-      fireEvent.click(screen.getByLabelText('New Chat'))
-      
+      fireEvent.click(screen.getByLabelText('New Chat'))      
       expect(mockPush).toHaveBeenCalledTimes(1)
       expect(mockPush).toHaveBeenCalledWith('/')
     })
     
-    it('should call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially open', () => {
+    it('should not call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially open', () => {
       global.innerWidth = 480
       render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
-      fireEvent.click(screen.getByLabelText('New Chat'))
-      
+
+      fireEvent.click(screen.getByLabelText('New Chat'))  
       // Because router.push('/') is called instead
-      expect(setIsSidebarOpen).toHaveBeenCalledWith(false) 
+      expect(setIsSidebarOpen).not.toHaveBeenCalled()
     })
 
     it('should not call setIsSidebarOpen when NewChat button is clicked on desktop and sidebar is initially open', () => {
-
       global.innerWidth = 1024
       render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
-      fireEvent.click(screen.getByLabelText('New Chat'))
 
+      fireEvent.click(screen.getByLabelText('New Chat'))
       expect(setIsSidebarOpen).not.toHaveBeenCalled()
     })
 
@@ -105,8 +103,8 @@ describe('Header Component', () => {
 
       global.innerWidth = 1024
       render(<Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />)
-      fireEvent.click(screen.getByLabelText('New Chat'))
 
+      fireEvent.click(screen.getByLabelText('New Chat'))
       expect(setIsSidebarOpen).not.toHaveBeenCalled()
     })
 
@@ -114,9 +112,9 @@ describe('Header Component', () => {
 
       global.innerWidth = 480
       render(<Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />)
-      fireEvent.click(screen.getByLabelText('New Chat'))
 
-      expect(setIsSidebarOpen).toHaveBeenCalledWith(false) 
+      fireEvent.click(screen.getByLabelText('New Chat'))
+      expect(setIsSidebarOpen).not.toHaveBeenCalled()
     }) 
   })
 
@@ -125,7 +123,6 @@ describe('Header Component', () => {
 
       render(<Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />)
 
-      // Simulate button clicks
       fireEvent.click(screen.getByLabelText('Toggle Sidebar'))
       expect(setIsSidebarOpen).toHaveBeenCalledWith(true)
     })
@@ -134,7 +131,6 @@ describe('Header Component', () => {
 
       render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
 
-      // Simulate SidebarMenu button clicks
       fireEvent.click(screen.getByLabelText('Toggle Sidebar'))
       expect(setIsSidebarOpen).toHaveBeenCalledWith(false)
     })
