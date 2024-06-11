@@ -51,8 +51,8 @@ const MenuItem: FC<MenuItemProps> = ({ title, link, itemList, defaultOpen = fals
       </div>
       {isOpen && (
         <ul className="px-6 py-2 font-medium text-slate-200">
-          { itemList.map((item)=>
-            <li key={item} className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100">
+          { itemList.map((item, index)=>
+            <li  key={`${item}-${index}`}  className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100">
             {item}
             </li>
           )}
