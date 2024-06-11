@@ -1,10 +1,8 @@
 import { useState, useEffect, FC, ReactNode } from 'react'
 import Sidebar from '@/src/components/Sidebar'
 import Header from '@/src/components/Header'
+import Footer from '@/src/components/Footer'
 
-const Footer = () => {
-  return <footer className='py-3 text-center opacity-40'>Chatbot responses are AI-generated and may be inaccurate, so always verify critical information.</footer>
-}
 
 const Layout: FC<{ children: ReactNode, messageSubjectList:string[]}>  = ({ children, messageSubjectList }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
