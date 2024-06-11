@@ -255,7 +255,7 @@ const UploadFilePage: FC<{namespaces : string[]}> = ({namespaces}) => {
           /> 
         </div>
         <span className="text-sm">
-        Are you dissatisfied with closed embedding models? Discover a variety of <a href="https://huggingface.co/spaces/mteb/leaderboard" className="text-blue-500">embedding models</a> on Hugging Face. You can host the model using <a href="github.com/linghong/smartchat-fastapi" className="text-blue-500"> SmartChat-FastAPI </a>, or submit finetune your model on <Link href='/finetunemodel' className="text-blue-500">Finetune AI model page.</Link>
+        Are you dissatisfied with closed embedding models? Discover a variety of <a href="https://huggingface.co/spaces/mteb/leaderboard" className="text-blue-500">embedding models</a> on Hugging Face. You can host the model using <a href="https://github.com/linghong/smartchat-fastapi" className="text-blue-500"> SmartChat-FastAPI </a>, or submit finetune your model on <Link href='/finetunemodel' className="text-blue-500">Finetune AI model page</Link>.
       </span>  
       </FieldSet>
       <div className="flex justify-end my-10 mr-5">

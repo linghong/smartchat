@@ -35,7 +35,7 @@ describe('Header Component', () => {
     const paths = [
       { path: '/', title: 'Chat With AI' },
       { path: '/finetunemodel', title: 'Finetune AI Model' },
-      { path: '/managemyai', title: 'Manage RAG Files' },
+      { path: '/embedragfile', title: 'Embed RAG File' },
     ]
 
     paths.forEach(({ path, title }) => {
