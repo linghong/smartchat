@@ -6,39 +6,45 @@ exports[`Header Component Header component snapshot 1`] = `
     class="w-full flex flx-col justify-between items-center bg-slate-400 py-1"
   >
     <div
-      class="flex w-1/3 xs:w-36 sm:w-52 md:w-48 lg:w-52 xl:w-56 items-center justify-between  px-6 text-white text-md focus:bg-indigo-100"
+      class="flex w-1/3 xs:w-36 sm:w-52 md:w-48 lg:w-52 xl:w-56 items-center justify-between px-6 text-white text-md focus:bg-indigo-100"
     >
       <button
         aria-label="Toggle Sidebar"
+        class="bg-slate-500 hover:bg-slate-700 focus:bg-stone-600"
+        role="toogle"
       >
         <svg
           fill="currentColor"
           height="20"
           stroke="currentColor"
           stroke-width="0"
-          viewBox="0 0 448 512"
+          viewBox="0 0 1024 1024"
           width="20"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+            d="M904 160H120c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8zm0 624H120c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8zm0-312H120c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8z"
           />
         </svg>
       </button>
       <button
         aria-label="New Chat"
+        class="hover:text-lg hover:bg-stone-600 hover:font-bold"
       >
         <svg
           fill="currentColor"
-          height="20"
+          height="21"
           stroke="currentColor"
           stroke-width="0"
-          viewBox="0 0 448 512"
-          width="20"
+          viewBox="0 0 1024 1024"
+          width="21"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
+            d="M904 512h-56c-4.4 0-8 3.6-8 8v320H184V184h320c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V520c0-4.4-3.6-8-8-8z"
+          />
+          <path
+            d="M355.9 534.9L354 653.8c-.1 8.9 7.1 16.2 16 16.2h.4l118-2.9c2-.1 4-.9 5.4-2.3l415.9-415c3.1-3.1 3.1-8.2 0-11.3L785.4 114.3c-1.6-1.6-3.6-2.3-5.7-2.3s-4.1.8-5.7 2.3l-415.8 415a8.3 8.3 0 0 0-2.3 5.6zm63.5 23.6L779.7 199l45.2 45.1-360.5 359.7-45.7 1.1.7-46.4z"
           />
         </svg>
       </button>

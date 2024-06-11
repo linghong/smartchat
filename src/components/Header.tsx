@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { FaBars, FaPlus } from 'react-icons/fa'
+import { AiOutlineMenu , AiOutlineForm } from 'react-icons/ai'
 import { useRouter } from 'next/router'
 
 interface HeaderProps {
@@ -24,18 +24,26 @@ const Header : FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
     }
   }
 
-  const toggleSidebar = (e: any) => {
+  const toggleSidebar = (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsSidebarOpen(!isSidebarOpen)
   }
-
+console.log('ee', isSidebarOpen)
   return (
     <header className="w-full flex flx-col justify-between items-center bg-slate-400 py-1">       
-      <div className="flex w-1/3 xs:w-36 sm:w-52 md:w-48 lg:w-52 xl:w-56 items-center justify-between  px-6 text-white text-md focus:bg-indigo-100">
-        <button onClick={toggleSidebar} aria-label="Toggle Sidebar">
-          <FaBars size={20} />
+      <div className="flex w-1/3 xs:w-36 sm:w-52 md:w-48 lg:w-52 xl:w-56 items-center justify-between px-6 text-white text-md focus:bg-indigo-100">
+        <button 
+          className={`${isSidebarOpen ?'bg-slate-500 hover:bg-slate-700 focus:bg-stone-600' : ''}`} onClick={toggleSidebar} 
+          aria-label="Toggle Sidebar"
+          role="toogle"
+        >
+          <AiOutlineMenu  size={20} />
         </button>
-        <button onClick={onNewChat} aria-label="New Chat">
-          <FaPlus size={20} />
+        <button 
+          className="hover:text-lg hover:bg-stone-600 hover:font-bold" 
+          onClick={onNewChat} 
+          aria-label="New Chat"
+        >
+          <AiOutlineForm size={21} />
         </button>
       </div>        
       <div className="flex flex-grow items-center justify-center  text-white text-md font-bold focus:bg-indigo-100 mx-auto">    

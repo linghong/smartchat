@@ -10,15 +10,17 @@ jest.mock('next/router', () => ({
 }))
 
 const setIsSidebarOpen = jest.fn()
+const mockPush = jest.fn()
 
 describe('Header Component', () => {
   beforeEach(() => {
     // Reset the mock before each test
     (useRouter as jest.Mock).mockReturnValue({
       pathname: '/',
-      push: jest.fn(),
+      push: mockPush,
     })
     setIsSidebarOpen.mockClear()
+    mockPush.mockClear()
   })
 
   it('should render the page title correctly', () => {
@@ -39,7 +41,7 @@ describe('Header Component', () => {
     paths.forEach(({ path, title }) => {
       (useRouter as jest.Mock).mockReturnValue({
         pathname: path,
-        push: jest.fn()
+        push: mockPush
       })
 
       render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
@@ -50,41 +52,92 @@ describe('Header Component', () => {
     })
   })
 
-  it('should call setIsSidebarOpen when NewChat button is clicked on mobile', () => {
-    global.innerWidth = 480
-    render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
+  describe('Mouse focusing and hovering events', () => {
+    beforeEach(()=> {
+      render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
+    })
 
-    // Simulate NewChat button clicks
-    fireEvent.click(screen.getByLabelText('New Chat'))
-    expect(setIsSidebarOpen).toHaveBeenCalledWith(false) // Because router.push('/') is called instead
+    it('should change its background color when focusing on menu button and sidebar is open', async () => {
+      const menuIcon = screen.getByLabelText("Toggle Sidebar")
+      expect(menuIcon?.className).toMatch(/focus/)
+    })
+
+    it('should show visual feedback when hovering over menu button and sidebar is open ', async () => {
+      const menuIcon = screen.getByLabelText('Toggle Sidebar')  
+      expect(menuIcon.className).toMatch(/hover/)
+    })
+
+    it('should show visual feedback when hovering over New Chat ', async () => {
+      const newChatButton = screen.getByLabelText('New Chat')
+      expect(newChatButton?.className).toMatch(/hover/)
+    })
   })
 
-  it('should not call setIsSidebarOpen when NewChat button is clicked on desktop', () => {
+  describe('Mouse click events on NewChat', () => {
+    it('should navigate to the home page when NewChat button is clicked', async () => {
+      render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
 
-    global.innerWidth = 1024
-    render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
+      fireEvent.click(screen.getByLabelText('New Chat'))
+      
+      expect(mockPush).toHaveBeenCalledTimes(1)
+      expect(mockPush).toHaveBeenCalledWith('/')
+    })
+    
+    it('should call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially open', () => {
+      global.innerWidth = 480
+      render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
+      fireEvent.click(screen.getByLabelText('New Chat'))
+      
+      // Because router.push('/') is called instead
+      expect(setIsSidebarOpen).toHaveBeenCalledWith(false) 
+    })
 
-    // Simulate NewChat button clicks
-    fireEvent.click(screen.getByLabelText('New Chat'))
-    expect(setIsSidebarOpen).not.toHaveBeenCalled()
+    it('should not call setIsSidebarOpen when NewChat button is clicked on desktop and sidebar is initially open', () => {
+
+      global.innerWidth = 1024
+      render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
+      fireEvent.click(screen.getByLabelText('New Chat'))
+
+      expect(setIsSidebarOpen).not.toHaveBeenCalled()
+    })
+
+    it('should not call setIsSidebarOpen when NewChat button is clicked on desktop and sidebar is initially closed', () => {
+
+      global.innerWidth = 1024
+      render(<Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />)
+      fireEvent.click(screen.getByLabelText('New Chat'))
+
+      expect(setIsSidebarOpen).not.toHaveBeenCalled()
+    })
+
+    it('should not call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially closed', () => {
+
+      global.innerWidth = 480
+      render(<Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />)
+      fireEvent.click(screen.getByLabelText('New Chat'))
+
+      expect(setIsSidebarOpen).toHaveBeenCalledWith(false) 
+    }) 
   })
 
-  it('should call setIsSidebarOpen with false when initially open and toggle button is clicked', () => {
+  describe('Mouse click events on menu icon', () => {
+    it('should call setIsSidebarOpen with true when initially closed and toggle button is clicked', () => {
 
-    render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
+      render(<Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />)
 
-    // Simulate SidebarMenu button clicks
-    fireEvent.click(screen.getByLabelText('Toggle Sidebar'))
-    expect(setIsSidebarOpen).toHaveBeenCalledWith(false)
-  })
+      // Simulate button clicks
+      fireEvent.click(screen.getByLabelText('Toggle Sidebar'))
+      expect(setIsSidebarOpen).toHaveBeenCalledWith(true)
+    })
 
-  it('should call setIsSidebarOpen with true when initially closed and toggle button is clicked', () => {
+    it('should call setIsSidebarOpen with false when initially open and toggle button is clicked', () => {
 
-    render(<Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />)
+      render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />)
 
-    // Simulate button clicks
-    fireEvent.click(screen.getByLabelText('Toggle Sidebar'))
-    expect(setIsSidebarOpen).toHaveBeenCalledWith(true)
+      // Simulate SidebarMenu button clicks
+      fireEvent.click(screen.getByLabelText('Toggle Sidebar'))
+      expect(setIsSidebarOpen).toHaveBeenCalledWith(false)
+    })
   })
 
   it('Header component snapshot', () => {
