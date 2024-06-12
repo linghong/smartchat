@@ -2,9 +2,10 @@ import { useState, FC } from 'react'
 import { BsTrash3 } from "react-icons/bs"
 
 import ImageModal from '@/src/components/ImageModal'
+import { ImageFile } from '@/src/types/chat'
 
 interface ImageListWithModalProps {
-  imageSrc: string[];
+  imageSrc: ImageFile[];
   handleImageDelete: (index: number) => void;
   isDeleteIconShow?: boolean;
 }
@@ -27,12 +28,12 @@ const ImageListWithModal: FC<ImageListWithModalProps> = ({imageSrc, handleImageD
     <>
      <div className="flex flex-row justify-start w-full pt-3 px-3">
       {
-        imageSrc.map((imgSrc:string, i: number) => (
+        imageSrc.map((imgSrc:ImageFile, i: number) => (
           <div key = {i} className="w-20 h-full mx-2">
             <div              
               className="mr-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100" 
-              onClick={()=>openModal(imgSrc)}
-              onKeyDown={(e) => e.key==='Enter' && openModal(imgSrc)}
+              onClick={()=>openModal(imgSrc.base64Image)}
+              onKeyDown={(e) => e.key==='Enter' && openModal(imgSrc.base64Image)}
               tabIndex={0}
               role="button"
               aria-label={`Click to view larger image ${i + 1}`}
@@ -40,7 +41,7 @@ const ImageListWithModal: FC<ImageListWithModalProps> = ({imageSrc, handleImageD
             >
               <div 
                 className={`bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer`} 
-                style={{ backgroundImage: imageSrc ? `url(${imgSrc})` : 'none'}}                
+                style={{ backgroundImage: imageSrc ? `url(${imgSrc.base64Image})` : 'none'}}                
               />
             </div>
            {

@@ -9,7 +9,7 @@ import DropdownSelect from '@/src/components/DropdownSelect'
 import ImageListWithModal from '@/src/components/ImageListWithModal'
 import ImageUploadIcon from '@/src/components/ImageUploadIcon'
 import Notification from '@/src/components/Notification'
-import { Message } from '@/src/types/chat'
+import { Message, ImageFile } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 import { fetchData } from '@/src/utils/fetchData'
 import {fileToBase64, fetchImageAsBase64 } from '@/src/utils/fileFetchAndConversion'
@@ -44,8 +44,8 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
   const [rows, setRows] = useState<number>(1)
   const [chatHistory, setChatHistory] = useState<Message[]>([ initialMessage ])
 
-  const [imageSrc, setImageSrc] = useState<string[]>([])
-  const [imageSrcHistory, setImageSrcHistory] = useState<string[][]>([[]])
+  const [imageSrc, setImageSrc] = useState<ImageFile[]>([])
+  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]])
 
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -55,7 +55,7 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
   selectedModel?.value==="gemini-1.5-flash" ||
   selectedModel?.value!=="gemini-1.5-pro"
   
-  const fetchChatResponse = async (basePrompt:string, question: string, imageSrc: string[], selectedModel: OptionType | null, namespace: string) => {
+  const fetchChatResponse = async (basePrompt:string, question: string, imageSrc: ImageFile[], selectedModel: OptionType | null, namespace: string) => {
  
     try {
       const response = await fetch('/api/chat', {
@@ -137,11 +137,31 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
   }
 
   const handleImageUpload =async (file: File) => {
+  
     if(!isVisionModel) return;
     if (!file) return;
+    const validImageType = [
+      'image/png',
+      'image/jpg',
+      'image/jpeg',
+      'image/gif',
+      'image/bmp',
+      'image/webp',
+      'image/tiff',
+      'image/svg+xml'
+    ]
+    if (!validImageType.includes(file.type)) {
+      setError('It is not an Image')
+      return
+    }
     try{
-      const newImage = await fileToBase64(file)
-      setImageSrc([...imageSrc, newImage])
+      const base64Image = await fileToBase64(file)
+      setImageSrc([...imageSrc, {
+        base64Image,
+        mimeType: file.type,
+        size: file.size,
+        name: file.name
+      }])
     } catch {
       throw new Error('Failed to read the file.')
     }       
@@ -154,10 +174,17 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
   const handleScreenCapture = async () => {
     try {
       const response = await fetch('/api/screenshot', { method: 'POST' })
+     
       const result = await response.json();
+
       if (response.ok) {
-        const newImage = await fetchImageAsBase64(result.imgPath)
-        setImageSrc([...imageSrc, newImage])
+        const base64Image = await fetchImageAsBase64(result.imgPath)
+        setImageSrc([...imageSrc, {
+          base64Image,
+          mimeType: result.mimeType,
+          size: result.fileSize,
+          name: result.fileName
+        }])
       } else {
         alert(result.message)
       }

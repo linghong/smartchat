@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import { Message } from '@/src/types/chat'
+import { Message, ImageFile } from '@/src/types/chat'
 import ImageListWithModal from '@/src/components/ImageListWithModal'
 
 type ChatMessageProps = {
@@ -8,7 +8,7 @@ type ChatMessageProps = {
   message: Message;
   lastIndex: boolean;
   loading: boolean;
-  imageSrc: string[];
+  imageSrc: ImageFile[];
   modelName: string;
   handleImageDelete: (e:any) => void;
 }

@@ -2,7 +2,7 @@ import { OpenAI } from "openai"
 import  { encode } from 'gpt-tokenizer'
 
 import { OPENAI_API_KEY } from '@/config/env'
-import { Message, ChatType, ChatRole } from '@/src/types/chat'
+import { Message, ChatType, ChatRole, ImageFile } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
 
@@ -75,18 +75,18 @@ export const buildChatArray = (
 }
 
 const contentForUserWithImageMessage = (
-  base64Images: string[],
+  base64ImageSrc: ImageFile[],
   userTextWithFetchedData: string,
 ) =>{
   let contentForUserMessage: ContentForUserMessageProps[] = [{
     "type": "text",
     "text":  userTextWithFetchedData
   }]
-  base64Images.map(base64Img => {
+  base64ImageSrc.map(imgSrc => {
     contentForUserMessage.push({
       "type": "image_url",
       "image_url": {
-        "url": `data:image/jpeg;base64,${base64Img}`
+        "url": `data:image/jpeg;base64,${imgSrc.base64Image}`
       }
     })
   
@@ -100,7 +100,7 @@ export const getOpenAIChatCompletion = async (
   userMessage : string, 
   fetchedText: string, 
   selectedModel: OptionType,
-  base64Images: string[] | undefined
+  base64ImageSrc: ImageFile[] | undefined
 ): Promise<string | undefined> => {
   const maxReturnMessageToken = selectedModel.contextWindow ? 4096 : 2000
 
@@ -131,14 +131,15 @@ export const getOpenAIChatCompletion = async (
           ...chatArray,
           {
             "role": "user",
-            "content":base64Images && base64Images?.length !== 0?
-            contentForUserWithImageMessage(base64Images, userTextWithFetchedData) : userTextWithFetchedData
+            "content":base64ImageSrc && base64ImageSrc?.length !== 0?
+            contentForUserWithImageMessage(base64ImageSrc, userTextWithFetchedData) : userTextWithFetchedData
           }],
     })
 
     if (!completion) throw new Error('Chat completion data is undefined.')
     if (!completion.usage) throw new Error('Chat completion data is undefined.')
     if(completion.choices[0].finish_reason !== 'stop') console.log(`AI message isn't complete.`)
+      
     let message = completion.choices[0].message?.content?? ''
 
     message = selectedModel.value === 'gpt-4' ? message : message.replace(/\n/g, '<br>')

@@ -7,6 +7,7 @@ import {  getGroqChatCompletion } from '@/src/services/groq'
 import {  createEmbedding, getOpenAIChatCompletion } from '@/src/services/openai'
 import getOpenModelChatCompletion from '@/src/services/opensourceai'
 import {extractMessageContent,extractSubjectTitle } from '@/src/utils/chatMessageHelper'
+import { ImageFile } from '@/src/types/chat'
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,7 +30,10 @@ export default async function handler(
 
   //remove prefix
   // original image looks like: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..." 
-  const base64Images = imageSrc?.map((imgSrc : string) => imgSrc.split(',')[1])
+  const base64ImageSrc = imageSrc?.map((imgSrc : ImageFile) => ({ 
+    ...imgSrc, 
+    base64Image:imgSrc.base64Image.split(',')[1]
+  }))
   
   // replacing newlines with spaces
   const sanitizedQuestion = question.trim().replaceAll('\n', ' ')
@@ -49,7 +53,7 @@ export default async function handler(
 
     switch(category){
       case 'openai':
-        chatResponse = await getOpenAIChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel, base64Images)
+        chatResponse = await getOpenAIChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel, base64ImageSrc)
         break
       
       case 'groq':
@@ -57,7 +61,7 @@ export default async function handler(
         break
 
       case 'google':
-        chatResponse = await getGeminiChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel, base64Images)
+        chatResponse = await getGeminiChatCompletion(basePrompt, chatHistory, sanitizedQuestion, fetchedText, selectedModel, base64ImageSrc)
         break
 
       case 'hf-small':

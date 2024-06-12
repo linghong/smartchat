@@ -9,3 +9,10 @@ export type ChatType = {
   role: ChatRole,
   content: string
 }
+
+export type ImageFile = {
+  base64Image: string;
+  mimeType: string,
+  size: number,
+  name: string
+}

@@ -1,20 +1,20 @@
 import { GoogleGenerativeAI, Part } from "@google/generative-ai"
 
 import { GEMINI_API_KEY } from '@/config/env'
-import { Message } from '@/src/types/chat'
+import { Message, ImageFile } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
 
-export const getCurrentUserParts = async (imageSrc: string[], userMessage: string) => {
+export const getCurrentUserParts = async (imageSrc: ImageFile[], userMessage: string) => {
   if(imageSrc.length === 0) return  userMessage
   
   let tempParts : string | (string | Part)[] = [userMessage]
   
-  imageSrc.forEach((image:string) => {
+  imageSrc.forEach((image:ImageFile) => {
     return tempParts.push({
       inlineData: {
-        data: image, 
-        mimeType: "image/png", 
+        data: image.base64Image, 
+        mimeType: image.mimeType, 
       }
     })
   })
@@ -48,7 +48,7 @@ const getGeminiChatCompletion = async (
   userMessage: string,
   fetchedText: string,
   selectedModel: OptionType,
-  base64Images: string[]
+  base64ImageSrc: ImageFile[],
 ) => {
   if(!GEMINI_API_KEY) return undefined
 
@@ -72,7 +72,7 @@ const getGeminiChatCompletion = async (
     systemInstruction: systemContent
   })
 
-  const currentUserParts = await getCurrentUserParts(base64Images, userTextWithFetchedData)
+  const currentUserParts = await getCurrentUserParts(base64ImageSrc, userTextWithFetchedData)
  
  try {
     const chat = model.startChat({
