@@ -13,6 +13,7 @@ import { Message, ImageFile } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 import { fetchData } from '@/src/utils/fetchData'
 import {fileToBase64, fetchImageAsBase64 } from '@/src/utils/fileFetchAndConversion'
+import ButtonWithTooltip from '@/src/components/ButtonWithTooltip'
 
 interface HomeProps {
   namespaces: string[]
@@ -46,14 +47,10 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
 
   const [imageSrc, setImageSrc] = useState<ImageFile[]>([])
   const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]])
+  const [isVisionModel, setIsVisionModel] = useState(true)
 
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-
-  const isVisionModel = selectedModel?.value==="gpt-4o" ||
-  selectedModel?.value==="gpt-4-turbo" ||
-  selectedModel?.value==="gemini-1.5-flash" ||
-  selectedModel?.value!=="gemini-1.5-pro"
   
   const fetchChatResponse = async (basePrompt:string, question: string, imageSrc: ImageFile[], selectedModel: OptionType | null, namespace: string) => {
  
@@ -117,6 +114,16 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
   }, [userInput, imageSrc, fetchChatResponse])
 
   const handleModelChange = (selectedOption: OptionType | null) => {
+    const isVisionModel = selectedOption?.value==="gpt-4o" ||
+    selectedOption?.value==="gpt-4-turbo" ||
+    selectedOption?.value==="gemini-1.5-flash" ||
+    selectedOption?.value==="gemini-1.5-pro"
+
+    console.log("set", selectedOption?.value, selectedOption?.value==="gpt-4o", 
+    selectedOption?.value==="gpt-4-turbo",
+    selectedOption?.value==="gemini-1.5-flash",
+    selectedOption?.value!=="gemini-1.5-pro" )
+    setIsVisionModel(isVisionModel)
     setSelectedModel(selectedOption)
   }
 
@@ -276,18 +283,16 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
             ref={messagesRef}
           >
             {chatHistory.map((chat, index) => 
-               <div key={index}>                
-               <ChatMessage
-               index={index}
-               message={chat}
-               lastIndex={index===chatHistory.length-1?true:false}
-               loading={loading}
-               imageSrc={imageSrcHistory[index]}
-               modelName={selectedModel?.value||'gpt-4o'}
-               handleImageDelete={handleImageDelete}
-             />
-            
-             
+              <div key={index}>                
+                <ChatMessage
+                index={index}
+                message={chat}
+                lastIndex={index===chatHistory.length-1?true:false}
+                loading={loading}
+                imageSrc={imageSrcHistory[index]}
+                modelName={selectedModel?.value||'gpt-4o'}
+                handleImageDelete={handleImageDelete}
+              />            
               </div>
               )
             }
@@ -300,33 +305,22 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
         />
         <div className="flex w-full justify-around items-center mx-2 my-1 border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg ">
           <div className="flex w-3/12 ms-2/12 xs:w-1/12  items-center justify-around mx-1">
-            <div className="screen-capture">
-              <button 
-                onClick={handleScreenCapture} 
-                className="flex items-center justify-center font-bold px-1 rounded cursor-pointer disabled:cursor-not-allowed"
-                aria-label="Capture Screenshot"
-                disabled={!isVisionModel}
-              >
-                <RiScreenshot2Fill size={30} />
-              </button>
-              <span 
-                className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 hidden group-hover:block bg-gray-100 text-black text-xs rounded py-1 px-5 whitespace-nowrap">
-                { isVisionModel? 
-                  `Capture Screenshot`
-                  :  `${selectedModel?.value} does not have vision feature `}
-              </span>
-            </div>
-            <div className="image-upload">
-            <ImageUploadIcon 
-              onImageUpload={handleImageUpload}
-              aria-label="Upload Image"
+            <ButtonWithTooltip
+              icon={<RiScreenshot2Fill size={30} />}
+              onClick={handleScreenCapture}
+              ariaLabel="Capture Screenshot"
+              tooltipText="Capture Screenshot"
+              isDisabled={!isVisionModel}
+              tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
             />
-             <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-6 hidden group-hover:block bg-gray-100 text-black text-xs rounded py-1 px-5 whitespace-nowrap">
-              { isVisionModel ? 
-                'Upload Image'
-                : `${selectedModel?.value} does not have vision feature` }
-            </span>
-            </div>   
+            <ButtonWithTooltip
+              icon={<ImageUploadIcon onImageUpload={handleImageUpload} isDisabled={!isVisionModel} />}
+              onClick={() => {}}
+              ariaLabel="Upload Image"
+              tooltipText="Upload Image"
+              isDisabled={!isVisionModel}
+              tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+            />
           </div>    
           <form
             onSubmit={handleSubmit} 

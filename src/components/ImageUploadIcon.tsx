@@ -2,9 +2,10 @@ import React, { useRef, ChangeEvent, FC } from 'react'
 import { BsImageFill  } from "react-icons/bs"
 interface ImageUploadIconProps {
   onImageUpload: (file: File) => void
+  isDisabled: boolean
 }
 
-const ImageUploadIcon: FC<ImageUploadIconProps> = ({ onImageUpload }) => {
+const ImageUploadIcon: FC<ImageUploadIconProps> = ({ onImageUpload, isDisabled }) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Trigger the file input when onKeyDown is fired
@@ -13,6 +14,7 @@ const ImageUploadIcon: FC<ImageUploadIconProps> = ({ onImageUpload }) => {
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if(isDisabled) return
     const file = event.target.files ? event.target.files[0] : null 
     if (file) {
       onImageUpload(file)
@@ -26,7 +28,7 @@ const ImageUploadIcon: FC<ImageUploadIconProps> = ({ onImageUpload }) => {
       onKeyDown={(e) => e.key === 'Enter' && handleIconClick()}
     >
       <input 
-        type="file" 
+        type={`${isDisabled? 'none' : 'file'}`} 
         ref={fileInputRef}
         onChange={handleFileChange} 
         style={{ display: 'none' }} 
