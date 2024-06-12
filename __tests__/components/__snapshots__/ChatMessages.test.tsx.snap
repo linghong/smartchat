@@ -89,7 +89,9 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
       />
       <label
         class="text-xs"
-      />
+      >
+        gpt-4o
+      </label>
     </div>
     <div
       class=" bot-response answer space-wrap"

@@ -16,7 +16,18 @@ describe('getGeminiChatCompletion', () => {
   const userMessage = "User Message";
   const fetchedText = "Fetched Text";
   const selectedModel: OptionType = { value: "model-id", label: "Model Label" };
-  const base64Images = ["base64image1", "base64image2"];
+  const imageSrc = [
+    {
+      base64Image:'base64Image1',
+      mimeType:'image/png',
+      size: 5000,
+      name: 'image1'
+    }, {
+      base64Image:'base64Image2',
+      mimeType:'image/png',
+      size: 8000,
+      name: 'image2'
+    }];
   
   beforeEach(() => {
     jest.clearAllMocks();
@@ -33,11 +44,11 @@ describe('getGeminiChatCompletion', () => {
   });
 
   it('should build current user parts correctly', async () => {
-    const parts = await getCurrentUserParts(base64Images, userMessage);
+    const parts = await getCurrentUserParts(imageSrc, userMessage);
     expect(parts).toEqual([
       userMessage,
-      { inlineData: { data: "base64image1", mimeType: "image/png" } },
-      { inlineData: { data: "base64image2", mimeType: "image/png" } }
+      { inlineData: { data: "base64Image1", mimeType: "image/png" } },
+      { inlineData: { data: "base64Image2", mimeType: "image/png" } }
     ]);
   });
 
@@ -55,7 +66,7 @@ describe('getGeminiChatCompletion', () => {
       getGenerativeModel: jest.fn().mockReturnValue(mockModel)
     } as any));
 
-    const result = await getGeminiChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel, base64Images);
+    const result = await getGeminiChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel, imageSrc);
     expect(result).toBe("Generated Response");
   });
 
@@ -69,7 +80,7 @@ describe('getGeminiChatCompletion', () => {
       getGenerativeModel: jest.fn().mockReturnValue(mockModel)
     } as any));
 
-    await expect(getGeminiChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel, base64Images))
+    await expect(getGeminiChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel, imageSrc))
       .rejects
       .toThrow("Failed to fetch response from Google model-id model, Error: API Error");
   });

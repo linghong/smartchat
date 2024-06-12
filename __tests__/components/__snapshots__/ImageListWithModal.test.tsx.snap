@@ -17,7 +17,7 @@ exports[`ImageListWithModal should match snapshot 1`] = `
       >
         <div
           class="bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer"
-          style="background-image: url(http://example.com/image1.jpg);"
+          style="background-image: url(data:image/png;base64,base64Imagedata1);"
         />
       </div>
     </div>
@@ -33,7 +33,7 @@ exports[`ImageListWithModal should match snapshot 1`] = `
       >
         <div
           class="bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer"
-          style="background-image: url(http://example.com/image2.jpg);"
+          style="background-image: url(data:image/png;base64,base64Imagedata2);"
         />
       </div>
     </div>

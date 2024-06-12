@@ -4,7 +4,19 @@ import '@testing-library/jest-dom'
 import ImageListWithModal from '@/src/components/ImageListWithModal'
 
 describe('ImageListWithModal', () => {
-  const imageSrc = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
+  const imageSrc = [
+    {
+      base64Image:'data:image/png;base64,base64Imagedata1',
+      mimeType:'image/png',
+      size: 5000,
+      name: 'image1'
+    }, {
+      base64Image:'data:image/png;base64,base64Imagedata2',
+      mimeType:'image/png',
+      size: 8000,
+      name: 'image2'
+    }]
+
   const handleImageDelete = jest.fn()
 
   beforeEach(() => {
@@ -29,7 +41,7 @@ describe('ImageListWithModal', () => {
 
     const modalImage = screen.getByAltText('Expanded view')
     expect(modalImage).toBeInTheDocument()
-    expect(modalImage).toHaveAttribute('src', expect.stringContaining(encodeURIComponent(imageSrc[0])))
+     expect(modalImage).toHaveAttribute('src', imageSrc[0].base64Image)
   })
 
   it('should open the modal when Enter key is pressed', () => {
@@ -43,7 +55,7 @@ describe('ImageListWithModal', () => {
 
     const modalImage = screen.getByAltText('Expanded view')
     expect(modalImage).toBeInTheDocument()
-    expect(modalImage).toHaveAttribute('src', expect.stringContaining(encodeURIComponent(imageSrc[0])))
+    expect(modalImage).toHaveAttribute('src', imageSrc[0].base64Image)
   })
 
   it('should close the modal when the close button is clicked', () => {

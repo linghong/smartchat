@@ -2,13 +2,15 @@ import React from 'react'
 import { render, screen, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import ChatMessage from '@/src/components/ChatMessage'
-import { Message } from '@/src/types/chat'
+import { Message, ImageFile } from '@/src/types/chat'
 
 describe('ChatMessage Component', () => {
+  let index: number
   let message : Message
   let loading : boolean
   let lastIndex : boolean
-  let imageSrc: string[]
+  let imageSrc: ImageFile[]
+  let modelName: string
   let handleImageDelete: jest.Mock
 
   beforeEach(() => {
@@ -16,12 +18,27 @@ describe('ChatMessage Component', () => {
     loading = false
     lastIndex = true
     handleImageDelete = jest.fn()
-    imageSrc = ['/path/to/image1.png', 'path/to/image2.png']
-    render(<ChatMessage 
+    imageSrc = [
+    {
+      base64Image:'/path/to/image1.png',
+      mimeType:'image/png',
+      size: 5000,
+      name: 'image1'
+    }, {
+      base64Image:'path/to/image2.png',
+      mimeType:'image/png',
+      size: 8000,
+      name: 'image2'
+    }]
+    modelName = 'gpt-4o'
+
+    render(<ChatMessage
+      index={index}
       message={message} 
       lastIndex={lastIndex} 
       loading={loading} 
       imageSrc={imageSrc}
+      modelName={modelName}
       handleImageDelete={handleImageDelete}
       />)
   })
@@ -37,11 +54,13 @@ describe('ChatMessage Component', () => {
 
   it('applies animate-pulse class when loading and is the last index', () => {
     act (() => {
-      render(<ChatMessage 
+      render(<ChatMessage
+        index={index} 
         message={message} 
         lastIndex={true} 
         loading={true}
         imageSrc={imageSrc}
+        modelName={modelName}
         handleImageDelete={handleImageDelete}
       />)
     })
@@ -51,11 +70,13 @@ describe('ChatMessage Component', () => {
 
   it('does not apply animate-pulse class when not loading', () => {
     act (() => {
-      render(<ChatMessage 
+      render(<ChatMessage
+        index={index} 
         message={message} 
         lastIndex={true} 
         loading={false}
         imageSrc={imageSrc}
+        modelName={modelName}
         handleImageDelete={handleImageDelete}
       />)
     })
@@ -65,11 +86,14 @@ describe('ChatMessage Component', () => {
   })
   
   it('ChatMessage component snapshot', () => {
-    const { asFragment } =  render(<ChatMessage 
+    const { asFragment } =  render(
+    <ChatMessage
+    index={index}
       message={message} 
       lastIndex={lastIndex} 
       loading={loading}
       imageSrc={imageSrc}
+      modelName={modelName}
       handleImageDelete={handleImageDelete}
     />)
     expect(asFragment()).toMatchSnapshot()
