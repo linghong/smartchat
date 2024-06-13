@@ -1,18 +1,21 @@
 /**
- * Extracts the message content by removing the <meta> tags and subject title.
- * @param message - The full message including the subject title in <meta> tags.
- * @returns The message content without the <meta> tags.
+ * Extracts the message content by removing the tag and subject title.
+ * the tag can be **{{{...}}}** for gemma or {{{...}}} for other AIs
+ * @param message - The full message including the subject title in the tag.
+ * @returns The message content without the tag.
  */
 export const extractMessageContent = (message: string): string => {
-  return message.trim().replace(/\{\{\{.*\}\}\}$/, '').trim()
+  const regex = /\*\*\{\{\{.*\}\}\}\*\*$|(?<!\*\*)\{\{\{.*\}\}\}$/
+  return message.trim().replace(regex, '').trim()
 }
 
 /**
  * Extracts the subject title from the message.
- * @param message - The full message including the subject title in <meta> tags.
- * @returns The subject title if found, otherwise an empty string.
+ * @param message - The full message including the subject title and tag.
+ * @returns The subject title if found, otherwise 'New Chat'.
  */
 export const extractSubjectTitle = (message: string): string => {
-  const match = message.trim().match(/\{\{\{(.*)\}\}\}$/)
-  return match ? match[1].trim() : ''
+  const regex = /\*\*\{\{\{(.*)\}\}\}\*\*$|(?<!\*\*)\{\{\{(.*)\}\}\}$/
+  const match = message.trim().match(regex)
+  return match ? (match[1] || match[2]).trim() : 'New Chat'
 }
