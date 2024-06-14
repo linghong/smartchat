@@ -1,11 +1,14 @@
-import { extractMessageContent, extractSubjectTitle } from '@/src/utils/chatMessageHelper' 
+import {
+  extractMessageContent,
+  extractSubjectTitle,
+} from '@/src/utils/chatMessageHelper'
 
 describe('extractMessageContent', () => {
   it('should remove <meta> tags and subject title from the message', () => {
     const message = 'This is a test message {{{Subject Title}}}'
     const result = extractMessageContent(message)
     expect(result).toBe('This is a test message')
-  });
+  })
 
   it('should return the original message if there are no <meta> tags', () => {
     const message = 'This is a test message'
@@ -53,7 +56,7 @@ describe('extractSubjectTitle', () => {
 
   it('should handle empty messages', () => {
     const message = ''
-    const result = extractSubjectTitle(message);
+    const result = extractSubjectTitle(message)
     expect(result).toBe('New Chat')
   })
 })

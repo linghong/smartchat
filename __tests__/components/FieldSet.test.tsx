@@ -1,4 +1,3 @@
-
 import { render } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import FieldSet from '@/src/components/FieldSet'
@@ -8,9 +7,9 @@ describe('FieldSet Component', () => {
     const { getByText } = render(
       <FieldSet>
         <p>Test Child</p>
-      </FieldSet>
+      </FieldSet>,
     )
-    
+
     expect(getByText('Test Child')).toBeInTheDocument()
   })
 
@@ -18,22 +17,22 @@ describe('FieldSet Component', () => {
     const { container } = render(
       <FieldSet>
         <p>Test Child</p>
-      </FieldSet>
-    );
+      </FieldSet>,
+    )
 
     expect(container.firstChild).toHaveClass('flex')
     expect(container.firstChild).toHaveClass('flex-col')
     expect(container.firstChild).toHaveClass('bg-slate-50')
     expect(container.firstChild).toHaveClass('shadow-md')
     expect(container.firstChild).toHaveClass('rounded')
-  });
+  })
 
   test('matches the snapshot', () => {
     const { asFragment } = render(
       <FieldSet>
         <p>Test Child</p>
-      </FieldSet>
-    );
+      </FieldSet>,
+    )
 
     expect(asFragment()).toMatchSnapshot()
   })

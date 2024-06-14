@@ -6,9 +6,9 @@ jest.mock('openai', () => {
   return {
     OpenAI: jest.fn().mockImplementation(() => ({
       createCompletion: jest.fn().mockResolvedValue({
-        choices: [{ message: { content: "Mock openai response" } }]
-      })
-    }))
+        choices: [{ message: { content: 'Mock openai response' } }],
+      }),
+    })),
   }
 })
 
@@ -16,28 +16,28 @@ jest.mock('groq-sdk', () => ({
   Groq: jest.fn().mockImplementation(() => ({
     chat: {
       completions: {
-        create: jest.fn()
-      }
-    }
-  }))
+        create: jest.fn(),
+      },
+    },
+  })),
 }))
 
 describe('getGroqChatCompletion', () => {
-  const basePrompt = "Hello, how can I help?"
+  const basePrompt = 'Hello, how can I help?'
   const chatHistory: Message[] = [{ question: 'Hello', answer: 'How are you?' }]
   const userMessage = "What's the weather like?"
-  const fetchedText = "Sunny and 75 degrees"
+  const fetchedText = 'Sunny and 75 degrees'
   const selectedModel = {
-    value: 'llama3-8b', 
-    label:'LLama3 8b'
+    value: 'llama3-8b',
+    label: 'LLama3 8b',
   }
 
   let consoleSpy: jest.SpyInstance
 
-  beforeEach(() => {  
+  beforeEach(() => {
     jest.resetAllMocks()
     process.env.GROQ_API_KEY = 'fake-api-key'
-    
+
     // Mock console.error to prevent it from logging during tests
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
   })
@@ -52,68 +52,104 @@ describe('getGroqChatCompletion', () => {
       chat: {
         completions: {
           create: jest.fn().mockResolvedValue({
-              choices: [{ 
-                message: { content: "It's sunny and 75 degrees" } 
-              }]
-          })
-        }
-      }
+            choices: [
+              {
+                message: { content: "It's sunny and 75 degrees" },
+              },
+            ],
+          }),
+        },
+      },
     }))
 
-    const response = await getGroqChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel)
-    
+    const response = await getGroqChatCompletion(
+      basePrompt,
+      chatHistory,
+      userMessage,
+      fetchedText,
+      selectedModel,
+    )
+
     expect(response).toEqual("It's sunny and 75 degrees")
-  });
+  })
 
   it('should throw an error if the completion object is missing', async () => {
     require('groq-sdk').Groq.mockImplementation(() => ({
       chat: {
         completions: {
-          create: jest.fn().mockResolvedValue(undefined)  // Explicitly return undefined
-        }
-      }
+          create: jest.fn().mockResolvedValue(undefined), // Explicitly return undefined
+        },
+      },
     }))
 
-    await expect(getGroqChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel))
-      .rejects.toThrow('No completion choices returned from the server.')
+    await expect(
+      getGroqChatCompletion(
+        basePrompt,
+        chatHistory,
+        userMessage,
+        fetchedText,
+        selectedModel,
+      ),
+    ).rejects.toThrow('No completion choices returned from the server.')
   })
 
   it('should throw an error if the choices array is missing', async () => {
     require('groq-sdk').Groq.mockImplementation(() => ({
       chat: {
         completions: {
-          create: jest.fn().mockResolvedValue({})
-        }
-      }
+          create: jest.fn().mockResolvedValue({}),
+        },
+      },
     }))
 
-    await expect(getGroqChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel))
-      .rejects.toThrow('No completion choices returned from the server.')
+    await expect(
+      getGroqChatCompletion(
+        basePrompt,
+        chatHistory,
+        userMessage,
+        fetchedText,
+        selectedModel,
+      ),
+    ).rejects.toThrow('No completion choices returned from the server.')
   })
 
   it('should throw an error if the choices array is empty', async () => {
     require('groq-sdk').Groq.mockImplementation(() => ({
       chat: {
         completions: {
-          create: jest.fn().mockResolvedValue({ choices: [] })
-        }
-      }
+          create: jest.fn().mockResolvedValue({ choices: [] }),
+        },
+      },
     }))
 
-    await expect(getGroqChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel))
-      .rejects.toThrow('No completion choices returned from the server.')
+    await expect(
+      getGroqChatCompletion(
+        basePrompt,
+        chatHistory,
+        userMessage,
+        fetchedText,
+        selectedModel,
+      ),
+    ).rejects.toThrow('No completion choices returned from the server.')
   })
 
   it('should handle API failures correctly', async () => {
-     require('groq-sdk').Groq.mockImplementation(() => ({
+    require('groq-sdk').Groq.mockImplementation(() => ({
       chat: {
         completions: {
-          create: jest.fn().mockRejectedValue(new Error('API failure'))
-        }
-      }
+          create: jest.fn().mockRejectedValue(new Error('API failure')),
+        },
+      },
     }))
-  
-    await expect(getGroqChatCompletion(basePrompt, chatHistory, userMessage, fetchedText, selectedModel))
-      .rejects.toThrow('Failed to fetch response from Groq server: API failure')
+
+    await expect(
+      getGroqChatCompletion(
+        basePrompt,
+        chatHistory,
+        userMessage,
+        fetchedText,
+        selectedModel,
+      ),
+    ).rejects.toThrow('Failed to fetch response from Groq server: API failure')
   })
 })

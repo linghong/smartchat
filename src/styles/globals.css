@@ -16,10 +16,11 @@
   }
 }
 
-html, body {
+html,
+body {
   color: var(--foreground-rgb);
   background: white;
-  height:100%;
+  height: 100%;
 }
 
 .bot-response p {
@@ -33,7 +34,9 @@ html, body {
   border-radius: 4px; /* Optional: rounded corners for the chat bubble */
 }
 
-html, body, #__next, .flex-grow {
+html,
+body,
+#__next,
+.flex-grow {
   height: 100%;
 }
-

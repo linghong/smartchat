@@ -1,15 +1,15 @@
 import React, { FC } from 'react'
 
 interface Notification {
-  type?: 'error' | 'loading' | 'success' | 'status';
-  message: string | null;
+  type?: 'error' | 'loading' | 'success' | 'status'
+  message: string | null
 }
 
 const Notification: FC<Notification> = ({ type, message }) => {
-  if(message === null) return null
+  if (message === null) return null
   let className = ''
-  let role= ''
-  let ariaLive: "off" | "assertive" | "polite" = 'off'
+  let role = ''
+  let ariaLive: 'off' | 'assertive' | 'polite' = 'off'
 
   switch (type) {
     case 'error':
@@ -40,7 +40,9 @@ const Notification: FC<Notification> = ({ type, message }) => {
 
   return (
     <div className="p-4">
-      <p className={className} role={role} aria-live={ariaLive} >{message}</p>
+      <p className={className} role={role} aria-live={ariaLive}>
+        {message}
+      </p>
     </div>
   )
 }

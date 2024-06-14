@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2021",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -24,14 +20,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
-    "typeRoots": [
-      "./typings",
-      "node_modules/@types"
-    ]
+    "typeRoots": ["./typings", "node_modules/@types"]
   },
   "include": [
     "next-env.d.ts",
@@ -41,7 +32,5 @@
     "tests/**/*",
     "types/**/*"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

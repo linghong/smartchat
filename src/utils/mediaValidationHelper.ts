@@ -1,13 +1,13 @@
 import { ImageFile } from '@/src/types/chat'
 
 export const isSupportedImage = (model: string, image: ImageFile) => {
-  let error : string[] = []
-  const {size, name, mimeType} = image
+  let error: string[] = []
+  const { size, name, mimeType } = image
 
-  switch(model) {
+  switch (model) {
     case 'gpt-4o' || 'gpt-4-turbo':
-      // OpenAI requires image size < 20MB 
-      if(size >= 20 *1024*1024) {
+      // OpenAI requires image size < 20MB
+      if (size >= 20 * 1024 * 1024) {
         error.push(`the size of Image ${name} must be less than 20MB.`)
       }
 
@@ -19,33 +19,39 @@ export const isSupportedImage = (model: string, image: ImageFile) => {
       }*/
 
       //validate openAI image type requirement
-      const validOpenAIImageType= [
+      const validOpenAIImageType = [
         'image/png',
         'image/jpg',
         'image/jpeg',
         'image/gif',
-        'image/webp'
+        'image/webp',
       ]
-      if(!validOpenAIImageType.includes(mimeType)) error.push("Only .png, .jpeg, .jpg, .webp, and non-animated .gif. is supported by OpenAI.")
+      if (!validOpenAIImageType.includes(mimeType))
+        error.push(
+          'Only .png, .jpeg, .jpg, .webp, and non-animated .gif. is supported by OpenAI.',
+        )
       break
 
-    case 'gemini-1.5-pro'||'gemini-1.5-flash':
+    case 'gemini-1.5-pro' || 'gemini-1.5-flash':
       //Gemini requires size < 2GB, but for security purpose, we will only set next.js to allow for 20MB
       //change next.js setting if large size is desired
-      if(size >= 20 * 1024 * 1024){
+      if (size >= 20 * 1024 * 1024) {
         error.push(`The size of Image ${name} must be less tan 2GB.`)
       }
 
       //validate gemini image type requirement
-      const validGeminiImageType= [
+      const validGeminiImageType = [
         'image/png',
         'image/jpeg',
         'image/webp',
         'image/heic',
-        'image/heif'
+        'image/heif',
       ]
-      if(!validGeminiImageType.includes(mimeType)){
-        error.push("Only .png, .jpeg, .webp,.heic and .heif is supported by Gemini.")}
+      if (!validGeminiImageType.includes(mimeType)) {
+        error.push(
+          'Only .png, .jpeg, .webp,.heic and .heif is supported by Gemini.',
+        )
+      }
       break
 
     default:

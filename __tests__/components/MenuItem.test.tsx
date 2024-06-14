@@ -22,8 +22,14 @@ describe('MenuItem Component', () => {
   })
 
   test('renders MenuItem component with the title and link', () => {
-    render(<MenuItem title="Test Title" link="/test-link" itemList={['Item 1', 'Item 2']} />)
-    
+    render(
+      <MenuItem
+        title="Test Title"
+        link="/test-link"
+        itemList={['Item 1', 'Item 2']}
+      />,
+    )
+
     expect(screen.getByText('Test Title')).toBeInTheDocument()
     expect(screen.getByText('Test Title')).toHaveAttribute('href', '/test-link')
   })
@@ -44,21 +50,39 @@ describe('MenuItem Component', () => {
   })
 
   test('applies active class when the link matches the current pathname', () => {
-    render(<MenuItem title="Test Title" link="/current-path" itemList={['Item 1', 'Item 2']} />)
+    render(
+      <MenuItem
+        title="Test Title"
+        link="/current-path"
+        itemList={['Item 1', 'Item 2']}
+      />,
+    )
 
     const menuItem = screen.getByText('Test Title').parentElement
     expect(menuItem).toHaveClass('bg-slate-400 text-indigo-200 rounded-sm')
   })
 
   test('does not apply active class when the link does not match the current pathname', () => {
-    render(<MenuItem title="Test Title" link="/other-path" itemList={['Item 1', 'Item 2']} />)
+    render(
+      <MenuItem
+        title="Test Title"
+        link="/other-path"
+        itemList={['Item 1', 'Item 2']}
+      />,
+    )
 
     const menuItem = screen.getByText('Test Title').parentElement
     expect(menuItem).not.toHaveClass('bg-slate-500 text-indigo-200 rounded-sm')
   })
 
   test('renders MenuItem component with default open state', () => {
-    render(<MenuItem title="Test Title" itemList={['Item 1', 'Item 2']} defaultOpen={true} />)
+    render(
+      <MenuItem
+        title="Test Title"
+        itemList={['Item 1', 'Item 2']}
+        defaultOpen={true}
+      />,
+    )
 
     // Ensure the item list is visible initially due to defaultOpen
     expect(screen.getByText('Item 1')).toBeInTheDocument()
@@ -66,14 +90,20 @@ describe('MenuItem Component', () => {
   })
 
   test('it has hover and focus classes', () => {
-    render(<MenuItem title="Test Title" itemList={['Item 1', 'Item 2']} />)   
+    render(<MenuItem title="Test Title" itemList={['Item 1', 'Item 2']} />)
     const menuItem = screen.getByText('Test Title').parentElement
     expect(menuItem).toHaveClass('hover:bg-slate-500')
     expect(menuItem).toHaveClass('focus:bg-indigo-100')
   })
 
   test('MenuItem component matches snapshot', () => {
-    const { asFragment } = render(<MenuItem title="Test Title" link="/test-link" itemList={['Item 1', 'Item 2']} />)
+    const { asFragment } = render(
+      <MenuItem
+        title="Test Title"
+        link="/test-link"
+        itemList={['Item 1', 'Item 2']}
+      />,
+    )
     expect(asFragment()).toMatchSnapshot()
   })
 })

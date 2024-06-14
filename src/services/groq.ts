@@ -1,48 +1,61 @@
-"use strict"
+'use strict'
 import { buildChatArray } from './openai'
-import { Groq } from "groq-sdk"
+import { Groq } from 'groq-sdk'
 
 import { GROQ_API_KEY } from '@/config/env'
 import { Message } from '@/src/types/chat'
-import { OptionType } from'@/src/types/common'
+import { OptionType } from '@/src/types/common'
 
 const buildChatMessages = (
-  basePrompt:string, 
-  systemContent: string, 
-  userMessage: string, 
-  fetchedText: string, 
+  basePrompt: string,
+  systemContent: string,
+  userMessage: string,
+  fetchedText: string,
   chatHistory: Message[],
-  selectedModel: OptionType, 
-  maxReturnMessageToken: number
-): any[]  => {
+  selectedModel: OptionType,
+  maxReturnMessageToken: number,
+): any[] => {
+  const chatArray = buildChatArray(
+    systemContent,
+    userMessage,
+    fetchedText,
+    chatHistory,
+    maxReturnMessageToken,
+    selectedModel.contextWindow,
+  )
 
-  const chatArray = buildChatArray(systemContent, userMessage, fetchedText, chatHistory, maxReturnMessageToken, selectedModel.contextWindow)
-
-  const userMessageWithFetchedData = fetchedText!=='' ? userMessage + '\n' + " '''fetchedStart " + fetchedText + " fetchedEnd'''"+ '\n'+ basePrompt : userMessage +'\n' + basePrompt
+  const userMessageWithFetchedData =
+    fetchedText !== ''
+      ? userMessage +
+        '\n' +
+        " '''fetchedStart " +
+        fetchedText +
+        " fetchedEnd'''" +
+        '\n' +
+        basePrompt
+      : userMessage + '\n' + basePrompt
 
   return [
-    {role: "system", 
-    content: systemContent
-    }, 
+    { role: 'system', content: systemContent },
     ...chatArray,
-    { 
-    role: "user", 
-    content: userMessageWithFetchedData
-  }]
+    {
+      role: 'user',
+      content: userMessageWithFetchedData,
+    },
+  ]
 }
 
 export const getGroqChatCompletion = async (
-  basePrompt:string, 
-  chatHistory: Message[], 
-  userMessage: string, 
-  fetchedText: string,  
-  selectedModel: OptionType
+  basePrompt: string,
+  chatHistory: Message[],
+  userMessage: string,
+  fetchedText: string,
+  selectedModel: OptionType,
 ) => {
-
-  if(!GROQ_API_KEY) return undefined
+  if (!GROQ_API_KEY) return undefined
 
   const groq = new Groq({
-    apiKey: GROQ_API_KEY
+    apiKey: GROQ_API_KEY,
   })
   const maxReturnMessageToken = 4000
 
@@ -54,28 +67,37 @@ export const getGroqChatCompletion = async (
   Always include a concise subject title at the end of each response, enclosed within triple curly braces like this: "{{{write your subject title here}}}".
   `
 
-  //gemma 7b think 
-  const messages = buildChatMessages(basePrompt,systemContent, userMessage, fetchedText, chatHistory, selectedModel, maxReturnMessageToken)
+  //gemma 7b think
+  const messages = buildChatMessages(
+    basePrompt,
+    systemContent,
+    userMessage,
+    fetchedText,
+    chatHistory,
+    selectedModel,
+    maxReturnMessageToken,
+  )
 
   try {
-      const completion = await groq.chat.completions.create({
-        messages,
-        model: selectedModel.value,
-        temperature: 0,
-        max_tokens: maxReturnMessageToken,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-        top_p: 1
-      })
+    const completion = await groq.chat.completions.create({
+      messages,
+      model: selectedModel.value,
+      temperature: 0,
+      max_tokens: maxReturnMessageToken,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+      top_p: 1,
+    })
 
-      if (!completion || !completion.choices || !completion.choices.length) {
-        throw new Error('No completion choices returned from the server.')
-      }
+    if (!completion || !completion.choices || !completion.choices.length) {
+      throw new Error('No completion choices returned from the server.')
+    }
 
     return completion.choices[0]?.message?.content
-
-  } catch(error){
+  } catch (error) {
     console.error('Error:', error)
-    throw new Error(`Failed to fetch response from Groq server: ${error instanceof Error ? error.message : 'Unknown error'}`)
-  } 
+    throw new Error(
+      `Failed to fetch response from Groq server: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    )
+  }
 }

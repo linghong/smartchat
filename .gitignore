@@ -49,3 +49,6 @@ next-env.d.ts
 # Keep specific necessary images
 !public/bot.png
 !public/user.png
+
+# IDE
+.vscode/

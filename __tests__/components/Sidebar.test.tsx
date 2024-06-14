@@ -1,5 +1,5 @@
 import React from 'react'
-import { render,  screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 
 import Sidebar from '@/src/components/Sidebar'
 import { useRouter } from 'next/router'
@@ -26,10 +26,10 @@ describe('Sidebar Component', () => {
       <Sidebar
         setIsSidebarOpen={setIsSidebarOpen}
         messageSubjectList={messageSubjectList}
-      />
+      />,
     )
   })
- 
+
   test('renders Sidebar component with all expected elements', () => {
     expect(screen.getByText('Embed RAG File')).toBeInTheDocument()
     expect(screen.getByText('Finetune AI Model')).toBeInTheDocument()
@@ -58,7 +58,7 @@ describe('Sidebar Component', () => {
       <Sidebar
         setIsSidebarOpen={setIsSidebarOpen}
         messageSubjectList={messageSubjectList}
-      />
+      />,
     )
     expect(asFragment()).toMatchSnapshot()
   })

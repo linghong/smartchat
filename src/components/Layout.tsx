@@ -3,11 +3,13 @@ import Sidebar from '@/src/components/Sidebar'
 import Header from '@/src/components/Header'
 import Footer from '@/src/components/Footer'
 
-
-const Layout: FC<{ children: ReactNode, messageSubjectList:string[]}>  = ({ children, messageSubjectList }) => {
+const Layout: FC<{ children: ReactNode; messageSubjectList: string[] }> = ({
+  children,
+  messageSubjectList,
+}) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
- 
+
   useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 480)
@@ -24,47 +26,45 @@ const Layout: FC<{ children: ReactNode, messageSubjectList:string[]}>  = ({ chil
   }, [])
 
   return (
-    <div className='flex flex-col h-screen' >
-      <Header 
-        isSidebarOpen={isSidebarOpen} 
+    <div className="flex flex-col h-screen">
+      <Header
+        isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
       />
       <div className="flex flex-row flex-grow h-full">
-        {isMobile && isSidebarOpen  && 
-          <Sidebar  
+        {isMobile && isSidebarOpen && (
+          <Sidebar
             setIsSidebarOpen={setIsSidebarOpen}
             messageSubjectList={messageSubjectList}
           />
-        }
-        {isMobile && !isSidebarOpen && 
+        )}
+        {isMobile && !isSidebarOpen && (
           <main className="w-full lg:w-70vw ">
             {children}
-            <Footer />  
+            <Footer />
           </main>
-        }
-        { !isMobile && isSidebarOpen && 
+        )}
+        {!isMobile && isSidebarOpen && (
           <>
-            <Sidebar 
+            <Sidebar
               setIsSidebarOpen={setIsSidebarOpen}
               messageSubjectList={messageSubjectList}
             />
             <main className="w-full sm:w-90vw lg:w-70vw justify-center items-center mx-auto">
               {children}
-              <Footer />  
+              <Footer />
             </main>
           </>
-        }
-        {!isMobile && !isSidebarOpen &&  
+        )}
+        {!isMobile && !isSidebarOpen && (
           <main className="w-full lg:w-70vw mx-auto">
             {children}
-            <Footer />  
+            <Footer />
           </main>
-        }     
+        )}
       </div>
     </div>
   )
 }
 
 export default Layout
-
-

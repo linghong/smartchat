@@ -6,16 +6,18 @@ import ImageListWithModal from '@/src/components/ImageListWithModal'
 describe('ImageListWithModal', () => {
   const imageSrc = [
     {
-      base64Image:'data:image/png;base64,base64Imagedata1',
-      mimeType:'image/png',
+      base64Image: 'data:image/png;base64,base64Imagedata1',
+      mimeType: 'image/png',
       size: 5000,
-      name: 'image1'
-    }, {
-      base64Image:'data:image/png;base64,base64Imagedata2',
-      mimeType:'image/png',
+      name: 'image1',
+    },
+    {
+      base64Image: 'data:image/png;base64,base64Imagedata2',
+      mimeType: 'image/png',
       size: 8000,
-      name: 'image2'
-    }]
+      name: 'image2',
+    },
+  ]
 
   const handleImageDelete = jest.fn()
 
@@ -24,16 +26,30 @@ describe('ImageListWithModal', () => {
   })
 
   it('should render the list of images', () => {
-    render(<ImageListWithModal imageSrc={imageSrc} handleImageDelete={handleImageDelete} />)
+    render(
+      <ImageListWithModal
+        imageSrc={imageSrc}
+        handleImageDelete={handleImageDelete}
+      />,
+    )
 
-    const images = screen.getAllByRole('button', { name: /click to view larger image/i })
+    const images = screen.getAllByRole('button', {
+      name: /click to view larger image/i,
+    })
     expect(images).toHaveLength(imageSrc.length)
   })
 
   it('should open the modal when an image is clicked', () => {
-    render(<ImageListWithModal imageSrc={imageSrc} handleImageDelete={handleImageDelete} />)
+    render(
+      <ImageListWithModal
+        imageSrc={imageSrc}
+        handleImageDelete={handleImageDelete}
+      />,
+    )
 
-    const image = screen.getByRole('button', { name: /click to view larger image 1/i })
+    const image = screen.getByRole('button', {
+      name: /click to view larger image 1/i,
+    })
     fireEvent.click(image)
 
     const modal = screen.getByRole('dialog')
@@ -41,13 +57,20 @@ describe('ImageListWithModal', () => {
 
     const modalImage = screen.getByAltText('Expanded view')
     expect(modalImage).toBeInTheDocument()
-     expect(modalImage).toHaveAttribute('src', imageSrc[0].base64Image)
+    expect(modalImage).toHaveAttribute('src', imageSrc[0].base64Image)
   })
 
   it('should open the modal when Enter key is pressed', () => {
-    render(<ImageListWithModal imageSrc={imageSrc} handleImageDelete={handleImageDelete} />)
+    render(
+      <ImageListWithModal
+        imageSrc={imageSrc}
+        handleImageDelete={handleImageDelete}
+      />,
+    )
 
-    const image = screen.getByRole('button', { name: /click to view larger image 1/i })
+    const image = screen.getByRole('button', {
+      name: /click to view larger image 1/i,
+    })
     fireEvent.keyDown(image, { key: 'Enter', code: 'Enter' })
 
     const modal = screen.getByRole('dialog')
@@ -59,43 +82,75 @@ describe('ImageListWithModal', () => {
   })
 
   it('should close the modal when the close button is clicked', () => {
-    render(<ImageListWithModal imageSrc={imageSrc} handleImageDelete={handleImageDelete} />)
+    render(
+      <ImageListWithModal
+        imageSrc={imageSrc}
+        handleImageDelete={handleImageDelete}
+      />,
+    )
 
-    const image = screen.getByRole('button', { name: /click to view larger image 1/i })
+    const image = screen.getByRole('button', {
+      name: /click to view larger image 1/i,
+    })
     fireEvent.click(image)
 
-    const closeButton = screen.getByRole('button', { name: /close image view/i })
+    const closeButton = screen.getByRole('button', {
+      name: /close image view/i,
+    })
     fireEvent.click(closeButton)
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
   it('should display the delete icon when isDeleteIconShow is true', () => {
-    render(<ImageListWithModal imageSrc={imageSrc} handleImageDelete={handleImageDelete} isDeleteIconShow={true} />)
+    render(
+      <ImageListWithModal
+        imageSrc={imageSrc}
+        handleImageDelete={handleImageDelete}
+        isDeleteIconShow={true}
+      />,
+    )
 
     const deleteIcons = screen.getAllByLabelText(/delete image/i)
     expect(deleteIcons).toHaveLength(imageSrc.length)
   })
 
   it('should not display the delete icon when isDeleteIconShow is false', () => {
-    render(<ImageListWithModal imageSrc={imageSrc} handleImageDelete={handleImageDelete} isDeleteIconShow={false} />)
+    render(
+      <ImageListWithModal
+        imageSrc={imageSrc}
+        handleImageDelete={handleImageDelete}
+        isDeleteIconShow={false}
+      />,
+    )
 
     const deleteIcons = screen.queryAllByLabelText(/delete image/i)
     expect(deleteIcons).toHaveLength(0)
   })
 
   it('should call handleImageDelete when the delete icon is clicked', () => {
-    render(<ImageListWithModal imageSrc={imageSrc} handleImageDelete={handleImageDelete} isDeleteIconShow={true} />)
+    render(
+      <ImageListWithModal
+        imageSrc={imageSrc}
+        handleImageDelete={handleImageDelete}
+        isDeleteIconShow={true}
+      />,
+    )
 
     const deleteIcon = screen.getByLabelText('Delete image 1')
-    fireEvent.click(deleteIcon);
+    fireEvent.click(deleteIcon)
 
     expect(handleImageDelete).toHaveBeenCalledTimes(1)
     expect(handleImageDelete).toHaveBeenCalledWith(0)
   })
 
   it('should match snapshot', () => {
-    const { asFragment } = render(<ImageListWithModal imageSrc={imageSrc} handleImageDelete={handleImageDelete} />)
+    const { asFragment } = render(
+      <ImageListWithModal
+        imageSrc={imageSrc}
+        handleImageDelete={handleImageDelete}
+      />,
+    )
     expect(asFragment()).toMatchSnapshot()
   })
 })

@@ -4,7 +4,7 @@ import Checkbox from '@/src/components/Checkbox'
 
 describe('Checkbox Component', () => {
   let setIsChecked: jest.Mock
-  
+
   beforeEach(() => {
     setIsChecked = jest.fn()
     render(<Checkbox label="Check me" setIsChecked={setIsChecked} />)
@@ -25,7 +25,9 @@ describe('Checkbox Component', () => {
   })
 
   it('Checkbox component snapshot', () => {
-    const { asFragment } =  render(<Checkbox label="Check me" setIsChecked={setIsChecked} />)
+    const { asFragment } = render(
+      <Checkbox label="Check me" setIsChecked={setIsChecked} />,
+    )
     expect(asFragment()).toMatchSnapshot()
   })
 })

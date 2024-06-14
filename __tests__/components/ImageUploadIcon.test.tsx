@@ -8,14 +8,14 @@ describe('ImageUploadIcon', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-  });
+  })
 
   it('should render the upload icon', () => {
     render(<ImageUploadIcon onImageUpload={onImageUpload} />)
 
     const icon = screen.getByLabelText('Upload image')
     expect(icon).toBeInTheDocument()
-  });
+  })
 
   it('should trigger file input click when icon is clicked', () => {
     render(<ImageUploadIcon onImageUpload={onImageUpload} />)
@@ -37,13 +37,15 @@ describe('ImageUploadIcon', () => {
     const fileInput = screen.getByLabelText('Upload image')
     expect(fileInput).toBeInTheDocument()
     expect(fileInput).toHaveProperty('type', 'file')
-  });
+  })
 
   it('should call onImageUpload when a file is selected', () => {
     render(<ImageUploadIcon onImageUpload={onImageUpload} />)
 
     const fileInput = screen.getByLabelText('Upload image') as HTMLInputElement
-    const file = new File(['dummy content'], 'example.png', { type: 'image/png' })
+    const file = new File(['dummy content'], 'example.png', {
+      type: 'image/png',
+    })
     fireEvent.change(fileInput, { target: { files: [file] } })
 
     expect(onImageUpload).toHaveBeenCalledTimes(1)
@@ -51,9 +53,10 @@ describe('ImageUploadIcon', () => {
   })
 
   it('should match snapshot', () => {
-    const { asFragment } = render(<ImageUploadIcon onImageUpload={onImageUpload} />)
-    
+    const { asFragment } = render(
+      <ImageUploadIcon onImageUpload={onImageUpload} />,
+    )
+
     expect(asFragment()).toMatchSnapshot()
   })
 })
-

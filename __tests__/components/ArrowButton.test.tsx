@@ -3,7 +3,6 @@ import '@testing-library/jest-dom'
 import ArrowButton from '@/src/components/ArrowButton'
 
 describe('ArrowButton Component', () => {
-
   test('has correct attributes when enabled', () => {
     const { getByRole } = render(<ArrowButton disabled={false} />)
     const button = getByRole('button')

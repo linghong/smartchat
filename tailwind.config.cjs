@@ -27,13 +27,13 @@ module.exports = {
         '80vh': '80vh',
       },
       screens: {
-        'ms': '360px', //micro small device 
-        'xs': '480px', //extra small device
+        ms: '360px', //micro small device
+        xs: '480px', //extra small device
         // otherwise, use Tailwind's defaults
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
         '2xl': '1536px',
       },
     },

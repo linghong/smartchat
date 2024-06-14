@@ -4,7 +4,7 @@ type ButtonProps = {
   disabled: boolean
 }
 
-const ArrowButton : FC<ButtonProps> = ({disabled = false}) => {
+const ArrowButton: FC<ButtonProps> = ({ disabled = false }) => {
   return (
     <button
       type="submit"

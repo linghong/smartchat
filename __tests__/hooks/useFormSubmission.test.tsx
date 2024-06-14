@@ -1,13 +1,18 @@
 import { renderHook, act } from '@testing-library/react-hooks'
 import { useFormSubmission } from '@/src/hooks'
-import { enableFetchMocks, resetMocks, mockResponseOnce, mockRejectOnce } from 'jest-fetch-mock'
+import {
+  enableFetchMocks,
+  resetMocks,
+  mockResponseOnce,
+  mockRejectOnce,
+} from 'jest-fetch-mock'
 
 // Enable fetch mocks
 enableFetchMocks()
 
 describe('useFormSubmission Hook', () => {
   let url: string, formData: FormData
-  
+
   beforeEach(() => {
     resetMocks()
     url = 'http://example.com/submit'
@@ -25,7 +30,7 @@ describe('useFormSubmission Hook', () => {
     mockResponseOnce(JSON.stringify(successResponse))
 
     const { result, waitForNextUpdate } = renderHook(() => useFormSubmission())
-    
+
     act(() => {
       result.current.handleFormSubmit(url, formData)
     })
@@ -38,17 +43,21 @@ describe('useFormSubmission Hook', () => {
     expect(result.current.isLoading).toBeFalsy()
     expect(result.current.successMessage).toBe(successResponse.id)
     expect(result.current.error).toBeNull()
-  });
+  })
 
   it('should handle an unsuccessful form submission', async () => {
-    const errorResponse = { success: false, id: null, error: 'Form submission failed' }
+    const errorResponse = {
+      success: false,
+      id: null,
+      error: 'Form submission failed',
+    }
     mockResponseOnce(JSON.stringify(errorResponse))
 
     const { result, waitForNextUpdate } = renderHook(() => useFormSubmission())
-    
+
     act(() => {
       result.current.handleFormSubmit(url, formData)
-    });
+    })
 
     await waitForNextUpdate()
 
@@ -56,13 +65,13 @@ describe('useFormSubmission Hook', () => {
     expect(result.current.isLoading).toBeFalsy()
     expect(result.current.successMessage).toBeNull()
     expect(result.current.error).toBe(errorResponse.error)
-  });
+  })
 
   it('should handle a network error', async () => {
     mockRejectOnce(new Error('Network Error'))
 
     const { result, waitForNextUpdate } = renderHook(() => useFormSubmission())
-    
+
     act(() => {
       result.current.handleFormSubmit(url, formData)
     })
@@ -72,6 +81,8 @@ describe('useFormSubmission Hook', () => {
     // Expect isLoading to be false and error to be set after a network error
     expect(result.current.isLoading).toBeFalsy()
     expect(result.current.successMessage).toBeNull()
-    expect(result.current.error).toBe('There was a network error when sending file.')
+    expect(result.current.error).toBe(
+      'There was a network error when sending file.',
+    )
   })
 })

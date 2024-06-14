@@ -11,14 +11,14 @@ describe('fetchData', () => {
   beforeEach(() => {
     // Resets the state of all fetch mocks provided by the jest-fetch-mock library
     fetch.resetMocks()
-    
+
     // Mocks console.error to prevent actual error logs during tests and allows verification of error logs
     jest.spyOn(console, 'error').mockImplementation(() => {})
   })
 
   afterEach(() => {
     // Restores all mocks created by jest.spyOn, jest.mock, and jest.fn to their original implementations
-    jest.restoreAllMocks() 
+    jest.restoreAllMocks()
   })
 
   it('should fetch data successfully', async () => {
@@ -37,25 +37,34 @@ describe('fetchData', () => {
     const data = await fetchData('test-endpoint')
 
     expect(fetch).toHaveBeenCalledWith(`${API_URL}/api/test-endpoint`)
-    expect(console.error).toHaveBeenCalledWith('Error fetching test-endpoint:', expect.any(Error))
+    expect(console.error).toHaveBeenCalledWith(
+      'Error fetching test-endpoint:',
+      expect.any(Error),
+    )
     expect(data).toEqual({
       props: {
-        error: 'Failed to fetch data.'
-      }
+        error: 'Failed to fetch data.',
+      },
     })
   })
 
   it('should handle non-OK response1', async () => {
-    fetch.mockResponseOnce('', { status: 500, statusText: 'Internal Server Error' });
+    fetch.mockResponseOnce('', {
+      status: 500,
+      statusText: 'Internal Server Error',
+    })
 
-    const data = await fetchData('test-endpoint');
+    const data = await fetchData('test-endpoint')
 
-    expect(fetch).toHaveBeenCalledWith(`${API_URL}/api/test-endpoint`);
-    expect(console.error).toHaveBeenCalledWith('Error fetching test-endpoint:', new Error('Error fetching test-endpoint: Internal Server Error'));
+    expect(fetch).toHaveBeenCalledWith(`${API_URL}/api/test-endpoint`)
+    expect(console.error).toHaveBeenCalledWith(
+      'Error fetching test-endpoint:',
+      new Error('Error fetching test-endpoint: Internal Server Error'),
+    )
     expect(data).toEqual({
       props: {
-        error: 'Failed to fetch data.'
-      }
-    });
-  });
+        error: 'Failed to fetch data.',
+      },
+    })
+  })
 })

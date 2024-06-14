@@ -1,15 +1,22 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react'
 
 interface TooltipButtonProps {
-  icon: React.ReactNode;
-  onClick: () => void;
-  ariaLabel: string;
-  tooltipText: string;
-  isDisabled: boolean;
-  tooltipDisabledText: string;
+  icon: React.ReactNode
+  onClick: () => void
+  ariaLabel: string
+  tooltipText: string
+  isDisabled: boolean
+  tooltipDisabledText: string
 }
 
-const ButtonWithTooltip: FC<TooltipButtonProps> = ({ icon, onClick, ariaLabel, tooltipText, isDisabled, tooltipDisabledText }) => {
+const ButtonWithTooltip: FC<TooltipButtonProps> = ({
+  icon,
+  onClick,
+  ariaLabel,
+  tooltipText,
+  isDisabled,
+  tooltipDisabledText,
+}) => {
   return (
     <div className="relative group">
       <button
@@ -20,13 +27,11 @@ const ButtonWithTooltip: FC<TooltipButtonProps> = ({ icon, onClick, ariaLabel, t
       >
         {icon}
       </button>
-      <span
-        className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 hidden group-hover:block bg-gray-100 text-black text-xs rounded py-1 px-5 whitespace-nowrap"
-      >
+      <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 hidden group-hover:block bg-gray-100 text-black text-xs rounded py-1 px-5 whitespace-nowrap">
         {isDisabled ? tooltipDisabledText : tooltipText}
       </span>
     </div>
-  );
-};
+  )
+}
 
 export default ButtonWithTooltip

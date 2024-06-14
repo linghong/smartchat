@@ -20,7 +20,7 @@ export const blobToFile = (blob: Blob, fileName: string): File => {
 export const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onloadend = () => resolve(reader.result as string);
+    reader.onloadend = () => resolve(reader.result as string)
     reader.onerror = reject
     reader.readAsDataURL(file)
   })
@@ -36,7 +36,7 @@ export const fetchImageAsBase64 = async (url: string): Promise<string> => {
   const blob = await response.blob()
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onloadend = () => resolve(reader.result as string);
+    reader.onloadend = () => resolve(reader.result as string)
     reader.onerror = reject
     reader.readAsDataURL(blob)
   })
@@ -47,16 +47,17 @@ export const fetchImageAsBase64 = async (url: string): Promise<string> => {
  * @param base64Image - The base64 string of the image.
  * @returns A promise that resolves with the width and height of the image.
  */
-export const getImageDimensions = (base64Image: string): Promise<{ width: number; height: number }> => {
+export const getImageDimensions = (
+  base64Image: string,
+): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
-    const img = new Image();
+    const img = new Image()
     img.onload = () => {
-      resolve({ width: img.width, height: img.height });
+      resolve({ width: img.width, height: img.height })
     }
     img.onerror = () => {
-      reject(new Error('Failed to load image'));
+      reject(new Error('Failed to load image'))
     }
     img.src = base64Image // Ensure the base64 string includes the data URI scheme
   })
 }
-

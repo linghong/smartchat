@@ -4,7 +4,7 @@ import { pineconeClient } from '@/src/services/pineconeClient'
 jest.mock('@/src/services/pineconeClient', () => {
   return {
     pineconeClient: {
-      Index: jest.fn().mockReturnValue( {
+      Index: jest.fn().mockReturnValue({
         namespace: jest.fn().mockReturnValue({
           query: jest.fn(),
         }),
@@ -30,10 +30,10 @@ describe('fetchDataFromPinecone', () => {
       matches: [
         {
           metadata: {
-            text: 'Test text'
-          }
-        }
-      ]
+            text: 'Test text',
+          },
+        },
+      ],
     })
 
     const result = await fetchDataFromPinecone(embeddedQuery, nameSpace)
@@ -50,11 +50,11 @@ describe('fetchDataFromPinecone', () => {
   })
 
   it('should throw an error if embeddedQuery is not an array', async () => {
-    const embeddedQuery = 'not-an-array'; // Not an array
+    const embeddedQuery = 'not-an-array' // Not an array
 
-    await expect(fetchDataFromPinecone(embeddedQuery as any, nameSpace))
-      .rejects
-      .toThrow('Invalid or empty query vector provided.')
+    await expect(
+      fetchDataFromPinecone(embeddedQuery as any, nameSpace),
+    ).rejects.toThrow('Invalid or empty query vector provided.')
   })
 
   it('should return an error when no matches are found', async () => {
@@ -64,9 +64,9 @@ describe('fetchDataFromPinecone', () => {
 
     mockQuery.mockResolvedValue({ matches: [] })
 
-    await expect(fetchDataFromPinecone(embeddedQuery, nameSpace)).rejects.toThrow(
-      'No matches found'
-    )
+    await expect(
+      fetchDataFromPinecone(embeddedQuery, nameSpace),
+    ).rejects.toThrow('No matches found')
   })
 
   it('should handle errors correctly', async () => {
@@ -76,9 +76,9 @@ describe('fetchDataFromPinecone', () => {
 
     mockQuery.mockRejectedValue(new Error('Network Error'))
 
-    await expect(fetchDataFromPinecone(embeddedQuery, nameSpace)).rejects.toThrow(
-      'Failed to fetch data from Pinecone'
-    )
+    await expect(
+      fetchDataFromPinecone(embeddedQuery, nameSpace),
+    ).rejects.toThrow('Failed to fetch data from Pinecone')
   })
 
   it('should throw an error when unable to fetch Pinecone index', async () => {
@@ -86,10 +86,10 @@ describe('fetchDataFromPinecone', () => {
     const mockIndex = pineconeClient.Index as jest.Mock
 
     mockIndex.mockReturnValue(null)
-  
+
     // The fetchDataFromPinecone function is expected to throw an error because the index could not be fetched
-    await expect(fetchDataFromPinecone(embeddedQuery, nameSpace))
-      .rejects
-      .toThrow('Unable to fetch Pinecone index')
+    await expect(
+      fetchDataFromPinecone(embeddedQuery, nameSpace),
+    ).rejects.toThrow('Unable to fetch Pinecone index')
   })
 })

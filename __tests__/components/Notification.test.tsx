@@ -4,7 +4,6 @@ import '@testing-library/jest-dom'
 import Notification from '@/src/components/Notification'
 
 describe('Notification Component', () => {
-  
   test('renders null when message is null', () => {
     const { container } = render(<Notification message={null} />)
     expect(container.firstChild).toBeNull()
@@ -45,9 +44,9 @@ describe('Notification Component', () => {
   test('renders with default type correctly', () => {
     render(<Notification message="Default message" />)
     const messageElement = screen.getByText('Default message')
-    // Check for default behavior. 
+    // Check for default behavior.
     expect(messageElement).not.toHaveClass()
-    expect(messageElement).toHaveAttribute('role', "")
+    expect(messageElement).toHaveAttribute('role', '')
     expect(messageElement).toHaveAttribute('aria-live', 'off')
   })
 
