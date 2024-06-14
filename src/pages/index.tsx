@@ -4,6 +4,7 @@ import { RiScreenshot2Fill } from "react-icons/ri";//screenshot
 
 import { modelOptions } from '@/config/modellist'
 import ArrowButton  from '@/src/components/ArrowButton'
+import ButtonWithTooltip from '@/src/components/ButtonWithTooltip'
 import ChatMessage from '@/src/components/ChatMessage'
 import DropdownSelect from '@/src/components/DropdownSelect'
 import ImageListWithModal from '@/src/components/ImageListWithModal'
@@ -13,7 +14,7 @@ import { Message, ImageFile } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 import { fetchData } from '@/src/utils/fetchData'
 import {fileToBase64, fetchImageAsBase64 } from '@/src/utils/fileFetchAndConversion'
-import ButtonWithTooltip from '@/src/components/ButtonWithTooltip'
+import { isSupportedImage } from '@/src/utils/mediaValidationHelper'
 
 interface HomeProps {
   namespaces: string[]
@@ -48,6 +49,7 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
   const [imageSrc, setImageSrc] = useState<ImageFile[]>([])
   const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]])
   const [isVisionModel, setIsVisionModel] = useState(true)
+  const [imageError, setImageError] = useState<string[]>([])
 
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -119,10 +121,6 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
     selectedOption?.value==="gemini-1.5-flash" ||
     selectedOption?.value==="gemini-1.5-pro"
 
-    console.log("set", selectedOption?.value, selectedOption?.value==="gpt-4o", 
-    selectedOption?.value==="gpt-4-turbo",
-    selectedOption?.value==="gemini-1.5-flash",
-    selectedOption?.value!=="gemini-1.5-pro" )
     setIsVisionModel(isVisionModel)
     setSelectedModel(selectedOption)
   }
@@ -143,32 +141,26 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
     setRows(newRows + 1)
   }
 
-  const handleImageUpload =async (file: File) => {
-  
-    if(!isVisionModel) return;
-    if (!file) return;
-    const validImageType = [
-      'image/png',
-      'image/jpg',
-      'image/jpeg',
-      'image/gif',
-      'image/bmp',
-      'image/webp',
-      'image/tiff',
-      'image/svg+xml'
-    ]
-    if (!validImageType.includes(file.type)) {
-      setError('It is not an Image')
-      return
-    }
+  const handleImageUpload =async (file: File) => { 
+    if(!isVisionModel) return
+    if (!file) return
+
     try{
       const base64Image = await fileToBase64(file)
-      setImageSrc([...imageSrc, {
+      const newImage = {
         base64Image,
         mimeType: file.type,
         size: file.size,
         name: file.name
-      }])
+      }
+
+      const imageVadiationError = isSupportedImage(selectedModel?.value||'', newImage )
+      if(imageVadiationError.length !== 0) {
+        setImageError([...imageError, ...imageVadiationError])
+        return
+      }
+
+      setImageSrc([...imageSrc, newImage])
     } catch {
       throw new Error('Failed to read the file.')
     }       
@@ -180,21 +172,31 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
 
   const handleScreenCapture = async () => {
     try {
-      const response = await fetch('/api/screenshot', { method: 'POST' })
-     
+      const response = await fetch('/api/screenshot', { method: 'POST' })    
       const result = await response.json();
 
-      if (response.ok) {
-        const base64Image = await fetchImageAsBase64(result.imgPath)
-        setImageSrc([...imageSrc, {
-          base64Image,
-          mimeType: result.mimeType,
-          size: result.fileSize,
-          name: result.fileName
-        }])
-      } else {
+      if (!response.ok) { 
         alert(result.message)
+        return
       }
+
+      const base64Image = await fetchImageAsBase64(result.imgPath)
+      const newImage = {
+        base64Image,
+        mimeType: result.mimeType,
+        size: result.fileSize,
+        name: result.fileName
+      }
+
+      //Image mimeType and size validation
+      const imageVadiationError = isSupportedImage(selectedModel?.value || '', newImage )
+      if(imageVadiationError.length !== 0) {
+        setImageError([...imageError, ...imageVadiationError])
+        return
+      }
+
+      setImageSrc([...imageSrc, newImage])
+
     } catch (error) {
       console.error('Error:', error)
       alert('An error occurred while capturing the screen')
@@ -345,7 +347,10 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
             />
           </form>
         </div>
-        { error && <Notification type="error" message={error} /> }      
+        { error && <Notification type="error" message={error} /> }
+        { 
+          imageError && imageError.map((err, i) => <Notification key={i} type='error' message={err} />) 
+        }       
         </div>
       </div>       
     </div>    

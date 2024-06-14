@@ -14,5 +14,7 @@ export type ImageFile = {
   base64Image: string;
   mimeType: string,
   size: number,
-  name: string
+  name: string,
+  width?: number,
+  height?: number
 }
