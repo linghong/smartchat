@@ -12,6 +12,11 @@
 /.next/
 /out/
 
+# Ignore log files and environment files
+logs
+*.log
+.env
+
 # production
 /build
 
@@ -34,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore all screenshots
+/public/screenshot_*.png
+/public/*.jpg
+/public/*.jpeg
+/public/*.gif
+
+# Keep specific necessary images
+!public/bot.png
+!public/user.png
