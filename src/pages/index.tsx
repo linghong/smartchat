@@ -260,7 +260,7 @@ const HomePage : FC<HomeProps> = ({ namespaces, isNewChat, setIsNewChat, message
           selectedOption={selectedNamespace} 
           onChange={handleNamespaceChange}
           options={fileCategoryOptions}
-          label='Using Saved File:'
+          label='Select RAG File:'
         />
       </div>      
       <div  className="flex flex-col w-full items-center py-2"
