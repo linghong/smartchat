@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { marked } from 'marked'
 
 
 import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone'
@@ -80,8 +81,8 @@ export default async function handler(
         return res.status(500).json('Invalid model category')
     }
    
-    let answer
-    let subject
+    let answer:string
+    let subject:string
     if(!chatResponse) {
       answer ='Sorry, I\'m having trouble finding an answer to your question.'
       subject = "Unknown"
@@ -91,7 +92,9 @@ export default async function handler(
       subject = extractSubjectTitle(chatResponse)
     }
     
-    res.status(200).json({ answer,subject })
+    const htmlAnswer = marked(answer)
+
+    res.status(200).json({ answer: htmlAnswer, subject })
   
   } catch (error: any) {
     console.error('An error occurred: ', error);
