@@ -2,130 +2,126 @@
 
 exports[`Sidebar Component Sidebar component matches snapshot 1`] = `
 <DocumentFragment>
-  <div
-    class="bg-slate-500 text-slate-50 h-full w-full xs:w-60 sm:w-80 md:w-72 lg:w-56 xl:w-56"
+  <ul
+    class="px-2 py-5 "
   >
-    <ul
-      class="px-2  py-5 "
+    <li
+      class="mt-5 my-8 font-semibold"
     >
-      <li
-        class="mt-5 my-8 font-semibold"
+      <div
+        class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
       >
-        <div
-          class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
+        <a
+          class="flex-grow px-2 hover:underline "
+          href="/embedragfile"
         >
-          <a
-            class="flex-grow px-2 hover:underline "
-            href="/embedragfile"
+          Embed RAG File
+        </a>
+        <span
+          class="cursor-pointer"
+          role="button"
+        >
+          <svg
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 24 24"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Embed RAG File
-          </a>
-          <span
-            class="cursor-pointer"
-            role="button"
-          >
-            <svg
-              fill="currentColor"
-              height="1em"
-              stroke="currentColor"
-              stroke-width="0"
-              viewBox="0 0 24 24"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M0 0h24v24H0z"
-                fill="none"
-              />
-              <path
-                d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
-              />
-            </svg>
-          </span>
-        </div>
-      </li>
-      <li
-        class="mt-5 my-8 font-semibold"
+            <path
+              d="M0 0h24v24H0z"
+              fill="none"
+            />
+            <path
+              d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
+            />
+          </svg>
+        </span>
+      </div>
+    </li>
+    <li
+      class="mt-5 my-8 font-semibold"
+    >
+      <div
+        class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
       >
-        <div
-          class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
+        <a
+          class="flex-grow px-2 hover:underline "
+          href="/finetunemodel"
         >
-          <a
-            class="flex-grow px-2 hover:underline "
-            href="/finetunemodel"
+          Finetune AI Model
+        </a>
+        <span
+          class="cursor-pointer"
+          role="button"
+        >
+          <svg
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 24 24"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Finetune AI Model
-          </a>
-          <span
-            class="cursor-pointer"
-            role="button"
-          >
-            <svg
-              fill="currentColor"
-              height="1em"
-              stroke="currentColor"
-              stroke-width="0"
-              viewBox="0 0 24 24"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M0 0h24v24H0z"
-                fill="none"
-              />
-              <path
-                d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
-              />
-            </svg>
-          </span>
-        </div>
-      </li>
-      <li
-        class="mt-5 my-8 font-semibold"
+            <path
+              d="M0 0h24v24H0z"
+              fill="none"
+            />
+            <path
+              d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
+            />
+          </svg>
+        </span>
+      </div>
+    </li>
+    <li
+      class="mt-5 my-8 font-semibold"
+    >
+      <div
+        class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
       >
-        <div
-          class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
+        <a
+          class="flex-grow px-2 hover:underline "
+          href="/"
         >
-          <a
-            class="flex-grow px-2 hover:underline "
-            href="/"
-          >
-            Chat With AI
-          </a>
-          <span
-            class="cursor-pointer"
-            role="button"
-          >
-            <svg
-              fill="currentColor"
-              height="1em"
-              stroke="currentColor"
-              stroke-width="0"
-              viewBox="0 0 24 24"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M0 0h24v24H0z"
-                fill="none"
-              />
-              <path
-                d="m12 8-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"
-              />
-            </svg>
-          </span>
-        </div>
-        <ul
-          class="px-6 py-2 font-medium text-slate-200"
+          Chat With AI
+        </a>
+        <span
+          class="cursor-pointer"
+          role="button"
         >
-          <li
-            class="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100"
+          <svg
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 24 24"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Test Subject
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </div>
+            <path
+              d="M0 0h24v24H0z"
+              fill="none"
+            />
+            <path
+              d="m12 8-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"
+            />
+          </svg>
+        </span>
+      </div>
+      <ul
+        class="px-6 py-2 font-medium text-slate-200"
+      >
+        <li
+          class="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100"
+        >
+          Test Subject
+        </li>
+      </ul>
+    </li>
+  </ul>
 </DocumentFragment>
 `;

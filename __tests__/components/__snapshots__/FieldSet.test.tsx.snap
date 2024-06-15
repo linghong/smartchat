@@ -3,7 +3,7 @@
 exports[`FieldSet Component matches the snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="flex flex-col my-5 p-6 bg-slate-50 border border-indigo-100 shadow-md rounded"
+    class="flex flex-col my-3 py-4 px-6 bg-slate-50 border border-indigo-100 shadow-md rounded"
   >
     <p>
       Test Child

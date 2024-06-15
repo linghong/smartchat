@@ -3,10 +3,10 @@
 exports[`DropdownSelect Component displays Dropdown component snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="flex justify-center items-center my-3 space-x-2"
+    class="my-2"
   >
     <label
-      class="text-base font-bold"
+      class="text-base font-bold w-50"
       for="dropdownName"
     >
       Dropdown Label

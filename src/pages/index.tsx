@@ -303,9 +303,9 @@ const HomePage: FC<HomeProps> = ({
   }, [isNewChat])
 
   return (
-    <div className="flex flex-col px-2 items-center justify-center mx-auto">
-      <div className="flex flex-col  items-center justify-center w-full">
-        <div className="flex flex-col sm:flex-row w-full justify-around">
+    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 flex-grow mx-auto">
+      <div className="flex flex-col flex-grow w-full">
+        <div className="flex flex-col lg:flex-row w-full justify-around">
           <DropdownSelect
             selectedOption={selectedModel}
             onChange={handleModelChange}
@@ -333,9 +333,9 @@ const HomePage: FC<HomeProps> = ({
             aria-label="Enter text here for AI to remember throughout the chat"
           />
         </div>
-        <div className="flex flex-col w-full h-60vh items-center">
+        <div className="flex flex-col flex-grow w-full items-center">
           <div
-            className={`w-full grow bg-white border-2 border-stone-200 overflow-y-auto`}
+            className={`w-full flex-grow grow bg-white border-2 border-stone-200 overflow-y-auto `}
           >
             <div
               className="w-full h-full overflow-y-scroll rounded-lg"
@@ -363,60 +363,60 @@ const HomePage: FC<HomeProps> = ({
             handleImageDelete={handleImageDelete}
             isDeleteIconShow={true}
           />
-          <div className="flex w-full justify-around items-center mx-2 my-1 border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg ">
-            <div className="flex w-3/12 ms-2/12 xs:w-1/12  items-center justify-around mx-1">
-              <ButtonWithTooltip
-                icon={<RiScreenshot2Fill size={30} />}
-                onClick={handleScreenCapture}
-                ariaLabel="Capture Screenshot"
-                tooltipText="Capture Screenshot"
-                isDisabled={!isVisionModel}
-                tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
-              />
-              <ButtonWithTooltip
-                icon={
-                  <ImageUploadIcon
-                    onImageUpload={handleImageUpload}
-                    isDisabled={!isVisionModel}
-                  />
-                }
-                onClick={() => {}}
-                ariaLabel="Upload Image"
-                tooltipText="Upload Image"
-                isDisabled={!isVisionModel}
-                tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
-              />
-            </div>
-            <form
-              onSubmit={handleSubmit}
-              className="flex items-center w-8/12 ms:w-9/12 xs:w-10/12 xl:w-11/12 px-2 py-1 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
-            >
-              <textarea
-                ref={textAreaRef}
-                disabled={loading}
-                autoFocus={false}
-                rows={rows}
-                id="userInput"
-                name="userInput"
-                className={`w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
-                placeholder="Click to send. Shift + Enter for a new line."
-                value={userInput}
-                onChange={handleInputChange}
-                aria-label="Enter your message here"
-              />
-              <ArrowButton
-                disabled={userInput === '' && imageSrc.length === 0}
-                aria-label="Send"
-              />
-            </form>
-          </div>
-          {error && <Notification type="error" message={error} />}
-          {imageError &&
-            imageError.map((err, i) => (
-              <Notification key={i} type="error" message={err} />
-            ))}
         </div>
       </div>
+      <div className="flex w-full justify-around items-center  my-1 border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg">
+        <div className="flex w-3/12 ms:w-2/12  sm:w-1/12 items-center justify-around md:mx-1">
+          <ButtonWithTooltip
+            icon={<RiScreenshot2Fill size={30} />}
+            onClick={handleScreenCapture}
+            ariaLabel="Capture Screenshot"
+            tooltipText="Capture Screenshot"
+            isDisabled={!isVisionModel}
+            tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+          />
+          <ButtonWithTooltip
+            icon={
+              <ImageUploadIcon
+                onImageUpload={handleImageUpload}
+                isDisabled={!isVisionModel}
+              />
+            }
+            onClick={() => {}}
+            ariaLabel="Upload Image"
+            tooltipText="Upload Image"
+            isDisabled={!isVisionModel}
+            tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+          />
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-center w-8/12 ms:w-9/12 xs:w-10/12 xl:w-11/12 px-2 py-1 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
+        >
+          <textarea
+            ref={textAreaRef}
+            disabled={loading}
+            autoFocus={false}
+            rows={rows}
+            id="userInput"
+            name="userInput"
+            className={`w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
+            placeholder="Click to send. Shift + Enter for a new line."
+            value={userInput}
+            onChange={handleInputChange}
+            aria-label="Enter your message here"
+          />
+          <ArrowButton
+            disabled={userInput === '' && imageSrc.length === 0}
+            aria-label="Send"
+          />
+        </form>
+      </div>
+      {error && <Notification type="error" message={error} />}
+      {imageError &&
+        imageError.map((err, i) => (
+          <Notification key={i} type="error" message={err} />
+        ))}
     </div>
   )
 }

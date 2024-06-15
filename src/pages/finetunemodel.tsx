@@ -230,10 +230,10 @@ const FinetuneModel: FC = () => {
   }, [isChecked, setSelectedInput])
 
   return (
-    <div className="flex flex-col items-center justify-center mx-auto">
-      <form className="flex flex-col justify-start">
+    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 mx-auto">
+      <form className="flex flex-col p-3">
         <FieldSet>
-          <div className="flex justify-start my-3">
+          <div className="flex justify-start">
             <UploadFile
               label="Upload Training File: "
               fileType=".jsonl"
@@ -243,7 +243,7 @@ const FinetuneModel: FC = () => {
               setSelectedUpload={setSelectedUpload}
             />
           </div>
-          <div className="flex justify-start my-3">
+          <div className="flex justify-start">
             <UploadFile
               label="Upload Validation File (optional): "
               fileType=".jsonl"
@@ -255,7 +255,7 @@ const FinetuneModel: FC = () => {
           </div>
         </FieldSet>
         <FieldSet>
-          <div className="flex justify-start my-3">
+          <div className="flex justify-start">
             <DropdownSelect
               name="finetuningModel"
               selectedOption={selectedDropdown.finetuningModel}
@@ -264,7 +264,7 @@ const FinetuneModel: FC = () => {
               label="Select Finetuning Model:"
             />
           </div>
-          <div className="my-3">
+          <div className="py-2">
             <label htmlFor="epochs" className="font-bold mr-2 py-1.5">
               Number of Epochs:
             </label>
@@ -288,7 +288,7 @@ const FinetuneModel: FC = () => {
             )}
           </div>
           {isOpenAIModel && (
-            <div className="my-3">
+            <div className="py-2">
               <label htmlFor="suffix" className="font-bold mr-2 py-1.5">
                 Suffix(Optional):
               </label>
@@ -307,7 +307,7 @@ const FinetuneModel: FC = () => {
             </div>
           )}
           {!isOpenAIModel && (
-            <div className="my-3">
+            <div className="py-2">
               <label htmlFor="batchSize" className="font-bold mr-2 py-1.5">
                 Batch Size:
               </label>
@@ -326,7 +326,7 @@ const FinetuneModel: FC = () => {
             </div>
           )}
           {!isOpenAIModel && (
-            <div className="my-3">
+            <div className="py-2">
               <label
                 htmlFor="learningRateMultiplier"
                 className="font-bold mr-2 py-1.5"
@@ -348,7 +348,7 @@ const FinetuneModel: FC = () => {
             </div>
           )}
           {!isOpenAIModel && (
-            <div className="my-3">
+            <div className="py-2">
               <label
                 htmlFor="promptLossWeight"
                 className="font-bold mr-2 py-1.5"
@@ -371,7 +371,7 @@ const FinetuneModel: FC = () => {
           )}
         </FieldSet>
 
-        <div className="flex justify-end my-10 mr-5">
+        <div className="flex justify-end py-5 mr-5">
           <button
             type="submit"
             className={`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-5 py-4 px-20 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}
@@ -390,7 +390,6 @@ const FinetuneModel: FC = () => {
           inputErrors={inputErrors}
         />
       </form>
-      <div className="flex flex-col h-20vh items-center"></div>
     </div>
   )
 }

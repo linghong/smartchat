@@ -240,8 +240,8 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
   }
 
   return (
-    <div className="flex flex-col px-2 items-center justify-center mx-auto">
-      <form className="flex flex-col h-60vh lg:h-40vh p-3 justify-between ">
+    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 mx-auto">
+      <form className="flex flex-col p-3">
         <FieldSet>
           <UploadFile
             label="Upload File: "
@@ -251,8 +251,8 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
             setUploadErrors={setUploadErrors}
             setSelectedUpload={setSelectedUpload}
           />
-          <div className="flex flex-col lg:flex-row justify-start">
-            <div className="lg:w-50 mr-20 my-2">
+          <div className="flex flex-col lg:flex-row">
+            <div className="w-full lg:w-6/12">
               <DropDownSelect
                 name="fileCategory"
                 selectedOption={selectedDropDown.fileCategory}
@@ -262,46 +262,54 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
               />
             </div>
             {showAddNewCategory && (
-              <div className="flex items-center lg:w-50 my-2">
-                <label htmlFor="newCategoryOption" className="font-bold mr-5">
-                  New Category:
-                </label>
-                <input
-                  type="text"
-                  name="newFileCategory"
-                  className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-blue-500 focus:outline-none"
-                  onChange={handleInputChange}
-                />
-                <button
-                  className="py-1.5"
-                  aria-label="Add New Category"
-                  onClick={handleAddCategoryToDropDown}
+              <div className="w-full lg:w-6/12 my-2">
+                <label
+                  htmlFor="newCategoryOption"
+                  className="w-full font-bold mr-5"
                 >
-                  <PlusIcon aria-hidden="true" />
-                </button>
+                  Add New Category:
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="newFileCategory"
+                    className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-blue-500 focus:outline-none"
+                    onChange={handleInputChange}
+                  />
+                  <button
+                    className="py-1.5 mx-2"
+                    aria-label="Add New Category"
+                    onClick={handleAddCategoryToDropDown}
+                  >
+                    <PlusIcon aria-hidden="true" />
+                  </button>
+                </div>
               </div>
             )}
           </div>
         </FieldSet>
         <FieldSet>
-          <div className="flex flex-col justify-start ">
-            <div className="lg:w-50 my-5">
-              <label htmlFor="chunkSize" className="font-bold mr-2 py-1.5">
+          <div className="flex flex-col lg:flex-row justify-start ">
+            <div className="w-full lg:w-6/12 py-2">
+              <label
+                htmlFor="chunkSize"
+                className="w-full lg:w-20 font-bold mr-2 py-1.5"
+              >
                 Chunk Size:
               </label>
               <input
                 type="number"
                 name="chunkSize"
                 value={selectedInput.chunkSize?.toString()}
-                className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+                className="w-11/12 lg:w-80 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
               />
             </div>
-            <div className="lg:w-50 my-5 justify-start">
+            <div className="w-full lg:w-6/12 py-2 justify-start">
               <label
                 htmlFor="chunkOverlapSize"
-                className="font-bold mr-2 py-1.5"
+                className="w-full lg:w-20 font-bold mr-2 py-1.5"
               >
                 Chunk Overlap:
               </label>
@@ -309,7 +317,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
                 type="number"
                 name="chunkOverlap"
                 value={selectedInput.chunkOverlap?.toString()}
-                className="w-50 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+                className="w-11/12 lg:w-80 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
               />
@@ -350,7 +358,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
             .
           </span>
         </FieldSet>
-        <div className="flex justify-end my-10 mr-5">
+        <div className="flex justify-end py-5 mr-5">
           <button
             type="submit"
             className={`bg-transparent hover:bg-slate-500 text-stone-700 font-semibold mr-5 py-4 px-20 border-2 border-stone-400 hover:border-transparent rounded-3xl focus:border-blue-500 focus:outline-none ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-300' : 'hover:text-white'}`}
@@ -369,7 +377,6 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
           inputErrors={inputErrors}
         />
       </form>
-      <div className="flex flex-col h-80vh items-center justify-between"></div>
     </div>
   )
 }

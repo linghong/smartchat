@@ -52,12 +52,14 @@ describe('DropdownSelect Component', () => {
     )
   })
 
-  it('applies custom styles when selected', () => {
+  it('applies custom styles when selected', async () => {
     const optionElement = screen.getByText(options[0].label)
     const originalStyles = window.getComputedStyle(optionElement)
 
     // Fire a click event to select the element
-    userEvent.click(optionElement)
+    await act(async () => {
+      userEvent.click(optionElement)
+    })
 
     const appliedStyles = window.getComputedStyle(optionElement)
     expect(appliedStyles).not.toBe(originalStyles)
@@ -68,7 +70,9 @@ describe('DropdownSelect Component', () => {
     const originalStyles = window.getComputedStyle(optionElement)
 
     // Fire a hover or focus event
-    userEvent.hover(optionElement)
+    await act(async () => {
+      userEvent.hover(optionElement)
+    })
 
     const appliedStyles = window.getComputedStyle(optionElement)
 

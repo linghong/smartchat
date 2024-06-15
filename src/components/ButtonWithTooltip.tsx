@@ -21,7 +21,7 @@ const ButtonWithTooltip: FC<TooltipButtonProps> = ({
     <div className="relative group">
       <button
         onClick={onClick}
-        className="flex items-center justify-center font-bold px-1 rounded cursor-pointer disabled:cursor-not-allowed"
+        className="flex items-center justify-center font-bold  rounded cursor-pointer disabled:cursor-not-allowed"
         aria-label={ariaLabel}
         disabled={isDisabled}
       >

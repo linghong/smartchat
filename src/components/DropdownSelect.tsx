@@ -59,8 +59,8 @@ const StaticDropdownSelect: FC<DropdownSelectProps> = ({
   const dropdownId = `${label.replace(/\s+/g, '-').toLowerCase()}`
 
   return (
-    <div className="flex justify-center items-center my-3 space-x-2">
-      <label htmlFor={name} className="text-base font-bold">
+    <div className="my-2">
+      <label htmlFor={name} className="text-base font-bold w-50">
         {label}
       </label>
       <Select

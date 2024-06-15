@@ -26,38 +26,42 @@ const Layout: FC<{ children: ReactNode; messageSubjectList: string[] }> = ({
   }, [])
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col w-full h-screen">
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
       />
-      <div className="flex flex-row flex-grow h-full">
+      <div className="flex flex-row w-full flex-grow h-full">
         {isMobile && isSidebarOpen && (
-          <Sidebar
-            setIsSidebarOpen={setIsSidebarOpen}
-            messageSubjectList={messageSubjectList}
-          />
+          <div className="bg-slate-500 text-slate-50 h-full w-full">
+            <Sidebar
+              setIsSidebarOpen={setIsSidebarOpen}
+              messageSubjectList={messageSubjectList}
+            />
+          </div>
         )}
         {isMobile && !isSidebarOpen && (
-          <main className="w-full lg:w-70vw ">
+          <main className="flex flex-col w-full lg:w-70vw h-full px-2">
             {children}
             <Footer />
           </main>
         )}
         {!isMobile && isSidebarOpen && (
           <>
-            <Sidebar
-              setIsSidebarOpen={setIsSidebarOpen}
-              messageSubjectList={messageSubjectList}
-            />
-            <main className="w-full sm:w-90vw lg:w-70vw justify-center items-center mx-auto">
+            <div className="bg-slate-500 text-slate-50 h-full  text-md xs:w-4/12 md:w-3/12 lg:w-2/12">
+              <Sidebar
+                setIsSidebarOpen={setIsSidebarOpen}
+                messageSubjectList={messageSubjectList}
+              />
+            </div>
+            <main className="flex flex-col w-full h-full xs:w-8/12 md:w-9/12 lg:w-10/12 items-center mx-auto h-full">
               {children}
               <Footer />
             </main>
           </>
         )}
         {!isMobile && !isSidebarOpen && (
-          <main className="w-full lg:w-70vw mx-auto">
+          <main className="flex flex-col w-full lg:w-70vw mx-auto h-full">
             {children}
             <Footer />
           </main>
