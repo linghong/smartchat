@@ -91,7 +91,7 @@ const contentForUserWithImageMessage = (
       },
     })
   })
-  return contentForUserMessage
+  return JSON.stringify(contentForUserMessage)
 }
 
 export const getOpenAIChatCompletion = async (
