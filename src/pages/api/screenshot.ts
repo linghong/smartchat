@@ -17,14 +17,17 @@ export default async function handler(
     const imageName = `screenshot_${Date.now()}.png`
     const screenshotPath = path.join(process.cwd(), 'public', imageName)
     await screenshot({ filename: screenshotPath })
-    const fileStats = await fs.stat(screenshotPath)
+
+    const fileBuffer = await fs.readFile(screenshotPath)
+    const base64Image = fileBuffer.toString('base64')
+    const mimeType = 'image/png'
 
     res.status(200).json({
       message: 'Screenshot saved',
-      imgPath: `/${imageName}`,
-      fileSize: fileStats.size,
-      fileName: imageName,
-      mimeType: 'image/png',
+      base64Image: `data:${mimeType};base64,${base64Image}`,
+      size: fileBuffer.length,
+      name: imageName,
+      mimeType: mimeType,
     })
   } catch (error) {
     console.error('Error capturing screen:', error)

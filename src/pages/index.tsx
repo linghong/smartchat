@@ -136,6 +136,7 @@ const HomePage: FC<HomeProps> = ({
       e.preventDefault()
 
       const question: string = userInput.trim()
+
       // prevent form submission if nothing is entered
       if (question.length === 0 && imageSrc.length === 0) return
 
@@ -229,20 +230,15 @@ const HomePage: FC<HomeProps> = ({
   const handleScreenCapture = async () => {
     try {
       const response = await fetch('/api/screenshot', { method: 'POST' })
-      const result = await response.json()
+      const { message, base64Image, mimeType, size, name } =
+        await response.json()
 
       if (!response.ok) {
-        alert(result.message)
+        alert(message)
         return
       }
 
-      const base64Image = await fetchImageAsBase64(result.imgPath)
-      const newImage = {
-        base64Image,
-        mimeType: result.mimeType,
-        size: result.fileSize,
-        name: result.fileName,
-      }
+      const newImage = { message, base64Image, mimeType, size, name }
 
       //Image mimeType and size validation
       const imageVadiationError = isSupportedImage(
@@ -358,11 +354,13 @@ const HomePage: FC<HomeProps> = ({
               ))}
             </div>
           </div>
-          <ImageListWithModal
-            imageSrc={imageSrc}
-            handleImageDelete={handleImageDelete}
-            isDeleteIconShow={true}
-          />
+          {imageSrc.length > 0 && (
+            <ImageListWithModal
+              imageSrc={imageSrc}
+              handleImageDelete={handleImageDelete}
+              isDeleteIconShow={true}
+            />
+          )}
         </div>
       </div>
       <div className="flex w-full justify-around items-center  my-1 border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg">
@@ -423,12 +421,12 @@ const HomePage: FC<HomeProps> = ({
 export default HomePage
 
 export const getStaticProps: GetStaticProps = async () => {
-    const namespaces = await fetchNamespaces()
+  const namespaces = await fetchNamespaces()
 
-    return {
-      props: {
-        namespaces,
-      },
-      revalidate: 60 * 60 * 24, // Regenerate the page after every 24 hours
-    } 
+  return {
+    props: {
+      namespaces,
+    },
+    revalidate: 60 * 60 * 24, // Regenerate the page after every 24 hours
+  }
 }
