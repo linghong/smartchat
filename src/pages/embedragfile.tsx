@@ -5,7 +5,6 @@ import Link from 'next/link'
 
 import DropDownSelect from '@/src/components/DropdownSelect'
 import FieldSet from '@/src/components/FieldSet'
-import Header from '@/src/components/Header'
 import Notifications from '@/src/components/Notifications'
 import PlusIcon from '@/src/components/PlusIcon'
 import UploadFile from '@/src/components/UploadFile'
@@ -16,7 +15,7 @@ import {
   UploadData,
   UploadErrors,
 } from '@/src/types/common'
-import { fetchData } from '@/src/utils/fetchData'
+import { fetchNamespaces } from '@/src/utils/fetchNamespaces'
 
 interface DropDownData {
   fileCategory: {
@@ -50,9 +49,11 @@ const initialInputErrors = {
 }
 
 const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
-  const defaultFileCategoryOptions = [
+  const defaultFileCategoryOptions =!namespaces.length ?
+  [{ value: 'default', label: 'Add New Category' }] :
+  [
     { value: 'default', label: 'Add New Category' },
-    ...namespaces.map(ns => ({ value: ns, label: ns })),
+    ...namespaces.map(ns => ({ value: ns, label: ns }))
   ]
 
   const [fileCategoryOptions, setFileCategoryOptions] = useState<OptionType[]>(
@@ -201,6 +202,9 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
   }
   const { handleFormSubmit, isLoading, successMessage, error } =
     useFormSubmission()
+
+  
+
 
   const prepareFormData = () => {
     const formData = new FormData()
@@ -384,7 +388,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
 export default UploadFilePage
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { namespaces } = await fetchData('namespaces')
+  const namespaces = await fetchNamespaces()
 
   return {
     props: {

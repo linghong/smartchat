@@ -20,7 +20,7 @@ import ImageUploadIcon from '@/src/components/ImageUploadIcon'
 import Notification from '@/src/components/Notification'
 import { Message, ImageFile } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
-import { fetchData } from '@/src/utils/fetchData'
+import { fetchNamespaces } from '@/src/utils/fetchNamespaces'
 import {
   fileToBase64,
   fetchImageAsBase64,
@@ -53,7 +53,7 @@ const HomePage: FC<HomeProps> = ({
   const messagesRef = useRef<HTMLDivElement | null>(null)
 
   const fileCategoryOptions =
-    namespaces === null
+    namespaces.length === 0
       ? [initialFileCategory]
       : [
           initialFileCategory,
@@ -423,13 +423,12 @@ const HomePage: FC<HomeProps> = ({
 export default HomePage
 
 export const getStaticProps: GetStaticProps = async () => {
-  const response = await fetchData('namespaces')
-  const namespaces = response?.namespaces || null // default to null if undefined
+    const namespaces = await fetchNamespaces()
 
-  return {
-    props: {
-      namespaces,
-    },
-    revalidate: 60 * 60 * 24, // Regenerate the page after every 24 hours
-  }
+    return {
+      props: {
+        namespaces,
+      },
+      revalidate: 60 * 60 * 24, // Regenerate the page after every 24 hours
+    } 
 }
