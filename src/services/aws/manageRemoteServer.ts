@@ -9,7 +9,7 @@ const executeCommand = (
   instanceIP: string,
   userName: string,
   pemPath: string,
-  appName: string,
+  command: string,
 ): Promise<{ message: string }> => {
   return new Promise((resolve, reject) => {
     const conn = new Client()

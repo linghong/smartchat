@@ -49,12 +49,12 @@ const initialInputErrors = {
 }
 
 const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
-  const defaultFileCategoryOptions =!namespaces.length ?
-  [{ value: 'default', label: 'Add New Category' }] :
-  [
-    { value: 'default', label: 'Add New Category' },
-    ...namespaces.map(ns => ({ value: ns, label: ns }))
-  ]
+  const defaultFileCategoryOptions = !namespaces.length
+    ? [{ value: 'default', label: 'Add New Category' }]
+    : [
+        { value: 'default', label: 'Add New Category' },
+        ...namespaces.map(ns => ({ value: ns, label: ns })),
+      ]
 
   const [fileCategoryOptions, setFileCategoryOptions] = useState<OptionType[]>(
     defaultFileCategoryOptions,
@@ -202,9 +202,6 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
   }
   const { handleFormSubmit, isLoading, successMessage, error } =
     useFormSubmission()
-
-  
-
 
   const prepareFormData = () => {
     const formData = new FormData()

@@ -1,11 +1,12 @@
 import { FC } from 'react'
-import {
+import Select, {
   CSSObjectWithLabel,
   StylesConfig,
   OptionProps,
   GroupBase,
+  ActionMeta,
+  SingleValue,
 } from 'react-select'
-import Select, { ActionMeta, SingleValue } from 'react-select'
 
 import dynamic from 'next/dynamic'
 import { OptionType } from '@/src/types/common'

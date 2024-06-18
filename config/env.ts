@@ -22,7 +22,7 @@ const PINECONE_API_KEY = process.env.PINECONE_API_KEY
 if (!PINECONE_API_KEY) throw new Error('Missing Pinecone API key')
 
 const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME
-if (!PINECONE_INDEX_NAME) throw new Error('Missing Pinecone index name')
+if (!PINECONE_INDEX_NAME) console.error('Missing Pinecone index name')
 
 export {
   GEMINI_API_KEY,
