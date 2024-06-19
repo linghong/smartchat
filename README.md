@@ -77,6 +77,7 @@ Here are some screenshots that illustrate various features of the SmartChat plat
 ### Clone the Repository and Install Dependency:
 
 ```bash
+nvm use v20.14.0
 yarn install
 ```
 

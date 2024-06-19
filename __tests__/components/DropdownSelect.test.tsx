@@ -83,7 +83,7 @@ describe('DropdownSelect Component', () => {
 
   it('displays Dropdown component snapshot', async () => {
     let asFragment
-    await act (() => {
+    await act(() => {
       const { asFragment: renderFragment } = render(
         <DropdownSelect
           selectedOption={options[0]}
@@ -95,7 +95,7 @@ describe('DropdownSelect Component', () => {
       )
       asFragment = renderFragment
     })
-    
+
     expect(asFragment()).toMatchSnapshot()
   })
 })

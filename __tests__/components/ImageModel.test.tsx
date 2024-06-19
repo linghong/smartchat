@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen, fireEvent, RenderResult } from '@testing-library/react'
 import '@testing-library/jest-dom'
+
 import ImageModal from '@/src/components/ImageModal'
 
 describe('ImageModal', () => {

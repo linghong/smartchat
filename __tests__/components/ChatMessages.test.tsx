@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
+
 import ChatMessage from '@/src/components/ChatMessage'
 import { Message, ImageFile } from '@/src/types/chat'
 

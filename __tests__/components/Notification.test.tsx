@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+
 import Notification from '@/src/components/Notification'
 
 describe('Notification Component', () => {

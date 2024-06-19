@@ -37,8 +37,6 @@ export default async function handler(
     return res.status(500).json('Something went wrong')
   }
 
-  //remove prefix
-  // original image looks like: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
   const base64ImageSrc = imageSrc?.map((imgSrc: ImageFile) => ({
     ...imgSrc,
     base64Image: imgSrc.base64Image.split(',')[1],
@@ -58,7 +56,7 @@ export default async function handler(
 
     // get response from AI
     const { category } = selectedModel
-    let chatResponse: string | undefined
+    let chatResponse: string | undefined | null
 
     switch (category) {
       case 'openai':
