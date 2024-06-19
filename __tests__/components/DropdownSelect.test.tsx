@@ -16,17 +16,19 @@ const name = 'dropdownName'
 describe('DropdownSelect Component', () => {
   let mockChangeHandler: jest.Mock
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockChangeHandler = jest.fn()
-    render(
-      <DropdownSelect
-        selectedOption={options[0]}
-        onChange={mockChangeHandler}
-        options={options}
-        label={label}
-        name={name}
-      />,
-    )
+    await act(async () => {
+      render(
+        <DropdownSelect
+          selectedOption={options[0]}
+          onChange={mockChangeHandler}
+          options={options}
+          label={label}
+          name={name}
+        />,
+      )
+    })
   })
 
   it('renders DropdownSelect component correctly', () => {
@@ -79,16 +81,21 @@ describe('DropdownSelect Component', () => {
     expect(appliedStyles).not.toBe(originalStyles)
   })
 
-  it('displays Dropdown component snapshot', () => {
-    const { asFragment } = render(
-      <DropdownSelect
-        selectedOption={options[0]}
-        onChange={mockChangeHandler}
-        options={options}
-        label={label}
-        name={name}
-      />,
-    )
+  it('displays Dropdown component snapshot', async () => {
+    let asFragment
+    await act (() => {
+      const { asFragment: renderFragment } = render(
+        <DropdownSelect
+          selectedOption={options[0]}
+          onChange={mockChangeHandler}
+          options={options}
+          label={label}
+          name={name}
+        />,
+      )
+      asFragment = renderFragment
+    })
+    
     expect(asFragment()).toMatchSnapshot()
   })
 })
