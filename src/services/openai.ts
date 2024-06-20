@@ -3,23 +3,12 @@ import { encode } from 'gpt-tokenizer'
 
 import { OPENAI_API_KEY } from '@/config/env'
 import { Message, ChatType, ChatRole, ImageFile } from '@/src/types/chat'
+import { OpenAIChatContentImage } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
 export const openaiClient = new OpenAI({
   apiKey: OPENAI_API_KEY,
 })
-
-type ContentForUserMessageProps =
-  | {
-      type: string
-      text: string
-    }
-  | {
-      type: string
-      image_url: {
-        url: string
-      }
-    }
 
 export const createEmbedding = async (text: string): Promise<number[]> => {
   const embedding = await openaiClient.embeddings.create({
@@ -73,26 +62,13 @@ export const buildChatArray = (
   return chatArray
 }
 
-const contentForUserWithImageMessage = (
-  base64ImageSrc: ImageFile[],
-  userTextWithFetchedData: string,
-) => {
-  let contentForUserMessage: ContentForUserMessageProps[] = [
-    {
-      type: 'text',
-      text: userTextWithFetchedData,
-    },
-  ]
-  base64ImageSrc.map(imgSrc => {
-    contentForUserMessage.push({
-      type: 'image_url',
-      image_url: {
-        url: `data:image/jpeg;base64,${imgSrc.base64Image}`,
-      },
-    })
-  })
-  return JSON.stringify(contentForUserMessage)
-}
+const contentForUserImage = (base64ImageSrc: ImageFile[]): OpenAIChatContentImage[] =>  base64ImageSrc.map(imgSrc => ({
+  type: "image_url",
+  image_url: {
+    url: `data:image/jpeg;base64,${imgSrc.base64Image}`,
+    detail: "low",
+  }
+}))
 
 export const getOpenAIChatCompletion = async (
   basePrompt: string,
@@ -135,6 +111,8 @@ export const getOpenAIChatCompletion = async (
         basePrompt
       : userMessage + '\n' + basePrompt
 
+  const imageContent = base64ImageSrc && base64ImageSrc?.length !== 0 ? contentForUserImage(base64ImageSrc) : []
+
   try {
     const completion = await openaiClient.chat.completions.create({
       model: selectedModel.value,
@@ -144,25 +122,25 @@ export const getOpenAIChatCompletion = async (
       presence_penalty: 0,
       top_p: 1,
       messages: [
-        { role: 'system', content: systemContent },
+        { role: "system", content: systemContent },
         ...chatArray,
         {
-          role: 'user',
-          content:
-            base64ImageSrc && base64ImageSrc?.length !== 0
-              ? contentForUserWithImageMessage(
-                  base64ImageSrc,
-                  userTextWithFetchedData,
-                )
-              : userTextWithFetchedData,
-        },
-      ],
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: userTextWithFetchedData,
+            },
+            ...imageContent
+          ] 
+        }
+      ]
     })
 
     if (!completion) throw new Error('Chat completion data is undefined.')
     if (!completion.usage) throw new Error('Chat completion data is undefined.')
     if (completion.choices[0].finish_reason !== 'stop')
-      console.log(`AI message isn't complete.`)
+    console.log(`AI message isn't complete.`)
 
     let message = completion.choices[0].message?.content ?? ''
 
