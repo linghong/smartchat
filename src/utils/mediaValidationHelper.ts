@@ -5,7 +5,8 @@ export const isSupportedImage = (model: string, image: ImageFile) => {
   const { size, name, mimeType } = image
 
   switch (model) {
-    case 'gpt-4o' || 'gpt-4-turbo':
+    case 'gpt-4o':
+    case 'gpt-4-turbo':
       // OpenAI requires image size < 20MB
       if (size >= 20 * 1024 * 1024) {
         error.push(`the size of Image ${name} must be less than 20MB.`)
@@ -26,13 +27,15 @@ export const isSupportedImage = (model: string, image: ImageFile) => {
         'image/gif',
         'image/webp',
       ]
+
       if (!validOpenAIImageType.includes(mimeType))
         error.push(
           'Only .png, .jpeg, .jpg, .webp, and non-animated .gif. is supported by OpenAI.',
         )
       break
 
-    case 'gemini-1.5-pro' || 'gemini-1.5-flash':
+    case 'gemini-1.5-pro':
+    case 'gemini-1.5-flash':
       //Gemini requires size < 2GB, but for security purpose, we will only set next.js to allow for 20MB
       //change next.js setting if large size is desired
       if (size >= 20 * 1024 * 1024) {
