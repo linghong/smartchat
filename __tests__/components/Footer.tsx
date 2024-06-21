@@ -10,7 +10,7 @@ describe('Footer component', () => {
     expect(footerElement).toBeInTheDocument()
     expect(footerElement).toHaveClass('py-3 text-center opacity-40')
     expect(footerElement.textContent).toBe(
-      'Chatbot responses are AI-generated and may be inaccurate, so always verify critical information.',
+      'AI-generated responses may be inaccurate. Verify critical information.',
     )
   })
 
