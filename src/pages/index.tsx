@@ -329,9 +329,9 @@ const HomePage: FC<HomeProps> = ({
             aria-label="Enter text here for AI to remember throughout the chat"
           />
         </div>
-        <div className="flex flex-col flex-grow w-full items-center">
+        <div className="flex flex-col h-[calc(100vh-420px)] w-full items-center">
           <div
-            className={`w-full flex-grow grow bg-white border-2 border-stone-200 overflow-y-auto `}
+            className={`w-full bg-white border-2 border-stone-200 overflow-y-auto`}
           >
             <div
               className="w-full h-full overflow-y-scroll rounded-lg"
