@@ -9,7 +9,7 @@ const executeCommand = (
   instanceIP: string,
   userName: string,
   pemPath: string,
-  command: string,
+  command: string
 ): Promise<{ message: string }> => {
   return new Promise((resolve, reject) => {
     const conn = new Client()
@@ -25,7 +25,7 @@ const executeCommand = (
           stream
             .on('close', (code: any, signal = null) => {
               console.log(
-                'Stream :: close :: code: ' + code + ', signal: ' + signal,
+                'Stream :: close :: code: ' + code + ', signal: ' + signal
               )
               conn.end()
 
@@ -44,7 +44,7 @@ const executeCommand = (
         host: instanceIP,
         port: 22,
         username: userName,
-        privateKey: require('fs').readFileSync(pemPath),
+        privateKey: require('fs').readFileSync(pemPath)
       })
   })
 }
@@ -54,7 +54,7 @@ export const manageServer = (
   userName: string,
   pemPath: string,
   appName: string,
-  action: 'start' | 'stop',
+  action: 'start' | 'stop'
 ): Promise<{ message: string }> => {
   const command = `systemctl ${action} ${appName}`
   return executeCommand(instanceIP, userName, pemPath, command)

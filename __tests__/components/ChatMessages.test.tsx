@@ -17,7 +17,7 @@ describe('ChatMessage Component', () => {
   beforeEach(() => {
     message = {
       question: 'What is AI?',
-      answer: 'AI stands for Artificial Intelligence.',
+      answer: 'AI stands for Artificial Intelligence.'
     }
     loading = false
     lastIndex = true
@@ -27,14 +27,14 @@ describe('ChatMessage Component', () => {
         base64Image: '/path/to/image1.png',
         mimeType: 'image/png',
         size: 5000,
-        name: 'image1',
+        name: 'image1'
       },
       {
         base64Image: 'path/to/image2.png',
         mimeType: 'image/png',
         size: 8000,
-        name: 'image2',
-      },
+        name: 'image2'
+      }
     ]
     modelName = 'gpt-4o'
 
@@ -47,7 +47,7 @@ describe('ChatMessage Component', () => {
         imageSrc={imageSrc}
         modelName={modelName}
         handleImageDelete={handleImageDelete}
-      />,
+      />
     )
   })
 
@@ -58,7 +58,7 @@ describe('ChatMessage Component', () => {
   it('renders ChatMessage component correctly with question and answer', () => {
     expect(screen.getByText('What is AI?')).toBeInTheDocument()
     expect(
-      screen.getByText('AI stands for Artificial Intelligence.'),
+      screen.getByText('AI stands for Artificial Intelligence.')
     ).toBeInTheDocument()
   })
 
@@ -73,7 +73,7 @@ describe('ChatMessage Component', () => {
           imageSrc={imageSrc}
           modelName={modelName}
           handleImageDelete={handleImageDelete}
-        />,
+        />
       )
     })
     const botImages = screen.getAllByAltText('AI bot avatar') as HTMLElement[]
@@ -91,7 +91,7 @@ describe('ChatMessage Component', () => {
           imageSrc={imageSrc}
           modelName={modelName}
           handleImageDelete={handleImageDelete}
-        />,
+        />
       )
     })
 
@@ -109,7 +109,7 @@ describe('ChatMessage Component', () => {
         imageSrc={imageSrc}
         modelName={modelName}
         handleImageDelete={handleImageDelete}
-      />,
+      />
     )
     expect(asFragment()).toMatchSnapshot()
   })

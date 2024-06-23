@@ -16,7 +16,7 @@ const MenuItem: FC<MenuItemProps> = ({
   link,
   itemList,
   defaultOpen = false,
-  setIsSidebarOpen,
+  setIsSidebarOpen
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen)
 

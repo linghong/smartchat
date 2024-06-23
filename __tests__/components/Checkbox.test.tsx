@@ -27,7 +27,7 @@ describe('Checkbox Component', () => {
 
   it('Checkbox component snapshot', () => {
     const { asFragment } = render(
-      <Checkbox label="Check me" setIsChecked={setIsChecked} />,
+      <Checkbox label="Check me" setIsChecked={setIsChecked} />
     )
     expect(asFragment()).toMatchSnapshot()
   })

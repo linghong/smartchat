@@ -15,7 +15,7 @@ const ButtonWithTooltip: FC<TooltipButtonProps> = ({
   ariaLabel,
   tooltipText,
   isDisabled,
-  tooltipDisabledText,
+  tooltipDisabledText
 }) => {
   return (
     <div className="relative group">

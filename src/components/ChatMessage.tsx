@@ -20,7 +20,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   lastIndex,
   modelName,
   loading,
-  handleImageDelete,
+  handleImageDelete
 }) => {
   const convertNewlinesToBreaks = (text: string) => {
     return text.replace(/\n/g, '<br>')
@@ -47,7 +47,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             <div
               className="space-wrap"
               dangerouslySetInnerHTML={{
-                __html: convertNewlinesToBreaks(message.question),
+                __html: convertNewlinesToBreaks(message.question)
               }}
             />
             {
@@ -78,7 +78,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           <div
             className=" bot-response answer space-wrap"
             dangerouslySetInnerHTML={{
-              __html: convertNewlinesToBreaks(message.answer),
+              __html: convertNewlinesToBreaks(message.answer)
             }}
           />
         </article>

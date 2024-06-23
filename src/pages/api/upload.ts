@@ -7,12 +7,12 @@ import ingestDataToPinecone from '@/src/services/ingestDataToPinecone'
 
 export const config = {
   api: {
-    bodyParser: false, // Disabling Next.js's body parser as we 're using formidable's
-  },
+    bodyParser: false // Disabling Next.js's body parser as we 're using formidable's
+  }
 }
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' })
@@ -28,13 +28,13 @@ export default async function handler(
           (
             err: Error | null,
             fields: { [key: string]: any },
-            files: { [key: string]: formidable.File[] | undefined },
+            files: { [key: string]: formidable.File[] | undefined }
           ) => {
             if (err) return reject(err)
             resolve({ fields, files })
-          },
+          }
         )
-      },
+      }
     )
 
     const uploadedFileArray = files['file']
@@ -43,28 +43,28 @@ export default async function handler(
 
     if (!uploadedFile) {
       return res.status(500).json({
-        error: 'Something wrong with the uploaded file.',
+        error: 'Something wrong with the uploaded file.'
       })
     }
 
     const chunkSize: number = parseInt(fields.chunkSize, 10)
     const chunkOverlap: number = parseInt(fields.chunkOverlap, 10)
     const fileCategory: OptionType = JSON.parse(
-      fields.fileCategory,
+      fields.fileCategory
     ).value.toLowerCase()
     const embeddingModel: OptionType = JSON.parse(
-      fields.embeddingModel,
+      fields.embeddingModel
     ).value.toLowerCase()
 
     const indexName = process.env.PINECONE_INDEX_NAME
     const namespace = fileCategory + '-' + embeddingModel
     if (!indexName)
       return res.status(500).json({
-        error: 'Missing Pinecone index name.',
+        error: 'Missing Pinecone index name.'
       })
     if (!namespace)
       return res.status(500).json({
-        error: 'Missing Pinecone name space.',
+        error: 'Missing Pinecone name space.'
       })
 
     await ingestDataToPinecone(
@@ -72,7 +72,7 @@ export default async function handler(
       namespace,
       indexName,
       chunkSize,
-      chunkOverlap,
+      chunkOverlap
     )
 
     // delete the file after using it
@@ -80,13 +80,13 @@ export default async function handler(
 
     res.status(200).json({
       message: 'File uploaded successfully.',
-      fileName: uploadedFile.originalFilename,
+      fileName: uploadedFile.originalFilename
     })
     console.log('File ingested.')
   } catch (e) {
     console.error('Error: ', e)
     return res.status(500).json({
-      error: 'Failed to Upload File.',
+      error: 'Failed to Upload File.'
     })
   }
 }

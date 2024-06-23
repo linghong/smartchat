@@ -12,7 +12,7 @@ import {
   InputErrors,
   InputData,
   UploadData,
-  UploadErrors,
+  UploadErrors
 } from '@/src/types/common'
 interface DropdownData {
   finetuningModel: {
@@ -24,7 +24,7 @@ interface DropdownData {
 const finetuningOptions = [
   { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo' },
   { value: 'Llama-13B-GGUF', label: 'Llama-13B-GGUF' },
-  { value: 'CodeLlama-13B-GGUF', label: 'CodeLlama-13B-GGUF' },
+  { value: 'CodeLlama-13B-GGUF', label: 'CodeLlama-13B-GGUF' }
 ]
 
 const initialInput = {
@@ -32,7 +32,7 @@ const initialInput = {
   epochs: 10,
   suffix: '',
   learningRateMultiplier: 0.1,
-  promptLossWeight: 0.01,
+  promptLossWeight: 0.01
 }
 
 const initialInputErrors = {
@@ -41,20 +41,20 @@ const initialInputErrors = {
   suffix: null,
   learningRateMultiplier: null,
   promptLossWeight: null,
-  integer: null,
+  integer: null
 }
 const initialUpload = {
   trainingFile: null,
-  validationFile: null,
+  validationFile: null
 }
 
 const initialUploadErrors = {
   trainingFile: null,
-  validationFile: null,
+  validationFile: null
 }
 
 const initialSelectedDropdown = {
-  finetuningModel: finetuningOptions[0],
+  finetuningModel: finetuningOptions[0]
 }
 
 const FinetuneModel: FC = () => {
@@ -64,7 +64,7 @@ const FinetuneModel: FC = () => {
     useState<UploadErrors>(initialUploadErrors)
 
   const [selectedDropdown, setSelectedDropdown] = useState<DropdownData>(
-    initialSelectedDropdown,
+    initialSelectedDropdown
   )
 
   // OpenAI no longer allows optional parameter selection except for the number of epochs.
@@ -74,13 +74,13 @@ const FinetuneModel: FC = () => {
 
   const handleDropdownChange = (
     selectedOption: OptionType | null,
-    actionMeta: ActionMeta<OptionType>,
+    actionMeta: ActionMeta<OptionType>
   ) => {
     if (selectedOption === null) return
     if (actionMeta.name === 'finetuningModel') {
       setSelectedDropdown({
         ...selectedDropdown,
-        [actionMeta.name]: selectedOption,
+        [actionMeta.name]: selectedOption
       })
     }
   }
@@ -93,23 +93,23 @@ const FinetuneModel: FC = () => {
       if (typeof value === 'string' && value.length > 18) {
         setInputErrors((prev: InputErrors) => ({
           ...prev,
-          [name]: `${name}'s character cannot exceed 18.`,
+          [name]: `${name}'s character cannot exceed 18.`
         }))
       }
     } else if (typeof value === 'string') {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: `${name} must be a number.`,
+        [name]: `${name} must be a number.`
       }))
     } else if (!value) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: `${name}'s value cannot be empty.`,
+        [name]: `${name}'s value cannot be empty.`
       }))
     } else if (value <= 0) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: `${name}'s value cannot be negative or zero.`,
+        [name]: `${name}'s value cannot be negative or zero.`
       }))
     } else if (
       (name === 'epochs' || name === 'batchSize') &&
@@ -117,7 +117,7 @@ const FinetuneModel: FC = () => {
     ) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: `${name} should be an integer.`,
+        [name]: `${name} should be an integer.`
       }))
     } else {
       setInputErrors((prev: InputErrors) => ({ ...prev, [name]: null }))
@@ -126,26 +126,26 @@ const FinetuneModel: FC = () => {
 
   const validateUpload = (
     trainingFile: File | null,
-    validationFile: File | null,
+    validationFile: File | null
   ) => {
     if (!trainingFile) {
       setUploadErrors((prev: UploadErrors) => ({
         ...prev,
-        ['trainingFile']: 'You must upload a training file.',
+        ['trainingFile']: 'You must upload a training file.'
       }))
       return
     }
     if (!(trainingFile instanceof File)) {
       setUploadErrors((prev: InputErrors) => ({
         ...prev,
-        ['trainingFile']: 'TrainingFile must be a file.',
+        ['trainingFile']: 'TrainingFile must be a file.'
       }))
       return
     }
     if (validationFile && !(validationFile instanceof File)) {
       setUploadErrors((prev: InputErrors) => ({
         ...prev,
-        ['validationFile']: 'ValidationFile must be a file.',
+        ['validationFile']: 'ValidationFile must be a file.'
       }))
       return
     }
@@ -157,7 +157,7 @@ const FinetuneModel: FC = () => {
     setSelectedInput,
     setInputErrors,
     handleInputChange,
-    handleInputBlur,
+    handleInputBlur
   } = useInputChange({ initialInput, initialInputErrors, validateInput })
 
   const { handleFormSubmit, isLoading, successMessage, error } =
@@ -181,11 +181,11 @@ const FinetuneModel: FC = () => {
       formData.append('batchsize', selectedInput.batchSize?.toString() ?? '')
       formData.append(
         'learningRateMultiplier',
-        selectedInput.learningRateMultiplier?.toString() ?? '',
+        selectedInput.learningRateMultiplier?.toString() ?? ''
       )
       formData.append(
         'promptLossWeight',
-        selectedInput.promptLossWeight?.toString() ?? '',
+        selectedInput.promptLossWeight?.toString() ?? ''
       )
     }
     return formData
@@ -210,7 +210,7 @@ const FinetuneModel: FC = () => {
     await handleFormSubmit(
       `${serverUrl}/api/finetuning/${endpoint}`,
       formData,
-      serverSecretKey,
+      serverSecretKey
     )
   }
 
@@ -218,12 +218,12 @@ const FinetuneModel: FC = () => {
     if (isChecked) {
       setSelectedInput((prev: InputData) => ({
         ...prev,
-        ['epochs']: '',
+        ['epochs']: ''
       }))
     } else {
       setSelectedInput((prev: InputData) => ({
         ...prev,
-        ['epochs']: initialInput.epochs,
+        ['epochs']: initialInput.epochs
       }))
     }
   }, [isChecked, setSelectedInput])

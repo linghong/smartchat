@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import Header from '@/src/components/Header'
 
 jest.mock('next/router', () => ({
-  useRouter: jest.fn(),
+  useRouter: jest.fn()
 }))
 
 const setIsSidebarOpen = jest.fn()
@@ -17,7 +17,7 @@ describe('Header Component', () => {
     // Reset the mock before each test
     ;(useRouter as jest.Mock).mockReturnValue({
       pathname: '/',
-      push: mockPush,
+      push: mockPush
     })
     setIsSidebarOpen.mockClear()
     mockPush.mockClear()
@@ -35,17 +35,17 @@ describe('Header Component', () => {
     const paths = [
       { path: '/', title: 'Chat With AI' },
       { path: '/finetunemodel', title: 'Finetune AI Model' },
-      { path: '/embedragfile', title: 'Embed RAG File' },
+      { path: '/embedragfile', title: 'Embed RAG File' }
     ]
 
     paths.forEach(({ path, title }) => {
       ;(useRouter as jest.Mock).mockReturnValue({
         pathname: path,
-        push: mockPush,
+        push: mockPush
       })
 
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />,
+        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
       )
 
       const headings = screen.getAllByRole('heading')
@@ -57,7 +57,7 @@ describe('Header Component', () => {
   describe('Mouse focusing and hovering events', () => {
     beforeEach(() => {
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />,
+        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
       )
     })
 
@@ -80,7 +80,7 @@ describe('Header Component', () => {
   describe('Mouse click events on NewChat', () => {
     it('should navigate to the home page when NewChat button is clicked', async () => {
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />,
+        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
       )
 
       fireEvent.click(screen.getByLabelText('New Chat'))
@@ -91,7 +91,7 @@ describe('Header Component', () => {
     it('should not call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially open', () => {
       global.innerWidth = 480
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />,
+        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
       )
 
       fireEvent.click(screen.getByLabelText('New Chat'))
@@ -102,7 +102,7 @@ describe('Header Component', () => {
     it('should not call setIsSidebarOpen when NewChat button is clicked on desktop and sidebar is initially open', () => {
       global.innerWidth = 1024
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />,
+        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
       )
 
       fireEvent.click(screen.getByLabelText('New Chat'))
@@ -112,7 +112,7 @@ describe('Header Component', () => {
     it('should not call setIsSidebarOpen when NewChat button is clicked on desktop and sidebar is initially closed', () => {
       global.innerWidth = 1024
       render(
-        <Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />,
+        <Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />
       )
 
       fireEvent.click(screen.getByLabelText('New Chat'))
@@ -122,7 +122,7 @@ describe('Header Component', () => {
     it('should not call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially closed', () => {
       global.innerWidth = 480
       render(
-        <Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />,
+        <Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />
       )
 
       fireEvent.click(screen.getByLabelText('New Chat'))
@@ -133,7 +133,7 @@ describe('Header Component', () => {
   describe('Mouse click events on menu icon', () => {
     it('should call setIsSidebarOpen with true when initially closed and toggle button is clicked', () => {
       render(
-        <Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />,
+        <Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />
       )
 
       fireEvent.click(screen.getByLabelText('Toggle Sidebar'))
@@ -142,7 +142,7 @@ describe('Header Component', () => {
 
     it('should call setIsSidebarOpen with false when initially open and toggle button is clicked', () => {
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />,
+        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
       )
 
       fireEvent.click(screen.getByLabelText('Toggle Sidebar'))
@@ -152,7 +152,7 @@ describe('Header Component', () => {
 
   it('Header component snapshot', () => {
     const { asFragment } = render(
-      <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />,
+      <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
     )
     expect(asFragment()).toMatchSnapshot()
   })

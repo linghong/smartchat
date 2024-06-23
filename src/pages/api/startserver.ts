@@ -5,7 +5,7 @@ import { manageEC2Instance } from '@/src/services/aws/manageRemoteInstance'
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ) {
   const { instanceId, instanceIP, userName, pemPath, appName } = req.body
 
@@ -17,7 +17,7 @@ export default async function handler(
       userName,
       pemPath,
       appName,
-      'start',
+      'start'
     )
     res
       .status(200)

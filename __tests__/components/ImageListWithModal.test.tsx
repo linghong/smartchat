@@ -10,14 +10,14 @@ describe('ImageListWithModal', () => {
       base64Image: 'data:image/png;base64,base64Imagedata1',
       mimeType: 'image/png',
       size: 5000,
-      name: 'image1',
+      name: 'image1'
     },
     {
       base64Image: 'data:image/png;base64,base64Imagedata2',
       mimeType: 'image/png',
       size: 8000,
-      name: 'image2',
-    },
+      name: 'image2'
+    }
   ]
 
   const handleImageDelete = jest.fn()
@@ -31,11 +31,11 @@ describe('ImageListWithModal', () => {
       <ImageListWithModal
         imageSrc={imageSrc}
         handleImageDelete={handleImageDelete}
-      />,
+      />
     )
 
     const images = screen.getAllByRole('button', {
-      name: /click to view larger image/i,
+      name: /click to view larger image/i
     })
     expect(images).toHaveLength(imageSrc.length)
   })
@@ -45,11 +45,11 @@ describe('ImageListWithModal', () => {
       <ImageListWithModal
         imageSrc={imageSrc}
         handleImageDelete={handleImageDelete}
-      />,
+      />
     )
 
     const image = screen.getByRole('button', {
-      name: /click to view larger image 1/i,
+      name: /click to view larger image 1/i
     })
     fireEvent.click(image)
 
@@ -66,11 +66,11 @@ describe('ImageListWithModal', () => {
       <ImageListWithModal
         imageSrc={imageSrc}
         handleImageDelete={handleImageDelete}
-      />,
+      />
     )
 
     const image = screen.getByRole('button', {
-      name: /click to view larger image 1/i,
+      name: /click to view larger image 1/i
     })
     fireEvent.keyDown(image, { key: 'Enter', code: 'Enter' })
 
@@ -87,16 +87,16 @@ describe('ImageListWithModal', () => {
       <ImageListWithModal
         imageSrc={imageSrc}
         handleImageDelete={handleImageDelete}
-      />,
+      />
     )
 
     const image = screen.getByRole('button', {
-      name: /click to view larger image 1/i,
+      name: /click to view larger image 1/i
     })
     fireEvent.click(image)
 
     const closeButton = screen.getByRole('button', {
-      name: /close image view/i,
+      name: /close image view/i
     })
     fireEvent.click(closeButton)
 
@@ -109,7 +109,7 @@ describe('ImageListWithModal', () => {
         imageSrc={imageSrc}
         handleImageDelete={handleImageDelete}
         isDeleteIconShow={true}
-      />,
+      />
     )
 
     const deleteIcons = screen.getAllByLabelText(/delete image/i)
@@ -122,7 +122,7 @@ describe('ImageListWithModal', () => {
         imageSrc={imageSrc}
         handleImageDelete={handleImageDelete}
         isDeleteIconShow={false}
-      />,
+      />
     )
 
     const deleteIcons = screen.queryAllByLabelText(/delete image/i)
@@ -135,7 +135,7 @@ describe('ImageListWithModal', () => {
         imageSrc={imageSrc}
         handleImageDelete={handleImageDelete}
         isDeleteIconShow={true}
-      />,
+      />
     )
 
     const deleteIcon = screen.getByLabelText('Delete image 1')
@@ -150,7 +150,7 @@ describe('ImageListWithModal', () => {
       <ImageListWithModal
         imageSrc={imageSrc}
         handleImageDelete={handleImageDelete}
-      />,
+      />
     )
     expect(asFragment()).toMatchSnapshot()
   })

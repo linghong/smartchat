@@ -6,9 +6,9 @@ jest.mock('openai', () => {
   return {
     OpenAI: jest.fn().mockImplementation(() => ({
       createCompletion: jest.fn().mockResolvedValue({
-        choices: [{ message: { content: 'Mock openai response' } }],
-      }),
-    })),
+        choices: [{ message: { content: 'Mock openai response' } }]
+      })
+    }))
   }
 })
 
@@ -16,10 +16,10 @@ jest.mock('groq-sdk', () => ({
   Groq: jest.fn().mockImplementation(() => ({
     chat: {
       completions: {
-        create: jest.fn(),
-      },
-    },
-  })),
+        create: jest.fn()
+      }
+    }
+  }))
 }))
 
 describe('getGroqChatCompletion', () => {
@@ -29,7 +29,7 @@ describe('getGroqChatCompletion', () => {
   const fetchedText = 'Sunny and 75 degrees'
   const selectedModel = {
     value: 'llama3-8b',
-    label: 'LLama3 8b',
+    label: 'LLama3 8b'
   }
 
   let consoleSpy: jest.SpyInstance
@@ -54,12 +54,12 @@ describe('getGroqChatCompletion', () => {
           create: jest.fn().mockResolvedValue({
             choices: [
               {
-                message: { content: "It's sunny and 75 degrees" },
-              },
-            ],
-          }),
-        },
-      },
+                message: { content: "It's sunny and 75 degrees" }
+              }
+            ]
+          })
+        }
+      }
     }))
 
     const response = await getGroqChatCompletion(
@@ -67,7 +67,7 @@ describe('getGroqChatCompletion', () => {
       chatHistory,
       userMessage,
       fetchedText,
-      selectedModel,
+      selectedModel
     )
 
     expect(response).toEqual("It's sunny and 75 degrees")
@@ -77,9 +77,9 @@ describe('getGroqChatCompletion', () => {
     require('groq-sdk').Groq.mockImplementation(() => ({
       chat: {
         completions: {
-          create: jest.fn().mockResolvedValue(undefined), // Explicitly return undefined
-        },
-      },
+          create: jest.fn().mockResolvedValue(undefined) // Explicitly return undefined
+        }
+      }
     }))
 
     await expect(
@@ -88,8 +88,8 @@ describe('getGroqChatCompletion', () => {
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel,
-      ),
+        selectedModel
+      )
     ).rejects.toThrow('No completion choices returned from the server.')
   })
 
@@ -97,9 +97,9 @@ describe('getGroqChatCompletion', () => {
     require('groq-sdk').Groq.mockImplementation(() => ({
       chat: {
         completions: {
-          create: jest.fn().mockResolvedValue({}),
-        },
-      },
+          create: jest.fn().mockResolvedValue({})
+        }
+      }
     }))
 
     await expect(
@@ -108,8 +108,8 @@ describe('getGroqChatCompletion', () => {
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel,
-      ),
+        selectedModel
+      )
     ).rejects.toThrow('No completion choices returned from the server.')
   })
 
@@ -117,9 +117,9 @@ describe('getGroqChatCompletion', () => {
     require('groq-sdk').Groq.mockImplementation(() => ({
       chat: {
         completions: {
-          create: jest.fn().mockResolvedValue({ choices: [] }),
-        },
-      },
+          create: jest.fn().mockResolvedValue({ choices: [] })
+        }
+      }
     }))
 
     await expect(
@@ -128,8 +128,8 @@ describe('getGroqChatCompletion', () => {
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel,
-      ),
+        selectedModel
+      )
     ).rejects.toThrow('No completion choices returned from the server.')
   })
 
@@ -137,9 +137,9 @@ describe('getGroqChatCompletion', () => {
     require('groq-sdk').Groq.mockImplementation(() => ({
       chat: {
         completions: {
-          create: jest.fn().mockRejectedValue(new Error('API failure')),
-        },
-      },
+          create: jest.fn().mockRejectedValue(new Error('API failure'))
+        }
+      }
     }))
 
     await expect(
@@ -148,8 +148,8 @@ describe('getGroqChatCompletion', () => {
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel,
-      ),
+        selectedModel
+      )
     ).rejects.toThrow('Failed to fetch response from Groq server: API failure')
   })
 })

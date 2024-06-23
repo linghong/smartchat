@@ -1,7 +1,7 @@
 import {
   Pinecone,
   IndexStatsNamespaceSummary,
-  IndexModel,
+  IndexModel
 } from '@pinecone-database/pinecone'
 
 import { PINECONE_API_KEY } from '@/config/env'
@@ -11,7 +11,7 @@ const initPinecone = async () => {
 
   try {
     const pinecone = new Pinecone({
-      apiKey: PINECONE_API_KEY as string,
+      apiKey: PINECONE_API_KEY as string
     })
 
     return pinecone
@@ -24,7 +24,7 @@ export const pineconeClient = await initPinecone()
 
 export const createPineconeIndex = async (
   pineconeClient: Pinecone,
-  indexName: string,
+  indexName: string
 ) => {
   try {
     console.log(`Creating index ${indexName}...`)
@@ -35,9 +35,9 @@ export const createPineconeIndex = async (
       spec: {
         serverless: {
           cloud: 'aws',
-          region: 'us-east-1',
-        },
-      },
+          region: 'us-east-1'
+        }
+      }
     })
   } catch (error) {
     console.error(`An error occurred while creating the index: ${error}`)
@@ -73,7 +73,7 @@ export const checkIndexExists = async (indexName: string): Promise<boolean> => {
 }
 
 export const getNamespaces = async (
-  indexName: string,
+  indexName: string
 ): Promise<string[] | undefined> => {
   try {
     const index = pineconeClient.Index(indexName)

@@ -7,7 +7,7 @@ interface ImageUploadIconProps {
 
 const ImageUploadIcon: FC<ImageUploadIconProps> = ({
   onImageUpload,
-  isDisabled,
+  isDisabled
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -43,7 +43,7 @@ const ImageUploadIcon: FC<ImageUploadIconProps> = ({
         style={{
           cursor: 'pointer',
           background: '#7b7bdc',
-          border: 'solid black 1px',
+          border: 'solid black 1px'
         }}
         aria-hidden="true" // Hides the icon from screen readers
       />

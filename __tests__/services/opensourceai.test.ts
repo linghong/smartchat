@@ -16,7 +16,7 @@ describe('getOpenModelChatCompletion', () => {
   const fetchedText = 'Sample text'
   const selectedModel = {
     value: 'test-model',
-    label: 'test model',
+    label: 'test model'
   }
   const serverURL = 'http://localhost/api/chat'
   const serverSecretKey = process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
@@ -31,22 +31,22 @@ describe('getOpenModelChatCompletion', () => {
       userMessage,
       fetchedText,
       selectedModel,
-      serverURL,
+      serverURL
     )
     expect(response).toEqual(mockResponse.message)
     expect(fetchMock).toHaveBeenCalledWith(serverURL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + serverSecretKey,
+        Authorization: 'Bearer ' + serverSecretKey
       },
       body: JSON.stringify({
         question: userMessage,
         basePrompt,
         chatHistory,
         selectedModel: selectedModel.value,
-        fetchedText,
-      }),
+        fetchedText
+      })
     })
   })
 
@@ -60,15 +60,15 @@ describe('getOpenModelChatCompletion', () => {
         userMessage,
         fetchedText,
         selectedModel,
-        serverURL,
-      ),
+        serverURL
+      )
     ).rejects.toThrow('Failed to connect')
   })
 
   it('should handle non-ok responses correctly', async () => {
     fetchMock.mockResponseOnce('', {
       status: 500,
-      statusText: 'Internal Server Error',
+      statusText: 'Internal Server Error'
     })
 
     await expect(
@@ -78,8 +78,8 @@ describe('getOpenModelChatCompletion', () => {
         userMessage,
         fetchedText,
         selectedModel,
-        serverURL,
-      ),
+        serverURL
+      )
     ).rejects.toThrow('Network response was not ok: Internal Server Error')
   })
 })

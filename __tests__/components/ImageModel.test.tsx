@@ -21,13 +21,13 @@ describe('ImageModal', () => {
     // We check if the src includes the expected URL part
     expect(image).toHaveAttribute(
       'src',
-      expect.stringContaining(encodeURIComponent(src)),
+      expect.stringContaining(encodeURIComponent(src))
     )
   })
 
   it('should call onClose when the close button is clicked', () => {
     const closeButton = screen.getByRole('button', {
-      name: /close image view/i,
+      name: /close image view/i
     })
     fireEvent.click(closeButton)
 
@@ -41,7 +41,7 @@ describe('ImageModal', () => {
     expect(dialog).toHaveAttribute('aria-labelledby', 'modalTitle')
     expect(dialog).toHaveAttribute(
       'aria-describedby',
-      'Extended view of the uploaded image',
+      'Extended view of the uploaded image'
     )
   })
 

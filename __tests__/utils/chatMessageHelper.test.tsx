@@ -1,6 +1,6 @@
 import {
   extractMessageContent,
-  extractSubjectTitle,
+  extractSubjectTitle
 } from '@/src/utils/chatMessageHelper'
 
 describe('extractMessageContent', () => {

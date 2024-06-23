@@ -4,7 +4,7 @@ import {
   enableFetchMocks,
   resetMocks,
   mockResponseOnce,
-  mockRejectOnce,
+  mockRejectOnce
 } from 'jest-fetch-mock'
 
 // Enable fetch mocks
@@ -49,7 +49,7 @@ describe('useFormSubmission Hook', () => {
     const errorResponse = {
       success: false,
       id: null,
-      error: 'Form submission failed',
+      error: 'Form submission failed'
     }
     mockResponseOnce(JSON.stringify(errorResponse))
 
@@ -82,7 +82,7 @@ describe('useFormSubmission Hook', () => {
     expect(result.current.isLoading).toBeFalsy()
     expect(result.current.successMessage).toBeNull()
     expect(result.current.error).toBe(
-      'There was a network error when sending file.',
+      'There was a network error when sending file.'
     )
   })
 })

@@ -45,7 +45,7 @@ describe('ImageUploadIcon', () => {
 
     const fileInput = screen.getByLabelText('Upload image') as HTMLInputElement
     const file = new File(['dummy content'], 'example.png', {
-      type: 'image/png',
+      type: 'image/png'
     })
     fireEvent.change(fileInput, { target: { files: [file] } })
 
@@ -55,7 +55,7 @@ describe('ImageUploadIcon', () => {
 
   it('should match snapshot', () => {
     const { asFragment } = render(
-      <ImageUploadIcon onImageUpload={onImageUpload} />,
+      <ImageUploadIcon onImageUpload={onImageUpload} />
     )
 
     expect(asFragment()).toMatchSnapshot()

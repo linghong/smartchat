@@ -7,7 +7,7 @@
 export const blobToFile = (blob: Blob, fileName: string): File => {
   const file = new File([blob], fileName, {
     type: blob.type,
-    lastModified: Date.now(),
+    lastModified: Date.now()
   })
   return file
 }
@@ -48,7 +48,7 @@ export const fetchImageAsBase64 = async (url: string): Promise<string> => {
  * @returns A promise that resolves with the width and height of the image.
  */
 export const getImageDimensions = (
-  base64Image: string,
+  base64Image: string
 ): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
     const img = new Image()

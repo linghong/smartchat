@@ -6,10 +6,10 @@ jest.mock('@/src/services/pineconeClient', () => {
     pineconeClient: {
       Index: jest.fn().mockReturnValue({
         namespace: jest.fn().mockReturnValue({
-          query: jest.fn(),
-        }),
-      }),
-    },
+          query: jest.fn()
+        })
+      })
+    }
   }
 })
 
@@ -30,10 +30,10 @@ describe('fetchDataFromPinecone', () => {
       matches: [
         {
           metadata: {
-            text: 'Test text',
-          },
-        },
-      ],
+            text: 'Test text'
+          }
+        }
+      ]
     })
 
     const result = await fetchDataFromPinecone(embeddedQuery, nameSpace)
@@ -44,7 +44,7 @@ describe('fetchDataFromPinecone', () => {
       vector: embeddedQuery,
       topK: 3,
       includeValues: true,
-      includeMetadata: true,
+      includeMetadata: true
     })
     expect(result).toBe('\nTest text')
   })
@@ -53,7 +53,7 @@ describe('fetchDataFromPinecone', () => {
     const embeddedQuery = 'not-an-array' // Not an array
 
     await expect(
-      fetchDataFromPinecone(embeddedQuery as any, nameSpace),
+      fetchDataFromPinecone(embeddedQuery as any, nameSpace)
     ).rejects.toThrow('Invalid or empty query vector provided.')
   })
 
@@ -65,7 +65,7 @@ describe('fetchDataFromPinecone', () => {
     mockQuery.mockResolvedValue({ matches: [] })
 
     await expect(
-      fetchDataFromPinecone(embeddedQuery, nameSpace),
+      fetchDataFromPinecone(embeddedQuery, nameSpace)
     ).rejects.toThrow('No matches found')
   })
 
@@ -77,7 +77,7 @@ describe('fetchDataFromPinecone', () => {
     mockQuery.mockRejectedValue(new Error('Network Error'))
 
     await expect(
-      fetchDataFromPinecone(embeddedQuery, nameSpace),
+      fetchDataFromPinecone(embeddedQuery, nameSpace)
     ).rejects.toThrow('Failed to fetch data from Pinecone')
   })
 
@@ -89,7 +89,7 @@ describe('fetchDataFromPinecone', () => {
 
     // The fetchDataFromPinecone function is expected to throw an error because the index could not be fetched
     await expect(
-      fetchDataFromPinecone(embeddedQuery, nameSpace),
+      fetchDataFromPinecone(embeddedQuery, nameSpace)
     ).rejects.toThrow('Unable to fetch Pinecone index')
   })
 })

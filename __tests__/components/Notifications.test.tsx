@@ -6,7 +6,7 @@ import Notifications from '@/src/components/Notifications'
 describe('Notifications Component', () => {
   it('renders loading notification when isLoading is true', () => {
     const { getByText } = render(
-      <Notifications isLoading successMessage={null} errorMessage={null} />,
+      <Notifications isLoading successMessage={null} errorMessage={null} />
     )
     expect(getByText('Uploading your data...')).toBeInTheDocument()
   })
@@ -17,7 +17,7 @@ describe('Notifications Component', () => {
         isLoading={false}
         successMessage="Success"
         errorMessage={null}
-      />,
+      />
     )
     expect(getByText('Success')).toBeInTheDocument()
   })
@@ -28,7 +28,7 @@ describe('Notifications Component', () => {
         isLoading={false}
         successMessage={null}
         errorMessage="Error"
-      />,
+      />
     )
     expect(getByText('Error')).toBeInTheDocument()
   })
@@ -41,7 +41,7 @@ describe('Notifications Component', () => {
         successMessage={null}
         errorMessage={null}
         uploadErrors={uploadErrors}
-      />,
+      />
     )
     expect(getByText('File is too large')).toBeInTheDocument()
   })
@@ -54,7 +54,7 @@ describe('Notifications Component', () => {
         successMessage={null}
         errorMessage={null}
         inputErrors={inputErrors}
-      />,
+      />
     )
     expect(getByText('Name is required')).toBeInTheDocument()
   })
@@ -66,7 +66,7 @@ describe('Notifications Component', () => {
           isLoading={false}
           successMessage="Success"
           errorMessage="Error"
-        />,
+        />
       )
       .toJSON()
     expect(tree).toMatchSnapshot()

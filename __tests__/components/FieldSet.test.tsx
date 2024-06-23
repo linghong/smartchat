@@ -8,7 +8,7 @@ describe('FieldSet Component', () => {
     const { getByText } = render(
       <FieldSet>
         <p>Test Child</p>
-      </FieldSet>,
+      </FieldSet>
     )
 
     expect(getByText('Test Child')).toBeInTheDocument()
@@ -18,7 +18,7 @@ describe('FieldSet Component', () => {
     const { container } = render(
       <FieldSet>
         <p>Test Child</p>
-      </FieldSet>,
+      </FieldSet>
     )
 
     expect(container.firstChild).toHaveClass('flex')
@@ -32,7 +32,7 @@ describe('FieldSet Component', () => {
     const { asFragment } = render(
       <FieldSet>
         <p>Test Child</p>
-      </FieldSet>,
+      </FieldSet>
     )
 
     expect(asFragment()).toMatchSnapshot()

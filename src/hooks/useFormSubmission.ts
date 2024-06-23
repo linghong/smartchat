@@ -15,7 +15,7 @@ const useFormSubmission = () => {
   const handleFormSubmit = async (
     url: string,
     formData: FormData,
-    serverSecretKey?: string,
+    serverSecretKey?: string
   ) => {
     setIsLoading(true)
     setSuccessMessage(null)
@@ -30,7 +30,7 @@ const useFormSubmission = () => {
       const res = await fetch(url, {
         method: 'POST',
         headers,
-        body: formData,
+        body: formData
       })
 
       const data: FormSubmissionResponse =

@@ -9,10 +9,10 @@ jest.mock('@/src/components/Header', () => {
   return {
     __esModule: true,
     default: ({
-      setIsSidebarOpen,
+      setIsSidebarOpen
     }: {
       setIsSidebarOpen: (isOpen: boolean) => void
-    }) => <div onClick={() => setIsSidebarOpen(false)}>Header Mock</div>,
+    }) => <div onClick={() => setIsSidebarOpen(false)}>Header Mock</div>
   }
 })
 
@@ -20,7 +20,7 @@ jest.mock('@/src/components/Header', () => {
 jest.mock('@/src/components/Sidebar', () => {
   return {
     __esModule: true,
-    default: () => <div>Sidebar Mock</div>,
+    default: () => <div>Sidebar Mock</div>
   }
 })
 
@@ -28,7 +28,7 @@ jest.mock('@/src/components/Sidebar', () => {
 jest.mock('@/src/components/Footer', () => {
   return {
     __esModule: true,
-    default: () => <div>Footer Mock</div>,
+    default: () => <div>Footer Mock</div>
   }
 })
 
@@ -44,7 +44,7 @@ describe('Layout Component', () => {
     const { getByText } = render(
       <Layout messageSubjectList={messageSubjectList}>
         <div>Child Content</div>
-      </Layout>,
+      </Layout>
     )
 
     // Check for Header and Footer
@@ -63,7 +63,7 @@ describe('Layout Component', () => {
     const { getByText, queryByText } = render(
       <Layout messageSubjectList={messageSubjectList}>
         <div>Child Content</div>
-      </Layout>,
+      </Layout>
     )
 
     // Simulate mobile view
@@ -85,7 +85,7 @@ describe('Layout Component', () => {
     const { getByText, queryByText } = render(
       <Layout messageSubjectList={messageSubjectList}>
         <div>Child Content</div>
-      </Layout>,
+      </Layout>
     )
 
     act(() => {

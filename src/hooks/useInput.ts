@@ -21,7 +21,7 @@ interface UseInputReturn<T> {
 const useInput = <T extends string | number>({
   initialInput,
   initialInputErrors,
-  validateInput,
+  validateInput
 }: UseInputProps<T>): UseInputReturn<T> => {
   const [selectedInput, setSelectedInput] = useState<Input<T>>(initialInput)
   const [inputErrors, setInputErrors] =
@@ -37,7 +37,7 @@ const useInput = <T extends string | number>({
     setSelectedInput(prev => ({ ...prev, [name]: parsedValue }))
     setInputErrors((prev: InputErrors) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }))
     validateInput(name, parsedValue)
   }
@@ -58,7 +58,7 @@ const useInput = <T extends string | number>({
     setSelectedInput,
     setInputErrors,
     handleInputChange,
-    handleInputBlur,
+    handleInputBlur
   }
 }
 

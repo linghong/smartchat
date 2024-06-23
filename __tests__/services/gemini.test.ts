@@ -3,7 +3,7 @@ import { Message } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 import getGeminiChatCompletion, {
   getCurrentUserParts,
-  buildChatArray,
+  buildChatArray
 } from '@/src/services/gemini'
 
 jest.mock('@google/generative-ai')
@@ -16,7 +16,7 @@ describe('getGeminiChatCompletion', () => {
   const basePrompt = 'Base Prompt'
   const chatHistory: Message[] = [
     { question: '', answer: 'I am an AI assistant. Do you need help?' },
-    { question: 'Question 1', answer: 'Answer 1' },
+    { question: 'Question 1', answer: 'Answer 1' }
   ]
   const userMessage = 'User Message'
   const fetchedText = 'Fetched Text'
@@ -26,14 +26,14 @@ describe('getGeminiChatCompletion', () => {
       base64Image: 'base64Image1',
       mimeType: 'image/png',
       size: 5000,
-      name: 'image1',
+      name: 'image1'
     },
     {
       base64Image: 'base64Image2',
       mimeType: 'image/png',
       size: 8000,
-      name: 'image2',
-    },
+      name: 'image2'
+    }
   ]
 
   beforeEach(() => {
@@ -46,10 +46,10 @@ describe('getGeminiChatCompletion', () => {
       { role: 'user', parts: [{ text: '' }] },
       {
         role: 'model',
-        parts: [{ text: 'I am an AI assistant. Do you need help?' }],
+        parts: [{ text: 'I am an AI assistant. Do you need help?' }]
       },
       { role: 'user', parts: [{ text: 'Question 1' }] },
-      { role: 'model', parts: [{ text: 'Answer 1' }] },
+      { role: 'model', parts: [{ text: 'Answer 1' }] }
     ])
   })
 
@@ -58,7 +58,7 @@ describe('getGeminiChatCompletion', () => {
     expect(parts).toEqual([
       userMessage,
       { inlineData: { data: 'base64Image1', mimeType: 'image/png' } },
-      { inlineData: { data: 'base64Image2', mimeType: 'image/png' } },
+      { inlineData: { data: 'base64Image2', mimeType: 'image/png' } }
     ])
   })
 
@@ -67,16 +67,16 @@ describe('getGeminiChatCompletion', () => {
       startChat: jest.fn().mockReturnValue({
         sendMessage: jest.fn().mockResolvedValue({
           response: {
-            text: jest.fn().mockReturnValue('Generated Response'),
-          },
-        }),
-      }),
+            text: jest.fn().mockReturnValue('Generated Response')
+          }
+        })
+      })
     }
     mockGoogleGenerativeAI.mockImplementation(
       () =>
         ({
-          getGenerativeModel: jest.fn().mockReturnValue(mockModel),
-        }) as any,
+          getGenerativeModel: jest.fn().mockReturnValue(mockModel)
+        }) as any
     )
 
     const result = await getGeminiChatCompletion(
@@ -85,7 +85,7 @@ describe('getGeminiChatCompletion', () => {
       userMessage,
       fetchedText,
       selectedModel,
-      imageSrc,
+      imageSrc
     )
     expect(result).toBe('Generated Response')
   })
@@ -93,14 +93,14 @@ describe('getGeminiChatCompletion', () => {
   it('should handle errors gracefully', async () => {
     const mockModel = {
       startChat: jest.fn().mockReturnValue({
-        sendMessage: jest.fn().mockRejectedValue(new Error('API Error')),
-      }),
+        sendMessage: jest.fn().mockRejectedValue(new Error('API Error'))
+      })
     }
     mockGoogleGenerativeAI.mockImplementation(
       () =>
         ({
-          getGenerativeModel: jest.fn().mockReturnValue(mockModel),
-        }) as any,
+          getGenerativeModel: jest.fn().mockReturnValue(mockModel)
+        }) as any
     )
 
     await expect(
@@ -110,10 +110,10 @@ describe('getGeminiChatCompletion', () => {
         userMessage,
         fetchedText,
         selectedModel,
-        imageSrc,
-      ),
+        imageSrc
+      )
     ).rejects.toThrow(
-      'Failed to fetch response from Google model-id model, Error: API Error',
+      'Failed to fetch response from Google model-id model, Error: API Error'
     )
   })
 })

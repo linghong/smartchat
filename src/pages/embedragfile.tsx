@@ -13,7 +13,7 @@ import {
   OptionType,
   InputErrors,
   UploadData,
-  UploadErrors,
+  UploadErrors
 } from '@/src/types/common'
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces'
 
@@ -38,14 +38,14 @@ const embeddingModelOptions = [{ value: 'openAI', label: 'Open AI embedding' }]
 const initialInput = {
   chunkSize: 800,
   chunkOverlap: 300,
-  newFileCategory: 'default',
+  newFileCategory: 'default'
 }
 
 const initialInputErrors = {
   chunkSize: null,
   chunkOverlap: null,
   newFileCategory: null,
-  selectedFileCategory: null,
+  selectedFileCategory: null
 }
 
 const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
@@ -53,24 +53,24 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
     ? [{ value: 'default', label: 'Add New Category' }]
     : [
         { value: 'default', label: 'Add New Category' },
-        ...namespaces.map(ns => ({ value: ns, label: ns })),
+        ...namespaces.map(ns => ({ value: ns, label: ns }))
       ]
 
   const [fileCategoryOptions, setFileCategoryOptions] = useState<OptionType[]>(
-    defaultFileCategoryOptions,
+    defaultFileCategoryOptions
   )
   const [showAddNewCategory, setShowAddNewCategory] = useState(false)
 
   const [selectedUpload, setSelectedUpload] = useState<UploadData>({
-    ['file']: null,
+    ['file']: null
   })
   const [uploadErrors, setUploadErrors] = useState<UploadErrors>({
-    ['file']: null,
+    ['file']: null
   })
 
   const [selectedDropDown, setSelectedDropDown] = useState<DropDownData>({
     fileCategory: defaultFileCategoryOptions[0],
-    embeddingModel: embeddingModelOptions[0],
+    embeddingModel: embeddingModelOptions[0]
   })
 
   const validateInput = (name: string, value: number | string) => {
@@ -80,7 +80,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
       if (!value)
         setInputErrors((prev: InputErrors) => ({
           ...prev,
-          [name]: `${name} cannot be empty.`,
+          [name]: `${name} cannot be empty.`
         }))
     } else if (
       typeof chunkSize !== 'number' ||
@@ -89,17 +89,17 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
     ) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: `${name} must be a number.`,
+        [name]: `${name} must be a number.`
       }))
     } else if (value <= 0) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: `${name}'s value cannot be negative or zero.`,
+        [name]: `${name}'s value cannot be negative or zero.`
       }))
     } else if (!Number.isInteger(value)) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: `${name} must be an integer.`,
+        [name]: `${name} must be an integer.`
       }))
     } else if (
       name === 'chunkSize' &&
@@ -107,7 +107,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
     ) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: `${name} must be between ${MIN_CHUNK_SIZE} and ${MAX_CHUNK_SIZE}`,
+        [name]: `${name} must be between ${MIN_CHUNK_SIZE} and ${MAX_CHUNK_SIZE}`
       }))
     } else if (
       name === 'chunkOverlap' &&
@@ -115,12 +115,12 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
     ) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: `${name} must be between ${MIN_CHUNK_OVERLAP} and ${MAX_CHUNK_OVERLAP}`,
+        [name]: `${name} must be between ${MIN_CHUNK_OVERLAP} and ${MAX_CHUNK_OVERLAP}`
       }))
     } else if (chunkOverlap >= chunkSize) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        [name]: 'Chunk Size must be greater than Chunk Overlap size.',
+        [name]: 'Chunk Size must be greater than Chunk Overlap size.'
       }))
     } else {
       setInputErrors((prev: InputErrors) => ({ ...prev, [name]: null }))
@@ -133,7 +133,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
     setSelectedInput,
     setInputErrors,
     handleInputChange,
-    handleInputBlur,
+    handleInputBlur
   } = useInputChange({ initialInput, initialInputErrors, validateInput })
 
   const handleAddCategoryToDropDown = (e: MouseEvent<HTMLButtonElement>) => {
@@ -144,44 +144,44 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
 
     const newCategoryOption = {
       value: newFileCategory.replace(/\s+/g, '').toLowerCase(),
-      label: newFileCategory,
+      label: newFileCategory
     }
 
     setSelectedDropDown(prevSelected => ({
       ...prevSelected,
-      fileCategory: newCategoryOption,
+      fileCategory: newCategoryOption
     }))
 
     // Check if the new category already exists in namespaces
     if (namespaces.includes(newFileCategory)) {
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        ['newFileCategory']: 'This category already exists.',
+        ['newFileCategory']: 'This category already exists.'
       }))
       return
     }
 
     setFileCategoryOptions(previousOptions => [
       ...previousOptions,
-      newCategoryOption,
+      newCategoryOption
     ])
     setInputErrors((prev: InputErrors) => ({
       ...prev,
-      ['newFileCategory']: null,
+      ['newFileCategory']: null
     }))
     setShowAddNewCategory(false)
   }
 
   const handleDropDownChange = (
     selectedOption: OptionType | null,
-    actionMeta: ActionMeta<OptionType>,
+    actionMeta: ActionMeta<OptionType>
   ) => {
     if (selectedOption === null) return
 
     if (actionMeta.name === 'embeddingModel') {
       setSelectedDropDown({
         ...selectedDropDown,
-        [actionMeta.name]: selectedOption,
+        [actionMeta.name]: selectedOption
       })
     } else if (
       actionMeta.name === 'fileCategory' &&
@@ -192,11 +192,11 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
       setShowAddNewCategory(false)
       setSelectedDropDown({
         ...selectedDropDown,
-        fileCategory: selectedOption,
+        fileCategory: selectedOption
       })
       setInputErrors((prev: InputErrors) => ({
         ...prev,
-        ['newFileCategory']: null,
+        ['newFileCategory']: null
       }))
     }
   }
@@ -209,15 +209,15 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
     formData.append('chunkSize', selectedInput.chunkSize?.toString() ?? '')
     formData.append(
       'chunkOverlap',
-      selectedInput.chunkOverlap?.toString() ?? '',
+      selectedInput.chunkOverlap?.toString() ?? ''
     )
     formData.append(
       'fileCategory',
-      JSON.stringify(selectedDropDown.fileCategory),
+      JSON.stringify(selectedDropDown.fileCategory)
     )
     formData.append(
       'embeddingModel',
-      JSON.stringify(selectedDropDown.embeddingModel),
+      JSON.stringify(selectedDropDown.embeddingModel)
     )
     return formData
   }
@@ -228,7 +228,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
     if (!selectedUpload) {
       setUploadErrors((prev: InputErrors) => ({
         ...prev,
-        ['file']: 'You must upload a file.',
+        ['file']: 'You must upload a file.'
       }))
     }
 
@@ -389,8 +389,8 @@ export const getStaticProps: GetStaticProps = async () => {
 
   return {
     props: {
-      namespaces,
+      namespaces
     },
-    revalidate: 60 * 60 * 24, // This is optional. It ensures regeneration of the page after every 24 hour
+    revalidate: 60 * 60 * 24 // This is optional. It ensures regeneration of the page after every 24 hour
   }
 }

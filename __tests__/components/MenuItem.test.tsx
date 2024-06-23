@@ -6,7 +6,7 @@ import MenuItem from '@/src/components/MenuItem'
 
 // Mock next/router
 jest.mock('next/router', () => ({
-  useRouter: jest.fn(),
+  useRouter: jest.fn()
 }))
 
 describe('MenuItem Component', () => {
@@ -18,7 +18,7 @@ describe('MenuItem Component', () => {
     const mockedUseRouter = useRouter as jest.Mock
     mockedUseRouter.mockReturnValue({
       pathname: '/current-path', // Set the current path for the router mock
-      push: mockPush,
+      push: mockPush
     })
   })
 
@@ -28,7 +28,7 @@ describe('MenuItem Component', () => {
         title="Test Title"
         link="/test-link"
         itemList={['Item 1', 'Item 2']}
-      />,
+      />
     )
 
     expect(screen.getByText('Test Title')).toBeInTheDocument()
@@ -56,7 +56,7 @@ describe('MenuItem Component', () => {
         title="Test Title"
         link="/current-path"
         itemList={['Item 1', 'Item 2']}
-      />,
+      />
     )
 
     const menuItem = screen.getByText('Test Title').parentElement
@@ -69,7 +69,7 @@ describe('MenuItem Component', () => {
         title="Test Title"
         link="/other-path"
         itemList={['Item 1', 'Item 2']}
-      />,
+      />
     )
 
     const menuItem = screen.getByText('Test Title').parentElement
@@ -82,7 +82,7 @@ describe('MenuItem Component', () => {
         title="Test Title"
         itemList={['Item 1', 'Item 2']}
         defaultOpen={true}
-      />,
+      />
     )
 
     // Ensure the item list is visible initially due to defaultOpen
@@ -103,7 +103,7 @@ describe('MenuItem Component', () => {
         title="Test Title"
         link="/test-link"
         itemList={['Item 1', 'Item 2']}
-      />,
+      />
     )
     expect(asFragment()).toMatchSnapshot()
   })

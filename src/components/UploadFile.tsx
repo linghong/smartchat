@@ -16,7 +16,7 @@ const UploadFile: FC<UploadProps> = ({
   name,
   uploadErrors,
   setUploadErrors,
-  setSelectedUpload,
+  setSelectedUpload
 }) => {
   const handleUploadChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -29,7 +29,7 @@ const UploadFile: FC<UploadProps> = ({
       if (fileSize > 1000) {
         setUploadErrors(prev => ({
           ...prev,
-          [name]: 'Maxmium file size to upload is 1GB.',
+          [name]: 'Maxmium file size to upload is 1GB.'
         }))
         return
       }
@@ -37,7 +37,7 @@ const UploadFile: FC<UploadProps> = ({
       if (uploadErrors)
         setUploadErrors(prev => ({
           ...prev,
-          [name]: null,
+          [name]: null
         }))
     }
   }

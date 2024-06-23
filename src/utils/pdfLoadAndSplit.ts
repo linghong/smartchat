@@ -34,7 +34,7 @@ const joinBrokenSentence = (pageContent: string): string => {
 const loadAndSplit = async (
   docPath: string,
   chunkSize: number,
-  chunkOverlap: number,
+  chunkOverlap: number
 ): Promise<Document[]> => {
   try {
     const loader = new PDFLoader(docPath, { splitPages: false })
@@ -58,13 +58,13 @@ const loadAndSplit = async (
         '\n(?![?)}]|])',
         '(?<![.!] *|[.!]"|[.!] *) ',
         ' ',
-        '',
-      ],
+        ''
+      ]
     })
 
     const documents: Document[] = await splitter.createDocuments(
       [preparedText],
-      [metadata],
+      [metadata]
     )
 
     return documents

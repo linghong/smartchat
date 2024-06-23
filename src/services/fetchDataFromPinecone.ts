@@ -18,7 +18,7 @@ interface Metadata {
 
 export const fetchDataFromPinecone = async (
   embeddedQuery: number[],
-  nameSpace: string,
+  nameSpace: string
 ) => {
   if (!Array.isArray(embeddedQuery) || embeddedQuery.length === 0) {
     throw new Error('Invalid or empty query vector provided.')
@@ -33,7 +33,7 @@ export const fetchDataFromPinecone = async (
     vector: embeddedQuery,
     topK: 3,
     includeValues: true,
-    includeMetadata: true,
+    includeMetadata: true
   }
 
   let queryResponse

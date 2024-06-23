@@ -9,7 +9,7 @@ interface SidebarProps {
 
 const Sidebar: FC<SidebarProps> = ({
   setIsSidebarOpen,
-  messageSubjectList,
+  messageSubjectList
 }) => {
   return (
     <ul className="px-2 py-5 ">

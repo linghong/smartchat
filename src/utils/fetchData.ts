@@ -14,8 +14,8 @@ export const fetchData = async (endpoint: string) => {
     console.error(`Error fetching ${endpoint}:`, error)
     return {
       props: {
-        error: 'Failed to fetch data.',
-      },
+        error: 'Failed to fetch data.'
+      }
     }
   }
 }

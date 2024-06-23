@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react'
 import Sidebar from '@/src/components/Sidebar'
 
 jest.mock('next/router', () => ({
-  useRouter: jest.fn(),
+  useRouter: jest.fn()
 }))
 const mockPush = jest.fn()
 
@@ -26,7 +26,7 @@ describe('Sidebar Component', () => {
       <Sidebar
         setIsSidebarOpen={setIsSidebarOpen}
         messageSubjectList={messageSubjectList}
-      />,
+      />
     )
   })
 
@@ -58,7 +58,7 @@ describe('Sidebar Component', () => {
       <Sidebar
         setIsSidebarOpen={setIsSidebarOpen}
         messageSubjectList={messageSubjectList}
-      />,
+      />
     )
     expect(asFragment()).toMatchSnapshot()
   })

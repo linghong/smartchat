@@ -13,7 +13,7 @@ interface ImageListWithModalProps {
 const ImageListWithModal: FC<ImageListWithModalProps> = ({
   imageSrc,
   handleImageDelete,
-  isDeleteIconShow = false,
+  isDeleteIconShow = false
 }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false)
   const [selectedImage, setSelectedImage] = useState<string>('')
@@ -48,7 +48,7 @@ const ImageListWithModal: FC<ImageListWithModalProps> = ({
                 style={{
                   backgroundImage: imageSrc
                     ? `url(${imgSrc.base64Image})`
-                    : 'none',
+                    : 'none'
                 }}
               />
             </div>

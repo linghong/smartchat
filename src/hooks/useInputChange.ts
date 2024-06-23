@@ -22,7 +22,7 @@ interface UseInputReturn {
 const useInputChange = ({
   initialInput,
   initialInputErrors,
-  validateInput,
+  validateInput
 }: UseInputProps): UseInputReturn => {
   const [selectedInput, setSelectedInput] = useState<InputData>(initialInput)
   const [inputErrors, setInputErrors] =
@@ -51,7 +51,7 @@ const useInputChange = ({
     setSelectedInput,
     setInputErrors,
     handleInputChange,
-    handleInputBlur,
+    handleInputBlur
   }
 }
 

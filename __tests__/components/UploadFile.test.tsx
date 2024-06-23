@@ -22,14 +22,14 @@ const setup = () => {
       uploadErrors={uploadErrors}
       setUploadErrors={setUploadErrors}
       setSelectedUpload={setSelectedUpload}
-    />,
+    />
   )
 
   const input = screen.getByTestId('fileInput') as HTMLInputElement
   return {
     input,
     setUploadErrors,
-    setSelectedUpload,
+    setSelectedUpload
   }
 }
 
@@ -46,7 +46,7 @@ describe('UploadFile Component', () => {
   test('handles file change event', async () => {
     const { input, setSelectedUpload, setUploadErrors } = setup()
     const file = new File(['dummy content'], 'example.pdf', {
-      type: 'application/pdf',
+      type: 'application/pdf'
     })
     await userEvent.upload(input, file)
 
@@ -79,7 +79,7 @@ describe('UploadFile Component', () => {
         uploadErrors={uploadErrors}
         setUploadErrors={jest.fn}
         setSelectedUpload={jest.fn}
-      />,
+      />
     )
 
     expect(asFragment()).toMatchSnapshot()

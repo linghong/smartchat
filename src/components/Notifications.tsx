@@ -18,25 +18,25 @@ const Notifications: FC<Notifications> = ({
   successMessage,
   errorMessage,
   uploadErrors,
-  inputErrors,
+  inputErrors
 }) => {
   const notifications = []
 
   if (isLoading) {
     notifications.push(
-      <Notification key="loading" type="loading" message={loadingMessage} />,
+      <Notification key="loading" type="loading" message={loadingMessage} />
     )
   }
 
   if (successMessage) {
     notifications.push(
-      <Notification key="success" type="success" message={successMessage} />,
+      <Notification key="success" type="success" message={successMessage} />
     )
   }
 
   if (errorMessage) {
     notifications.push(
-      <Notification key="error" type="error" message={errorMessage} />,
+      <Notification key="error" type="error" message={errorMessage} />
     )
   }
 
@@ -47,7 +47,7 @@ const Notifications: FC<Notifications> = ({
           key={`uploaderror-${key}`}
           type="error"
           message={uploadErrors[key]}
-        />,
+        />
       )
     })
 
@@ -58,7 +58,7 @@ const Notifications: FC<Notifications> = ({
           key={`inputerror-${key}`}
           type="error"
           message={inputErrors[key]}
-        />,
+        />
       )
     })
 

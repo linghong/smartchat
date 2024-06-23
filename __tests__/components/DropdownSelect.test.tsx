@@ -7,7 +7,7 @@ import DropdownSelect from '@/src/components/DropdownSelect'
 
 const options = [
   { value: 'option1', label: 'Option 1' },
-  { value: 'option2', label: 'Option 2' },
+  { value: 'option2', label: 'Option 2' }
 ]
 
 const label = 'Dropdown Label'
@@ -26,7 +26,7 @@ describe('DropdownSelect Component', () => {
           options={options}
           label={label}
           name={name}
-        />,
+        />
       )
     })
   })
@@ -50,7 +50,7 @@ describe('DropdownSelect Component', () => {
     // Check if the change handler is called with the correct option
     expect(mockChangeHandler).toHaveBeenCalledWith(
       options[1],
-      expect.any(Object),
+      expect.any(Object)
     )
   })
 
@@ -91,7 +91,7 @@ describe('DropdownSelect Component', () => {
           options={options}
           label={label}
           name={name}
-        />,
+        />
       )
       asFragment = renderFragment
     })

@@ -14,7 +14,7 @@ const Header: FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const pageCollection: { [key: string]: string } = {
     '/': 'Chat With AI',
     '/finetunemodel': 'Finetune AI Model',
-    '/embedragfile': 'Embed RAG File',
+    '/embedragfile': 'Embed RAG File'
   }
 
   const onNewChat = async () => {
