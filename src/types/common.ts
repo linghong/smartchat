@@ -3,6 +3,7 @@ export type OptionType = {
   label: string
   category?: string
   contextWindow?: number
+  vision?: boolean
 }
 
 export type ApiResponse = {

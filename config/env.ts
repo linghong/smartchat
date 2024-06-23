@@ -1,6 +1,13 @@
-// for connecting to Google's gemini Generative AI models
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || ''
+if (!OPENAI_API_KEY) throw new Error('Missing OpenAI API key')
+
+// for connecting to Google's Gemini Generative AI models
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 if (!GEMINI_API_KEY) console.error('Missing Google Gemini API key')
+
+// for connecting to Anthropic's Claude Generative AI models
+const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY
+if (!CLAUDE_API_KEY) console.error('Missing CLAUDE API key')
 
 // For connecting to remote FastAPI server
 const NEXT_PUBLIC_SERVER_SECRET_KEY = process.env.NEXT_PUBLIC_SERVER_SECRET_KEY
@@ -14,9 +21,6 @@ if (!NEXT_PUBLIC_API_URL) throw new Error('Missing API url')
 const GROQ_API_KEY = process.env.GROQ_API_KEY
 if (!GROQ_API_KEY) console.error('Missing GROQ API key')
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || ''
-if (!OPENAI_API_KEY) throw new Error('Missing OpenAI API key')
-
 // for connecting to Pinecone vector database
 const PINECONE_API_KEY = process.env.PINECONE_API_KEY
 if (!PINECONE_API_KEY) throw new Error('Missing Pinecone API key')
@@ -26,10 +30,11 @@ if (!PINECONE_INDEX_NAME) console.error('Missing Pinecone index name')
 
 export {
   GEMINI_API_KEY,
+  CLAUDE_API_KEY,
   GROQ_API_KEY,
   NEXT_PUBLIC_API_URL,
   OPENAI_API_KEY,
   PINECONE_API_KEY,
   PINECONE_INDEX_NAME,
-  NEXT_PUBLIC_SERVER_SECRET_KEY,
+  NEXT_PUBLIC_SERVER_SECRET_KEY
 }
