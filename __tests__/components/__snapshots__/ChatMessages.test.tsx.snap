@@ -34,7 +34,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
         class="flex flex-row justify-start w-full pt-3 px-3"
       >
         <div
-          class="w-20 h-full mx-2"
+          class="w-20 h-full mx-2 relative"
         >
           <div
             aria-label="Click to view larger image 1"
@@ -50,7 +50,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
           </div>
         </div>
         <div
-          class="w-20 h-full mx-2"
+          class="w-20 h-full mx-2 relative"
         >
           <div
             aria-label="Click to view larger image 2"

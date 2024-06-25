@@ -1,5 +1,5 @@
 import { useState, FC } from 'react'
-import { BsTrash3 } from 'react-icons/bs'
+import { RiCloseLargeFill } from 'react-icons/ri'
 
 import ImageModal from '@/src/components/ImageModal'
 import { ImageFile } from '@/src/types/chat'
@@ -31,7 +31,7 @@ const ImageListWithModal: FC<ImageListWithModalProps> = ({
     <>
       <div className="flex flex-row justify-start w-full pt-3 px-3">
         {imageSrc.map((imgSrc: ImageFile, i: number) => (
-          <div key={i} className="w-20 h-full mx-2">
+          <div key={i} className="w-20 h-full mx-2 relative">
             <div
               className="mr-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100"
               onClick={() => openModal(imgSrc.base64Image)}
@@ -53,12 +53,13 @@ const ImageListWithModal: FC<ImageListWithModalProps> = ({
               />
             </div>
             {isDeleteIconShow && (
-              <BsTrash3
+              <button
                 onClick={() => handleImageDelete(i)}
-                className="text-grey-600 cursor-pointer float-right"
+                className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md"
                 aria-label={`Delete image ${i + 1}`}
-                tabIndex={0}
-              />
+              >
+                <RiCloseLargeFill className="text-gray-600" />
+              </button>
             )}
           </div>
         ))}

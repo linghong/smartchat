@@ -1,7 +1,7 @@
 import React, { useState, FC } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { MdExpandMore, MdExpandLess } from 'react-icons/md'
+import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai'
 
 interface MenuItemProps {
   title: string
@@ -53,7 +53,7 @@ const MenuItem: FC<MenuItemProps> = ({
           <span className="flex-grow text-slate-50 ">{title}</span>
         )}
         <span role="button" className="cursor-pointer" onClick={toggle}>
-          {isOpen ? <MdExpandLess /> : <MdExpandMore />}
+          {isOpen ? <AiFillCaretUp /> : <AiFillCaretDown />}
         </span>
       </div>
       {isOpen && (

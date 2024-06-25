@@ -1,5 +1,5 @@
 import React, { useRef, ChangeEvent, FC } from 'react'
-import { BsImageFill } from 'react-icons/bs'
+import { RiImageAddFill } from 'react-icons/ri'
 interface ImageUploadIconProps {
   onImageUpload: (file: File) => void
   isDisabled: boolean
@@ -38,7 +38,7 @@ const ImageUploadIcon: FC<ImageUploadIconProps> = ({
         accept="image/*"
         aria-label="Upload image"
       />
-      <BsImageFill
+      <RiImageAddFill
         size={24}
         style={{
           cursor: 'pointer',
