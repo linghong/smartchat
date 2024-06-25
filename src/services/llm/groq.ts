@@ -1,5 +1,5 @@
 'use strict'
-import { buildChatArray } from './openai'
+import { buildChatArray } from '@/src/services/llm/openai'
 import { Groq } from 'groq-sdk'
 
 import { GROQ_API_KEY } from '@/config/env'
@@ -13,7 +13,7 @@ const buildChatMessages = (
   fetchedText: string,
   chatHistory: Message[],
   selectedModel: OptionType,
-  maxReturnMessageToken: number,
+  maxReturnMessageToken: number
 ): any[] => {
   const chatArray = buildChatArray(
     systemContent,
@@ -21,7 +21,7 @@ const buildChatMessages = (
     fetchedText,
     chatHistory,
     maxReturnMessageToken,
-    selectedModel.contextWindow,
+    selectedModel.contextWindow
   )
 
   const userMessageWithFetchedData =
@@ -40,8 +40,8 @@ const buildChatMessages = (
     ...chatArray,
     {
       role: 'user',
-      content: userMessageWithFetchedData,
-    },
+      content: userMessageWithFetchedData
+    }
   ]
 }
 
@@ -50,12 +50,12 @@ export const getGroqChatCompletion = async (
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
-  selectedModel: OptionType,
+  selectedModel: OptionType
 ) => {
   if (!GROQ_API_KEY) return undefined
 
   const groq = new Groq({
-    apiKey: GROQ_API_KEY,
+    apiKey: GROQ_API_KEY
   })
   const maxReturnMessageToken = 4000
 
@@ -75,7 +75,7 @@ export const getGroqChatCompletion = async (
     fetchedText,
     chatHistory,
     selectedModel,
-    maxReturnMessageToken,
+    maxReturnMessageToken
   )
 
   try {
@@ -86,7 +86,7 @@ export const getGroqChatCompletion = async (
       max_tokens: maxReturnMessageToken,
       frequency_penalty: 0,
       presence_penalty: 0,
-      top_p: 1,
+      top_p: 1
     })
 
     if (!completion || !completion.choices || !completion.choices.length) {
@@ -97,7 +97,7 @@ export const getGroqChatCompletion = async (
   } catch (error) {
     console.error('Error:', error)
     throw new Error(
-      `Failed to fetch response from Groq server: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      `Failed to fetch response from Groq server: ${error instanceof Error ? error.message : 'Unknown error'}`
     )
   }
 }

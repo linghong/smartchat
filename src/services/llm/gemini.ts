@@ -6,7 +6,7 @@ import { OptionType } from '@/src/types/common'
 
 export const getCurrentUserParts = async (
   imageSrc: ImageFile[],
-  userMessage: string,
+  userMessage: string
 ) => {
   if (imageSrc.length === 0) return userMessage
 
@@ -16,8 +16,8 @@ export const getCurrentUserParts = async (
     return tempParts.push({
       inlineData: {
         data: image.base64Image,
-        mimeType: image.mimeType,
-      },
+        mimeType: image.mimeType
+      }
     })
   })
 
@@ -31,12 +31,12 @@ export const buildChatArray = (chatHistory: Message[]) => {
   for (let i = 0; i < len; i++) {
     chatArray.push({
       role: 'user',
-      parts: [{ text: chatHistory[i].question }],
+      parts: [{ text: chatHistory[i].question }]
     })
 
     chatArray.push({
       role: 'model',
-      parts: [{ text: chatHistory[i].answer }],
+      parts: [{ text: chatHistory[i].answer }]
     })
   }
 
@@ -49,7 +49,7 @@ const getGeminiChatCompletion = async (
   userMessage: string,
   fetchedText: string,
   selectedModel: OptionType,
-  base64ImageSrc: ImageFile[],
+  base64ImageSrc: ImageFile[]
 ) => {
   if (!GEMINI_API_KEY) return undefined
 
@@ -79,20 +79,20 @@ const getGeminiChatCompletion = async (
 
   const model = genAI.getGenerativeModel({
     model: selectedModel.value,
-    systemInstruction: systemContent,
+    systemInstruction: systemContent
   })
 
   const currentUserParts = await getCurrentUserParts(
     base64ImageSrc,
-    userTextWithFetchedData,
+    userTextWithFetchedData
   )
 
   try {
     const chat = model.startChat({
       history: buildChatArray(chatHistory),
       generationConfig: {
-        maxOutputTokens: maxReturnMessageToken,
-      },
+        maxOutputTokens: maxReturnMessageToken
+      }
     })
 
     const result = await chat.sendMessage(currentUserParts)
@@ -101,7 +101,7 @@ const getGeminiChatCompletion = async (
     return text
   } catch (error) {
     throw new Error(
-      `Failed to fetch response from Google ${selectedModel.value} model, ${error}`,
+      `Failed to fetch response from Google ${selectedModel.value} model, ${error}`
     )
   }
 }

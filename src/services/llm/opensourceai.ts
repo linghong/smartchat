@@ -8,7 +8,7 @@ const getOpenModelChatCompletion = async (
   userMessage: string,
   fetchedText: string,
   selectedModel: OptionType,
-  serverURL: string,
+  serverURL: string
 ): Promise<string | undefined> => {
   if (!NEXT_PUBLIC_SERVER_SECRET_KEY) return undefined
 
@@ -17,7 +17,7 @@ const getOpenModelChatCompletion = async (
     basePrompt,
     chatHistory,
     selectedModel: selectedModel.value,
-    fetchedText,
+    fetchedText
   }
 
   try {
@@ -25,9 +25,9 @@ const getOpenModelChatCompletion = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + NEXT_PUBLIC_SERVER_SECRET_KEY,
+        Authorization: 'Bearer ' + NEXT_PUBLIC_SERVER_SECRET_KEY
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     })
 
     if (!res.ok) {

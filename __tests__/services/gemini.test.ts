@@ -4,7 +4,7 @@ import { OptionType } from '@/src/types/common'
 import getGeminiChatCompletion, {
   getCurrentUserParts,
   buildChatArray
-} from '@/src/services/gemini'
+} from '@/src/services/llm/gemini'
 
 jest.mock('@google/generative-ai')
 

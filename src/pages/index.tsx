@@ -5,7 +5,7 @@ import {
   useEffect,
   ChangeEvent,
   FormEvent,
-  FC,
+  FC
 } from 'react'
 import { GetStaticProps } from 'next'
 import { RiScreenshot2Fill } from 'react-icons/ri' //screenshot
@@ -21,10 +21,7 @@ import Notification from '@/src/components/Notification'
 import { Message, ImageFile } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces'
-import {
-  fileToBase64,
-  fetchImageAsBase64,
-} from '@/src/utils/fileFetchAndConversion'
+import { fileToBase64 } from '@/src/utils/fileFetchAndConversion'
 import { isSupportedImage } from '@/src/utils/mediaValidationHelper'
 
 interface HomeProps {
@@ -39,7 +36,7 @@ const initialFileCategory: OptionType = { value: 'none', label: 'None' }
 
 const initialMessage = {
   question: '',
-  answer: 'Hi, how can I assist you?',
+  answer: 'Hi, how can I assist you?'
 }
 
 const HomePage: FC<HomeProps> = ({
@@ -47,7 +44,7 @@ const HomePage: FC<HomeProps> = ({
   isNewChat,
   setIsNewChat,
   messageSubjectList,
-  setMessageSubjectList,
+  setMessageSubjectList
 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null>(null)
@@ -57,14 +54,14 @@ const HomePage: FC<HomeProps> = ({
       ? [initialFileCategory]
       : [
           initialFileCategory,
-          ...namespaces.map(ns => ({ value: ns, label: ns })),
+          ...namespaces.map(ns => ({ value: ns, label: ns }))
         ]
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>(
-    initialFileCategory,
+    initialFileCategory
   )
 
   const [selectedModel, setSelectedModel] = useState<OptionType | null>(
-    modelOptions[0],
+    modelOptions[0]
   )
   const [basePrompt, setBasePrompt] = useState('')
 
@@ -86,13 +83,13 @@ const HomePage: FC<HomeProps> = ({
       question: string,
       imageSrc: ImageFile[],
       selectedModel: OptionType | null,
-      namespace: string,
+      namespace: string
     ) => {
       try {
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             basePrompt,
@@ -100,8 +97,8 @@ const HomePage: FC<HomeProps> = ({
             imageSrc,
             chatHistory,
             namespace,
-            selectedModel,
-          }),
+            selectedModel
+          })
         })
 
         //handling server-side errors
@@ -117,8 +114,9 @@ const HomePage: FC<HomeProps> = ({
 
         setChatHistory([
           ...chatHistory.slice(0, chatHistory.length),
-          { question: userInput, answer: data.answer },
+          { question: userInput, answer: data.answer }
         ])
+
         setMessageSubjectList([...messageSubjectList, data.subject])
 
         setLoading(false)
@@ -128,7 +126,7 @@ const HomePage: FC<HomeProps> = ({
         console.error('error', error)
       }
     },
-    [userInput, chatHistory, messageSubjectList, setMessageSubjectList],
+    [userInput, chatHistory, messageSubjectList, setMessageSubjectList]
   )
 
   const handleSubmit = useCallback(
@@ -155,7 +153,7 @@ const HomePage: FC<HomeProps> = ({
         question,
         imageSrc,
         selectedModel,
-        selectedNamespace?.value || 'none',
+        selectedNamespace?.value || 'none'
       )
     },
     [
@@ -164,18 +162,12 @@ const HomePage: FC<HomeProps> = ({
       imageSrc,
       fetchChatResponse,
       selectedModel,
-      selectedNamespace?.value,
-    ],
+      selectedNamespace?.value
+    ]
   )
 
   const handleModelChange = (selectedOption: OptionType | null) => {
-    const isVisionModel =
-      selectedOption?.value === 'gpt-4o' ||
-      selectedOption?.value === 'gpt-4-turbo' ||
-      selectedOption?.value === 'gemini-1.5-flash' ||
-      selectedOption?.value === 'gemini-1.5-pro'
-
-    setIsVisionModel(isVisionModel)
+    setIsVisionModel(!!selectedOption?.vision)
     setSelectedModel(selectedOption)
   }
 
@@ -205,12 +197,12 @@ const HomePage: FC<HomeProps> = ({
         base64Image,
         mimeType: file.type,
         size: file.size,
-        name: file.name,
+        name: file.name
       }
 
       const imageVadiationError = isSupportedImage(
         selectedModel?.value || '',
-        newImage,
+        newImage
       )
       if (imageVadiationError.length !== 0) {
         setImageError([...imageError, ...imageVadiationError])
@@ -243,7 +235,7 @@ const HomePage: FC<HomeProps> = ({
       //Image mimeType and size validation
       const imageVadiationError = isSupportedImage(
         selectedModel?.value || '',
-        newImage,
+        newImage
       )
       if (imageVadiationError.length !== 0) {
         setImageError([...imageError, ...imageVadiationError])
@@ -329,7 +321,7 @@ const HomePage: FC<HomeProps> = ({
             aria-label="Enter text here for AI to remember throughout the chat"
           />
         </div>
-        <div className="flex flex-col h-[calc(100vh-420px)] w-full items-center">
+        <div className="flex flex-col h-[calc(100vh-440px) md:h-[calc(100vh-430px)] lg:h-[calc(100vh-400px)] w-full items-center">
           <div
             className={`w-full bg-white border-2 border-stone-200 overflow-y-auto`}
           >
@@ -347,7 +339,7 @@ const HomePage: FC<HomeProps> = ({
                     lastIndex={index === chatHistory.length - 1 ? true : false}
                     loading={loading}
                     imageSrc={imageSrcHistory[index]}
-                    modelName={selectedModel?.value || 'gpt-4o'}
+                    modelName={selectedModel?.label || 'GPT-4o'}
                     handleImageDelete={handleImageDelete}
                   />
                 </div>
@@ -425,8 +417,8 @@ export const getStaticProps: GetStaticProps = async () => {
 
   return {
     props: {
-      namespaces,
+      namespaces
     },
-    revalidate: 60 * 60 * 24, // Regenerate the page after every 24 hours
+    revalidate: 60 * 60 * 24 // Regenerate the page after every 24 hours
   }
 }

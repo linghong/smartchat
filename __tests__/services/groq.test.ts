@@ -1,5 +1,5 @@
 import 'openai/shims/node'
-import { getGroqChatCompletion } from '@/src/services/groq'
+import { getGroqChatCompletion } from '@/src/services/llm/groq'
 import { Message } from '@/src/types/chat'
 
 jest.mock('openai', () => {

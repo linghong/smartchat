@@ -2,19 +2,23 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { marked } from 'marked'
 
 import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone'
-import getGeminiChatCompletion from '@/src/services/gemini'
-import { getGroqChatCompletion } from '@/src/services/groq'
-import { createEmbedding, getOpenAIChatCompletion } from '@/src/services/openai'
-import getOpenModelChatCompletion from '@/src/services/opensourceai'
+import getGeminiChatCompletion from '@/src/services/llm/gemini'
+import getClaudeChatCompletion from '@/src/services/llm/claude'
+import { getGroqChatCompletion } from '@/src/services/llm/groq'
+import {
+  createEmbedding,
+  getOpenAIChatCompletion
+} from '@/src/services/llm/openai'
+import getOpenModelChatCompletion from '@/src/services/llm/opensourceai'
 import {
   extractMessageContent,
-  extractSubjectTitle,
+  extractSubjectTitle
 } from '@/src/utils/chatMessageHelper'
 import { ImageFile } from '@/src/types/chat'
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -26,7 +30,7 @@ export default async function handler(
     namespace,
     selectedModel,
     chatHistory,
-    imageSrc,
+    imageSrc
   } = req.body
 
   if (!question && imageSrc.length === 0) {
@@ -34,12 +38,12 @@ export default async function handler(
   }
 
   if (!selectedModel?.value) {
-    return res.status(500).json('Something went wrong')
+    return res.status(500).json('Model name is missing.')
   }
 
   const base64ImageSrc = imageSrc?.map((imgSrc: ImageFile) => ({
     ...imgSrc,
-    base64Image: imgSrc.base64Image.split(',')[1],
+    base64Image: imgSrc.base64Image.split(',')[1]
   }))
 
   // replacing newlines with spaces
@@ -66,7 +70,7 @@ export default async function handler(
           sanitizedQuestion,
           fetchedText,
           selectedModel,
-          base64ImageSrc,
+          base64ImageSrc
         )
         break
 
@@ -76,7 +80,7 @@ export default async function handler(
           chatHistory,
           sanitizedQuestion,
           fetchedText,
-          selectedModel,
+          selectedModel
         )
         break
 
@@ -87,7 +91,18 @@ export default async function handler(
           sanitizedQuestion,
           fetchedText,
           selectedModel,
-          base64ImageSrc,
+          base64ImageSrc
+        )
+        break
+
+      case 'anthropic':
+        chatResponse = await getClaudeChatCompletion(
+          basePrompt,
+          chatHistory,
+          sanitizedQuestion,
+          fetchedText,
+          selectedModel,
+          base64ImageSrc
         )
         break
 
@@ -101,7 +116,7 @@ export default async function handler(
           return res
             .status(500)
             .json(
-              `Url address for posting the data to ${selectedModel} is missing`,
+              `Url address for posting the data to ${selectedModel} is missing`
             )
         }
         const url = `${baseUrl}/api/chat_${category === 'hf-small' ? 'cpu' : 'gpu'}`
@@ -111,7 +126,7 @@ export default async function handler(
           sanitizedQuestion,
           fetchedText,
           selectedModel,
-          url,
+          url
         )
         break
 

@@ -7,13 +7,13 @@ import { OpenAIChatContentImage } from '@/src/types/chat'
 import { OptionType } from '@/src/types/common'
 
 export const openaiClient = new OpenAI({
-  apiKey: OPENAI_API_KEY,
+  apiKey: OPENAI_API_KEY
 })
 
 export const createEmbedding = async (text: string): Promise<number[]> => {
   const embedding = await openaiClient.embeddings.create({
     model: 'text-embedding-ada-002',
-    input: text,
+    input: text
   })
 
   return embedding.data[0].embedding
@@ -25,7 +25,7 @@ export const buildChatArray = (
   fetchedText: string,
   chatHistory: Message[],
   maxReturnMessageToken: number,
-  contextWindow: number | undefined,
+  contextWindow: number | undefined
 ) => {
   // after comparing the token count received from OpenAI, it seems that counting tokens in the way shown below matches better with Open AI's token number.
   const tokenCount = (role: ChatRole, str: string) => {
@@ -48,11 +48,11 @@ export const buildChatArray = (
     const chat = chatHistory[i]
     chatArray.push({
       role: 'assistant',
-      content: chat.answer,
+      content: chat.answer
     })
     chatArray.push({
       role: 'user',
-      content: chat.question,
+      content: chat.question
     })
     tokenLeft -=
       tokenCount('user', chat.question) + tokenCount('assistant', chat.answer)
@@ -62,13 +62,16 @@ export const buildChatArray = (
   return chatArray
 }
 
-const contentForUserImage = (base64ImageSrc: ImageFile[]): OpenAIChatContentImage[] =>  base64ImageSrc.map(imgSrc => ({
-  type: "image_url",
-  image_url: {
-    url: `data:image/jpeg;base64,${imgSrc.base64Image}`,
-    detail: "low",
-  }
-}))
+const contentForUserImage = (
+  base64ImageSrc: ImageFile[]
+): OpenAIChatContentImage[] =>
+  base64ImageSrc.map(imgSrc => ({
+    type: 'image_url',
+    image_url: {
+      url: `data:image/jpeg;base64,${imgSrc.base64Image}`,
+      detail: 'low'
+    }
+  }))
 
 export const getOpenAIChatCompletion = async (
   basePrompt: string,
@@ -76,7 +79,7 @@ export const getOpenAIChatCompletion = async (
   userMessage: string,
   fetchedText: string,
   selectedModel: OptionType,
-  base64ImageSrc: ImageFile[] | undefined,
+  base64ImageSrc: ImageFile[] | undefined
 ): Promise<string | undefined> => {
   const maxReturnMessageToken = selectedModel.contextWindow ? 4096 : 2000
 
@@ -97,7 +100,7 @@ export const getOpenAIChatCompletion = async (
     fetchedText,
     chatHistory,
     maxReturnMessageToken,
-    selectedModel.contextWindow,
+    selectedModel.contextWindow
   )
 
   const userTextWithFetchedData =
@@ -111,7 +114,10 @@ export const getOpenAIChatCompletion = async (
         basePrompt
       : userMessage + '\n' + basePrompt
 
-  const imageContent = base64ImageSrc && base64ImageSrc?.length !== 0 ? contentForUserImage(base64ImageSrc) : []
+  const imageContent =
+    base64ImageSrc && base64ImageSrc?.length !== 0
+      ? contentForUserImage(base64ImageSrc)
+      : []
 
   try {
     const completion = await openaiClient.chat.completions.create({
@@ -122,17 +128,17 @@ export const getOpenAIChatCompletion = async (
       presence_penalty: 0,
       top_p: 1,
       messages: [
-        { role: "system", content: systemContent },
+        { role: 'system', content: systemContent },
         ...chatArray,
         {
-          role: "user",
+          role: 'user',
           content: [
             {
-              type: "text",
-              text: userTextWithFetchedData,
+              type: 'text',
+              text: userTextWithFetchedData
             },
             ...imageContent
-          ] 
+          ]
         }
       ]
     })
@@ -140,7 +146,7 @@ export const getOpenAIChatCompletion = async (
     if (!completion) throw new Error('Chat completion data is undefined.')
     if (!completion.usage) throw new Error('Chat completion data is undefined.')
     if (completion.choices[0].finish_reason !== 'stop')
-    console.log(`AI message isn't complete.`)
+      console.log(`AI message isn't complete.`)
 
     let message = completion.choices[0].message?.content ?? ''
 

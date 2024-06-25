@@ -1,4 +1,4 @@
-import getOpenModelChatCompletion from '@/src/services/opensourceai'
+import getOpenModelChatCompletion from '@/src/services/llm/opensourceai'
 import { Message } from '@/src/types/chat'
 import fetchMock from 'jest-fetch-mock'
 

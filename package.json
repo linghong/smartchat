@@ -17,6 +17,7 @@
     "retrieve": "tsx -r dotenv/config src/services/fetchDataFromPinecone.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
     "@google/generative-ai": "^0.13.0",
     "@pinecone-database/pinecone": "^2.2.2",
     "aws-sdk": "^2.1470.0",
@@ -25,6 +26,7 @@
     "fs": "^0.0.1-security",
     "gpt-tokenizer": "^2.1.2",
     "groq-sdk": "^0.5.0",
+    "jimp": "^0.22.12",
     "langchain": "^0.0.96",
     "marked": "^13.0.0",
     "next": "^14.2.4",
@@ -76,3 +78,4 @@
     "tsx": "^4.15.6"
   }
 }
+
