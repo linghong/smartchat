@@ -8,7 +8,7 @@ describe('Footer component', () => {
     render(<Footer />);
     const footerElement = screen.getByRole('contentinfo');
     expect(footerElement).toBeInTheDocument();
-    expect(footerElement).toHaveClass('py-3 text-center opacity-40');
+    expect(footerElement).toHaveClass('py-2 text-center opacity-40 text-sm');
     expect(footerElement.textContent).toBe(
       'AI-generated responses may be inaccurate. Verify critical information.'
     );

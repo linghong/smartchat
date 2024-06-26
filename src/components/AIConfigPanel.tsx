@@ -32,7 +32,10 @@ const AIConfigPanel: FC<AIConfigPanelProps> = ({
     }
   `}
     >
-      <div className="flex flex-col w-full bg-gray-50 border-2 border-indigo-100  mb-2 p-4 shadow-lg shadow-slate-200">
+      <div className="flex flex-col w-full bg-gray-50 border-2 border-indigo-100 p-4 shadow-lg shadow-slate-200">
+        <div className="flex font-bold text-xl justify-center">
+          Config My AI Assistant
+        </div>
         <div className="flex flex-col lg:flex-row w-full justify-between">
           <DropdownSelect
             selectedOption={selectedModel}
@@ -53,7 +56,7 @@ const AIConfigPanel: FC<AIConfigPanelProps> = ({
           </label>
           <textarea
             id="userSystemPrompt"
-            rows={4}
+            rows={3}
             name="userSystemPrompt"
             onChange={handleBasePromptChange}
             value={basePrompt}

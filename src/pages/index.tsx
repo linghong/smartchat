@@ -296,7 +296,7 @@ const HomePage: FC<HomeProps> = ({
   }, [isNewChat]);
 
   return (
-    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 flex-grow mx-auto mt-2">
+    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 flex-grow mx-auto">
       {isPanelVisible && (
         <AIConfigPanel
           selectedModel={selectedModel}
@@ -310,11 +310,11 @@ const HomePage: FC<HomeProps> = ({
           isPanelVisible={isPanelVisible}
         />
       )}
-      <div className="flex flex-col flex-grow w-full">
-        <div className="flex flex-col h-[calc(100vh-440px) md:h-[calc(100vh-430px)] lg:h-[calc(100vh-400px)] w-full items-center">
-          <div
-            className={`w-full bg-white border-2 border-stone-200 overflow-y-auto`}
-          >
+      <div className="flex flex-col flex-grow w-full mt-1">
+        <div
+          className={`flex flex-col ${isPanelVisible ? 'h-[calc(100vh-440px) md:h-[calc(100vh-490px)] lg:h-[calc(100vh-440px)]' : 'h-[calc(100vh-200px) md:h-[calc(100vh-190px)] lg:h-[calc(100vh-150px)]'} w-full items-center bg-white border-2 border-stone-200`}
+        >
+          <div className={`w-full overflow-y-auto`}>
             <div
               className="w-full h-full overflow-y-auto rounded-lg"
               aria-live="polite"
@@ -336,61 +336,63 @@ const HomePage: FC<HomeProps> = ({
               ))}
             </div>
           </div>
-          {imageSrc.length > 0 && (
-            <ImageListWithModal
-              imageSrc={imageSrc}
-              handleImageDelete={handleImageDelete}
-              isDeleteIconShow={true}
-            />
-          )}
         </div>
       </div>
-      <div className="flex w-full justify-around items-center  my-1 border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg">
-        <div className="flex w-3/12 ms:w-2/12  sm:w-1/12 items-center justify-around md:mx-1">
-          <ButtonWithTooltip
-            icon={<RiScreenshot2Fill size={30} />}
-            onClick={handleScreenCapture}
-            ariaLabel="Capture Screenshot"
-            tooltipText="Capture Screenshot"
-            isDisabled={!isVisionModel}
-            tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+      <div className="flex flex-col w-full justify-around items-center  my-1">
+        {imageSrc.length > 0 && (
+          <ImageListWithModal
+            imageSrc={imageSrc}
+            handleImageDelete={handleImageDelete}
+            isDeleteIconShow={true}
           />
-          <ButtonWithTooltip
-            icon={
-              <ImageUploadIcon
-                onImageUpload={handleImageUpload}
-                isDisabled={!isVisionModel}
-              />
-            }
-            onClick={() => {}}
-            ariaLabel="Upload Image"
-            tooltipText="Upload Image"
-            isDisabled={!isVisionModel}
-            tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
-          />
+        )}
+        <div className="flex w-full justify-around items-center  my-1 border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg">
+          <div className="flex w-3/12 ms:w-2/12  sm:w-1/12 items-center justify-around md:mx-1">
+            <ButtonWithTooltip
+              icon={<RiScreenshot2Fill size={30} />}
+              onClick={handleScreenCapture}
+              ariaLabel="Capture Screenshot"
+              tooltipText="Capture Screenshot"
+              isDisabled={!isVisionModel}
+              tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+            />
+            <ButtonWithTooltip
+              icon={
+                <ImageUploadIcon
+                  onImageUpload={handleImageUpload}
+                  isDisabled={!isVisionModel}
+                />
+              }
+              onClick={() => {}}
+              ariaLabel="Upload Image"
+              tooltipText="Upload Image"
+              isDisabled={!isVisionModel}
+              tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+            />
+          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="flex items-center w-8/12 ms:w-9/12 xs:w-10/12 xl:w-11/12 px-2 py-1 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
+          >
+            <textarea
+              ref={textAreaRef}
+              disabled={loading}
+              autoFocus={false}
+              rows={rows}
+              id="userInput"
+              name="userInput"
+              className={`w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
+              placeholder="Click to send. Shift + Enter for a new line."
+              value={userInput}
+              onChange={handleInputChange}
+              aria-label="Enter your message here"
+            />
+            <ArrowButton
+              disabled={userInput === '' && imageSrc.length === 0}
+              aria-label="Send"
+            />
+          </form>
         </div>
-        <form
-          onSubmit={handleSubmit}
-          className="flex items-center w-8/12 ms:w-9/12 xs:w-10/12 xl:w-11/12 px-2 py-1 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
-        >
-          <textarea
-            ref={textAreaRef}
-            disabled={loading}
-            autoFocus={false}
-            rows={rows}
-            id="userInput"
-            name="userInput"
-            className={`w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
-            placeholder="Click to send. Shift + Enter for a new line."
-            value={userInput}
-            onChange={handleInputChange}
-            aria-label="Enter your message here"
-          />
-          <ArrowButton
-            disabled={userInput === '' && imageSrc.length === 0}
-            aria-label="Send"
-          />
-        </form>
       </div>
       {error && <Notification type="error" message={error} />}
       {imageError &&

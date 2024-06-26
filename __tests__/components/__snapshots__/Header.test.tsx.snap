@@ -3,7 +3,7 @@
 exports[`Header Component Header component snapshot 1`] = `
 <DocumentFragment>
   <header
-    class="w-full flex flx-col justify-between items-center bg-slate-400 p-2"
+    class="w-full flex flx-col justify-between items-center bg-slate-400 p-2 z-50"
   >
     <div
       class="flex w-1/3 xs:w-36 sm:w-52 md:w-48 lg:w-52 xl:w-56 items-center justify-between px-6 text-white text-md focus:bg-indigo-100"
@@ -50,17 +50,17 @@ exports[`Header Component Header component snapshot 1`] = `
       </button>
     </div>
     <div
-      class="flex flex-grow items-center justify-center  text-white text-md font-bold focus:bg-indigo-100 mx-auto"
+      class="flex flex-grow items-center justify-center text-white text-md font-bold focus:bg-indigo-100 mx-auto"
     >
       <div
-        class="text-xl font-bold text-center text-32xl"
+        class="font-bold text-center text-32xl px-2"
       >
         <h1>
           Chat With AI
         </h1>
       </div>
       <button
-        class="px-3 py-1 text-black rounded mb-2"
+        class="px-2 text-stone-400 text-sm rounded bg-stone-200"
       >
         Show Config
       </button>

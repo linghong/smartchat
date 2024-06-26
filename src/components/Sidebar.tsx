@@ -12,7 +12,7 @@ const Sidebar: FC<SidebarProps> = ({
   messageSubjectList
 }) => {
   return (
-    <ul className="px-2 py-5 ">
+    <ul className="px-2 pt-10 ">
       <MenuItem
         key="embedragfile"
         title="Embed RAG File"

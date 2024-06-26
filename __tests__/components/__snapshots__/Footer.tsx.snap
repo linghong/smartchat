@@ -3,7 +3,7 @@
 exports[`Footer component matches the snapshot 1`] = `
 <DocumentFragment>
   <footer
-    class="py-3 text-center opacity-40 text-sm"
+    class="py-2 text-center opacity-40 text-sm"
   >
     AI-generated responses may be inaccurate. Verify critical information.
   </footer>

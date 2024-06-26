@@ -37,12 +37,11 @@ const Header: FC<HeaderProps> = ({
   };
 
   const toggleConfigPanel = (e: MouseEvent<HTMLButtonElement>) => {
-    console.log('herr', isPanelVisible);
     setIsPanelVisible(!isPanelVisible);
   };
 
   return (
-    <header className="w-full flex flx-col justify-between items-center bg-slate-400 p-2">
+    <header className="w-full flex flx-col justify-between items-center bg-slate-400 p-2 z-50">
       <div className="flex w-1/3 xs:w-36 sm:w-52 md:w-48 lg:w-52 xl:w-56 items-center justify-between px-6 text-white text-md focus:bg-indigo-100">
         <button
           className={`${isSidebarOpen ? 'bg-slate-500 hover:bg-slate-700 focus:bg-stone-600' : ''}`}
@@ -60,13 +59,13 @@ const Header: FC<HeaderProps> = ({
           <AiOutlineForm size={21} />
         </button>
       </div>
-      <div className="flex flex-grow items-center justify-center  text-white text-md font-bold focus:bg-indigo-100 mx-auto">
-        <div className="text-xl font-bold text-center text-32xl">
+      <div className="flex flex-grow items-center justify-center text-white text-md font-bold focus:bg-indigo-100 mx-auto">
+        <div className="font-bold text-center text-32xl px-2">
           <h1>{pageCollection[pathName]}</h1>
         </div>
         <button
           onClick={toggleConfigPanel}
-          className="px-3 py-1 text-black rounded mb-2"
+          className="px-2 text-stone-400 text-sm rounded bg-stone-200"
         >
           {isPanelVisible ? 'Hide' : 'Show'} Config
         </button>

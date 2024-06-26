@@ -3,7 +3,7 @@
 exports[`Sidebar Component Sidebar component matches snapshot 1`] = `
 <DocumentFragment>
   <ul
-    class="px-2 py-5 "
+    class="px-2 pt-10 "
   >
     <li
       class="mt-5 my-8 font-semibold"
