@@ -1,12 +1,12 @@
-import { useState, useEffect, FC, ReactNode } from 'react'
-import Sidebar from '@/src/components/Sidebar'
-import Header from '@/src/components/Header'
-import Footer from '@/src/components/Footer'
+import { useState, useEffect, FC, ReactNode } from 'react';
+import Sidebar from '@/src/components/Sidebar';
+import Header from '@/src/components/Header';
+import Footer from '@/src/components/Footer';
 interface LayoutProps {
-  children: ReactNode
-  messageSubjectList: string[]
-  isPanelVisible: boolean
-  setIsPanelVisible: (isPanelVisible: boolean) => void
+  children: ReactNode;
+  messageSubjectList: string[];
+  isPanelVisible: boolean;
+  setIsPanelVisible: (isPanelVisible: boolean) => void;
 }
 
 const Layout: FC<LayoutProps> = ({
@@ -15,23 +15,23 @@ const Layout: FC<LayoutProps> = ({
   isPanelVisible,
   setIsPanelVisible
 }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const [isMobile, setIsMobile] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= 480)
-    }
+      setIsMobile(window.innerWidth <= 480);
+    };
 
     // Run on initial mount
-    checkIsMobile()
+    checkIsMobile();
 
-    window.addEventListener('resize', checkIsMobile)
+    window.addEventListener('resize', checkIsMobile);
 
     return () => {
-      window.removeEventListener('resize', checkIsMobile)
-    }
-  }, [])
+      window.removeEventListener('resize', checkIsMobile);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-screen">
@@ -78,7 +78,7 @@ const Layout: FC<LayoutProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

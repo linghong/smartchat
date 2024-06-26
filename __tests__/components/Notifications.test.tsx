@@ -1,15 +1,15 @@
-import React from 'react'
-import { render } from '@testing-library/react'
-import renderer from 'react-test-renderer'
-import Notifications from '@/src/components/Notifications'
+import React from 'react';
+import { render } from '@testing-library/react';
+import renderer from 'react-test-renderer';
+import Notifications from '@/src/components/Notifications';
 
 describe('Notifications Component', () => {
   it('renders loading notification when isLoading is true', () => {
     const { getByText } = render(
       <Notifications isLoading successMessage={null} errorMessage={null} />
-    )
-    expect(getByText('Uploading your data...')).toBeInTheDocument()
-  })
+    );
+    expect(getByText('Uploading your data...')).toBeInTheDocument();
+  });
 
   it('renders success message when provided', () => {
     const { getByText } = render(
@@ -18,9 +18,9 @@ describe('Notifications Component', () => {
         successMessage="Success"
         errorMessage={null}
       />
-    )
-    expect(getByText('Success')).toBeInTheDocument()
-  })
+    );
+    expect(getByText('Success')).toBeInTheDocument();
+  });
 
   it('renders error message when provided', () => {
     const { getByText } = render(
@@ -29,12 +29,12 @@ describe('Notifications Component', () => {
         successMessage={null}
         errorMessage="Error"
       />
-    )
-    expect(getByText('Error')).toBeInTheDocument()
-  })
+    );
+    expect(getByText('Error')).toBeInTheDocument();
+  });
 
   it('renders upload errors when provided', () => {
-    const uploadErrors = { file: 'File is too large' }
+    const uploadErrors = { file: 'File is too large' };
     const { getByText } = render(
       <Notifications
         isLoading={false}
@@ -42,12 +42,12 @@ describe('Notifications Component', () => {
         errorMessage={null}
         uploadErrors={uploadErrors}
       />
-    )
-    expect(getByText('File is too large')).toBeInTheDocument()
-  })
+    );
+    expect(getByText('File is too large')).toBeInTheDocument();
+  });
 
   it('renders input errors when provided', () => {
-    const inputErrors = { name: 'Name is required' }
+    const inputErrors = { name: 'Name is required' };
     const { getByText } = render(
       <Notifications
         isLoading={false}
@@ -55,9 +55,9 @@ describe('Notifications Component', () => {
         errorMessage={null}
         inputErrors={inputErrors}
       />
-    )
-    expect(getByText('Name is required')).toBeInTheDocument()
-  })
+    );
+    expect(getByText('Name is required')).toBeInTheDocument();
+  });
 
   it('matches the snapshot', () => {
     const tree = renderer
@@ -68,7 +68,7 @@ describe('Notifications Component', () => {
           errorMessage="Error"
         />
       )
-      .toJSON()
-    expect(tree).toMatchSnapshot()
-  })
-})
+      .toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+});

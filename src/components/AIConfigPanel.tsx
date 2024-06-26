@@ -1,17 +1,17 @@
-import React, { FC } from 'react'
-import DropdownSelect from '@/src/components/DropdownSelect'
-import { OptionType } from '@/src/types/common'
+import React, { FC } from 'react';
+import DropdownSelect from '@/src/components/DropdownSelect';
+import { OptionType } from '@/src/types/common';
 
 interface AIConfigPanelProps {
-  selectedModel: OptionType | null
-  handleModelChange: (selectedOption: OptionType | null) => void
-  selectedNamespace: OptionType | null
-  handleNamespaceChange: (selectedOption: OptionType | null) => void
-  basePrompt: string
-  handleBasePromptChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-  modelOptions: OptionType[]
-  fileCategoryOptions: OptionType[]
-  isPanelVisible: boolean
+  selectedModel: OptionType | null;
+  handleModelChange: (selectedOption: OptionType | null) => void;
+  selectedNamespace: OptionType | null;
+  handleNamespaceChange: (selectedOption: OptionType | null) => void;
+  basePrompt: string;
+  handleBasePromptChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  modelOptions: OptionType[];
+  fileCategoryOptions: OptionType[];
+  isPanelVisible: boolean;
 }
 
 const AIConfigPanel: FC<AIConfigPanelProps> = ({
@@ -63,7 +63,7 @@ const AIConfigPanel: FC<AIConfigPanelProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AIConfigPanel
+export default AIConfigPanel;

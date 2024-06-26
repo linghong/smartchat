@@ -1,12 +1,12 @@
-import { FC, MouseEvent } from 'react'
-import { AiOutlineMenu, AiOutlineForm } from 'react-icons/ai'
-import { useRouter } from 'next/router'
+import { FC, MouseEvent } from 'react';
+import { AiOutlineMenu, AiOutlineForm } from 'react-icons/ai';
+import { useRouter } from 'next/router';
 
 interface HeaderProps {
-  setIsSidebarOpen: (isSideBarOpen: boolean) => void
-  isSidebarOpen: boolean
-  isPanelVisible: boolean
-  setIsPanelVisible: (isPanelVisible: boolean) => void
+  setIsSidebarOpen: (isSideBarOpen: boolean) => void;
+  isSidebarOpen: boolean;
+  isPanelVisible: boolean;
+  setIsPanelVisible: (isPanelVisible: boolean) => void;
 }
 
 const Header: FC<HeaderProps> = ({
@@ -15,31 +15,31 @@ const Header: FC<HeaderProps> = ({
   isPanelVisible,
   setIsPanelVisible
 }) => {
-  const router = useRouter()
-  const pathName = router.pathname
+  const router = useRouter();
+  const pathName = router.pathname;
 
   const pageCollection: { [key: string]: string } = {
     '/': 'Chat With AI',
     '/finetunemodel': 'Finetune AI Model',
     '/embedragfile': 'Embed RAG File'
-  }
+  };
 
   const onNewChat = async () => {
     // await its completion to ensure that any state changes occur after navigating, so that the sidebar won't open before the navigation completes
-    await router.push('/')
+    await router.push('/');
     if (window.innerWidth <= 480) {
-      setIsSidebarOpen(false)
+      setIsSidebarOpen(false);
     }
-  }
+  };
 
   const toggleSidebar = (e: MouseEvent<HTMLButtonElement>) => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   const toggleConfigPanel = (e: MouseEvent<HTMLButtonElement>) => {
-    console.log('herr', isPanelVisible)
-    setIsPanelVisible(!isPanelVisible)
-  }
+    console.log('herr', isPanelVisible);
+    setIsPanelVisible(!isPanelVisible);
+  };
 
   return (
     <header className="w-full flex flx-col justify-between items-center bg-slate-400 p-2">
@@ -72,7 +72,7 @@ const Header: FC<HeaderProps> = ({
         </button>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

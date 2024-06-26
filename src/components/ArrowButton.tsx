@@ -1,8 +1,8 @@
-import { FC } from 'react'
+import { FC } from 'react';
 
 type ButtonProps = {
-  disabled: boolean
-}
+  disabled: boolean;
+};
 
 const ArrowButton: FC<ButtonProps> = ({ disabled = false }) => {
   return (
@@ -21,6 +21,6 @@ const ArrowButton: FC<ButtonProps> = ({ disabled = false }) => {
         </path>
       </svg>
     </button>
-  )
-}
-export default ArrowButton
+  );
+};
+export default ArrowButton;

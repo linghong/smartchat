@@ -1,14 +1,14 @@
-import { FC, ChangeEvent, Dispatch, SetStateAction } from 'react'
+import { FC, ChangeEvent, Dispatch, SetStateAction } from 'react';
 
 interface CheckboxProps {
-  label: string
-  setIsChecked: Dispatch<SetStateAction<boolean>>
+  label: string;
+  setIsChecked: Dispatch<SetStateAction<boolean>>;
 }
 
 const Checkbox: FC<CheckboxProps> = ({ label, setIsChecked }) => {
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(e.target.checked)
-  }
+    setIsChecked(e.target.checked);
+  };
 
   return (
     <div className="my-2">
@@ -22,6 +22,6 @@ const Checkbox: FC<CheckboxProps> = ({ label, setIsChecked }) => {
         {label}
       </label>
     </div>
-  )
-}
-export default Checkbox
+  );
+};
+export default Checkbox;

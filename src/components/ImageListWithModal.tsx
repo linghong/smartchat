@@ -1,13 +1,13 @@
-import { useState, FC } from 'react'
-import { RiCloseLargeFill } from 'react-icons/ri'
+import { useState, FC } from 'react';
+import { RiCloseLargeFill } from 'react-icons/ri';
 
-import ImageModal from '@/src/components/ImageModal'
-import { ImageFile } from '@/src/types/chat'
+import ImageModal from '@/src/components/ImageModal';
+import { ImageFile } from '@/src/types/chat';
 
 interface ImageListWithModalProps {
-  imageSrc: ImageFile[]
-  handleImageDelete: (index: number) => void
-  isDeleteIconShow?: boolean
+  imageSrc: ImageFile[];
+  handleImageDelete: (index: number) => void;
+  isDeleteIconShow?: boolean;
 }
 
 const ImageListWithModal: FC<ImageListWithModalProps> = ({
@@ -15,17 +15,17 @@ const ImageListWithModal: FC<ImageListWithModalProps> = ({
   handleImageDelete,
   isDeleteIconShow = false
 }) => {
-  const [modalOpen, setModalOpen] = useState<boolean>(false)
-  const [selectedImage, setSelectedImage] = useState<string>('')
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<string>('');
 
   const openModal = (imgSrc: string) => {
-    setSelectedImage(imgSrc)
-    setModalOpen(true)
-  }
+    setSelectedImage(imgSrc);
+    setModalOpen(true);
+  };
 
   const closeModal = () => {
-    setModalOpen(false)
-  }
+    setModalOpen(false);
+  };
 
   return (
     <>
@@ -66,7 +66,7 @@ const ImageListWithModal: FC<ImageListWithModalProps> = ({
       </div>
       {modalOpen && <ImageModal src={selectedImage} onClose={closeModal} />}
     </>
-  )
-}
+  );
+};
 
-export default ImageListWithModal
+export default ImageListWithModal;

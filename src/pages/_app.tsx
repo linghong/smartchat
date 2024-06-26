@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import type { AppProps } from 'next/app'
-import Head from 'next/head'
+import { useState } from 'react';
+import type { AppProps } from 'next/app';
+import Head from 'next/head';
 
-import Layout from '@/src/components/Layout'
-import '@/src/styles/globals.css'
+import Layout from '@/src/components/Layout';
+import '@/src/styles/globals.css';
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  const [isNewChat, setIsNewChat] = useState(false)
-  const [messageSubjectList, setMessageSubjectList] = useState<string[]>([])
-  const [isPanelVisible, setIsPanelVisible] = useState(true)
+  const [isNewChat, setIsNewChat] = useState(false);
+  const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
+  const [isPanelVisible, setIsPanelVisible] = useState(true);
 
   return (
     <>
@@ -31,7 +31,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         />
       </Layout>
     </>
-  )
-}
+  );
+};
 
-export default MyApp
+export default MyApp;

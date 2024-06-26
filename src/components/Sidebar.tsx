@@ -1,10 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC } from 'react';
 
-import MenuItem from '@/src/components/MenuItem'
+import MenuItem from '@/src/components/MenuItem';
 
 interface SidebarProps {
-  setIsSidebarOpen: (isSidebarOpen: boolean) => void
-  messageSubjectList: string[]
+  setIsSidebarOpen: (isSidebarOpen: boolean) => void;
+  messageSubjectList: string[];
 }
 
 const Sidebar: FC<SidebarProps> = ({
@@ -36,7 +36,7 @@ const Sidebar: FC<SidebarProps> = ({
         defaultOpen={true}
       />
     </ul>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

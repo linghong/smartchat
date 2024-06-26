@@ -6,40 +6,40 @@ import {
   ChangeEvent,
   FormEvent,
   FC
-} from 'react'
-import { GetStaticProps } from 'next'
-import { RiScreenshot2Fill } from 'react-icons/ri' //screenshot
+} from 'react';
+import { GetStaticProps } from 'next';
+import { RiScreenshot2Fill } from 'react-icons/ri'; //screenshot
 
-import { modelOptions } from '@/config/modellist'
-import AIConfigPanel from '@/src/components/AIConfigPanel'
-import ArrowButton from '@/src/components/ArrowButton'
-import ButtonWithTooltip from '@/src/components/ButtonWithTooltip'
-import ChatMessage from '@/src/components/ChatMessage'
-import DropdownSelect from '@/src/components/DropdownSelect'
-import ImageListWithModal from '@/src/components/ImageListWithModal'
-import ImageUploadIcon from '@/src/components/ImageUploadIcon'
-import Notification from '@/src/components/Notification'
-import { Message, ImageFile } from '@/src/types/chat'
-import { OptionType } from '@/src/types/common'
-import { fetchNamespaces } from '@/src/utils/fetchNamespaces'
-import { fileToBase64 } from '@/src/utils/fileFetchAndConversion'
-import { isSupportedImage } from '@/src/utils/mediaValidationHelper'
+import { modelOptions } from '@/config/modellist';
+import AIConfigPanel from '@/src/components/AIConfigPanel';
+import ArrowButton from '@/src/components/ArrowButton';
+import ButtonWithTooltip from '@/src/components/ButtonWithTooltip';
+import ChatMessage from '@/src/components/ChatMessage';
+import DropdownSelect from '@/src/components/DropdownSelect';
+import ImageListWithModal from '@/src/components/ImageListWithModal';
+import ImageUploadIcon from '@/src/components/ImageUploadIcon';
+import Notification from '@/src/components/Notification';
+import { Message, ImageFile } from '@/src/types/chat';
+import { OptionType } from '@/src/types/common';
+import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
+import { fileToBase64 } from '@/src/utils/fileFetchAndConversion';
+import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
 
 interface HomeProps {
-  namespaces: string[]
-  isNewChat: boolean
-  isPanelVisible: boolean
-  setIsNewChat: (value: boolean) => void
-  messageSubjectList: string[]
-  setMessageSubjectList: (messageSubjectList: string[]) => void
+  namespaces: string[];
+  isNewChat: boolean;
+  isPanelVisible: boolean;
+  setIsNewChat: (value: boolean) => void;
+  messageSubjectList: string[];
+  setMessageSubjectList: (messageSubjectList: string[]) => void;
 }
 
-const initialFileCategory: OptionType = { value: 'none', label: 'None' }
+const initialFileCategory: OptionType = { value: 'none', label: 'None' };
 
 const initialMessage = {
   question: '',
   answer: 'Hi, how can I assist you?'
-}
+};
 
 const HomePage: FC<HomeProps> = ({
   namespaces,
@@ -49,8 +49,8 @@ const HomePage: FC<HomeProps> = ({
   setMessageSubjectList,
   isPanelVisible
 }) => {
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const messagesRef = useRef<HTMLDivElement | null>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesRef = useRef<HTMLDivElement | null>(null);
 
   const fileCategoryOptions =
     namespaces.length === 0
@@ -58,27 +58,27 @@ const HomePage: FC<HomeProps> = ({
       : [
           initialFileCategory,
           ...namespaces.map(ns => ({ value: ns, label: ns }))
-        ]
+        ];
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>(
     initialFileCategory
-  )
+  );
 
   const [selectedModel, setSelectedModel] = useState<OptionType | null>(
     modelOptions[0]
-  )
-  const [basePrompt, setBasePrompt] = useState('')
+  );
+  const [basePrompt, setBasePrompt] = useState('');
 
-  const [userInput, setUserInput] = useState<string>('')
-  const [rows, setRows] = useState<number>(1)
-  const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage])
+  const [userInput, setUserInput] = useState<string>('');
+  const [rows, setRows] = useState<number>(1);
+  const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
 
-  const [imageSrc, setImageSrc] = useState<ImageFile[]>([])
-  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]])
-  const [isVisionModel, setIsVisionModel] = useState(true)
-  const [imageError, setImageError] = useState<string[]>([])
+  const [imageSrc, setImageSrc] = useState<ImageFile[]>([]);
+  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]);
+  const [isVisionModel, setIsVisionModel] = useState(true);
+  const [imageError, setImageError] = useState<string[]>([]);
 
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchChatResponse = useCallback(
     async (
@@ -102,54 +102,56 @@ const HomePage: FC<HomeProps> = ({
             namespace,
             selectedModel
           })
-        })
+        });
 
         //handling server-side errors
         if (!response.ok) {
-          const errorData = await response.json()
+          const errorData = await response.json();
 
-          setError('There is a server side error. Try it again later.')
-          setLoading(false)
-          return
+          setError('There is a server side error. Try it again later.');
+          setLoading(false);
+          return;
         }
 
-        const data = await response.json()
+        const data = await response.json();
 
         setChatHistory([
           ...chatHistory.slice(0, chatHistory.length),
           { question: userInput, answer: data.answer }
-        ])
+        ]);
 
-        setMessageSubjectList([...messageSubjectList, data.subject])
+        setMessageSubjectList([...messageSubjectList, data.subject]);
 
-        setLoading(false)
+        setLoading(false);
       } catch (error) {
-        setLoading(false)
-        setError('An error occurred while fetching the data. Please try again.')
-        console.error('error', error)
+        setLoading(false);
+        setError(
+          'An error occurred while fetching the data. Please try again.'
+        );
+        console.error('error', error);
       }
     },
     [userInput, chatHistory, messageSubjectList, setMessageSubjectList]
-  )
+  );
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
+      e.preventDefault();
 
-      const question: string = userInput.trim()
+      const question: string = userInput.trim();
 
       // prevent form submission if nothing is entered
-      if (question.length === 0 && imageSrc.length === 0) return
+      if (question.length === 0 && imageSrc.length === 0) return;
 
-      setImageSrcHistory(prev => [...prev, imageSrc])
+      setImageSrcHistory(prev => [...prev, imageSrc]);
 
-      setChatHistory(prev => [...prev, { question: userInput, answer: '' }])
+      setChatHistory(prev => [...prev, { question: userInput, answer: '' }]);
 
-      setError(null)
-      setLoading(true)
-      setUserInput('')
-      setImageSrc([])
-      setRows(1) // Reset the textarea rows to initial state
+      setError(null);
+      setLoading(true);
+      setUserInput('');
+      setImageSrc([]);
+      setRows(1); // Reset the textarea rows to initial state
 
       fetchChatResponse(
         basePrompt,
@@ -157,7 +159,7 @@ const HomePage: FC<HomeProps> = ({
         imageSrc,
         selectedModel,
         selectedNamespace?.value || 'none'
-      )
+      );
     },
     [
       basePrompt,
@@ -167,131 +169,131 @@ const HomePage: FC<HomeProps> = ({
       selectedModel,
       selectedNamespace?.value
     ]
-  )
+  );
 
   const handleModelChange = (selectedOption: OptionType | null) => {
-    setIsVisionModel(!!selectedOption?.vision)
-    setSelectedModel(selectedOption)
-  }
+    setIsVisionModel(!!selectedOption?.vision);
+    setSelectedModel(selectedOption);
+  };
 
   const handleNamespaceChange = (selectedOption: OptionType | null) => {
-    setSelectedNamespace(selectedOption)
-  }
+    setSelectedNamespace(selectedOption);
+  };
 
   const handleBasePromptChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const basePrompt = e.target.value
-    setBasePrompt(basePrompt)
-  }
+    const basePrompt = e.target.value;
+    setBasePrompt(basePrompt);
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value
-    setUserInput(newValue)
-    const newRows = newValue.match(/\n/g)?.length ?? 0
-    setRows(newRows + 1)
-  }
+    const newValue = e.target.value;
+    setUserInput(newValue);
+    const newRows = newValue.match(/\n/g)?.length ?? 0;
+    setRows(newRows + 1);
+  };
 
   const handleImageUpload = async (file: File) => {
-    if (!isVisionModel) return
-    if (!file) return
+    if (!isVisionModel) return;
+    if (!file) return;
 
     try {
-      const base64Image = await fileToBase64(file)
+      const base64Image = await fileToBase64(file);
       const newImage = {
         base64Image,
         mimeType: file.type,
         size: file.size,
         name: file.name
-      }
+      };
 
       const imageVadiationError = isSupportedImage(
         selectedModel?.value || '',
         newImage
-      )
+      );
       if (imageVadiationError.length !== 0) {
-        setImageError([...imageError, ...imageVadiationError])
-        return
+        setImageError([...imageError, ...imageVadiationError]);
+        return;
       }
 
-      setImageSrc([...imageSrc, newImage])
+      setImageSrc([...imageSrc, newImage]);
     } catch {
-      throw new Error('Failed to read the file.')
+      throw new Error('Failed to read the file.');
     }
-  }
+  };
 
   const handleImageDelete = (id: number) => {
-    setImageSrc([...imageSrc.slice(0, id), ...imageSrc.slice(id + 1)])
-  }
+    setImageSrc([...imageSrc.slice(0, id), ...imageSrc.slice(id + 1)]);
+  };
 
   const handleScreenCapture = async () => {
     try {
-      const response = await fetch('/api/screenshot', { method: 'POST' })
+      const response = await fetch('/api/screenshot', { method: 'POST' });
       const { message, base64Image, mimeType, size, name } =
-        await response.json()
+        await response.json();
 
       if (!response.ok) {
-        alert(message)
-        return
+        alert(message);
+        return;
       }
 
-      const newImage = { message, base64Image, mimeType, size, name }
+      const newImage = { message, base64Image, mimeType, size, name };
 
       //Image mimeType and size validation
       const imageVadiationError = isSupportedImage(
         selectedModel?.value || '',
         newImage
-      )
+      );
       if (imageVadiationError.length !== 0) {
-        setImageError([...imageError, ...imageVadiationError])
-        return
+        setImageError([...imageError, ...imageVadiationError]);
+        return;
       }
 
-      setImageSrc([...imageSrc, newImage])
+      setImageSrc([...imageSrc, newImage]);
     } catch (error) {
-      console.error('Error:', error)
-      alert('An error occurred while capturing the screen')
+      console.error('Error:', error);
+      alert('An error occurred while capturing the screen');
     }
-  }
+  };
 
   useEffect(() => {
     const keyDownHandler = (e: KeyboardEvent) => {
-      if (e.key !== 'Enter') return
-      e.preventDefault()
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
 
       //insert newline \n when using shift + enter
       if (e.shiftKey) {
-        setUserInput(prevState => prevState + '\n')
-        setRows(rows => rows + 1)
+        setUserInput(prevState => prevState + '\n');
+        setRows(rows => rows + 1);
       } else {
-        handleSubmit(e as any)
-        setRows(1)
+        handleSubmit(e as any);
+        setRows(1);
       }
-    }
-    const currentTextArea = textAreaRef.current
+    };
+    const currentTextArea = textAreaRef.current;
     if (currentTextArea) {
-      currentTextArea.addEventListener('keydown', keyDownHandler)
-      currentTextArea.scrollTop = currentTextArea.scrollHeight
+      currentTextArea.addEventListener('keydown', keyDownHandler);
+      currentTextArea.scrollTop = currentTextArea.scrollHeight;
     }
 
     return () => {
       if (currentTextArea) {
-        currentTextArea.removeEventListener('keydown', keyDownHandler)
+        currentTextArea.removeEventListener('keydown', keyDownHandler);
       }
-    }
-  }, [handleSubmit])
+    };
+  }, [handleSubmit]);
 
   useEffect(() => {
     if (messagesRef.current !== null) {
-      messagesRef.current.scrollTop = messagesRef.current.scrollHeight
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
-  }, [chatHistory])
+  }, [chatHistory]);
 
   useEffect(() => {
     if (isNewChat) {
-      setChatHistory([initialMessage])
-      setIsNewChat(false)
+      setChatHistory([initialMessage]);
+      setIsNewChat(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNewChat])
+  }, [isNewChat]);
 
   return (
     <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 flex-grow mx-auto mt-2">
@@ -396,17 +398,17 @@ const HomePage: FC<HomeProps> = ({
           <Notification key={i} type="error" message={err} />
         ))}
     </div>
-  )
-}
-export default HomePage
+  );
+};
+export default HomePage;
 
 export const getStaticProps: GetStaticProps = async () => {
-  const namespaces = await fetchNamespaces()
+  const namespaces = await fetchNamespaces();
 
   return {
     props: {
       namespaces
     },
     revalidate: 60 * 60 * 24 // Regenerate the page after every 24 hours
-  }
-}
+  };
+};

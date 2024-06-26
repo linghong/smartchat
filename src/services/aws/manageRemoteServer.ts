@@ -1,8 +1,8 @@
-import { Client } from 'ssh2'
+import { Client } from 'ssh2';
 
 interface SSHError {
-  message: string
-  status: string
+  message: string;
+  status: string;
 }
 
 const executeCommand = (
@@ -12,42 +12,42 @@ const executeCommand = (
   command: string
 ): Promise<{ message: string }> => {
   return new Promise((resolve, reject) => {
-    const conn = new Client()
+    const conn = new Client();
 
     conn
       .on('ready', () => {
         conn.exec(command, (err: SSHError, stream: any) => {
           if (err) {
-            conn.end()
-            return reject(err)
+            conn.end();
+            return reject(err);
           }
 
           stream
             .on('close', (code: any, signal = null) => {
               console.log(
                 'Stream :: close :: code: ' + code + ', signal: ' + signal
-              )
-              conn.end()
+              );
+              conn.end();
 
               if (code === 0) {
-                resolve({ message: 'Main app started' })
+                resolve({ message: 'Main app started' });
               } else {
-                reject({ message: 'Failed to start main app', code })
+                reject({ message: 'Failed to start main app', code });
               }
             }) // Removed the .on('data') event listener
             .stderr.on('data', (data: any) => {
-              console.log('STDERR: ' + data)
-            })
-        })
+              console.log('STDERR: ' + data);
+            });
+        });
       })
       .connect({
         host: instanceIP,
         port: 22,
         username: userName,
         privateKey: require('fs').readFileSync(pemPath)
-      })
-  })
-}
+      });
+  });
+};
 
 export const manageServer = (
   instanceIP: string,
@@ -56,6 +56,6 @@ export const manageServer = (
   appName: string,
   action: 'start' | 'stop'
 ): Promise<{ message: string }> => {
-  const command = `systemctl ${action} ${appName}`
-  return executeCommand(instanceIP, userName, pemPath, command)
-}
+  const command = `systemctl ${action} ${appName}`;
+  return executeCommand(instanceIP, userName, pemPath, command);
+};

@@ -1,17 +1,17 @@
-import Image from 'next/image'
+import Image from 'next/image';
 
-import { Message, ImageFile } from '@/src/types/chat'
-import ImageListWithModal from '@/src/components/ImageListWithModal'
+import { Message, ImageFile } from '@/src/types/chat';
+import ImageListWithModal from '@/src/components/ImageListWithModal';
 
 type ChatMessageProps = {
-  index: number
-  message: Message
-  lastIndex: boolean
-  loading: boolean
-  imageSrc: ImageFile[]
-  modelName: string
-  handleImageDelete: (e: any) => void
-}
+  index: number;
+  message: Message;
+  lastIndex: boolean;
+  loading: boolean;
+  imageSrc: ImageFile[];
+  modelName: string;
+  handleImageDelete: (e: any) => void;
+};
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
   index,
@@ -23,8 +23,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   handleImageDelete
 }) => {
   const convertNewlinesToBreaks = (text: string) => {
-    return text.replace(/\n/g, '<br>')
-  }
+    return text.replace(/\n/g, '<br>');
+  };
 
   return (
     <>
@@ -84,7 +84,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         </article>
       }
     </>
-  )
-}
+  );
+};
 
-export default ChatMessage
+export default ChatMessage;

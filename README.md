@@ -21,7 +21,7 @@ This models generate responses to user messages, and send back to the SmatChat p
 
 ### Multimodal Response
 
-Users can upload one or more images or take desktop screenshots, and ask questions about them, or combine them with text input, including fetched information from Retrieval-Augmented Generation (RAG). The chatbot can then provide a comprehensive response. 
+Users can upload one or more images or take desktop screenshots, and ask questions about them, or combine them with text input, including fetched information from Retrieval-Augmented Generation (RAG). The chatbot can then provide a comprehensive response.
 
 The following models support those capabilities:
 1.GPT-4o and GPT4 Turbo
@@ -79,6 +79,7 @@ Here are some screenshots that illustrate various features of the SmartChat plat
 ## Getting Started
 
 ### Clone the Repository and Install Dependency:
+
 support nodejs v18 and plus
 
 ```bash
@@ -116,17 +117,18 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### Lint and CI/CD
 
-
 ## Deployment
 
 You can deploy the app to any cloud environment, just as you would with other Next.js apps. For a seamless deployment experience, consider using the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), which is recommended by the creators of Next.js.
 
-
 ## How to Contribute
+
 Whether you want to report a bug, improve documentation, or contribute code, your help is greatly appreciated.
 
 ### Steps to COntribute
-1. Fork and clone the Repository, install dependencies, ensure you have NodeJS(v18, v19, v20) installed, create a new branch for your feature or bugfix. 
+
+1. Fork and clone the Repository, install dependencies, ensure you have NodeJS(v18, v19, v20) installed, create a new branch for your feature or bugfix.
+
 ```
 git clone https://github.com/linghong/smartchat.git
 cd smartchat
@@ -134,18 +136,21 @@ yarn install
 git checkout -b feature-or-bugfix-name
 ```
 
-2. Implement your changes and write test code. 
+2. Implement your changes and write test code.
 
 3. Run lint, prettier and tests: Ensure all tests pass and your code follows the project’s linting and formatting rules:
+
 ```bash
 yarn lint
 yarn prettier:check
 yarn prettier:fix
 yarn test
 ```
+
 4. Commit your changes with a clear message and push to your fork. Open a pull request to the main repository, detailing your changes and any related issues.
 
 ## Issues and Feature Requests
+
 If you encounter any problems or have suggestions for improvements, please open an issue. Provide as much detail as possible to help us understand and address the issue quickly.
 
 We are always looking to improve SmartChat. If you have an idea for a new feature and want to contribute it, please open a feature request and describe your idea in detail.

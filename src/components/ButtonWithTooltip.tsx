@@ -1,12 +1,12 @@
-import React, { FC } from 'react'
+import React, { FC } from 'react';
 
 interface TooltipButtonProps {
-  icon: React.ReactNode
-  onClick: () => void
-  ariaLabel: string
-  tooltipText: string
-  isDisabled: boolean
-  tooltipDisabledText: string
+  icon: React.ReactNode;
+  onClick: () => void;
+  ariaLabel: string;
+  tooltipText: string;
+  isDisabled: boolean;
+  tooltipDisabledText: string;
 }
 
 const ButtonWithTooltip: FC<TooltipButtonProps> = ({
@@ -31,7 +31,7 @@ const ButtonWithTooltip: FC<TooltipButtonProps> = ({
         {isDisabled ? tooltipDisabledText : tooltipText}
       </span>
     </div>
-  )
-}
+  );
+};
 
-export default ButtonWithTooltip
+export default ButtonWithTooltip;

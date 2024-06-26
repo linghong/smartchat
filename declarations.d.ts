@@ -1,1 +1,1 @@
-declare module 'jest-fetch-mock'
+declare module 'jest-fetch-mock';

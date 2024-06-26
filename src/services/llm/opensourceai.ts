@@ -1,6 +1,6 @@
-import { NEXT_PUBLIC_SERVER_SECRET_KEY } from '@/config/env'
-import { Message } from '@/src/types/chat'
-import { OptionType } from '@/src/types/common'
+import { NEXT_PUBLIC_SERVER_SECRET_KEY } from '@/config/env';
+import { Message } from '@/src/types/chat';
+import { OptionType } from '@/src/types/common';
 
 const getOpenModelChatCompletion = async (
   basePrompt: string,
@@ -10,7 +10,7 @@ const getOpenModelChatCompletion = async (
   selectedModel: OptionType,
   serverURL: string
 ): Promise<string | undefined> => {
-  if (!NEXT_PUBLIC_SERVER_SECRET_KEY) return undefined
+  if (!NEXT_PUBLIC_SERVER_SECRET_KEY) return undefined;
 
   const data = {
     question: userMessage,
@@ -18,7 +18,7 @@ const getOpenModelChatCompletion = async (
     chatHistory,
     selectedModel: selectedModel.value,
     fetchedText
-  }
+  };
 
   try {
     const res = await fetch(serverURL, {
@@ -28,17 +28,17 @@ const getOpenModelChatCompletion = async (
         Authorization: 'Bearer ' + NEXT_PUBLIC_SERVER_SECRET_KEY
       },
       body: JSON.stringify(data)
-    })
+    });
 
     if (!res.ok) {
-      throw new Error(`Network response was not ok: ${res.statusText}`)
+      throw new Error(`Network response was not ok: ${res.statusText}`);
     }
 
-    return (await res.json()).message
+    return (await res.json()).message;
   } catch (error: any) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
-}
+};
 
-export default getOpenModelChatCompletion
+export default getOpenModelChatCompletion;

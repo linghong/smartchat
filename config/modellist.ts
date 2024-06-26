@@ -1,4 +1,4 @@
-import { OptionType } from '@/src/types/common'
+import { OptionType } from '@/src/types/common';
 
 const modelOptions: OptionType[] = [
   {
@@ -106,6 +106,6 @@ const modelOptions: OptionType[] = [
     contextWindow: 8192,
     vision: false
   }
-]
+];
 
-export { modelOptions }
+export { modelOptions };

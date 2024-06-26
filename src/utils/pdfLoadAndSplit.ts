@@ -8,28 +8,31 @@
  *
  * Due to the complexity and variability of PDF file structures, particularly those with embedded tables, the current implementation is primarily targeted at handling non-tabular English-language text for a significantly better outcome than the original Langchain method.
  */
-import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
+import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
 type Document = {
-  pageContent: string
-  metadata: Record<string, any>
-}
+  pageContent: string;
+  metadata: Record<string, any>;
+};
 
 const joinBrokenSentence = (pageContent: string): string => {
   // Handle words that got split between lines, or two words that are combined into one.
-  let text = pageContent.replace(/-\n/g, '').replace(/\n-/g, '-')
+  let text = pageContent.replace(/-\n/g, '').replace(/\n-/g, '-');
 
   // Replaces newline characters that are part of numbered lists.
-  text = text.replace(/(?<=^\b[0-9a-zA-Z]{1}\.|•)\n/gm, ' ')
+  text = text.replace(/(?<=^\b[0-9a-zA-Z]{1}\.|•)\n/gm, ' ');
 
   // Replace newline characters that less likely represent sentence boundaries.
   //This occurs when both the preceding characters are not typical sentence endings and the following characters do not typically start a sentence.
   //The '?' character is excluded from this process to prevent splitting potential answers.
-  text = text.replace(/(?<![.!] *\)*|[.!]") *\n(?= *[a-z0-9!?:;,.@%&$ ])/g, ' ')
+  text = text.replace(
+    /(?<![.!] *\)*|[.!]") *\n(?= *[a-z0-9!?:;,.@%&$ ])/g,
+    ' '
+  );
 
-  return text
-}
+  return text;
+};
 
 const loadAndSplit = async (
   docPath: string,
@@ -37,12 +40,12 @@ const loadAndSplit = async (
   chunkOverlap: number
 ): Promise<Document[]> => {
   try {
-    const loader = new PDFLoader(docPath, { splitPages: false })
-    const document = await loader.load()
+    const loader = new PDFLoader(docPath, { splitPages: false });
+    const document = await loader.load();
 
-    const metadata: Record<string, any> = await document[0].metadata
+    const metadata: Record<string, any> = await document[0].metadata;
 
-    const preparedText = joinBrokenSentence(document[0].pageContent)
+    const preparedText = joinBrokenSentence(document[0].pageContent);
 
     // The regex used as separators serves the following purposes:
     // 1.'(?<![.!] *\)*|[.!]")\n': split when newline characters that are more likely to be at the end of a sentence.
@@ -60,18 +63,18 @@ const loadAndSplit = async (
         ' ',
         ''
       ]
-    })
+    });
 
     const documents: Document[] = await splitter.createDocuments(
       [preparedText],
       [metadata]
-    )
+    );
 
-    return documents
+    return documents;
   } catch (e) {
-    console.error(e)
-    throw new Error(`Failed to load or split document: ${e}`)
+    console.error(e);
+    throw new Error(`Failed to load or split document: ${e}`);
   }
-}
+};
 
-export default loadAndSplit
+export default loadAndSplit;

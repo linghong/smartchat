@@ -1,18 +1,18 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom'
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
 
-import UploadFile from '@/src/components/UploadFile'
+import UploadFile from '@/src/components/UploadFile';
 
 // Mock component props
-const label = 'Upload Training Data: '
-const fileType = '.pdf'
-const name = 'uploadFile'
-const uploadErrors = { file: null }
+const label = 'Upload Training Data: ';
+const fileType = '.pdf';
+const name = 'uploadFile';
+const uploadErrors = { file: null };
 
 const setup = () => {
-  const setUploadErrors = jest.fn()
-  const setSelectedUpload = jest.fn()
+  const setUploadErrors = jest.fn();
+  const setSelectedUpload = jest.fn();
 
   render(
     <UploadFile
@@ -23,41 +23,41 @@ const setup = () => {
       setUploadErrors={setUploadErrors}
       setSelectedUpload={setSelectedUpload}
     />
-  )
+  );
 
-  const input = screen.getByTestId('fileInput') as HTMLInputElement
+  const input = screen.getByTestId('fileInput') as HTMLInputElement;
   return {
     input,
     setUploadErrors,
     setSelectedUpload
-  }
-}
+  };
+};
 
 describe('UploadFile Component', () => {
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   it('renders UploadFile component', () => {
-    const { input } = setup()
-    expect(input).toBeInTheDocument()
-  })
+    const { input } = setup();
+    expect(input).toBeInTheDocument();
+  });
 
   test('handles file change event', async () => {
-    const { input, setSelectedUpload, setUploadErrors } = setup()
+    const { input, setSelectedUpload, setUploadErrors } = setup();
     const file = new File(['dummy content'], 'example.pdf', {
       type: 'application/pdf'
-    })
-    await userEvent.upload(input, file)
+    });
+    await userEvent.upload(input, file);
 
-    expect(setSelectedUpload).toHaveBeenCalledWith(expect.any(Function))
+    expect(setSelectedUpload).toHaveBeenCalledWith(expect.any(Function));
 
     // Grab the callback function and test it
-    const callback = setSelectedUpload.mock.calls[0][0] // get the first argument of the first call
-    const dummyPrevState = {}
-    const newState = callback(dummyPrevState)
-    expect(newState[name]).toBe(file)
-  })
+    const callback = setSelectedUpload.mock.calls[0][0]; // get the first argument of the first call
+    const dummyPrevState = {};
+    const newState = callback(dummyPrevState);
+    expect(newState[name]).toBe(file);
+  });
 
   /*test('handles file size error', () => {
     const { input, setUploadError } = setup();
@@ -80,8 +80,8 @@ describe('UploadFile Component', () => {
         setUploadErrors={jest.fn}
         setSelectedUpload={jest.fn}
       />
-    )
+    );
 
-    expect(asFragment()).toMatchSnapshot()
-  })
-})
+    expect(asFragment()).toMatchSnapshot();
+  });
+});

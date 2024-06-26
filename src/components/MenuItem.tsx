@@ -1,14 +1,14 @@
-import React, { useState, FC } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai'
+import React, { useState, FC } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
 
 interface MenuItemProps {
-  title: string
-  link?: string
-  itemList: string[]
-  defaultOpen?: boolean
-  setIsSidebarOpen?: (isSidebarOpen: boolean) => void
+  title: string;
+  link?: string;
+  itemList: string[];
+  defaultOpen?: boolean;
+  setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
 }
 
 const MenuItem: FC<MenuItemProps> = ({
@@ -18,23 +18,23 @@ const MenuItem: FC<MenuItemProps> = ({
   defaultOpen = false,
   setIsSidebarOpen
 }) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  const router = useRouter()
-  const isActive = link && router.pathname === link
+  const router = useRouter();
+  const isActive = link && router.pathname === link;
 
-  const toggle = () => setIsOpen(!isOpen)
+  const toggle = () => setIsOpen(!isOpen);
 
   const handleLinkClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
+    e.preventDefault();
     if (link) {
       // await its completion to ensure that any state changes occur after navigating, so that the sidebar won't open before the navigation completes
-      await router.push(link)
+      await router.push(link);
       if (setIsSidebarOpen && window.innerWidth <= 480) {
-        setIsSidebarOpen(false)
+        setIsSidebarOpen(false);
       }
     }
-  }
+  };
 
   return (
     <li className="mt-5 my-8 font-semibold">
@@ -69,7 +69,7 @@ const MenuItem: FC<MenuItemProps> = ({
         </ul>
       )}
     </li>
-  )
-}
+  );
+};
 
-export default MenuItem
+export default MenuItem;

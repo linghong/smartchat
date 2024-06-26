@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC } from 'react';
 import Select, {
   CSSObjectWithLabel,
   StylesConfig,
@@ -6,20 +6,20 @@ import Select, {
   GroupBase,
   ActionMeta,
   SingleValue
-} from 'react-select'
+} from 'react-select';
 
-import dynamic from 'next/dynamic'
-import { OptionType } from '@/src/types/common'
+import dynamic from 'next/dynamic';
+import { OptionType } from '@/src/types/common';
 
 interface DropdownSelectProps {
-  selectedOption: OptionType | null
+  selectedOption: OptionType | null;
   onChange: (
     selectedOption: SingleValue<OptionType>,
     actionMeta: ActionMeta<OptionType>
-  ) => void
-  options: OptionType[]
-  label: string
-  name?: string
+  ) => void;
+  options: OptionType[];
+  label: string;
+  name?: string;
 }
 
 // Styles for the dropdown
@@ -48,7 +48,7 @@ const customStyles: StylesConfig<OptionType, false> = {
     borderRadius: '12px',
     backgroundColor: '#eef0f7'
   })
-}
+};
 
 const StaticDropdownSelect: FC<DropdownSelectProps> = ({
   selectedOption,
@@ -57,7 +57,7 @@ const StaticDropdownSelect: FC<DropdownSelectProps> = ({
   label,
   name = undefined
 }) => {
-  const dropdownId = `${label.replace(/\s+/g, '-').toLowerCase()}`
+  const dropdownId = `${label.replace(/\s+/g, '-').toLowerCase()}`;
 
   return (
     <div className="my-2">
@@ -73,12 +73,12 @@ const StaticDropdownSelect: FC<DropdownSelectProps> = ({
         name={name}
       />
     </div>
-  )
-}
+  );
+};
 
 const DropdownSelect = dynamic<DropdownSelectProps>(
   () => Promise.resolve(StaticDropdownSelect),
   { ssr: false }
-)
+);
 
-export default DropdownSelect
+export default DropdownSelect;

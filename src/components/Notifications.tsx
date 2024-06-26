@@ -1,15 +1,15 @@
-import React, { FC } from 'react'
+import React, { FC } from 'react';
 
-import { InputErrors, UploadErrors } from '@/src/types/common'
-import Notification from '@/src/components/Notification'
+import { InputErrors, UploadErrors } from '@/src/types/common';
+import Notification from '@/src/components/Notification';
 
 interface Notifications {
-  isLoading: boolean
-  loadingMessage: string
-  successMessage: string | null
-  errorMessage: string | null
-  uploadErrors?: UploadErrors
-  inputErrors?: InputErrors
+  isLoading: boolean;
+  loadingMessage: string;
+  successMessage: string | null;
+  errorMessage: string | null;
+  uploadErrors?: UploadErrors;
+  inputErrors?: InputErrors;
 }
 
 const Notifications: FC<Notifications> = ({
@@ -20,24 +20,24 @@ const Notifications: FC<Notifications> = ({
   uploadErrors,
   inputErrors
 }) => {
-  const notifications = []
+  const notifications = [];
 
   if (isLoading) {
     notifications.push(
       <Notification key="loading" type="loading" message={loadingMessage} />
-    )
+    );
   }
 
   if (successMessage) {
     notifications.push(
       <Notification key="success" type="success" message={successMessage} />
-    )
+    );
   }
 
   if (errorMessage) {
     notifications.push(
       <Notification key="error" type="error" message={errorMessage} />
-    )
+    );
   }
 
   if (uploadErrors)
@@ -48,8 +48,8 @@ const Notifications: FC<Notifications> = ({
           type="error"
           message={uploadErrors[key]}
         />
-      )
-    })
+      );
+    });
 
   if (inputErrors)
     Object.keys(inputErrors).forEach(key => {
@@ -59,10 +59,10 @@ const Notifications: FC<Notifications> = ({
           type="error"
           message={inputErrors[key]}
         />
-      )
-    })
+      );
+    });
 
-  return notifications
-}
+  return notifications;
+};
 
-export default Notifications
+export default Notifications;

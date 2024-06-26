@@ -1,10 +1,10 @@
 // components/ImageModal.tsx
-import React from 'react'
-import Image from 'next/image'
+import React from 'react';
+import Image from 'next/image';
 
 interface ImageModalProps {
-  src: string
-  onClose: () => void
+  src: string;
+  onClose: () => void;
 }
 
 const ImageModal: React.FC<ImageModalProps> = ({ src, onClose }) => {
@@ -26,15 +26,15 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, onClose }) => {
       <button
         className="absolute top-5 right-5 text-white text-3xl"
         onClick={e => {
-          e.stopPropagation()
-          onClose()
+          e.stopPropagation();
+          onClose();
         }}
         aria-label="Close image view"
       >
         &times;
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default ImageModal
+export default ImageModal;

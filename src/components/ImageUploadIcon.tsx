@@ -1,28 +1,28 @@
-import React, { useRef, ChangeEvent, FC } from 'react'
-import { RiImageAddFill } from 'react-icons/ri'
+import React, { useRef, ChangeEvent, FC } from 'react';
+import { RiImageAddFill } from 'react-icons/ri';
 interface ImageUploadIconProps {
-  onImageUpload: (file: File) => void
-  isDisabled: boolean
+  onImageUpload: (file: File) => void;
+  isDisabled: boolean;
 }
 
 const ImageUploadIcon: FC<ImageUploadIconProps> = ({
   onImageUpload,
   isDisabled
 }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Trigger the file input when onKeyDown is fired
   const handleIconClick = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (isDisabled) return
-    const file = event.target.files ? event.target.files[0] : null
+    if (isDisabled) return;
+    const file = event.target.files ? event.target.files[0] : null;
     if (file) {
-      onImageUpload(file)
+      onImageUpload(file);
     }
-  }
+  };
 
   return (
     <label
@@ -48,7 +48,7 @@ const ImageUploadIcon: FC<ImageUploadIconProps> = ({
         aria-hidden="true" // Hides the icon from screen readers
       />
     </label>
-  )
-}
+  );
+};
 
-export default ImageUploadIcon
+export default ImageUploadIcon;
