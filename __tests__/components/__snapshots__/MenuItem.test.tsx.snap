@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`MenuItem Component MenuItem component matches snapshot 1`] = `
+exports[`MenuItem Component should match MenuItem component snapshot 1`] = `
 <DocumentFragment>
   <li
     class="mt-5 my-8 font-semibold"

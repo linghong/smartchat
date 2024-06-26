@@ -22,7 +22,7 @@ describe('MenuItem Component', () => {
     });
   });
 
-  test('renders MenuItem component with the title and link', () => {
+  it('should render MenuItem component with the title and link', () => {
     render(
       <MenuItem
         title="Test Title"
@@ -38,7 +38,7 @@ describe('MenuItem Component', () => {
     );
   });
 
-  test('renders MenuItem component with item list and toggles correctly', () => {
+  it('should render MenuItem component with item list and toggles correctly', () => {
     render(<MenuItem title="Test Title" itemList={['Item 1', 'Item 2']} />);
 
     // Ensure the item list is not visible initially
@@ -53,7 +53,7 @@ describe('MenuItem Component', () => {
     expect(screen.getByText('Item 2')).toBeInTheDocument();
   });
 
-  test('applies active class when the link matches the current pathname', () => {
+  it('should apply active class when the link matches the current pathname', () => {
     render(
       <MenuItem
         title="Test Title"
@@ -66,7 +66,7 @@ describe('MenuItem Component', () => {
     expect(menuItem).toHaveClass('bg-slate-400 text-indigo-200 rounded-sm');
   });
 
-  test('does not apply active class when the link does not match the current pathname', () => {
+  it('should not apply active class when the link does not match the current pathname', () => {
     render(
       <MenuItem
         title="Test Title"
@@ -79,7 +79,7 @@ describe('MenuItem Component', () => {
     expect(menuItem).not.toHaveClass('bg-slate-500 text-indigo-200 rounded-sm');
   });
 
-  test('renders MenuItem component with default open state', () => {
+  it('should render MenuItem component with default open state', () => {
     render(
       <MenuItem
         title="Test Title"
@@ -93,14 +93,50 @@ describe('MenuItem Component', () => {
     expect(screen.getByText('Item 2')).toBeInTheDocument();
   });
 
-  test('it has hover and focus classes', () => {
+  it('should have hover and focus classes', () => {
     render(<MenuItem title="Test Title" itemList={['Item 1', 'Item 2']} />);
     const menuItem = screen.getByText('Test Title').parentElement;
     expect(menuItem).toHaveClass('hover:bg-slate-500');
     expect(menuItem).toHaveClass('focus:bg-indigo-100');
   });
 
-  test('MenuItem component matches snapshot', () => {
+  it('should call router.push and setIsSidebarOpen when link is clicked on mobile', async () => {
+    global.innerWidth = 480;
+    const setIsSidebarOpen = jest.fn();
+    render(
+      <MenuItem
+        title="Test Title"
+        link="/test-link"
+        itemList={['Item 1', 'Item 2']}
+        setIsSidebarOpen={setIsSidebarOpen}
+      />
+    );
+
+    await fireEvent.click(screen.getByText('Test Title'));
+
+    expect(mockPush).toHaveBeenCalledWith('/test-link');
+    expect(setIsSidebarOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('should call router.push but not setIsSidebarOpen when link is clicked on desktop', async () => {
+    global.innerWidth = 1024;
+    const setIsSidebarOpen = jest.fn();
+    render(
+      <MenuItem
+        title="Test Title"
+        link="/test-link"
+        itemList={['Item 1', 'Item 2']}
+        setIsSidebarOpen={setIsSidebarOpen}
+      />
+    );
+
+    await fireEvent.click(screen.getByText('Test Title'));
+
+    expect(mockPush).toHaveBeenCalledWith('/test-link');
+    expect(setIsSidebarOpen).not.toHaveBeenCalled();
+  });
+
+  it('should match MenuItem component snapshot', () => {
     const { asFragment } = render(
       <MenuItem
         title="Test Title"
