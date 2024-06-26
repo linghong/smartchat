@@ -11,7 +11,6 @@ interface AIConfigPanelProps {
   handleBasePromptChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   modelOptions: OptionType[];
   fileCategoryOptions: OptionType[];
-  isPanelVisible: boolean;
 }
 
 const AIConfigPanel: FC<AIConfigPanelProps> = ({
@@ -22,8 +21,7 @@ const AIConfigPanel: FC<AIConfigPanelProps> = ({
   basePrompt,
   handleBasePromptChange,
   modelOptions,
-  fileCategoryOptions,
-  isPanelVisible
+  fileCategoryOptions
 }) => {
   return (
     <div

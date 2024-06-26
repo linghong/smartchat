@@ -307,7 +307,6 @@ const HomePage: FC<HomeProps> = ({
           handleBasePromptChange={handleBasePromptChange}
           modelOptions={modelOptions}
           fileCategoryOptions={fileCategoryOptions}
-          isPanelVisible={isPanelVisible}
         />
       )}
       <div className="flex flex-col flex-grow w-full mt-1">

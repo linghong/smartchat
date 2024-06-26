@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AIConfigPanel matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="
+    transition-[max-height] duration-500 ease-in-out
+    }
+  "
+  >
+    <div
+      class="flex flex-col w-full bg-gray-50 border-2 border-indigo-100 p-4 shadow-lg shadow-slate-200"
+    >
+      <div
+        class="flex font-bold text-xl justify-center"
+      >
+        Config My AI Assistant
+      </div>
+      <div
+        class="flex flex-col lg:flex-row w-full justify-between"
+      >
+        <div>
+          <span>
+            Choose AI Model:
+          </span>
+          <span>
+            Model 1
+          </span>
+        </div>
+        <div>
+          <span>
+            Select RAG File:
+          </span>
+          <span>
+            Namespace 1
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col w-full items-center py-2"
+      >
+        <label
+          class="text-base font-bold"
+          for="userSystemPrompt"
+        >
+          Enter text here for AI to remember throughout the chat:
+        </label>
+        <textarea
+          aria-label="Enter text here for AI to remember throughout the chat"
+          class="w-full placeholder-gray-400 my-2 p-2 border-2 border-stone-300 rounded focus:ring-stone-100 focus:outline-none hover:bg-stone-50"
+          id="userSystemPrompt"
+          name="userSystemPrompt"
+          rows="3"
+        >
+          Test prompt
+        </textarea>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
