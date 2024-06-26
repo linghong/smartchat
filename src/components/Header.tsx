@@ -1,5 +1,11 @@
 import { FC, MouseEvent } from 'react';
-import { AiOutlineMenu, AiOutlineForm } from 'react-icons/ai';
+import {
+  AiOutlineMenu,
+  AiOutlineForm,
+  AiOutlineSetting,
+  AiOutlineEye,
+  AiOutlineEyeInvisible
+} from 'react-icons/ai';
 import { useRouter } from 'next/router';
 
 interface HeaderProps {
@@ -19,7 +25,7 @@ const Header: FC<HeaderProps> = ({
   const pathName = router.pathname;
 
   const pageCollection: { [key: string]: string } = {
-    '/': 'Chat With AI',
+    '/': 'Chat With My AI Assistant',
     '/finetunemodel': 'Finetune AI Model',
     '/embedragfile': 'Embed RAG File'
   };
@@ -44,7 +50,7 @@ const Header: FC<HeaderProps> = ({
     <header className="w-full flex flx-col justify-between items-center bg-slate-400 p-2 z-50">
       <div className="flex w-1/3 xs:w-36 sm:w-52 md:w-48 lg:w-52 xl:w-56 items-center justify-between px-6 text-white text-md focus:bg-indigo-100">
         <button
-          className={`${isSidebarOpen ? 'bg-slate-500 hover:bg-slate-700 focus:bg-stone-600' : ''}`}
+          className={` transition-colors duration-200 ${isSidebarOpen ? 'bg-slate-500 hover:bg-slate-700 focus:bg-stone-600' : ''}`}
           onClick={toggleSidebar}
           aria-label="Toggle Sidebar"
           role="toogle"
@@ -52,24 +58,30 @@ const Header: FC<HeaderProps> = ({
           <AiOutlineMenu size={20} />
         </button>
         <button
-          className="hover:text-lg hover:bg-stone-600 hover:font-bold"
+          className="hover:text-lg hover:bg-stone-600 hover:font-bold transition-colors duration-200"
           onClick={onNewChat}
           aria-label="New Chat"
         >
           <AiOutlineForm size={21} />
         </button>
       </div>
-      <div className="flex flex-grow items-center justify-center text-white text-md font-bold focus:bg-indigo-100 mx-auto">
-        <div className="font-bold text-center text-32xl px-2">
-          <h1>{pageCollection[pathName]}</h1>
-        </div>
-        <button
-          onClick={toggleConfigPanel}
-          className="px-2 text-stone-400 text-sm rounded bg-stone-200"
-        >
-          {isPanelVisible ? 'Hide' : 'Show'} Config
-        </button>
+      <div className="flex text-white text-md font-bold focus:bg-indigo-100">
+        {pageCollection[pathName]}
       </div>
+      <button
+        onClick={toggleConfigPanel}
+        className="flex items-center space-x-2 rounded-full hover:bg-slate-500 transition-colors duration-200"
+        aria-label={isPanelVisible ? 'Hide Config' : 'Show Config'}
+      >
+        {isPanelVisible ? (
+          <AiOutlineEyeInvisible size={20} className="text-white" />
+        ) : (
+          <AiOutlineEye size={20} className="text-white" />
+        )}
+        <span className="text-white text-sm hidden sm:inline">
+          {isPanelVisible ? 'Hide' : 'Show'} AI Assistant Config
+        </span>
+      </button>
     </header>
   );
 };

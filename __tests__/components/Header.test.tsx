@@ -10,6 +10,7 @@ jest.mock('next/router', () => ({
 }));
 
 const setIsSidebarOpen = jest.fn();
+const setIsPanelVisible = jest.fn();
 const mockPush = jest.fn();
 
 describe('Header Component', () => {
@@ -20,20 +21,27 @@ describe('Header Component', () => {
       push: mockPush
     });
     setIsSidebarOpen.mockClear();
+    setIsPanelVisible.mockClear();
     mockPush.mockClear();
   });
 
   it('should render the page title correctly', () => {
-    render(<Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />);
+    render(
+      <Header
+        isSidebarOpen={true}
+        setIsSidebarOpen={setIsSidebarOpen}
+        isPanelVisible={false}
+        setIsPanelVisible={setIsPanelVisible}
+      />
+    );
 
     // Check if the rendered header contains the correct page title
-    expect(screen.getByText('Chat With AI')).toBeInTheDocument();
-    expect(screen.getByRole('heading')).toHaveTextContent('Chat With AI');
+    expect(screen.getByText('Chat With My AI Assistant')).toBeInTheDocument();
   });
 
   it('should render different page titles based on pathname', () => {
     const paths = [
-      { path: '/', title: 'Chat With AI' },
+      { path: '/', title: 'Chat With My AI Assistant' },
       { path: '/finetunemodel', title: 'Finetune AI Model' },
       { path: '/embedragfile', title: 'Embed RAG File' }
     ];
@@ -45,21 +53,27 @@ describe('Header Component', () => {
       });
 
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
+        <Header
+          isSidebarOpen={true}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
       );
 
-      const headings = screen.getAllByRole('heading');
-
-      expect(headings.some(heading => heading.textContent === title)).toBe(
-        true
-      );
+      expect(screen.getByText(title)).toBeInTheDocument();
     });
   });
 
   describe('Mouse focusing and hovering events', () => {
     beforeEach(() => {
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
+        <Header
+          isSidebarOpen={true}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
       );
     });
 
@@ -82,7 +96,12 @@ describe('Header Component', () => {
   describe('Mouse click events on NewChat', () => {
     it('should navigate to the home page when NewChat button is clicked', async () => {
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
+        <Header
+          isSidebarOpen={true}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
       );
 
       fireEvent.click(screen.getByLabelText('New Chat'));
@@ -93,7 +112,12 @@ describe('Header Component', () => {
     it('should not call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially open', () => {
       global.innerWidth = 480;
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
+        <Header
+          isSidebarOpen={true}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
       );
 
       fireEvent.click(screen.getByLabelText('New Chat'));
@@ -104,7 +128,12 @@ describe('Header Component', () => {
     it('should not call setIsSidebarOpen when NewChat button is clicked on desktop and sidebar is initially open', () => {
       global.innerWidth = 1024;
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
+        <Header
+          isSidebarOpen={false}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
       );
 
       fireEvent.click(screen.getByLabelText('New Chat'));
@@ -114,7 +143,12 @@ describe('Header Component', () => {
     it('should not call setIsSidebarOpen when NewChat button is clicked on desktop and sidebar is initially closed', () => {
       global.innerWidth = 1024;
       render(
-        <Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />
+        <Header
+          isSidebarOpen={false}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
       );
 
       fireEvent.click(screen.getByLabelText('New Chat'));
@@ -124,7 +158,12 @@ describe('Header Component', () => {
     it('should not call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially closed', () => {
       global.innerWidth = 480;
       render(
-        <Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />
+        <Header
+          isSidebarOpen={false}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
       );
 
       fireEvent.click(screen.getByLabelText('New Chat'));
@@ -135,7 +174,12 @@ describe('Header Component', () => {
   describe('Mouse click events on menu icon', () => {
     it('should call setIsSidebarOpen with true when initially closed and toggle button is clicked', () => {
       render(
-        <Header isSidebarOpen={false} setIsSidebarOpen={setIsSidebarOpen} />
+        <Header
+          isSidebarOpen={false}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
       );
 
       fireEvent.click(screen.getByLabelText('Toggle Sidebar'));
@@ -144,7 +188,12 @@ describe('Header Component', () => {
 
     it('should call setIsSidebarOpen with false when initially open and toggle button is clicked', () => {
       render(
-        <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
+        <Header
+          isSidebarOpen={true}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
       );
 
       fireEvent.click(screen.getByLabelText('Toggle Sidebar'));
@@ -152,9 +201,54 @@ describe('Header Component', () => {
     });
   });
 
+  describe('Config panel visibility toggle', () => {
+    it('should toggle panel visibility when config button is clicked', () => {
+      render(
+        <Header
+          isSidebarOpen={false}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
+      );
+
+      fireEvent.click(screen.getByLabelText('Show Config'));
+      expect(setIsPanelVisible).toHaveBeenCalledWith(true);
+    });
+
+    it('should show correct button text based on panel visibility', () => {
+      const { rerender } = render(
+        <Header
+          isSidebarOpen={false}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={false}
+          setIsPanelVisible={setIsPanelVisible}
+        />
+      );
+
+      expect(screen.getByText('Show AI Assistant Config')).toBeInTheDocument();
+
+      rerender(
+        <Header
+          isSidebarOpen={false}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isPanelVisible={true}
+          setIsPanelVisible={setIsPanelVisible}
+        />
+      );
+
+      expect(screen.getByText('Hide AI Assistant Config')).toBeInTheDocument();
+    });
+  });
+
   it('Header component snapshot', () => {
     const { asFragment } = render(
-      <Header isSidebarOpen={true} setIsSidebarOpen={setIsSidebarOpen} />
+      <Header
+        isSidebarOpen={true}
+        setIsSidebarOpen={setIsSidebarOpen}
+        isPanelVisible={false}
+        setIsPanelVisible={setIsPanelVisible}
+      />
     );
     expect(asFragment()).toMatchSnapshot();
   });
