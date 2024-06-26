@@ -1,13 +1,20 @@
-import { FC } from 'react'
+import { FC, MouseEvent } from 'react'
 import { AiOutlineMenu, AiOutlineForm } from 'react-icons/ai'
 import { useRouter } from 'next/router'
 
 interface HeaderProps {
   setIsSidebarOpen: (isSideBarOpen: boolean) => void
   isSidebarOpen: boolean
+  isPanelVisible: boolean
+  setIsPanelVisible: (isPanelVisible: boolean) => void
 }
 
-const Header: FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
+const Header: FC<HeaderProps> = ({
+  isSidebarOpen,
+  setIsSidebarOpen,
+  isPanelVisible,
+  setIsPanelVisible
+}) => {
   const router = useRouter()
   const pathName = router.pathname
 
@@ -25,8 +32,13 @@ const Header: FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
     }
   }
 
-  const toggleSidebar = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const toggleSidebar = (e: MouseEvent<HTMLButtonElement>) => {
     setIsSidebarOpen(!isSidebarOpen)
+  }
+
+  const toggleConfigPanel = (e: MouseEvent<HTMLButtonElement>) => {
+    console.log('herr', isPanelVisible)
+    setIsPanelVisible(!isPanelVisible)
   }
 
   return (
@@ -52,6 +64,12 @@ const Header: FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
         <div className="text-xl font-bold text-center text-32xl">
           <h1>{pageCollection[pathName]}</h1>
         </div>
+        <button
+          onClick={toggleConfigPanel}
+          className="px-3 py-1 text-black rounded mb-2"
+        >
+          {isPanelVisible ? 'Hide' : 'Show'} Config
+        </button>
       </div>
     </header>
   )

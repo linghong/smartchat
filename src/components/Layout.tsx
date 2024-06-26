@@ -2,10 +2,18 @@ import { useState, useEffect, FC, ReactNode } from 'react'
 import Sidebar from '@/src/components/Sidebar'
 import Header from '@/src/components/Header'
 import Footer from '@/src/components/Footer'
+interface LayoutProps {
+  children: ReactNode
+  messageSubjectList: string[]
+  isPanelVisible: boolean
+  setIsPanelVisible: (isPanelVisible: boolean) => void
+}
 
-const Layout: FC<{ children: ReactNode; messageSubjectList: string[] }> = ({
+const Layout: FC<LayoutProps> = ({
   children,
-  messageSubjectList
+  messageSubjectList,
+  isPanelVisible,
+  setIsPanelVisible
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
@@ -30,6 +38,8 @@ const Layout: FC<{ children: ReactNode; messageSubjectList: string[] }> = ({
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        isPanelVisible={isPanelVisible}
+        setIsPanelVisible={setIsPanelVisible}
       />
       <div className="flex flex-row w-full flex-grow h-full">
         {isMobile && isSidebarOpen && (

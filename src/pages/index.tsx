@@ -11,6 +11,7 @@ import { GetStaticProps } from 'next'
 import { RiScreenshot2Fill } from 'react-icons/ri' //screenshot
 
 import { modelOptions } from '@/config/modellist'
+import AIConfigPanel from '@/src/components/AIConfigPanel'
 import ArrowButton from '@/src/components/ArrowButton'
 import ButtonWithTooltip from '@/src/components/ButtonWithTooltip'
 import ChatMessage from '@/src/components/ChatMessage'
@@ -27,6 +28,7 @@ import { isSupportedImage } from '@/src/utils/mediaValidationHelper'
 interface HomeProps {
   namespaces: string[]
   isNewChat: boolean
+  isPanelVisible: boolean
   setIsNewChat: (value: boolean) => void
   messageSubjectList: string[]
   setMessageSubjectList: (messageSubjectList: string[]) => void
@@ -44,7 +46,8 @@ const HomePage: FC<HomeProps> = ({
   isNewChat,
   setIsNewChat,
   messageSubjectList,
-  setMessageSubjectList
+  setMessageSubjectList,
+  isPanelVisible
 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const messagesRef = useRef<HTMLDivElement | null>(null)
@@ -291,42 +294,27 @@ const HomePage: FC<HomeProps> = ({
   }, [isNewChat])
 
   return (
-    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 flex-grow mx-auto">
+    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 flex-grow mx-auto mt-2">
+      {isPanelVisible && (
+        <AIConfigPanel
+          selectedModel={selectedModel}
+          handleModelChange={handleModelChange}
+          selectedNamespace={selectedNamespace}
+          handleNamespaceChange={handleNamespaceChange}
+          basePrompt={basePrompt}
+          handleBasePromptChange={handleBasePromptChange}
+          modelOptions={modelOptions}
+          fileCategoryOptions={fileCategoryOptions}
+          isPanelVisible={isPanelVisible}
+        />
+      )}
       <div className="flex flex-col flex-grow w-full">
-        <div className="flex flex-col lg:flex-row w-full justify-around">
-          <DropdownSelect
-            selectedOption={selectedModel}
-            onChange={handleModelChange}
-            options={modelOptions}
-            label="Choose AI Model:"
-          />
-          <DropdownSelect
-            selectedOption={selectedNamespace}
-            onChange={handleNamespaceChange}
-            options={fileCategoryOptions}
-            label="Select RAG File:"
-          />
-        </div>
-        <div className="flex flex-col w-full items-center py-2">
-          <label htmlFor="userSystemPrompt" className="text-base font-bold">
-            Enter text here for AI to remember throughout the chat:
-          </label>
-          <textarea
-            id="userSystemPrompt"
-            rows={2}
-            name="userSystemPrompt"
-            onChange={handleBasePromptChange}
-            value={basePrompt}
-            className={`w-full placeholder-gray-400 my-2 p-2 border-2 border-indigo-300 rounded focus:ring-stone-100 focus:outline-none hover:bg-stone-50`}
-            aria-label="Enter text here for AI to remember throughout the chat"
-          />
-        </div>
         <div className="flex flex-col h-[calc(100vh-440px) md:h-[calc(100vh-430px)] lg:h-[calc(100vh-400px)] w-full items-center">
           <div
             className={`w-full bg-white border-2 border-stone-200 overflow-y-auto`}
           >
             <div
-              className="w-full h-full overflow-y-scroll rounded-lg"
+              className="w-full h-full overflow-y-auto rounded-lg"
               aria-live="polite"
               aria-atomic="true"
               ref={messagesRef}

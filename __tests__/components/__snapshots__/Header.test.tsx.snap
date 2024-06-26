@@ -59,6 +59,11 @@ exports[`Header Component Header component snapshot 1`] = `
           Chat With AI
         </h1>
       </div>
+      <button
+        class="px-3 py-1 text-black rounded mb-2"
+      >
+        Show Config
+      </button>
     </div>
   </header>
 </DocumentFragment>
