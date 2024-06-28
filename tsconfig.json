@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2021",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext", "es6"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -14,6 +14,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "plugins": [
       {
         "name": "next"
@@ -22,7 +24,7 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "typeRoots": ["./typings", "node_modules/@types"]
+    "typeRoots": ["./typings", "./node_modules/@types"]
   },
   "include": [
     "next-env.d.ts",
