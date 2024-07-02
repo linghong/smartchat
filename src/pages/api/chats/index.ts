@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getAppDataSource, Chat, User } from '@/src/db';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // Only one User for the local app. 
+  // Only one User for the local app.
   // fixed user with username 'local' and the id automatically created by the database with 1
   const LOCAL_USER_NAME = 'local';
 
@@ -13,7 +13,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const chatRepository = dataSource.getRepository(Chat);
 
     if (req.method === 'POST') {
-
       // Ensure the user exists
       let user = await userRepository.findOneBy({ username: LOCAL_USER_NAME });
       if (!user) {
@@ -38,7 +37,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await chatRepository.save(chat);
 
       res.status(201).json(chat);
-
     } else if (req.method === 'GET') {
       const chats = await chatRepository.find({
         where: { userId: 1 },

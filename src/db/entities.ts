@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  OneToMany,
+  OneToMany
 } from 'typeorm';
 
 @Entity('users') // Explicitly name the table
