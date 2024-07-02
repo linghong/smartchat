@@ -4,15 +4,30 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
-  ManyToOne
 } from 'typeorm';
 
-@Entity()
+@Entity('users') // Explicitly name the table
+export class User {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: false
+  })
+  username!: string;
+
+  @OneToMany(() => Chat, (chat: Chat) => chat.userId)
+  chats!: Chat[];
+}
+
+@Entity('chats') // Explicitly name the table
 export class Chat {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column('text')
+  @Column('text', { nullable: false })
   title!: string;
 
   @CreateDateColumn()
@@ -21,28 +36,23 @@ export class Chat {
   @Column('simple-json', { nullable: true })
   metadata?: { [key: string]: any };
 
-  @OneToMany(() => ChatMessage, (message: ChatMessage) => message.chat)
+  @Column('int')
+  userId!: number;
+
+  @OneToMany(() => ChatMessage, (message: ChatMessage) => message.chatId)
   messages!: ChatMessage[];
-
-  @OneToMany(() => ChatImage, (image: ChatImage) => image.id)
-  images!: ChatImage[];
-
-  constructor(title: string, metadata?: { [key: string]: any }) {
-    this.title = title;
-    this.metadata = metadata;
-  }
 }
 
-@Entity()
+@Entity('chat_messages') // Explicitly name the table
 export class ChatMessage {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column('text')
-  question: string;
+  userMessage!: string;
 
   @Column('text')
-  answer: string;
+  aiMessage!: string;
 
   @CreateDateColumn()
   timestamp!: Date;
@@ -50,26 +60,14 @@ export class ChatMessage {
   @Column('simple-json', { nullable: true })
   metadata?: { [key: string]: any };
 
-  @ManyToOne(() => Chat, (chat: Chat) => chat.messages)
-  chat!: Chat;
+  @Column('int')
+  chatId!: number;
 
-  @OneToMany(() => ChatImage, (image: ChatImage) => image.message)
+  @OneToMany(() => ChatImage, (image: ChatImage) => image.messageId)
   images!: ChatImage[];
-
-  constructor(
-    question: string,
-    answer: string,
-    chat: Chat,
-    metadata?: { [key: string]: any }
-  ) {
-    this.question = question;
-    this.answer = answer;
-    this.chat = chat;
-    this.metadata = metadata;
-  }
 }
 
-@Entity()
+@Entity('chat_images') // Explicitly name the table
 export class ChatImage {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -77,11 +75,6 @@ export class ChatImage {
   @Column('text')
   url!: string;
 
-  @ManyToOne(() => ChatMessage, (message: ChatMessage) => message.images)
-  message!: ChatMessage;
-
-  constructor(url: string, message: ChatMessage) {
-    this.url = url;
-    this.message = message;
-  }
+  @Column('int')
+  messageId!: number;
 }

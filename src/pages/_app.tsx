@@ -1,8 +1,6 @@
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-
 
 import Layout from '@/src/components/Layout';
 
@@ -12,7 +10,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const [isNewChat, setIsNewChat] = useState(false);
   const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
   const [isPanelVisible, setIsPanelVisible] = useState(true);
-
 
   return (
     <>

@@ -1,25 +1,32 @@
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { Chat, ChatMessage, ChatImage } from '@/src/db/entities';
+import { User, Chat, ChatMessage, ChatImage } from '@/src/db/entities';
+
 const options: DataSourceOptions = {
   type: 'sqlite',
   database: 'database.sqlite',
-  entities: [Chat, ChatMessage, ChatImage],
+  entities: [User, Chat, ChatMessage, ChatImage],
   synchronize: true,
   migrations: ['src/db/migration/*.ts'],
-  logging: false,
+  logging: false, // change to ['query', 'error', 'schema'] debug,
   subscribers: []
 };
 class AppDataSourceSingleton {
   private static instance: DataSource;
+
   private constructor() {}
+
   public static async getInstance(): Promise<DataSource> {
     if (!AppDataSourceSingleton.instance) {
       AppDataSourceSingleton.instance = new DataSource(options);
-      await AppDataSourceSingleton.instance.initialize();
+      try {
+        await AppDataSourceSingleton.instance.initialize();
+      } catch (e) {
+        console.error('Error during data source initialization', e);
+      }
     }
     return AppDataSourceSingleton.instance;
   }
 }
 
-export default AppDataSourceSingleton
+export default AppDataSourceSingleton;

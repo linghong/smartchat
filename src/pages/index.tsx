@@ -89,7 +89,7 @@ const HomePage: FC<HomeProps> = ({
       namespace: string
     ) => {
       try {
-        const response = await fetch('/api/chat', {
+        const response = await fetch('/api/ai/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -123,6 +123,8 @@ const HomePage: FC<HomeProps> = ({
         setMessageSubjectList([...messageSubjectList, data.subject]);
 
         setLoading(false);
+
+        return data;
       } catch (error) {
         setLoading(false);
         setError(
@@ -133,6 +135,29 @@ const HomePage: FC<HomeProps> = ({
     },
     [userInput, chatHistory, messageSubjectList, setMessageSubjectList]
   );
+
+  const updateChats = async (chatTitle: string, metadata: any) => {
+    try {
+      const res = await fetch('/api/chats', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: chatTitle,
+          metadata
+        })
+      });
+      if (!res) {
+        console.log('Error on post data to Chats table');
+      }
+      const chat = await res.json();
+
+      return chat;
+    } catch (e) {
+      console.error("Chat isn't created", e);
+    }
+  };
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -153,13 +178,18 @@ const HomePage: FC<HomeProps> = ({
       setImageSrc([]);
       setRows(1); // Reset the textarea rows to initial state
 
-      fetchChatResponse(
+      const data = await fetchChatResponse(
         basePrompt,
         question,
         imageSrc,
         selectedModel,
         selectedNamespace?.value || 'none'
       );
+
+      if (chatHistory.length === 1) {
+        const chat = await updateChats(data.subject, {});
+        console.log('chat', chat);
+      }
     },
     [
       basePrompt,
@@ -167,7 +197,8 @@ const HomePage: FC<HomeProps> = ({
       imageSrc,
       fetchChatResponse,
       selectedModel,
-      selectedNamespace?.value
+      selectedNamespace?.value,
+      chatHistory.length
     ]
   );
 
@@ -226,7 +257,7 @@ const HomePage: FC<HomeProps> = ({
 
   const handleScreenCapture = async () => {
     try {
-      const response = await fetch('/api/screenshot', { method: 'POST' });
+      const response = await fetch('/api/tools/screenshot', { method: 'POST' });
       const { message, base64Image, mimeType, size, name } =
         await response.json();
 

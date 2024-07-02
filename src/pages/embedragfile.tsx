@@ -237,7 +237,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
     if (hasErrors) return;
 
     const formData = await prepareFormData();
-    await handleFormSubmit('/api/upload', formData);
+    await handleFormSubmit('/api/tools/upload', formData);
   };
 
   return (
