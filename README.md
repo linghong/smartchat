@@ -75,7 +75,11 @@ Here are some screenshots that illustrate various features of the SmartChat plat
   <img src="images/finetuning.png" width="90%" alt="Finetuning Data Submissions Page">
 </div>
 *This interface allows users to submit data to OpenAI for fine-tuning OpenAI models or to the SmartChat-FastAPI server for fine-tuning using open-source generative models hosted on the GPU, tailored to specific needs.*
- 
+
+### Local SQLite Database for Privacy
+
+To ensure privacy and maintain control over critical information, the app uses TypeORM with SQLite to store chat messages and other critical content.
+
 ## Getting Started
 
 ### Clone the Repository and Install Dependency:
@@ -105,6 +109,42 @@ cp .env.example .env
 
 Open the newly created .env file and replace the placeholders with the actual keys you obtained from OpenAI, Google Gemini, Groq, Anthropic, and Pinecone.
 
+### Manage Local SQLite Database
+
+To ensure privacy and maintain control over critical information, the app uses TypeORM with SQLite to store chat content and settings.
+
+The database configuration and initialization are handled in the `data-source.ts` file located in the `src/db` folder. All migration files are stored in the `src/db/migration` directory and can be managed using TypeORM CLI commands.
+Generate a migration:
+
+```bash
+npx typeorm migration:generate -n YourMigrationName
+```
+
+Run a migration to apply it to your database:
+
+```bash
+npx typeorm migration:run
+```
+
+Revert the latest migration:
+
+```bash
+npx typeorm migration:revert
+
+```
+
+To run SQL query in the terminal, type:
+
+```bash
+sqlite3 database.sqlite
+```
+
+To exit the SQLite prompt, type:
+
+```bash
+sqlite> .quit
+```
+
 ### Run the Development Server:
 
 ```bash
@@ -125,7 +165,7 @@ You can deploy the app to any cloud environment, just as you would with other Ne
 
 Whether you want to report a bug, improve documentation, or contribute code, your help is greatly appreciated.
 
-### Steps to COntribute
+### Steps to Contribute
 
 1. Fork and clone the Repository, install dependencies, ensure you have NodeJS(v18, v19, v20) installed, create a new branch for your feature or bugfix.
 
