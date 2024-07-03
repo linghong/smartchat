@@ -1,12 +1,15 @@
 import React, { useState, FC } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+
 import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
+
+import { Chat } from '@/src/types/chat';
 
 interface MenuItemProps {
   title: string;
   link?: string;
-  itemList: string[];
+  itemList: Chat[];
   defaultOpen?: boolean;
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
 }
@@ -58,12 +61,12 @@ const MenuItem: FC<MenuItemProps> = ({
       </div>
       {isOpen && (
         <ul className="px-6 py-2 font-medium text-slate-200">
-          {itemList.map((item, index) => (
+          {itemList.map(item => (
             <li
-              key={`${item}-${index}`}
+              key={item.id}
               className="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100"
             >
-              {item}
+              {item.title}
             </li>
           ))}
         </ul>

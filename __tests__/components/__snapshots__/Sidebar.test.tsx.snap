@@ -1,115 +1,44 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Sidebar Component Sidebar component matches snapshot 1`] = `
+exports[`Sidebar Component matches snapshot 1`] = `
 <DocumentFragment>
   <ul
     class="px-2 pt-10 "
   >
-    <li
-      class="mt-5 my-8 font-semibold"
-    >
-      <div
-        class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
+    <div>
+      <a
+        href="/embedragfile"
       >
-        <a
-          class="flex-grow px-2 hover:underline "
-          href="/embedragfile"
-        >
+        <h2>
           Embed RAG File
-        </a>
-        <span
-          class="cursor-pointer"
-          role="button"
-        >
-          <svg
-            fill="currentColor"
-            height="1em"
-            stroke="currentColor"
-            stroke-width="0"
-            viewBox="0 0 1024 1024"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
-            />
-          </svg>
-        </span>
-      </div>
-    </li>
-    <li
-      class="mt-5 my-8 font-semibold"
-    >
-      <div
-        class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
+        </h2>
+      </a>
+      <ul />
+    </div>
+    <div>
+      <a
+        href="/finetunemodel"
       >
-        <a
-          class="flex-grow px-2 hover:underline "
-          href="/finetunemodel"
-        >
+        <h2>
           Finetune AI Model
-        </a>
-        <span
-          class="cursor-pointer"
-          role="button"
-        >
-          <svg
-            fill="currentColor"
-            height="1em"
-            stroke="currentColor"
-            stroke-width="0"
-            viewBox="0 0 1024 1024"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
-            />
-          </svg>
-        </span>
-      </div>
-    </li>
-    <li
-      class="mt-5 my-8 font-semibold"
-    >
-      <div
-        class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
+        </h2>
+      </a>
+      <ul />
+    </div>
+    <div>
+      <a
+        href="/"
       >
-        <a
-          class="flex-grow px-2 hover:underline "
-          href="/"
-        >
+        <h2>
           Chat With AI
-        </a>
-        <span
-          class="cursor-pointer"
-          role="button"
-        >
-          <svg
-            fill="currentColor"
-            height="1em"
-            stroke="currentColor"
-            stroke-width="0"
-            viewBox="0 0 1024 1024"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M858.9 689L530.5 308.2c-9.4-10.9-27.5-10.9-37 0L165.1 689c-12.2 14.2-1.2 35 18.5 35h656.8c19.7 0 30.7-20.8 18.5-35z"
-            />
-          </svg>
-        </span>
-      </div>
-      <ul
-        class="px-6 py-2 font-medium text-slate-200"
-      >
-        <li
-          class="px-2 py-2 hover:bg-slate-400 focus:bg-indigo-100"
-        >
-          Test Subject
+        </h2>
+      </a>
+      <ul>
+        <li>
+          Test Chat
         </li>
       </ul>
-    </li>
+    </div>
   </ul>
 </DocumentFragment>
 `;

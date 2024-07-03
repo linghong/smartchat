@@ -27,7 +27,10 @@ describe('MenuItem Component', () => {
       <MenuItem
         title="Test Title"
         link="/test-link"
-        itemList={['Item 1', 'Item 2']}
+        itemList={[
+          { title: 'Item 1', id: 1 },
+          { title: 'Item 2', id: 2 }
+        ]}
       />
     );
 
@@ -39,7 +42,15 @@ describe('MenuItem Component', () => {
   });
 
   it('should render MenuItem component with item list and toggles correctly', () => {
-    render(<MenuItem title="Test Title" itemList={['Item 1', 'Item 2']} />);
+    render(
+      <MenuItem
+        title="Test Title"
+        itemList={[
+          { title: 'Item 1', id: 1 },
+          { title: 'Item 2', id: 2 }
+        ]}
+      />
+    );
 
     // Ensure the item list is not visible initially
     expect(screen.queryByText('Item 1')).toBeNull();
@@ -58,7 +69,10 @@ describe('MenuItem Component', () => {
       <MenuItem
         title="Test Title"
         link="/current-path"
-        itemList={['Item 1', 'Item 2']}
+        itemList={[
+          { title: 'Item 1', id: 1 },
+          { title: 'Item 2', id: 2 }
+        ]}
       />
     );
 
@@ -71,7 +85,10 @@ describe('MenuItem Component', () => {
       <MenuItem
         title="Test Title"
         link="/other-path"
-        itemList={['Item 1', 'Item 2']}
+        itemList={[
+          { title: 'Item 1', id: 1 },
+          { title: 'Item 2', id: 2 }
+        ]}
       />
     );
 
@@ -83,7 +100,10 @@ describe('MenuItem Component', () => {
     render(
       <MenuItem
         title="Test Title"
-        itemList={['Item 1', 'Item 2']}
+        itemList={[
+          { title: 'Item 1', id: 1 },
+          { title: 'Item 2', id: 2 }
+        ]}
         defaultOpen={true}
       />
     );
@@ -94,7 +114,15 @@ describe('MenuItem Component', () => {
   });
 
   it('should have hover and focus classes', () => {
-    render(<MenuItem title="Test Title" itemList={['Item 1', 'Item 2']} />);
+    render(
+      <MenuItem
+        title="Test Title"
+        itemList={[
+          { title: 'Item 1', id: 1 },
+          { title: 'Item 2', id: 2 }
+        ]}
+      />
+    );
     const menuItem = screen.getByText('Test Title').parentElement;
     expect(menuItem).toHaveClass('hover:bg-slate-500');
     expect(menuItem).toHaveClass('focus:bg-indigo-100');
@@ -107,7 +135,10 @@ describe('MenuItem Component', () => {
       <MenuItem
         title="Test Title"
         link="/test-link"
-        itemList={['Item 1', 'Item 2']}
+        itemList={[
+          { title: 'Item 1', id: 1 },
+          { title: 'Item 2', id: 2 }
+        ]}
         setIsSidebarOpen={setIsSidebarOpen}
       />
     );
@@ -125,7 +156,10 @@ describe('MenuItem Component', () => {
       <MenuItem
         title="Test Title"
         link="/test-link"
-        itemList={['Item 1', 'Item 2']}
+        itemList={[
+          { title: 'Item 1', id: 1 },
+          { title: 'Item 2', id: 2 }
+        ]}
         setIsSidebarOpen={setIsSidebarOpen}
       />
     );
@@ -141,7 +175,10 @@ describe('MenuItem Component', () => {
       <MenuItem
         title="Test Title"
         link="/test-link"
-        itemList={['Item 1', 'Item 2']}
+        itemList={[
+          { title: 'Item 1', id: 1 },
+          { title: 'Item 2', id: 2 }
+        ]}
       />
     );
     expect(asFragment()).toMatchSnapshot();

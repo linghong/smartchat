@@ -8,7 +8,7 @@ const options: DataSourceOptions = {
   entities: [User, Chat, ChatMessage, ChatImage],
   synchronize: true,
   migrations: ['src/db/migration/*.ts'],
-  logging: false, // change to ['query', 'error', 'schema'] debug,
+  logging: false, //change to true or ['query', 'error', 'schema'] for debug purpose
   subscribers: []
 };
 class AppDataSourceSingleton {

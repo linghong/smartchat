@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { NextApiRequest, NextApiResponse } from 'next';
+
 import { getAppDataSource, Chat, User } from '@/src/db';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -12,16 +13,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const userRepository = dataSource.getRepository(User);
     const chatRepository = dataSource.getRepository(Chat);
 
-    if (req.method === 'POST') {
-      // Ensure the user exists
-      let user = await userRepository.findOneBy({ username: LOCAL_USER_NAME });
-      if (!user) {
-        user = userRepository.create({
-          username: LOCAL_USER_NAME
-        });
-        await userRepository.save(user);
-      }
+    // Ensure the user exists
+    let user = await userRepository.findOneBy({ username: LOCAL_USER_NAME });
 
+    if (!user) {
+      user = userRepository.create({
+        username: LOCAL_USER_NAME
+      });
+      await userRepository.save(user);
+    }
+
+    if (req.method === 'POST') {
       const { title, metadata } = req.body;
 
       if (!title) {
@@ -38,10 +40,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       res.status(201).json(chat);
     } else if (req.method === 'GET') {
-      const chats = await chatRepository.find({
-        where: { userId: 1 },
-        order: { createdAt: 'DESC' }
-      });
+      const chats = await chatRepository
+        .createQueryBuilder('chat')
+        .select(['chat.id', 'chat.title', 'chat.createdAt'])
+        .where('chat.userId = :userId', { userId: user.id })
+        .orderBy('chat.createdAt', 'DESC')
+        .getMany();
       res.status(200).json(chats);
     } else {
       res.setHeader('Allow', ['GET', 'POST']);

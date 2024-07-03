@@ -10,15 +10,14 @@ import {
 import { GetStaticProps } from 'next';
 import { RiScreenshot2Fill } from 'react-icons/ri'; //screenshot
 
-import { modelOptions } from '@/config/modellist';
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ArrowButton from '@/src/components/ArrowButton';
 import ButtonWithTooltip from '@/src/components/ButtonWithTooltip';
 import ChatMessage from '@/src/components/ChatMessage';
-import DropdownSelect from '@/src/components/DropdownSelect';
 import ImageListWithModal from '@/src/components/ImageListWithModal';
 import ImageUploadIcon from '@/src/components/ImageUploadIcon';
 import Notification from '@/src/components/Notification';
+import { modelOptions } from '@/config/modellist';
 import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
@@ -30,8 +29,6 @@ interface HomeProps {
   isNewChat: boolean;
   isPanelVisible: boolean;
   setIsNewChat: (value: boolean) => void;
-  messageSubjectList: string[];
-  setMessageSubjectList: (messageSubjectList: string[]) => void;
 }
 
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
@@ -45,8 +42,6 @@ const HomePage: FC<HomeProps> = ({
   namespaces,
   isNewChat,
   setIsNewChat,
-  messageSubjectList,
-  setMessageSubjectList,
   isPanelVisible
 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -71,6 +66,7 @@ const HomePage: FC<HomeProps> = ({
   const [userInput, setUserInput] = useState<string>('');
   const [rows, setRows] = useState<number>(1);
   const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
+  const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
 
   const [imageSrc, setImageSrc] = useState<ImageFile[]>([]);
   const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]);
@@ -114,7 +110,7 @@ const HomePage: FC<HomeProps> = ({
         }
 
         const data = await response.json();
-
+        console.log('data', data.answer);
         setChatHistory([
           ...chatHistory.slice(0, chatHistory.length),
           { question: userInput, answer: data.answer }

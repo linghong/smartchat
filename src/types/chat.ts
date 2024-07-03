@@ -1,7 +1,7 @@
-export type Message = {
-  question: string;
-  answer: string;
-};
+export interface Chat {
+  id: number;
+  title: string;
+}
 
 export type ChatRole = 'system' | 'assistant' | 'user';
 
@@ -10,14 +10,19 @@ export type ChatType = {
   content: string;
 };
 
-export type ImageFile = {
+export interface ImageFile {
   base64Image: string;
   mimeType: string;
   size: number;
   name: string;
   width?: number;
   height?: number;
-};
+}
+
+export interface Message {
+  question: string;
+  answer: string;
+}
 
 export interface OpenAIChatContentImage {
   type: 'image_url';
