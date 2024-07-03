@@ -29,7 +29,7 @@ const ImageListWithModal: FC<ImageListWithModalProps> = ({
 
   return (
     <>
-      <div className="flex flex-row justify-start w-full pt-3 px-3">
+      <div className="flex flex-row justify-start w-full p-2">
         {imageSrc.map((imgSrc: ImageFile, i: number) => (
           <div key={i} className="w-20 h-full mx-2 relative">
             <div

@@ -29,6 +29,7 @@ interface HomeProps {
   isNewChat: boolean;
   isPanelVisible: boolean;
   setIsNewChat: (value: boolean) => void;
+  setIsPanelVisible: (isPanelVisible: boolean) => void;
 }
 
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
@@ -42,7 +43,8 @@ const HomePage: FC<HomeProps> = ({
   namespaces,
   isNewChat,
   setIsNewChat,
-  isPanelVisible
+  isPanelVisible,
+  setIsPanelVisible
 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
@@ -110,7 +112,7 @@ const HomePage: FC<HomeProps> = ({
         }
 
         const data = await response.json();
-        console.log('data', data.answer);
+
         setChatHistory([
           ...chatHistory.slice(0, chatHistory.length),
           { question: userInput, answer: data.answer }
@@ -215,8 +217,13 @@ const HomePage: FC<HomeProps> = ({
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setUserInput(newValue);
+
+    // Close config panel when user starts typing
+    if (newValue.length >= 1 && isPanelVisible) {
+      setIsPanelVisible(false);
+    }
     const newRows = newValue.match(/\n/g)?.length ?? 0;
-    setRows(newRows + 1);
+    setRows(Math.min(newRows + 1, 8));
   };
 
   const handleImageUpload = async (file: File) => {
@@ -242,6 +249,7 @@ const HomePage: FC<HomeProps> = ({
       }
 
       setImageSrc([...imageSrc, newImage]);
+      setIsPanelVisible(false);
     } catch {
       throw new Error('Failed to read the file.');
     }
@@ -275,6 +283,7 @@ const HomePage: FC<HomeProps> = ({
       }
 
       setImageSrc([...imageSrc, newImage]);
+      setIsPanelVisible(false);
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred while capturing the screen');
@@ -323,101 +332,99 @@ const HomePage: FC<HomeProps> = ({
   }, [isNewChat]);
 
   return (
-    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 flex-grow mx-auto">
+    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 h-full mx-auto">
       {isPanelVisible && (
-        <AIConfigPanel
-          selectedModel={selectedModel}
-          handleModelChange={handleModelChange}
-          selectedNamespace={selectedNamespace}
-          handleNamespaceChange={handleNamespaceChange}
-          basePrompt={basePrompt}
-          handleBasePromptChange={handleBasePromptChange}
-          modelOptions={modelOptions}
-          fileCategoryOptions={fileCategoryOptions}
-        />
+        <div className="flex-shrink-0">
+          <AIConfigPanel
+            selectedModel={selectedModel}
+            handleModelChange={handleModelChange}
+            selectedNamespace={selectedNamespace}
+            handleNamespaceChange={handleNamespaceChange}
+            basePrompt={basePrompt}
+            handleBasePromptChange={handleBasePromptChange}
+            modelOptions={modelOptions}
+            fileCategoryOptions={fileCategoryOptions}
+          />
+        </div>
       )}
-      <div className="flex flex-col flex-grow w-full mt-1">
-        <div
-          className={`flex flex-col ${isPanelVisible ? 'h-[calc(100vh-440px) md:h-[calc(100vh-490px)] lg:h-[calc(100vh-440px)]' : 'h-[calc(100vh-200px) md:h-[calc(100vh-190px)] lg:h-[calc(100vh-150px)]'} w-full items-center bg-white border-2 border-stone-200`}
-        >
-          <div className={`w-full overflow-y-auto`}>
-            <div
-              className="w-full h-full overflow-y-auto rounded-lg"
-              aria-live="polite"
-              aria-atomic="true"
-              ref={messagesRef}
-            >
-              {chatHistory.map((chat, index) => (
-                <div key={index}>
-                  <ChatMessage
-                    index={index}
-                    message={chat}
-                    lastIndex={index === chatHistory.length - 1 ? true : false}
-                    loading={loading}
-                    imageSrc={imageSrcHistory[index]}
-                    modelName={selectedModel?.label || 'GPT-4o'}
-                    handleImageDelete={handleImageDelete}
-                  />
-                </div>
-              ))}
-            </div>
+      <div className="flex flex-col flex-grow overflow-hidden w-full">
+        <div className="flex-grow overflow-y-auto bg-white border-2 border-stone-200">
+          <div
+            className="w-full h-full overflow-y-auto rounded-lg"
+            aria-live="polite"
+            aria-atomic="true"
+            ref={messagesRef}
+          >
+            {chatHistory.map((chat, index) => (
+              <div key={index}>
+                <ChatMessage
+                  index={index}
+                  message={chat}
+                  lastIndex={index === chatHistory.length - 1 ? true : false}
+                  loading={loading}
+                  imageSrc={imageSrcHistory[index]}
+                  modelName={selectedModel?.label || 'GPT-4o'}
+                  handleImageDelete={handleImageDelete}
+                />
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-      <div className="flex flex-col w-full justify-around items-center  my-1">
-        {imageSrc.length > 0 && (
-          <ImageListWithModal
-            imageSrc={imageSrc}
-            handleImageDelete={handleImageDelete}
-            isDeleteIconShow={true}
-          />
-        )}
-        <div className="flex w-full justify-around items-center  my-1 border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg">
-          <div className="flex w-3/12 ms:w-2/12  sm:w-1/12 items-center justify-around md:mx-1">
-            <ButtonWithTooltip
-              icon={<RiScreenshot2Fill size={30} />}
-              onClick={handleScreenCapture}
-              ariaLabel="Capture Screenshot"
-              tooltipText="Capture Screenshot"
-              isDisabled={!isVisionModel}
-              tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+        <div className="flex flex-col w-full justify-around flex-shrink-0 items-center  my-1">
+          {imageSrc.length > 0 && (
+            <ImageListWithModal
+              imageSrc={imageSrc}
+              handleImageDelete={handleImageDelete}
+              isDeleteIconShow={true}
             />
-            <ButtonWithTooltip
-              icon={
-                <ImageUploadIcon
-                  onImageUpload={handleImageUpload}
-                  isDisabled={!isVisionModel}
-                />
-              }
-              onClick={() => {}}
-              ariaLabel="Upload Image"
-              tooltipText="Upload Image"
-              isDisabled={!isVisionModel}
-              tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
-            />
+          )}
+          <div className="flex w-full justify-around items-center border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg">
+            <div className="flex w-3/12 ms:w-2/12  sm:w-1/12 items-center justify-around md:mx-1">
+              <ButtonWithTooltip
+                icon={<RiScreenshot2Fill size={30} />}
+                onClick={handleScreenCapture}
+                ariaLabel="Capture Screenshot"
+                tooltipText="Capture Screenshot"
+                isDisabled={!isVisionModel}
+                tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+              />
+              <ButtonWithTooltip
+                icon={
+                  <ImageUploadIcon
+                    onImageUpload={handleImageUpload}
+                    isDisabled={!isVisionModel}
+                  />
+                }
+                onClick={() => {}}
+                ariaLabel="Upload Image"
+                tooltipText="Upload Image"
+                isDisabled={!isVisionModel}
+                tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+              />
+            </div>
+            <form
+              onSubmit={handleSubmit}
+              className="flex items-center w-8/12 ms:w-9/12 xs:w-10/12 xl:w-11/12 px-2 py-1 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
+            >
+              <textarea
+                ref={textAreaRef}
+                disabled={loading}
+                autoFocus={false}
+                rows={rows}
+                id="userInput"
+                name="userInput"
+                className={`w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
+                placeholder="Click to send. Shift + Enter for a new line."
+                value={userInput}
+                onChange={handleInputChange}
+                aria-label="Enter your message here"
+              />
+              <ArrowButton
+                disabled={userInput === '' && imageSrc.length === 0}
+                aria-label="Send"
+              />
+            </form>
           </div>
-          <form
-            onSubmit={handleSubmit}
-            className="flex items-center w-8/12 ms:w-9/12 xs:w-10/12 xl:w-11/12 px-2 py-1 rounded-lg hover:bg-indigo-100 focus:outline-none focus:ring focus:ring-stone-300 focus:ring-offset-red"
-          >
-            <textarea
-              ref={textAreaRef}
-              disabled={loading}
-              autoFocus={false}
-              rows={rows}
-              id="userInput"
-              name="userInput"
-              className={`w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 ${loading && 'opacity-50'} focus:ring-stone-100 focus:outline-none`}
-              placeholder="Click to send. Shift + Enter for a new line."
-              value={userInput}
-              onChange={handleInputChange}
-              aria-label="Enter your message here"
-            />
-            <ArrowButton
-              disabled={userInput === '' && imageSrc.length === 0}
-              aria-label="Send"
-            />
-          </form>
         </div>
       </div>
       {error && <Notification type="error" message={error} />}

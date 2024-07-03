@@ -23,10 +23,6 @@ body {
   height: 100%;
 }
 
-.bot-response p {
-  padding: 0px 0px 10px 0px;
-}
-
 .space-wrap {
   white-space: pre-wrap; /* CSS property to preserve whitespace */
   font-family: monospace; /* Ensures consistent spacing */
