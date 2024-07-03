@@ -6,6 +6,9 @@ module.exports = {
   transform: {
     '^.+\\.(ts|tsx)$': 'babel-jest'
   },
+  transformIgnorePatterns: [
+    "/node_modules/(?!clui|yargs).+\\.js$",
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1'
   }

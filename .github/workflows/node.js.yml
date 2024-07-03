@@ -25,6 +25,14 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      # Removing node_modules to ensure any build artifacts or state introduced by the initial build
+      # that affect yarn test running are cleaned up.
+      - name: Remove node_modules
+        run: rm -rf node_modules
+
+      - name: Reinstall dependencies
+        run: yarn install
+
       - name: Set environment variables
         run: |
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
@@ -39,17 +47,8 @@ jobs:
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> $GITHUB_ENV
           echo "CLAUDE_API_KEY=${{ secrets.CLAUDE_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Build project
+      - name: Rebuild project
         run: yarn build
-
-      - name: Update Snapshots
-        run: yarn test -u
 
       - name: Run tests
         run: yarn test
-
-      - name: Upload Snapshots
-        uses: actions/upload-artifact@v3
-        with:
-          name: snapshots
-          path: __tests__/components/__snapshots__/
