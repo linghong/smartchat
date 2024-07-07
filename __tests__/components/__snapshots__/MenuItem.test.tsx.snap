@@ -3,7 +3,7 @@
 exports[`MenuItem Component should match MenuItem component snapshot 1`] = `
 <DocumentFragment>
   <li
-    class="mt-5 my-8 font-semibold"
+    class="mt-8 font-semibold"
   >
     <div
       class="flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer text-slate-50"
