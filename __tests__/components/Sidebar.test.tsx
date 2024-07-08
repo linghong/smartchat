@@ -30,6 +30,7 @@ jest.mock('@/src/components/MenuItem', () => {
     );
   };
 });
+
 const mockSetIsSidebarOpen = jest.fn();
 
 describe('Sidebar Component', () => {
@@ -43,7 +44,7 @@ describe('Sidebar Component', () => {
     ) as jest.Mock;
   });
 
-  it('renders Sidebar component with all expected ul elements', async () => {
+  it('renders Sidebar component with all expected elements', async () => {
     await act(async () => {
       render(<Sidebar setIsSidebarOpen={mockSetIsSidebarOpen} />);
     });
@@ -51,6 +52,7 @@ describe('Sidebar Component', () => {
     expect(screen.getByText('Embed RAG File')).toBeInTheDocument();
     expect(screen.getByText('Finetune AI Model')).toBeInTheDocument();
     expect(screen.getByText('Chat With AI')).toBeInTheDocument();
+    expect(screen.getByText('AI Hub')).toBeInTheDocument();
   });
 
   it('handles fetch error gracefully', async () => {
@@ -97,10 +99,10 @@ describe('Sidebar Component', () => {
     // Wait for the chat data to be fetched and rendered
     await waitFor(() => {
       expect(screen.getByText('Test Chat')).toBeInTheDocument();
-    }); // Visible because defaultOpen is true
+    }); // Visible because defaultOpen is true for Chat With AI
   });
 
-  it('has the correct href for Each menuItem', async () => {
+  it('has the correct href for Each MenuItem', async () => {
     await act(async () => {
       render(<Sidebar setIsSidebarOpen={mockSetIsSidebarOpen} />);
     });

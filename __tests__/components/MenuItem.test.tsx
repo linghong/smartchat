@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/router';
 
 import MenuItem from '@/src/components/MenuItem';
@@ -57,7 +57,7 @@ describe('MenuItem Component', () => {
     expect(screen.queryByText('Item 2')).toBeNull();
 
     // Click to toggle the item list
-    fireEvent.click(screen.getByRole('button'));
+    fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
 
     // Ensure the item list is visible after toggling
     expect(screen.getByText('Item 1')).toBeInTheDocument();
@@ -143,10 +143,11 @@ describe('MenuItem Component', () => {
       />
     );
 
-    await fireEvent.click(screen.getByText('Test Title'));
-
-    expect(mockPush).toHaveBeenCalledWith('/test-link');
-    expect(setIsSidebarOpen).toHaveBeenCalledWith(false);
+    fireEvent.click(screen.getByText('Test Title'));
+    await waitFor (() => {
+      expect(mockPush).toHaveBeenCalledWith('/test-link');
+      expect(setIsSidebarOpen).toHaveBeenCalledWith(false); //close the sidebar got to the link page
+    }) 
   });
 
   it('should call router.push but not setIsSidebarOpen when link is clicked on desktop', async () => {
@@ -164,10 +165,11 @@ describe('MenuItem Component', () => {
       />
     );
 
-    await fireEvent.click(screen.getByText('Test Title'));
-
-    expect(mockPush).toHaveBeenCalledWith('/test-link');
-    expect(setIsSidebarOpen).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText('Test Title'));
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/test-link');
+      expect(setIsSidebarOpen).not.toHaveBeenCalled();
+    })
   });
 
   it('should match MenuItem component snapshot', () => {
