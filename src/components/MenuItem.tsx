@@ -45,7 +45,7 @@ const MenuItem: FC<MenuItemProps> = ({
   return (
     <li className="mt-6 font-semibold">
       <div
-        className={`flex justify-between items-center px-3 py-1 border-b cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100  ${isActive ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-50'}`}
+        className={`flex justify-between items-center px-1 py-1 border-b cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100  ${isActive ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-50'}`}
       >
         {link ? (
           <Link
@@ -72,7 +72,7 @@ const MenuItem: FC<MenuItemProps> = ({
           {itemList.map(item => (
             <li
               key={item.id}
-              className="px-2 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
+              className="px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
             >
               {item.title}
             </li>

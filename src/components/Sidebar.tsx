@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FC } from 'react';
 
 import MenuItem from '@/src/components/MenuItem';
+import AIHub from '@/src/components/AIHub';
 import { Chat } from '@/src/types/chat';
 
 interface SidebarProps {
@@ -49,30 +50,33 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen }) => {
   }, []);
 
   return (
-    <ul className="px-2 pt-10 ">
-      <MenuItem
-        key="embedragfile"
-        title="Embed RAG File"
-        link="/embedragfile"
-        itemList={files}
-        setIsSidebarOpen={setIsSidebarOpen}
-      />
-      <MenuItem
-        key="finetunemodel"
-        title="Finetune AI Model"
-        link="/finetunemodel"
-        itemList={models}
-        setIsSidebarOpen={setIsSidebarOpen}
-      />
-      <MenuItem
-        key="chatwithai"
-        title="Chat With AI"
-        link="/"
-        itemList={chats}
-        setIsSidebarOpen={setIsSidebarOpen}
-        defaultOpen={true}
-      />
-    </ul>
+    <div className="flex flex-col w-full h-full">
+      <ul className="flex-grow px-2 pt-10 ">
+        <MenuItem
+          key="embedragfile"
+          title="Embed RAG File"
+          link="/embedragfile"
+          itemList={files}
+          setIsSidebarOpen={setIsSidebarOpen}
+        />
+        <MenuItem
+          key="finetunemodel"
+          title="Finetune AI Model"
+          link="/finetunemodel"
+          itemList={models}
+          setIsSidebarOpen={setIsSidebarOpen}
+        />
+        <MenuItem
+          key="chatwithai"
+          title="Chat With AI"
+          link="/"
+          itemList={chats}
+          setIsSidebarOpen={setIsSidebarOpen}
+          defaultOpen={true}
+        />
+      </ul>
+      <AIHub />
+    </div>
   );
 };
 
