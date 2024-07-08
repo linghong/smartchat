@@ -36,3 +36,20 @@ body,
 .flex-grow {
   height: 100%;
 }
+
+pre {
+  font-size: 14px; 
+  white-space: pre-wrap; 
+  word-wrap: break-word; /* Break long words */
+  overflow-x: auto; /* Allow horizontal scrolling if needed */
+}
+
+pre code {
+  display: block;
+  padding: 1em; 
+  background-color: #19181a;
+  color: rgb(226, 226, 249);
+  border-radius: 5px;
+  font-family: 'Courier New', Courier, monospace; 
+  line-height: 1.5; 
+}
