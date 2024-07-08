@@ -158,7 +158,7 @@ const HomePage: FC<HomeProps> = ({
   };
 
   const handleSubmit = useCallback(
-    async (e: FormEvent<HTMLFormElement>) => {
+    async (e: FormEvent<HTMLFormElement> | KeyboardEvent) => {
       e.preventDefault();
 
       const question: string = userInput.trim();
@@ -186,7 +186,6 @@ const HomePage: FC<HomeProps> = ({
 
       if (chatHistory.length === 1) {
         const chat = await updateChats(data.subject, {});
-        console.log('chat', chat);
       }
     },
     [
@@ -290,29 +289,45 @@ const HomePage: FC<HomeProps> = ({
     }
   };
 
+  // for input text area
   useEffect(() => {
-    const keyDownHandler = (e: KeyboardEvent) => {
+    const handleShiftEnter = (e: KeyboardEvent) => {
       if (e.key !== 'Enter') return;
       e.preventDefault();
 
       //insert newline \n when using shift + enter
       if (e.shiftKey) {
-        setUserInput(prevState => prevState + '\n');
-        setRows(rows => rows + 1);
+        const start = textAreaRef.current?.selectionStart;
+        const end = textAreaRef.current?.selectionEnd;
+
+        if (start != null && end != null && textAreaRef.current) {
+          const value = textAreaRef.current.value;
+          const newValue =
+            value.substring(0, start) + '\n' + value.substring(end);
+          setUserInput(newValue);
+          setRows(rows => rows + 1);
+
+          // Update cursor position
+          setTimeout(() => {
+            textAreaRef.current!.selectionStart =
+              textAreaRef.current!.selectionEnd = start + 1;
+          }, 0);
+        }
       } else {
         handleSubmit(e as any);
         setRows(1);
       }
     };
+
     const currentTextArea = textAreaRef.current;
     if (currentTextArea) {
-      currentTextArea.addEventListener('keydown', keyDownHandler);
+      currentTextArea.addEventListener('keydown', handleShiftEnter);
       currentTextArea.scrollTop = currentTextArea.scrollHeight;
     }
 
     return () => {
       if (currentTextArea) {
-        currentTextArea.removeEventListener('keydown', keyDownHandler);
+        currentTextArea.removeEventListener('keydown', handleShiftEnter);
       }
     };
   }, [handleSubmit]);
