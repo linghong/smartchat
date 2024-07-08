@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react';
+import React, { useState, useCallback, FC } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -26,28 +26,31 @@ const MenuItem: FC<MenuItemProps> = ({
   const router = useRouter();
   const isActive = link && router.pathname === link;
 
-  const toggle = () => setIsOpen(!isOpen);
+  const toggle = useCallback(() => setIsOpen(prev => !prev), []);
 
-  const handleLinkClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    if (link) {
-      // await its completion to ensure that any state changes occur after navigating, so that the sidebar won't open before the navigation completes
-      await router.push(link);
-      if (setIsSidebarOpen && window.innerWidth <= 480) {
-        setIsSidebarOpen(false);
+  const handleLinkClick = useCallback(
+    async (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      if (link) {
+        // await its completion to ensure that any state changes occur after navigating, so that the sidebar won't open before the navigation completes
+        await router.push(link);
+        if (setIsSidebarOpen && window.innerWidth <= 480) {
+          setIsSidebarOpen(false);
+        }
       }
-    }
-  };
+    },
+    [link, router, setIsSidebarOpen]
+  );
 
   return (
-    <li className="mt-8 font-semibold">
+    <li className="mt-6 font-semibold">
       <div
-        className={`flex justify-between items-center px-3 py-1 border-b hover:bg-slate-500 focus:bg-indigo-100 cursor-pointer ${isActive ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-50'}`}
+        className={`flex justify-between items-center px-3 py-1 border-b cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100  ${isActive ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-50'}`}
       >
         {link ? (
           <Link
             href={link}
-            className={`flex-grow px-2 hover:underline `}
+            className={`flex-grow px-2 transition-colors duration-200 hover:text-indigo-300`}
             onClick={handleLinkClick}
           >
             {title}
@@ -55,16 +58,21 @@ const MenuItem: FC<MenuItemProps> = ({
         ) : (
           <span className="flex-grow text-slate-50 ">{title}</span>
         )}
-        <span role="button" className="cursor-pointer" onClick={toggle}>
-          {isOpen ? <AiFillCaretUp /> : <AiFillCaretDown />}
-        </span>
+        <button
+          role="button"
+          className="cursor-pointer transition-colors duration-200 hover:text-indigo-300"
+          onClick={toggle}
+          aria-label={isOpen ? 'Collapse' : 'Expand'}
+        >
+          {isOpen ? <AiFillCaretUp size={18} /> : <AiFillCaretDown size={18} />}
+        </button>
       </div>
       {isOpen && (
-        <ul className="px-1 py-2 font-medium text-slate-200">
+        <ul className="px-1 py-2 font-medium text-slate-200 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300">
           {itemList.map(item => (
             <li
               key={item.id}
-              className="px-2 py-2  tracking-tight text-sm font-normal truncate hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
+              className="px-2 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
             >
               {item.title}
             </li>
