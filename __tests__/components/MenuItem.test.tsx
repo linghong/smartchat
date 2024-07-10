@@ -9,6 +9,20 @@ jest.mock('next/router', () => ({
   useRouter: jest.fn()
 }));
 
+// Mock react-virtualized
+jest.mock('react-virtualized', () => ({
+  List: jest.fn(({ rowRenderer }) => (
+    <div data-testid="virtualized-list">
+      {[0, 1].map(index =>
+        rowRenderer({ index, key: `item-${index}`, style: {} })
+      )}
+    </div>
+  )),
+  AutoSizer: jest.fn(({ children }) => children({ width: 300, height: 400 })),
+  CellMeasurer: jest.fn(({ children }) => children({ measure: jest.fn() })),
+  CellMeasurerCache: jest.fn()
+}));
+
 describe('MenuItem Component', () => {
   const mockPush = jest.fn();
 
@@ -53,6 +67,7 @@ describe('MenuItem Component', () => {
     );
 
     // Ensure the item list is not visible initially
+    expect(screen.queryByTestId('virtualized-list')).toBeNull();
     expect(screen.queryByText('Item 1')).toBeNull();
     expect(screen.queryByText('Item 2')).toBeNull();
 
@@ -60,6 +75,7 @@ describe('MenuItem Component', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
 
     // Ensure the item list is visible after toggling
+    expect(screen.getByTestId('virtualized-list')).toBeInTheDocument();
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 2')).toBeInTheDocument();
   });
@@ -108,7 +124,8 @@ describe('MenuItem Component', () => {
       />
     );
 
-    // Ensure the item list is visible initially due to defaultOpen
+    // Ensure the virtualized list is visible initially due to defaultOpen
+    expect(screen.getByTestId('virtualized-list')).toBeInTheDocument();
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 2')).toBeInTheDocument();
   });
@@ -144,10 +161,10 @@ describe('MenuItem Component', () => {
     );
 
     fireEvent.click(screen.getByText('Test Title'));
-    await waitFor (() => {
+    await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/test-link');
-      expect(setIsSidebarOpen).toHaveBeenCalledWith(false); //close the sidebar got to the link page
-    }) 
+      expect(setIsSidebarOpen).toHaveBeenCalledWith(false); //close the sidebar and go to the link page
+    });
   });
 
   it('should call router.push but not setIsSidebarOpen when link is clicked on desktop', async () => {
@@ -169,7 +186,7 @@ describe('MenuItem Component', () => {
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/test-link');
       expect(setIsSidebarOpen).not.toHaveBeenCalled();
-    })
+    });
   });
 
   it('should match MenuItem component snapshot', () => {

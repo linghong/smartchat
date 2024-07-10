@@ -1,8 +1,14 @@
-import React, { useState, useCallback, FC } from 'react';
+import React, { useState, useCallback, FC, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
 import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
+import {
+  List,
+  AutoSizer,
+  ListRowProps,
+  CellMeasurer,
+  CellMeasurerCache
+} from 'react-virtualized';
 
 import { Chat } from '@/src/types/chat';
 
@@ -32,7 +38,6 @@ const MenuItem: FC<MenuItemProps> = ({
     async (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
       if (link) {
-        // await its completion to ensure that any state changes occur after navigating, so that the sidebar won't open before the navigation completes
         await router.push(link);
         if (setIsSidebarOpen && window.innerWidth <= 480) {
           setIsSidebarOpen(false);
@@ -40,6 +45,41 @@ const MenuItem: FC<MenuItemProps> = ({
       }
     },
     [link, router, setIsSidebarOpen]
+  );
+
+  const cache = useMemo(
+    () =>
+      new CellMeasurerCache({
+        fixedWidth: true,
+        defaultHeight: 40
+      }),
+    []
+  );
+
+  const renderRow = useCallback(
+    ({ index, key, style, parent }: ListRowProps) => {
+      const item = itemList[index];
+      return (
+        <CellMeasurer
+          key={key}
+          cache={cache}
+          parent={parent}
+          columnIndex={0}
+          rowIndex={index}
+        >
+          {({ measure }) => (
+            <li
+              style={style}
+              className="px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
+              onLoad={measure}
+            >
+              {item.title}
+            </li>
+          )}
+        </CellMeasurer>
+      );
+    },
+    [itemList, cache]
   );
 
   return (
@@ -68,15 +108,21 @@ const MenuItem: FC<MenuItemProps> = ({
         </button>
       </div>
       {isOpen && (
-        <ul className="px-1 py-2 font-medium text-slate-200 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300">
-          {itemList.map(item => (
-            <li
-              key={item.id}
-              className="px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
-            >
-              {item.title}
-            </li>
-          ))}
+        <ul className="px-1 py-2 font-medium text-slate-200 max-h-80">
+          <AutoSizer disableHeight>
+            {({ width }) => (
+              <List
+                width={width}
+                height={320}
+                rowCount={itemList.length}
+                deferredMeasurementCache={cache}
+                rowHeight={cache.rowHeight}
+                rowRenderer={renderRow}
+                overscanRowCount={5}
+                className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300"
+              />
+            )}
+          </AutoSizer>
         </ul>
       )}
     </li>
