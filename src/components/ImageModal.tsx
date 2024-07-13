@@ -24,7 +24,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, onClose }) => {
         className="p-6"
       />
       <button
-        className="absolute top-5 right-5 text-white text-3xl"
+        className="absolute top-9 right-9 text-white text-3xl"
         onClick={e => {
           e.stopPropagation();
           onClose();

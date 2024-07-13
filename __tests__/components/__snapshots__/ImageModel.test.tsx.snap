@@ -22,7 +22,7 @@ exports[`ImageModal should match snapshot 1`] = `
     />
     <button
       aria-label="Close image view"
-      class="absolute top-5 right-5 text-white text-3xl"
+      class="absolute top-9 right-9 text-white text-3xl"
     >
       ×
     </button>
