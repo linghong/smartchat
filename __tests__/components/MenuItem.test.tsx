@@ -25,6 +25,7 @@ jest.mock('react-virtualized', () => ({
 
 describe('MenuItem Component', () => {
   const mockPush = jest.fn();
+  const mockSetIsSidebarOpen = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -42,8 +43,8 @@ describe('MenuItem Component', () => {
         title="Test Title"
         link="/test-link"
         itemList={[
-          { title: 'Item 1', id: 1 },
-          { title: 'Item 2', id: 2 }
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
         ]}
       />
     );
@@ -60,8 +61,8 @@ describe('MenuItem Component', () => {
       <MenuItem
         title="Test Title"
         itemList={[
-          { title: 'Item 1', id: 1 },
-          { title: 'Item 2', id: 2 }
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
         ]}
       />
     );
@@ -86,8 +87,8 @@ describe('MenuItem Component', () => {
         title="Test Title"
         link="/current-path"
         itemList={[
-          { title: 'Item 1', id: 1 },
-          { title: 'Item 2', id: 2 }
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
         ]}
       />
     );
@@ -102,8 +103,8 @@ describe('MenuItem Component', () => {
         title="Test Title"
         link="/other-path"
         itemList={[
-          { title: 'Item 1', id: 1 },
-          { title: 'Item 2', id: 2 }
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
         ]}
       />
     );
@@ -117,8 +118,8 @@ describe('MenuItem Component', () => {
       <MenuItem
         title="Test Title"
         itemList={[
-          { title: 'Item 1', id: 1 },
-          { title: 'Item 2', id: 2 }
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
         ]}
         defaultOpen={true}
       />
@@ -135,8 +136,8 @@ describe('MenuItem Component', () => {
       <MenuItem
         title="Test Title"
         itemList={[
-          { title: 'Item 1', id: 1 },
-          { title: 'Item 2', id: 2 }
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
         ]}
       />
     );
@@ -147,23 +148,23 @@ describe('MenuItem Component', () => {
 
   it('should call router.push and setIsSidebarOpen when link is clicked on mobile', async () => {
     global.innerWidth = 480;
-    const setIsSidebarOpen = jest.fn();
+
     render(
       <MenuItem
         title="Test Title"
         link="/test-link"
         itemList={[
-          { title: 'Item 1', id: 1 },
-          { title: 'Item 2', id: 2 }
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
         ]}
-        setIsSidebarOpen={setIsSidebarOpen}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
       />
     );
 
     fireEvent.click(screen.getByText('Test Title'));
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/test-link');
-      expect(setIsSidebarOpen).toHaveBeenCalledWith(false); //close the sidebar and go to the link page
+      expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false); //close the sidebar and go to the link page
     });
   });
 
@@ -175,17 +176,17 @@ describe('MenuItem Component', () => {
         title="Test Title"
         link="/test-link"
         itemList={[
-          { title: 'Item 1', id: 1 },
-          { title: 'Item 2', id: 2 }
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
         ]}
-        setIsSidebarOpen={setIsSidebarOpen}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
       />
     );
 
     fireEvent.click(screen.getByText('Test Title'));
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/test-link');
-      expect(setIsSidebarOpen).not.toHaveBeenCalled();
+      expect(mockSetIsSidebarOpen).not.toHaveBeenCalled();
     });
   });
 
@@ -195,8 +196,8 @@ describe('MenuItem Component', () => {
         title="Test Title"
         link="/test-link"
         itemList={[
-          { title: 'Item 1', id: 1 },
-          { title: 'Item 2', id: 2 }
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
         ]}
       />
     );

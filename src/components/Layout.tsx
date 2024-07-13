@@ -3,16 +3,20 @@ import { useState, useEffect, FC, ReactNode } from 'react';
 import Footer from '@/src/components/Footer';
 import Header from '@/src/components/Header';
 import Sidebar from '@/src/components/Sidebar';
+import { OptionType } from '@/src/types/common';
+
 interface LayoutProps {
   children: ReactNode;
   isPanelVisible: boolean;
   setIsPanelVisible: (isPanelVisible: boolean) => void;
+  namespacesList: OptionType[] | null;
 }
 
 const Layout: FC<LayoutProps> = ({
   children,
   isPanelVisible,
-  setIsPanelVisible
+  setIsPanelVisible,
+  namespacesList
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -43,7 +47,10 @@ const Layout: FC<LayoutProps> = ({
       <div className="flex flex-row w-full h-full">
         {isMobile && isSidebarOpen && (
           <div className="bg-slate-500 text-slate-50 h-full w-full">
-            <Sidebar setIsSidebarOpen={setIsSidebarOpen} />
+            <Sidebar
+              setIsSidebarOpen={setIsSidebarOpen}
+              namespacesList={namespacesList}
+            />
           </div>
         )}
         {isMobile && !isSidebarOpen && (
@@ -55,7 +62,10 @@ const Layout: FC<LayoutProps> = ({
         {!isMobile && isSidebarOpen && (
           <div className="flex flex-row w-full h-full">
             <div className="bg-slate-500 text-slate-50 h-full text-md xs:w-4/12 md:w-3/12 lg:w-2/12 fixed top-0 left-0 bottom-0">
-              <Sidebar setIsSidebarOpen={setIsSidebarOpen} />
+              <Sidebar
+                setIsSidebarOpen={setIsSidebarOpen}
+                namespacesList={namespacesList}
+              />
             </div>
             <div className="flex flex-col w-full xs:pl-[33.33%] md:pl-[25%] lg:pl-[16.67%] items-center">
               <main className={`flex flex-col h-full  w-full max-w-4xl`}>

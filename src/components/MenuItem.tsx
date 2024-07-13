@@ -10,12 +10,12 @@ import {
   CellMeasurerCache
 } from 'react-virtualized';
 
-import { Chat } from '@/src/types/chat';
+import { OptionType } from '@/src/types/common';
 
 interface MenuItemProps {
   title: string;
   link?: string;
-  itemList: Chat[];
+  itemList: OptionType[] | null;
   defaultOpen?: boolean;
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
 }
@@ -58,6 +58,7 @@ const MenuItem: FC<MenuItemProps> = ({
 
   const renderRow = useCallback(
     ({ index, key, style, parent }: ListRowProps) => {
+      if (!itemList) return;
       const item = itemList[index];
       return (
         <CellMeasurer
@@ -73,7 +74,7 @@ const MenuItem: FC<MenuItemProps> = ({
               className="px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
               onLoad={measure}
             >
-              {item.title}
+              {item.label}
             </li>
           )}
         </CellMeasurer>
@@ -81,6 +82,13 @@ const MenuItem: FC<MenuItemProps> = ({
     },
     [itemList, cache]
   );
+
+  const listHeight = useMemo(() => {
+    const itemHeight = 40; // Assuming each item is 40px high
+    const maxHeight = 320; // Maximum height of the list
+    const calculatedHeight = itemList ? itemList.length * itemHeight : 0;
+    return Math.min(calculatedHeight, maxHeight);
+  }, [itemList]);
 
   return (
     <li className="mt-6 font-semibold">
@@ -109,20 +117,22 @@ const MenuItem: FC<MenuItemProps> = ({
       </div>
       {isOpen && (
         <ul className="px-1 py-2 font-medium text-slate-200 max-h-80">
-          <AutoSizer disableHeight>
-            {({ width }) => (
-              <List
-                width={width}
-                height={320}
-                rowCount={itemList.length}
-                deferredMeasurementCache={cache}
-                rowHeight={cache.rowHeight}
-                rowRenderer={renderRow}
-                overscanRowCount={5}
-                className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300"
-              />
-            )}
-          </AutoSizer>
+          {itemList && (
+            <AutoSizer disableHeight>
+              {({ width }) => (
+                <List
+                  width={width}
+                  height={listHeight}
+                  rowCount={itemList.length}
+                  deferredMeasurementCache={cache}
+                  rowHeight={cache.rowHeight}
+                  rowRenderer={renderRow}
+                  overscanRowCount={5}
+                  className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300"
+                />
+              )}
+            </AutoSizer>
+          )}
         </ul>
       )}
     </li>

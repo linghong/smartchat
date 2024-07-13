@@ -35,7 +35,11 @@ const AIHub: React.FC = () => {
           <AiOutlineBulb size={20} className="mr-2" />
           <span className="font-medium">AI Hub</span>
         </span>
-        {isOpen ? <AiFillCaretDown size={20} /> : <AiFillCaretUp size={20} />}
+        {isOpen ? (
+          <AiFillCaretDown size={20} aria-label="caret-down" />
+        ) : (
+          <AiFillCaretUp size={20} aria-label="caret-up" />
+        )}
       </button>
       {isOpen && (
         <div

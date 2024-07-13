@@ -24,14 +24,26 @@ jest.mock('@/src/components/MenuItem', () => {
         </a>
         <ul>
           {defaultOpen &&
-            itemList.map(item => <li key={item.id}>{item.title}</li>)}
+            itemList?.map((item, index) => <li key={index}>{item.label}</li>)}
         </ul>
       </div>
     );
   };
 });
 
+// Mock the AIHub component
+jest.mock('@/src/components/AIHub', () => {
+  return function MockAIHub() {
+    return <div>AI Hub</div>;
+  };
+});
+
 const mockSetIsSidebarOpen = jest.fn();
+
+const mockNamespacesList = [
+  { label: 'Namespace 1', value: 'ns1' },
+  { label: 'Namespace 2', value: 'ns2' }
+];
 
 describe('Sidebar Component', () => {
   beforeEach(() => {
@@ -46,7 +58,12 @@ describe('Sidebar Component', () => {
 
   it('renders Sidebar component with all expected elements', async () => {
     await act(async () => {
-      render(<Sidebar setIsSidebarOpen={mockSetIsSidebarOpen} />);
+      render(
+        <Sidebar
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+        />
+      );
     });
 
     expect(screen.getByText('Embed RAG File')).toBeInTheDocument();
@@ -64,7 +81,12 @@ describe('Sidebar Component', () => {
     ) as jest.Mock;
 
     await act(async () => {
-      render(<Sidebar setIsSidebarOpen={mockSetIsSidebarOpen} />);
+      render(
+        <Sidebar
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+        />
+      );
     });
 
     await waitFor(() => {
@@ -78,7 +100,12 @@ describe('Sidebar Component', () => {
 
   it('fetches chats on mount', async () => {
     await act(async () => {
-      render(<Sidebar setIsSidebarOpen={mockSetIsSidebarOpen} />);
+      render(
+        <Sidebar
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+        />
+      );
     });
 
     expect(global.fetch).toHaveBeenCalledWith('/api/chats');
@@ -88,9 +115,28 @@ describe('Sidebar Component', () => {
     });
   });
 
+  it('renders namespaces list correctly', async () => {
+    await act(async () => {
+      render(
+        <Sidebar
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+        />
+      );
+    });
+
+    expect(screen.queryByText('Namespace 1')).toBeNull(); // Not visible because Embed RAG File is not defaultOpen
+    expect(screen.queryByText('Namespace 2')).toBeNull();
+  });
+
   it('initially renders child menu items correctly based on defaultOpen state', async () => {
     await act(async () => {
-      render(<Sidebar setIsSidebarOpen={mockSetIsSidebarOpen} />);
+      render(
+        <Sidebar
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+        />
+      );
     });
 
     expect(screen.queryByText('File 1')).toBeNull();
@@ -104,7 +150,12 @@ describe('Sidebar Component', () => {
 
   it('has the correct href for Each MenuItem', async () => {
     await act(async () => {
-      render(<Sidebar setIsSidebarOpen={mockSetIsSidebarOpen} />);
+      render(
+        <Sidebar
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+        />
+      );
     });
 
     const embedRagFileLink = screen.getByText('Embed RAG File').closest('a');
@@ -124,7 +175,10 @@ describe('Sidebar Component', () => {
 
     await act(async () => {
       const result = render(
-        <Sidebar setIsSidebarOpen={mockSetIsSidebarOpen} />
+        <Sidebar
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+        />
       );
       asFragment = result.asFragment;
     });

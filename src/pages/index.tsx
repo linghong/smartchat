@@ -7,8 +7,8 @@ import {
   FormEvent,
   FC
 } from 'react';
-import { GetStaticProps } from 'next';
 import { RiScreenshot2Fill } from 'react-icons/ri'; //screenshot
+import { GetStaticProps } from 'next';
 
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ArrowButton from '@/src/components/ArrowButton';
@@ -20,12 +20,14 @@ import Notification from '@/src/components/Notification';
 import { modelOptions } from '@/config/modellist';
 import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
 import { fileToBase64 } from '@/src/utils/fileFetchAndConversion';
+import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
 import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
 
 interface HomeProps {
   namespaces: string[];
+  namespacesList: OptionType[];
+  setNamespacesList: (namespacesList: OptionType[]) => void;
   isNewChat: boolean;
   isPanelVisible: boolean;
   setIsNewChat: (value: boolean) => void;
@@ -41,6 +43,8 @@ const initialMessage = {
 
 const HomePage: FC<HomeProps> = ({
   namespaces,
+  namespacesList,
+  setNamespacesList,
   isNewChat,
   setIsNewChat,
   isPanelVisible,
@@ -49,13 +53,9 @@ const HomePage: FC<HomeProps> = ({
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
-  const fileCategoryOptions =
-    namespaces.length === 0
-      ? [initialFileCategory]
-      : [
-          initialFileCategory,
-          ...namespaces.map(ns => ({ value: ns, label: ns }))
-        ];
+  const fetchedCategoryOptions =
+    namespaces.map(ns => ({ value: ns, label: ns })) ?? [];
+
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>(
     initialFileCategory
   );
@@ -289,6 +289,10 @@ const HomePage: FC<HomeProps> = ({
     }
   };
 
+  useEffect(() => {
+    setNamespacesList(fetchedCategoryOptions);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // for input text area
   useEffect(() => {
     const handleShiftEnter = (e: KeyboardEvent) => {
@@ -343,7 +347,7 @@ const HomePage: FC<HomeProps> = ({
       setChatHistory([initialMessage]);
       setIsNewChat(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [isNewChat]);
 
   return (
@@ -358,7 +362,7 @@ const HomePage: FC<HomeProps> = ({
             basePrompt={basePrompt}
             handleBasePromptChange={handleBasePromptChange}
             modelOptions={modelOptions}
-            fileCategoryOptions={fileCategoryOptions}
+            fileCategoryOptions={fetchedCategoryOptions}
           />
         </div>
       )}
