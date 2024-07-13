@@ -23,6 +23,8 @@ const AIConfigPanel: FC<AIConfigPanelProps> = ({
   modelOptions,
   fileCategoryOptions
 }) => {
+  const initialFileCategory: OptionType = { value: 'none', label: 'None' };
+
   return (
     <div
       className={`
@@ -44,7 +46,7 @@ const AIConfigPanel: FC<AIConfigPanelProps> = ({
           <DropdownSelect
             selectedOption={selectedNamespace}
             onChange={handleNamespaceChange}
-            options={fileCategoryOptions}
+            options={[initialFileCategory, ...fileCategoryOptions]}
             label="Select RAG File:"
           />
         </div>
