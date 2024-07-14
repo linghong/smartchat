@@ -61,14 +61,14 @@ const Layout: FC<LayoutProps> = ({
         )}
         {!isMobile && isSidebarOpen && (
           <div className="flex flex-row w-full h-full">
-            <div className="bg-slate-500 text-slate-50 h-full text-md xs:w-4/12 md:w-3/12 lg:w-2/12 fixed top-0 left-0 bottom-0">
+            <div className="bg-slate-500 text-slate-50 h-full text-md w-full xs:w-56 xl:w-64 2xl:w-72 fixed top-0 left-0 bottom-0 z-10">
               <Sidebar
                 setIsSidebarOpen={setIsSidebarOpen}
                 namespacesList={namespacesList}
               />
             </div>
-            <div className="flex flex-col w-full xs:pl-[33.33%] md:pl-[25%] lg:pl-[16.67%] items-center">
-              <main className={`flex flex-col h-full  w-full max-w-4xl`}>
+            <div className="flex flex-col w-full ml-56 xl:ml-64 2xl:ml-72">
+              <main className={`flex flex-col h-full w-full max-w-screen-2xl mx-auto px-2 sm:px-4 lg:px-8`}>
                 <div className="flex-grow">{children}</div>
                 <Footer />
               </main>
@@ -76,7 +76,7 @@ const Layout: FC<LayoutProps> = ({
           </div>
         )}
         {!isMobile && !isSidebarOpen && (
-          <main className="flex flex-col w-full lg:w-70vw mx-auto h-full">
+          <main className="flex flex-col h-full w-full lg:w-70vw px-2 mx-auto">
             {children}
             <Footer />
           </main>
