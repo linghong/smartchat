@@ -1,19 +1,60 @@
 import 'reflect-metadata';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { DataSource } from 'typeorm';
 
 import { getAppDataSource, Chat, User } from '@/src/db';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // Only one User for the local app.
-  // fixed user with username 'local' and the id automatically created by the database with 1
-  const LOCAL_USER_NAME = 'local';
+// Only one User for the local app.
+// fixed user with username 'local' and the id automatically created by the database with 1
+const LOCAL_USER_NAME = 'local';
 
+const handlePostRequest = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  dataSource: DataSource,
+  user: User
+) => {
+  const { title, metadata } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ message: 'Missing title' });
+  }
+  const chatRepository = dataSource.getRepository(Chat);
+  const chat = chatRepository.create({
+    title,
+    userId: user.id,
+    metadata
+  });
+  await chatRepository.save(chat);
+
+  res.status(201).json(chat);
+};
+
+const handleGetRequest = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  dataSource: DataSource,
+  user: User
+) => {
+  const chatRepository = dataSource.getRepository(Chat);
+  const chats = await chatRepository
+    .createQueryBuilder('chat')
+    .select(['chat.id', 'chat.title', 'chat.createdAt'])
+    .where('chat.userId = :userId', { userId: user.id })
+    .orderBy('chat.createdAt', 'DESC')
+    .getMany();
+
+  res.status(200).json(chats);
+};
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const dataSource = await getAppDataSource();
-    const userRepository = dataSource.getRepository(User);
-    const chatRepository = dataSource.getRepository(Chat);
+    if (!dataSource)
+      return res.status(500).json({ message: 'AppDataSource is null' });
 
-    // Ensure the user exists
+    const userRepository = dataSource.getRepository(User);
+
     let user = await userRepository.findOneBy({ username: LOCAL_USER_NAME });
 
     if (!user) {
@@ -24,29 +65,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     if (req.method === 'POST') {
-      const { title, metadata } = req.body;
-
-      if (!title) {
-        return res.status(400).json({ message: 'Missing title' });
-      }
-
-      const chat = chatRepository.create({
-        title,
-        userId: user.id,
-        metadata
-      });
-
-      await chatRepository.save(chat);
-
-      res.status(201).json(chat);
+      await handlePostRequest(req, res, dataSource, user);
     } else if (req.method === 'GET') {
-      const chats = await chatRepository
-        .createQueryBuilder('chat')
-        .select(['chat.id', 'chat.title', 'chat.createdAt'])
-        .where('chat.userId = :userId', { userId: user.id })
-        .orderBy('chat.createdAt', 'DESC')
-        .getMany();
-      res.status(200).json(chats);
+      await handleGetRequest(req, res, dataSource, user);
     } else {
       res.setHeader('Allow', ['GET', 'POST']);
       res.status(405).end(`Method ${req.method} Not Allowed`);

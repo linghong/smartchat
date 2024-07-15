@@ -16,16 +16,19 @@ class AppDataSourceSingleton {
 
   private constructor() {}
 
-  public static async getInstance(): Promise<DataSource> {
+  public static async getInstance(): Promise<DataSource | null> {
     if (!AppDataSourceSingleton.instance) {
       AppDataSourceSingleton.instance = new DataSource(options);
-      try {
-        await AppDataSourceSingleton.instance.initialize();
-      } catch (e) {
-        console.error('Error during data source initialization', e);
-      }
     }
-    return AppDataSourceSingleton.instance;
+    try {
+      if (!AppDataSourceSingleton.instance.isInitialized) {
+        await AppDataSourceSingleton.instance.initialize();
+      }
+      return AppDataSourceSingleton.instance;
+    } catch (e) {
+      console.error('Error during data source initialization', e);
+      return null;
+    }
   }
 }
 
