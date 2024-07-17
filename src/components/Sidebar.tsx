@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect, useRef, FC } from 'react';
 
 import MenuItem from '@/src/components/MenuItem';
 import AIHub from '@/src/components/AIHub';
@@ -23,14 +23,20 @@ const models = [
 
 const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
   const [chats, setChats] = useState<OptionType[]>([]);
+  const isFetchingChats = useRef(false);
 
   useEffect(() => {
     const fetchAllChats = async () => {
+      // avoid calling db twice, which causes the second call fetching data in the middle of the first call to complete the db inlization
+      if (isFetchingChats.current) return;
+      isFetchingChats.current = true;
       try {
         const chats = await fetchChats();
         if (chats) setChats(chats);
       } catch (error: any) {
         console.error(`Failed to fetch chats: ${error.message}`);
+      } finally {
+        isFetchingChats.current = false;
       }
     };
 
