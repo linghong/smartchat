@@ -23,6 +23,7 @@ import { OptionType } from '@/src/types/common';
 import { fileToBase64 } from '@/src/utils/fileFetchAndConversion';
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
 import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
+import { updateChats, updateChatMessages } from '@/src/utils/sqliteApiClient';
 
 interface HomeProps {
   namespaces: string[];
@@ -65,13 +66,14 @@ const HomePage: FC<HomeProps> = ({
   );
   const [basePrompt, setBasePrompt] = useState('');
 
+  const [dbChatId, setDbChatId] = useState<number | null>(null);
   const [userInput, setUserInput] = useState<string>('');
   const [rows, setRows] = useState<number>(1);
   const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
   const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
 
   const [imageSrc, setImageSrc] = useState<ImageFile[]>([]);
-  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]);
+  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]); //the first one is for Hi, how can I assist you?
   const [isVisionModel, setIsVisionModel] = useState(true);
   const [imageError, setImageError] = useState<string[]>([]);
 
@@ -105,7 +107,6 @@ const HomePage: FC<HomeProps> = ({
         //handling server-side errors
         if (!response.ok) {
           const errorData = await response.json();
-
           setError('There is a server side error. Try it again later.');
           setLoading(false);
           return;
@@ -113,12 +114,12 @@ const HomePage: FC<HomeProps> = ({
 
         const data = await response.json();
 
-        setChatHistory([
-          ...chatHistory.slice(0, chatHistory.length),
+        setChatHistory(prevHistory => [
+          ...prevHistory.slice(0, prevHistory.length - 1),
           { question: userInput, answer: data.answer }
         ]);
 
-        setMessageSubjectList([...messageSubjectList, data.subject]);
+        setMessageSubjectList(prevList => [...prevList, data.subject]);
 
         setLoading(false);
 
@@ -131,31 +132,8 @@ const HomePage: FC<HomeProps> = ({
         console.error('error', error);
       }
     },
-    [userInput, chatHistory, messageSubjectList, setMessageSubjectList]
+    [userInput, chatHistory, setMessageSubjectList]
   );
-
-  const updateChats = async (chatTitle: string, metadata: any) => {
-    try {
-      const res = await fetch('/api/chats', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: chatTitle,
-          metadata
-        })
-      });
-      if (!res) {
-        console.log('Error on post data to Chats table');
-      }
-      const chat = await res.json();
-
-      return chat;
-    } catch (e) {
-      console.error("Chat isn't created", e);
-    }
-  };
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement> | KeyboardEvent) => {
@@ -183,9 +161,15 @@ const HomePage: FC<HomeProps> = ({
         selectedModel,
         selectedNamespace?.value || 'none'
       );
-
-      if (chatHistory.length === 1) {
+      const imageUrls = imageSrc.map((img: ImageFile) => img.base64Image);
+      if (chatHistory.length === 1 || !dbChatId) {
         const chat = await updateChats(data.subject, {});
+
+        setDbChatId(chat.id);
+
+        updateChatMessages(userInput, data.answer, chat.id, imageUrls);
+      } else {
+        updateChatMessages(userInput, data.answer, dbChatId, imageUrls);
       }
     },
     [
@@ -195,7 +179,8 @@ const HomePage: FC<HomeProps> = ({
       fetchChatResponse,
       selectedModel,
       selectedNamespace?.value,
-      chatHistory.length
+      chatHistory.length,
+      dbChatId
     ]
   );
 

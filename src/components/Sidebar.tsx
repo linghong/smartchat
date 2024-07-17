@@ -2,8 +2,8 @@ import React, { useState, useEffect, FC } from 'react';
 
 import MenuItem from '@/src/components/MenuItem';
 import AIHub from '@/src/components/AIHub';
-import { Chat } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
+import { fetchChats } from '@/src/utils/sqliteApiClient';
 
 interface SidebarProps {
   setIsSidebarOpen: (isSidebarOpen: boolean) => void;
@@ -25,24 +25,16 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
   const [chats, setChats] = useState<OptionType[]>([]);
 
   useEffect(() => {
-    const fetchChats = async () => {
+    const fetchAllChats = async () => {
       try {
-        const response = await fetch('/api/chats');
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-        const data = await response.json();
-        const chats = data.map((d: Chat, i: number) => ({
-          label: d.title,
-          value: d.id.toString()
-        }));
-        setChats(chats);
+        const chats = await fetchChats();
+        if (chats) setChats(chats);
       } catch (error: any) {
         console.error(`Failed to fetch chats: ${error.message}`);
       }
     };
 
-    fetchChats();
+    fetchAllChats();
   }, []);
 
   return (

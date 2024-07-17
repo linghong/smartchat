@@ -68,7 +68,9 @@ const Layout: FC<LayoutProps> = ({
               />
             </div>
             <div className="flex flex-col w-full ml-56 xl:ml-64 2xl:ml-72">
-              <main className={`flex flex-col h-full w-full max-w-screen-2xl mx-auto px-2 sm:px-4 lg:px-8`}>
+              <main
+                className={`flex flex-col h-full w-full max-w-screen-2xl mx-auto px-2 sm:px-4 lg:px-8`}
+              >
                 <div className="flex-grow">{children}</div>
                 <Footer />
               </main>
