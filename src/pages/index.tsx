@@ -27,12 +27,9 @@ import { updateChats, updateChatMessages } from '@/src/utils/sqliteApiClient';
 
 interface HomeProps {
   namespaces: string[];
-  namespacesList: OptionType[];
   setNamespacesList: (namespacesList: OptionType[]) => void;
-  isNewChat: boolean;
-  isPanelVisible: boolean;
-  setIsNewChat: (value: boolean) => void;
-  setIsPanelVisible: (isPanelVisible: boolean) => void;
+  isConfigPanelVisible: boolean;
+  setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
 }
 
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
@@ -44,12 +41,9 @@ const initialMessage = {
 
 const HomePage: FC<HomeProps> = ({
   namespaces,
-  namespacesList,
   setNamespacesList,
-  isNewChat,
-  setIsNewChat,
-  isPanelVisible,
-  setIsPanelVisible
+  isConfigPanelVisible,
+  setIsConfigPanelVisible
 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
@@ -67,6 +61,7 @@ const HomePage: FC<HomeProps> = ({
   const [basePrompt, setBasePrompt] = useState('');
 
   const [dbChatId, setDbChatId] = useState<number | null>(null);
+  const [isNewChat, setIsNewChat] = useState(false);
   const [userInput, setUserInput] = useState<string>('');
   const [rows, setRows] = useState<number>(1);
   const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
@@ -203,8 +198,8 @@ const HomePage: FC<HomeProps> = ({
     setUserInput(newValue);
 
     // Close config panel when user starts typing
-    if (newValue.length >= 1 && isPanelVisible) {
-      setIsPanelVisible(false);
+    if (newValue.length >= 1 && isConfigPanelVisible) {
+      setIsConfigPanelVisible(false);
     }
     const newRows = newValue.match(/\n/g)?.length ?? 0;
     setRows(Math.min(newRows + 1, 8));
@@ -233,7 +228,7 @@ const HomePage: FC<HomeProps> = ({
       }
 
       setImageSrc([...imageSrc, newImage]);
-      setIsPanelVisible(false);
+      setIsConfigPanelVisible(false);
     } catch {
       throw new Error('Failed to read the file.');
     }
@@ -267,7 +262,7 @@ const HomePage: FC<HomeProps> = ({
       }
 
       setImageSrc([...imageSrc, newImage]);
-      setIsPanelVisible(false);
+      setIsConfigPanelVisible(false);
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred while capturing the screen');
@@ -337,7 +332,7 @@ const HomePage: FC<HomeProps> = ({
 
   return (
     <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 h-full mx-auto">
-      {isPanelVisible && (
+      {isConfigPanelVisible && (
         <div className="flex-shrink-0">
           <AIConfigPanel
             selectedModel={selectedModel}

@@ -7,15 +7,15 @@ import { OptionType } from '@/src/types/common';
 
 interface LayoutProps {
   children: ReactNode;
-  isPanelVisible: boolean;
-  setIsPanelVisible: (isPanelVisible: boolean) => void;
+  isConfigPanelVisible: boolean;
+  setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
   namespacesList: OptionType[] | null;
 }
 
 const Layout: FC<LayoutProps> = ({
   children,
-  isPanelVisible,
-  setIsPanelVisible,
+  isConfigPanelVisible,
+  setIsConfigPanelVisible,
   namespacesList
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -41,8 +41,8 @@ const Layout: FC<LayoutProps> = ({
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
-        isPanelVisible={isPanelVisible}
-        setIsPanelVisible={setIsPanelVisible}
+        isConfigPanelVisible={isConfigPanelVisible}
+        setIsConfigPanelVisible={setIsConfigPanelVisible}
       />
       <div className="flex flex-row w-full h-full">
         {isMobile && isSidebarOpen && (

@@ -10,7 +10,7 @@ jest.mock('next/router', () => ({
 }));
 
 const setIsSidebarOpen = jest.fn();
-const setIsPanelVisible = jest.fn();
+const setIsConfigPanelVisible = jest.fn();
 const mockPush = jest.fn();
 
 describe('Header Component', () => {
@@ -21,7 +21,7 @@ describe('Header Component', () => {
       push: mockPush
     });
     setIsSidebarOpen.mockClear();
-    setIsPanelVisible.mockClear();
+    setIsConfigPanelVisible.mockClear();
     mockPush.mockClear();
   });
 
@@ -30,8 +30,8 @@ describe('Header Component', () => {
       <Header
         isSidebarOpen={true}
         setIsSidebarOpen={setIsSidebarOpen}
-        isPanelVisible={false}
-        setIsPanelVisible={setIsPanelVisible}
+        isConfigPanelVisible={false}
+        setIsConfigPanelVisible={setIsConfigPanelVisible}
       />
     );
 
@@ -56,8 +56,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={true}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -71,8 +71,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={true}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
     });
@@ -99,8 +99,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={true}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -115,8 +115,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={true}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -131,8 +131,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={false}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -146,8 +146,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={false}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -161,8 +161,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={false}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -177,8 +177,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={false}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -191,8 +191,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={true}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -207,13 +207,13 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={false}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
       fireEvent.click(screen.getByLabelText('Show Config'));
-      expect(setIsPanelVisible).toHaveBeenCalledWith(true);
+      expect(setIsConfigPanelVisible).toHaveBeenCalledWith(true);
     });
 
     it('should show correct button text based on panel visibility', () => {
@@ -221,8 +221,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={false}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={false}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={false}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -232,8 +232,8 @@ describe('Header Component', () => {
         <Header
           isSidebarOpen={false}
           setIsSidebarOpen={setIsSidebarOpen}
-          isPanelVisible={true}
-          setIsPanelVisible={setIsPanelVisible}
+          isConfigPanelVisible={true}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       );
 
@@ -246,8 +246,8 @@ describe('Header Component', () => {
       <Header
         isSidebarOpen={true}
         setIsSidebarOpen={setIsSidebarOpen}
-        isPanelVisible={false}
-        setIsPanelVisible={setIsPanelVisible}
+        isConfigPanelVisible={false}
+        setIsConfigPanelVisible={setIsConfigPanelVisible}
       />
     );
     expect(asFragment()).toMatchSnapshot();

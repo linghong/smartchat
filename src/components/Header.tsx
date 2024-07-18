@@ -11,15 +11,15 @@ import { useRouter } from 'next/router';
 interface HeaderProps {
   setIsSidebarOpen: (isSideBarOpen: boolean) => void;
   isSidebarOpen: boolean;
-  isPanelVisible: boolean;
-  setIsPanelVisible: (isPanelVisible: boolean) => void;
+  isConfigPanelVisible: boolean;
+  setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
 }
 
 const Header: FC<HeaderProps> = ({
   isSidebarOpen,
   setIsSidebarOpen,
-  isPanelVisible,
-  setIsPanelVisible
+  isConfigPanelVisible,
+  setIsConfigPanelVisible
 }) => {
   const router = useRouter();
   const pathName = router.pathname;
@@ -43,7 +43,7 @@ const Header: FC<HeaderProps> = ({
   };
 
   const toggleConfigPanel = (e: MouseEvent<HTMLButtonElement>) => {
-    setIsPanelVisible(!isPanelVisible);
+    setIsConfigPanelVisible(!isConfigPanelVisible);
   };
 
   return (
@@ -71,15 +71,15 @@ const Header: FC<HeaderProps> = ({
       <button
         onClick={toggleConfigPanel}
         className="flex items-center space-x-2 rounded-full hover:bg-slate-500 transition-colors duration-200"
-        aria-label={isPanelVisible ? 'Hide Config' : 'Show Config'}
+        aria-label={isConfigPanelVisible ? 'Hide Config' : 'Show Config'}
       >
-        {isPanelVisible ? (
+        {isConfigPanelVisible ? (
           <AiOutlineEyeInvisible size={20} className="text-white" />
         ) : (
           <AiOutlineEye size={20} className="text-white" />
         )}
         <span className="text-white text-sm hidden sm:inline">
-          {isPanelVisible ? 'Hide' : 'Show'} AI Assistant Config
+          {isConfigPanelVisible ? 'Hide' : 'Show'} AI Assistant Config
         </span>
       </button>
     </header>

@@ -9,8 +9,7 @@ import '@/src/styles/globals.css';
 const initialFileCategory: OptionType = { value: 'none', label: '1' };
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  const [isNewChat, setIsNewChat] = useState(false);
-  const [isPanelVisible, setIsPanelVisible] = useState(true);
+  const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
   const [namespacesList, setNamespacesList] = useState(null);
 
   return (
@@ -19,17 +18,14 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       <Layout
-        isPanelVisible={isPanelVisible}
-        setIsPanelVisible={setIsPanelVisible}
+        isConfigPanelVisible={isConfigPanelVisible}
+        setIsConfigPanelVisible={setIsConfigPanelVisible}
         namespacesList={namespacesList}
       >
         <Component
           {...pageProps}
-          isNewChat={isNewChat}
-          setIsNewChat={setIsNewChat}
-          isPanelVisible={isPanelVisible}
-          setIsPanelVisible={setIsPanelVisible}
-          namespacesList={namespacesList}
+          isConfigPanelVisible={isConfigPanelVisible}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
           setNamespacesList={setNamespacesList}
         />
       </Layout>

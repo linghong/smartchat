@@ -38,7 +38,7 @@ describe('AIConfigPanel', () => {
       { value: 'namespace1', label: 'Namespace 1' },
       { value: 'namespace2', label: 'Namespace 2' }
     ],
-    isPanelVisible: true
+    isConfigPanelVisible: true
   };
 
   it('renders the component correctly', () => {
