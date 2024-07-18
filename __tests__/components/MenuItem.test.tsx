@@ -9,18 +9,20 @@ jest.mock('next/router', () => ({
   useRouter: jest.fn()
 }));
 
-// Mock react-virtualized
-jest.mock('react-virtualized', () => ({
-  List: jest.fn(({ rowRenderer }) => (
+// Mock react-window and react-virtualized-auto-sizer
+jest.mock('react-window', () => ({
+  FixedSizeList: jest.fn(({ children, itemCount }) => (
     <div data-testid="virtualized-list">
-      {[0, 1].map(index =>
-        rowRenderer({ index, key: `item-${index}`, style: {} })
-      )}
+      {Array.from({ length: itemCount }).map((_, index) => (
+        <div key={`item-${index}`}>{children({ index, style: {} })}</div>
+      ))}
     </div>
-  )),
-  AutoSizer: jest.fn(({ children }) => children({ width: 300, height: 400 })),
-  CellMeasurer: jest.fn(({ children }) => children({ measure: jest.fn() })),
-  CellMeasurerCache: jest.fn()
+  ))
+}));
+
+jest.mock('react-virtualized-auto-sizer', () => ({
+  __esModule: true,
+  default: jest.fn(({ children }) => children({ width: 300, height: 400 }))
 }));
 
 describe('MenuItem Component', () => {
@@ -32,7 +34,7 @@ describe('MenuItem Component', () => {
 
     const mockedUseRouter = useRouter as jest.Mock;
     mockedUseRouter.mockReturnValue({
-      pathname: '/current-path', // Set the current path for the router mock
+      pathname: '/current-path',
       push: mockPush
     });
   });
@@ -93,7 +95,7 @@ describe('MenuItem Component', () => {
       />
     );
 
-    const menuItem = screen.getByText('Test Title').parentElement;
+    const menuItem = screen.getByText('Test Title').closest('div');
     expect(menuItem).toHaveClass('bg-slate-400 text-indigo-200 rounded-sm');
   });
 
@@ -109,8 +111,8 @@ describe('MenuItem Component', () => {
       />
     );
 
-    const menuItem = screen.getByText('Test Title').parentElement;
-    expect(menuItem).not.toHaveClass('bg-slate-500 text-indigo-200 rounded-sm');
+    const menuItem = screen.getByText('Test Title').closest('div');
+    expect(menuItem).not.toHaveClass('bg-slate-400 text-indigo-200 rounded-sm');
   });
 
   it('should render MenuItem component with default open state', () => {
@@ -141,7 +143,7 @@ describe('MenuItem Component', () => {
         ]}
       />
     );
-    const menuItem = screen.getByText('Test Title').parentElement;
+    const menuItem = screen.getByText('Test Title').closest('div');
     expect(menuItem).toHaveClass('hover:bg-slate-500');
     expect(menuItem).toHaveClass('focus:bg-indigo-100');
   });
@@ -164,13 +166,12 @@ describe('MenuItem Component', () => {
     fireEvent.click(screen.getByText('Test Title'));
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/test-link');
-      expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false); //close the sidebar and go to the link page
+      expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false);
     });
   });
 
   it('should call router.push but not setIsSidebarOpen when link is clicked on desktop', async () => {
     global.innerWidth = 1024;
-    const setIsSidebarOpen = jest.fn();
     render(
       <MenuItem
         title="Test Title"

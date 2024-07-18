@@ -2,13 +2,8 @@ import React, { useState, useCallback, FC, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
-import {
-  List,
-  AutoSizer,
-  ListRowProps,
-  CellMeasurer,
-  CellMeasurerCache
-} from 'react-virtualized';
+import { FixedSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 import { OptionType } from '@/src/types/common';
 
@@ -47,45 +42,25 @@ const MenuItem: FC<MenuItemProps> = ({
     [link, router, setIsSidebarOpen]
   );
 
-  const cache = useMemo(
-    () =>
-      new CellMeasurerCache({
-        fixedWidth: true,
-        defaultHeight: 40
-      }),
-    []
-  );
-
-  const renderRow = useCallback(
-    ({ index, key, style, parent }: ListRowProps) => {
-      if (!itemList) return;
+  const Row = useCallback(
+    ({ index, style }: { index: number; style: React.CSSProperties }) => {
+      if (!itemList) return null;
       const item = itemList[index];
       return (
-        <CellMeasurer
-          key={key}
-          cache={cache}
-          parent={parent}
-          columnIndex={0}
-          rowIndex={index}
+        <li
+          style={style}
+          className="px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
         >
-          {({ measure }) => (
-            <li
-              style={style}
-              className="px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
-              onLoad={measure}
-            >
-              {item.label}
-            </li>
-          )}
-        </CellMeasurer>
+          {item.label}
+        </li>
       );
     },
-    [itemList, cache]
+    [itemList]
   );
 
   const listHeight = useMemo(() => {
     const itemHeight = 40; // Assuming each item is 40px high
-    const maxHeight = 320; // Maximum height of the list
+    const maxHeight = 360; // Maximum height of the list
     const calculatedHeight = itemList ? itemList.length * itemHeight : 0;
     return Math.min(calculatedHeight, maxHeight);
   }, [itemList]);
@@ -123,13 +98,12 @@ const MenuItem: FC<MenuItemProps> = ({
                 <List
                   width={width}
                   height={listHeight}
-                  rowCount={itemList.length}
-                  deferredMeasurementCache={cache}
-                  rowHeight={cache.rowHeight}
-                  rowRenderer={renderRow}
-                  overscanRowCount={5}
-                  className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300"
-                />
+                  itemCount={itemList.length}
+                  itemSize={40}
+                  className="custom-scrollbar"
+                >
+                  {Row}
+                </List>
               )}
             </AutoSizer>
           )}
