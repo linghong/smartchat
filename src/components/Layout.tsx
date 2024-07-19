@@ -10,13 +10,17 @@ interface LayoutProps {
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
   namespacesList: OptionType[] | null;
+  chatId: string | null;
+  setChatId: (chatId: string | null) => void;
 }
 
 const Layout: FC<LayoutProps> = ({
   children,
   isConfigPanelVisible,
   setIsConfigPanelVisible,
-  namespacesList
+  namespacesList,
+  chatId,
+  setChatId
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -50,6 +54,8 @@ const Layout: FC<LayoutProps> = ({
             <Sidebar
               setIsSidebarOpen={setIsSidebarOpen}
               namespacesList={namespacesList}
+              chatId={chatId}
+              setChatId={setChatId}
             />
           </div>
         )}
@@ -65,6 +71,8 @@ const Layout: FC<LayoutProps> = ({
               <Sidebar
                 setIsSidebarOpen={setIsSidebarOpen}
                 namespacesList={namespacesList}
+                chatId={chatId}
+                setChatId={setChatId}
               />
             </div>
             <div className="flex flex-col w-full ml-56 xl:ml-64 2xl:ml-72">

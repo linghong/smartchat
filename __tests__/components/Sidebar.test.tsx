@@ -3,6 +3,7 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import Sidebar from '@/src/components/Sidebar';
+import { fetchChats } from '@/src/utils/sqliteApiClient';
 
 // Mock the MenuItem component
 jest.mock('@/src/components/MenuItem', () => {
@@ -10,12 +11,14 @@ jest.mock('@/src/components/MenuItem', () => {
     title,
     itemList,
     link,
-    defaultOpen
+    defaultOpen,
+    onItemClick
   }: {
     title: string;
     itemList: any[];
     link: string;
     defaultOpen: boolean;
+    onItemClick?: (id: string) => void;
   }) {
     return (
       <div>
@@ -24,7 +27,14 @@ jest.mock('@/src/components/MenuItem', () => {
         </a>
         <ul>
           {defaultOpen &&
-            itemList?.map((item, index) => <li key={index}>{item.label}</li>)}
+            itemList?.map(item => (
+              <li
+                key={item.value}
+                onClick={() => onItemClick && onItemClick(item.value)}
+              >
+                {item.label}
+              </li>
+            ))}
         </ul>
       </div>
     );
@@ -38,7 +48,13 @@ jest.mock('@/src/components/AIHub', () => {
   };
 });
 
+// Mock the fetchChats function
+jest.mock('@/src/utils/sqliteApiClient', () => ({
+  fetchChats: jest.fn()
+}));
+
 const mockSetIsSidebarOpen = jest.fn();
+const mockSetChatId = jest.fn();
 
 const mockNamespacesList = [
   { label: 'Namespace 1', value: 'ns1' },
@@ -48,12 +64,9 @@ const mockNamespacesList = [
 describe('Sidebar Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve([{ id: '1', title: 'Test Chat' }])
-      })
-    ) as jest.Mock;
+    (fetchChats as jest.Mock).mockResolvedValue([
+      { value: '1', label: 'Test Chat' }
+    ]);
   });
 
   it('renders Sidebar component with all expected elements', async () => {
@@ -62,6 +75,8 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId={null}
+          setChatId={mockSetChatId}
         />
       );
     });
@@ -76,15 +91,15 @@ describe('Sidebar Component', () => {
     const consoleSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
-    global.fetch = jest.fn(() =>
-      Promise.reject(new Error('Fetch failed'))
-    ) as jest.Mock;
+    (fetchChats as jest.Mock).mockRejectedValue(new Error('Fetch failed'));
 
     await act(async () => {
       render(
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId={null}
+          setChatId={mockSetChatId}
         />
       );
     });
@@ -98,17 +113,19 @@ describe('Sidebar Component', () => {
     consoleSpy.mockRestore();
   });
 
-  it('fetches chats on mount', async () => {
+  it('fetches and renders chats on mount', async () => {
     await act(async () => {
       render(
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId={null}
+          setChatId={mockSetChatId}
         />
       );
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/chats');
+    expect(fetchChats).toHaveBeenCalled();
 
     await waitFor(() => {
       expect(screen.getByText('Test Chat')).toBeInTheDocument();
@@ -121,6 +138,8 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId={null}
+          setChatId={mockSetChatId}
         />
       );
     });
@@ -135,12 +154,16 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId={null}
+          setChatId={mockSetChatId}
         />
       );
     });
 
-    expect(screen.queryByText('File 1')).toBeNull();
-    expect(screen.queryByText('Model1')).toBeNull();
+    expect(screen.queryByText('Namespace 1')).not.toBeInTheDocument();
+    expect(screen.queryByText('Namespace 2')).not.toBeInTheDocument();
+    expect(screen.queryByText('Model 1')).not.toBeInTheDocument();
+    expect(screen.queryByText('Model 2')).not.toBeInTheDocument();
 
     // Wait for the chat data to be fetched and rendered
     await waitFor(() => {
@@ -154,6 +177,8 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId={null}
+          setChatId={mockSetChatId}
         />
       );
     });
@@ -170,6 +195,30 @@ describe('Sidebar Component', () => {
     expect(chatWithAILink).toHaveAttribute('href', '/');
   });
 
+  it('calls setChatId when a chat is clicked', async () => {
+    await act(async () => {
+      render(
+        <Sidebar
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+          chatId={null}
+          setChatId={mockSetChatId}
+        />
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Chat')).toBeInTheDocument();
+    });
+
+    const chatItem = screen.getByText('Test Chat');
+    act(() => {
+      chatItem.click();
+    });
+
+    expect(mockSetChatId).toHaveBeenCalledWith('1');
+  });
+
   it('matches snapshot', async () => {
     let asFragment: (() => DocumentFragment) | undefined;
 
@@ -178,6 +227,8 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId={null}
+          setChatId={mockSetChatId}
         />
       );
       asFragment = result.asFragment;

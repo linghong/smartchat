@@ -28,6 +28,7 @@ jest.mock('react-virtualized-auto-sizer', () => ({
 describe('MenuItem Component', () => {
   const mockPush = jest.fn();
   const mockSetIsSidebarOpen = jest.fn();
+  const mockOnItemClick = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -81,6 +82,12 @@ describe('MenuItem Component', () => {
     expect(screen.getByTestId('virtualized-list')).toBeInTheDocument();
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 2')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse' }));
+
+    expect(screen.queryByTestId('virtualized-list')).toBeNull();
+    expect(screen.queryByText('Item 1')).toBeNull();
+    expect(screen.queryByText('Item 2')).toBeNull();
   });
 
   it('should apply active class when the link matches the current pathname', () => {
@@ -189,6 +196,47 @@ describe('MenuItem Component', () => {
       expect(mockPush).toHaveBeenCalledWith('/test-link');
       expect(mockSetIsSidebarOpen).not.toHaveBeenCalled();
     });
+  });
+
+  it('should call onItemClick when an item is clicked', () => {
+    render(
+      <MenuItem
+        title="Test Title"
+        itemList={[
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
+        ]}
+        onItemClick={mockOnItemClick}
+        defaultOpen={true}
+      />
+    );
+
+    fireEvent.click(screen.getByText('Item 1'));
+    expect(mockOnItemClick).toHaveBeenCalledWith('1');
+
+    fireEvent.click(screen.getByText('Item 2'));
+    expect(mockOnItemClick).toHaveBeenCalledWith('2');
+  });
+
+  it('should render correct number of items in the virtualized list', () => {
+    const itemList = [
+      { label: 'Item 1', value: '1' },
+      { label: 'Item 2', value: '2' },
+      { label: 'Item 3', value: '3' }
+    ];
+
+    render(
+      <MenuItem title="Test Title" itemList={itemList} defaultOpen={true} />
+    );
+
+    const listItems = screen.getAllByText(/Item \d/);
+    expect(listItems).toHaveLength(itemList.length);
+  });
+
+  it('should not render list when itemList is null', () => {
+    render(<MenuItem title="Test Title" itemList={null} defaultOpen={true} />);
+
+    expect(screen.queryByTestId('virtualized-list')).toBeNull();
   });
 
   it('should match MenuItem component snapshot', () => {

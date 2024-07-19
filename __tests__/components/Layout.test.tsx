@@ -12,6 +12,8 @@ jest.mock('@/src/components/Header', () => {
       setIsSidebarOpen
     }: {
       setIsSidebarOpen: (isOpen: boolean) => void;
+      isConfigPanelVisible: boolean;
+      setIsConfigPanelVisible: (isVisible: boolean) => void;
     }) => <div onClick={() => setIsSidebarOpen(false)}>Header Mock</div>
   };
 });
@@ -20,7 +22,17 @@ jest.mock('@/src/components/Header', () => {
 jest.mock('@/src/components/Sidebar', () => {
   return {
     __esModule: true,
-    default: () => <div>Sidebar Mock</div>
+    default: ({
+      setIsSidebarOpen,
+      namespacesList,
+      chatId,
+      setChatId
+    }: {
+      setIsSidebarOpen: (isOpen: boolean) => void;
+      namespacesList: any[] | null;
+      chatId: string | null;
+      setChatId: (chatId: string | null) => void;
+    }) => <div>Sidebar Mock</div>
   };
 });
 
@@ -33,6 +45,14 @@ jest.mock('@/src/components/Footer', () => {
 });
 
 describe('Layout Component', () => {
+  const defaultProps = {
+    isConfigPanelVisible: false,
+    setIsConfigPanelVisible: jest.fn(),
+    namespacesList: null,
+    chatId: null,
+    setChatId: jest.fn()
+  };
+
   beforeEach(() => {
     // Reset the viewport size before each test
     global.innerWidth = 1024;
@@ -40,9 +60,8 @@ describe('Layout Component', () => {
   });
 
   it('renders Header, Sidebar (conditionally), and Footer correctly on initial load', () => {
-    const messageSubjectList = ['Test Subject'];
     const { getByText } = render(
-      <Layout messageSubjectList={messageSubjectList}>
+      <Layout {...defaultProps}>
         <div>Child Content</div>
       </Layout>
     );
@@ -59,9 +78,8 @@ describe('Layout Component', () => {
   });
 
   it('does not render Sidebar when it is in mobile mode and Header menu is clicked to be closed', () => {
-    const messageSubjectList = ['Test Subject'];
     const { getByText, queryByText } = render(
-      <Layout messageSubjectList={messageSubjectList}>
+      <Layout {...defaultProps}>
         <div>Child Content</div>
       </Layout>
     );
@@ -81,9 +99,8 @@ describe('Layout Component', () => {
   });
 
   it('renders Sidebar in mobile mode when sidebar is open', () => {
-    const messageSubjectList = ['Test Subject'];
     const { getByText, queryByText } = render(
-      <Layout messageSubjectList={messageSubjectList}>
+      <Layout {...defaultProps}>
         <div>Child Content</div>
       </Layout>
     );
@@ -95,5 +112,14 @@ describe('Layout Component', () => {
 
     expect(getByText('Sidebar Mock')).toBeInTheDocument();
     expect(queryByText('Child Content')).not.toBeInTheDocument();
+  });
+
+  it('should match Layout component snapshot', () => {
+    const { asFragment } = render(
+      <Layout {...defaultProps}>
+        <div>Child Content</div>
+      </Layout>
+    );
+    expect(asFragment()).toMatchSnapshot();
   });
 });

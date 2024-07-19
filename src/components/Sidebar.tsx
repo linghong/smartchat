@@ -8,6 +8,8 @@ import { fetchChats } from '@/src/utils/sqliteApiClient';
 interface SidebarProps {
   setIsSidebarOpen: (isSidebarOpen: boolean) => void;
   namespacesList: OptionType[] | null;
+  chatId: string | null;
+  setChatId: (chatId: string | null) => void;
 }
 
 const models = [
@@ -21,7 +23,12 @@ const models = [
   }
 ];
 
-const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
+const Sidebar: FC<SidebarProps> = ({
+  setIsSidebarOpen,
+  namespacesList,
+  chatId,
+  setChatId
+}) => {
   const [chats, setChats] = useState<OptionType[]>([]);
   const isFetchingChats = useRef(false);
 
@@ -42,6 +49,10 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
 
     fetchAllChats();
   }, []);
+
+  const handleChatClick = (chatId: string) => {
+    setChatId(chatId);
+  };
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -66,6 +77,7 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
           link="/"
           itemList={chats}
           setIsSidebarOpen={setIsSidebarOpen}
+          onItemClick={handleChatClick}
           defaultOpen={true}
         />
       </ul>

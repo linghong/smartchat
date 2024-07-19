@@ -30,6 +30,8 @@ interface HomeProps {
   setNamespacesList: (namespacesList: OptionType[]) => void;
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
+  chatId: string | null;
+  setChatId: (chatId: string) => void;
 }
 
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
@@ -43,7 +45,9 @@ const HomePage: FC<HomeProps> = ({
   namespaces,
   setNamespacesList,
   isConfigPanelVisible,
-  setIsConfigPanelVisible
+  setIsConfigPanelVisible,
+  chatId,
+  setChatId
 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
@@ -60,7 +64,6 @@ const HomePage: FC<HomeProps> = ({
   );
   const [basePrompt, setBasePrompt] = useState('');
 
-  const [dbChatId, setDbChatId] = useState<number | null>(null);
   const [isNewChat, setIsNewChat] = useState(false);
   const [userInput, setUserInput] = useState<string>('');
   const [rows, setRows] = useState<number>(1);
@@ -157,14 +160,14 @@ const HomePage: FC<HomeProps> = ({
         selectedNamespace?.value || 'none'
       );
       const imageUrls = imageSrc.map((img: ImageFile) => img.base64Image);
-      if (chatHistory.length === 1 || !dbChatId) {
+      if (chatHistory.length === 1 || !chatId) {
         const chat = await updateChats(data.subject, {});
 
-        setDbChatId(chat.id);
+        setChatId(chat.id);
 
         updateChatMessages(userInput, data.answer, chat.id, imageUrls);
       } else {
-        updateChatMessages(userInput, data.answer, dbChatId, imageUrls);
+        updateChatMessages(userInput, data.answer, parseInt(chatId), imageUrls);
       }
     },
     [
@@ -175,7 +178,8 @@ const HomePage: FC<HomeProps> = ({
       selectedModel,
       selectedNamespace?.value,
       chatHistory.length,
-      dbChatId
+      chatId,
+      setChatId
     ]
   );
 

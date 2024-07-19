@@ -13,6 +13,7 @@ interface MenuItemProps {
   itemList: OptionType[] | null;
   defaultOpen?: boolean;
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
+  onItemClick?: (id: string) => void;
 }
 
 const MenuItem: FC<MenuItemProps> = ({
@@ -20,7 +21,8 @@ const MenuItem: FC<MenuItemProps> = ({
   link,
   itemList,
   defaultOpen = false,
-  setIsSidebarOpen
+  setIsSidebarOpen,
+  onItemClick
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -46,16 +48,24 @@ const MenuItem: FC<MenuItemProps> = ({
     ({ index, style }: { index: number; style: React.CSSProperties }) => {
       if (!itemList) return null;
       const item = itemList[index];
+
+      const handleClick = (id: string) => {
+        if (onItemClick) {
+          onItemClick(id);
+        }
+      };
+
       return (
         <li
           style={style}
           className="px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
+          onClick={() => handleClick(item.value)}
         >
           {item.label}
         </li>
       );
     },
-    [itemList]
+    [itemList, onItemClick]
   );
 
   const listHeight = useMemo(() => {
