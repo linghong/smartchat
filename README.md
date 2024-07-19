@@ -9,10 +9,10 @@ SmartChat is a cutting-edge chatbot platform and full-stack application develope
 This AI chat platform allows you to select from a variety of Generative AI models:
 
 1. From APIs:
-   1.OpenAI: GPT-4o, GPT4 Turbo, GPT-4, and GPT-3.5
+   1.OpenAI: GPT-4o,GPT-4o Mini, GPT4 Turbo, GPT-4, and GPT-3.5 Turbo
    2.Google: Gemini-1.5-flash and Gemini-1.5-pro
    3.Anthropic: Claude 3.5 Sonnet, Claude 3 Haiku, and Claude 3 Opus
-   4.Open-source models hosted on Groq: Meta's LLaMA3-8b and LLaMa3-70b, Mistral's Mixtral 8x7b, Google's Gemma 7b
+   4.Open-source models hosted on Groq: Meta's LLaMA3-8b and LLaMa3-70b, Mistral's Mixtral 8x7b, Google's Gemma 7b and Gemma2 9b
 
 2. From Open Sources Models Self-hosted in a GPU Server
    The platform can also relay messages to a remote backend (refer to the [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi))repository, Once configured, this backend server can run open-source AI models.
