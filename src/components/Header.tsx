@@ -2,7 +2,6 @@ import { FC, MouseEvent } from 'react';
 import {
   AiOutlineMenu,
   AiOutlineForm,
-  AiOutlineSetting,
   AiOutlineEye,
   AiOutlineEyeInvisible
 } from 'react-icons/ai';

@@ -6,7 +6,7 @@ const options: DataSourceOptions = {
   type: 'sqlite',
   database: 'database.sqlite',
   entities: [User, Chat, ChatMessage, ChatImage],
-  synchronize: true,
+  synchronize: true, //change to false on production
   migrations: ['src/db/migration/*.ts'],
   logging: false, //change to true or ['query', 'error', 'schema'] for debug purpose
   subscribers: []
