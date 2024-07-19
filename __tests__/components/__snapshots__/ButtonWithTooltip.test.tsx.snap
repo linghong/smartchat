@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ButtonWithTooltip Should match component snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="relative group"
+  >
+    <button
+      aria-label="Search"
+      class="flex items-center justify-center font-bold  rounded cursor-pointer disabled:cursor-not-allowed"
+    >
+      <span>
+        🔍
+      </span>
+    </button>
+    <span
+      class="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 hidden group-hover:block bg-gray-100 text-black text-xs rounded py-1 px-5 whitespace-nowrap"
+    >
+      Click to search
+    </span>
+  </div>
+</DocumentFragment>
+`;
