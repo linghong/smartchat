@@ -63,7 +63,7 @@ export const updateChatMessages = async (
   userMessage: string,
   aiMessage: string,
   chatId: number,
-  imageUrls: string[]
+  imageSrc: ImageFile[]
 ) => {
   try {
     const res = await fetch(`/api/chats/${chatId}/messages`, {
@@ -75,7 +75,7 @@ export const updateChatMessages = async (
         chatId,
         userMessage,
         aiMessage,
-        imageUrls
+        imageSrc
       })
     });
     if (!res) {
@@ -86,5 +86,32 @@ export const updateChatMessages = async (
     return chatMessage;
   } catch (e) {
     console.error("Chat message isn't saved on the database", e);
+  }
+};
+
+/**
+ * Fetch all chat messages for a specific chat.
+ * @param chatId - The ID of the chat.
+ * @returns A list of chat messages or an error message if the fetch failed.
+ */
+export const fetchChatMessages = async (chatId: number) => {
+  try {
+    const res = await fetch(`/api/chats/${chatId}/messages`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!res) {
+      console.log('Error on fetching chat messages');
+      return null;
+    }
+    const chatMessages = await res.json();
+
+    return chatMessages;
+  } catch (e) {
+    console.error('Error fetching chat messages', e);
+    return null;
   }
 };
