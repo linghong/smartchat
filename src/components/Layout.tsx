@@ -3,6 +3,7 @@ import { useState, useEffect, FC, ReactNode } from 'react';
 import Footer from '@/src/components/Footer';
 import Header from '@/src/components/Header';
 import Sidebar from '@/src/components/Sidebar';
+import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
 interface LayoutProps {
@@ -10,8 +11,9 @@ interface LayoutProps {
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
   namespacesList: OptionType[] | null;
-  chatId: string | null;
-  setChatId: (chatId: string | null) => void;
+  setChatId: (chatId: string) => void;
+  setChatHistory: (chatHistory: Message[]) => void;
+  setImageSrcHistory: (ImageSrcHistory: ImageFile[][]) => void;
 }
 
 const Layout: FC<LayoutProps> = ({
@@ -19,8 +21,9 @@ const Layout: FC<LayoutProps> = ({
   isConfigPanelVisible,
   setIsConfigPanelVisible,
   namespacesList,
-  chatId,
-  setChatId
+  setChatId,
+  setChatHistory,
+  setImageSrcHistory
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -54,8 +57,9 @@ const Layout: FC<LayoutProps> = ({
             <Sidebar
               setIsSidebarOpen={setIsSidebarOpen}
               namespacesList={namespacesList}
-              chatId={chatId}
               setChatId={setChatId}
+              setChatHistory={setChatHistory}
+              setImageSrcHistory={setImageSrcHistory}
             />
           </div>
         )}
@@ -71,8 +75,9 @@ const Layout: FC<LayoutProps> = ({
               <Sidebar
                 setIsSidebarOpen={setIsSidebarOpen}
                 namespacesList={namespacesList}
-                chatId={chatId}
                 setChatId={setChatId}
+                setChatHistory={setChatHistory}
+                setImageSrcHistory={setImageSrcHistory}
               />
             </div>
             <div className="flex flex-col w-full ml-56 xl:ml-64 2xl:ml-72">

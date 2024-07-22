@@ -52,7 +52,7 @@ describe('Chat API Handler', () => {
     } as unknown as jest.Mocked<Repository<Chat>>;
 
     (getAppDataSource as jest.Mock).mockResolvedValue(mockDataSource);
-    mockDataSource.getRepository.mockImplementation((entity) => {
+    mockDataSource.getRepository.mockImplementation(entity => {
       if (entity === User) return mockUserRepository;
       if (entity === Chat) return mockChatRepository;
       return {} as any;
@@ -84,12 +84,14 @@ describe('Chat API Handler', () => {
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
     expect(mockRes.status).toHaveBeenCalledWith(201);
-    expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({
-      id: 1,
-      title: 'Test Chat',
-      userId: 1,
-      metadata: { key: 'value' }
-    }));
+    expect(mockRes.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 1,
+        title: 'Test Chat',
+        userId: 1,
+        metadata: { key: 'value' }
+      })
+    );
   });
 
   it('should return 400 if title is missing in POST request', async () => {
@@ -117,10 +119,12 @@ describe('Chat API Handler', () => {
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
     expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith(expect.arrayContaining([
-      expect.objectContaining({ id: 1, title: 'Chat 1' }),
-      expect.objectContaining({ id: 2, title: 'Chat 2' })
-    ]));
+    expect(mockRes.json).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 1, title: 'Chat 1' }),
+        expect.objectContaining({ id: 2, title: 'Chat 2' })
+      ])
+    );
   });
 
   it('should create a new user if not exists', async () => {
@@ -133,7 +137,9 @@ describe('Chat API Handler', () => {
 
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
-    expect(mockUserRepository.create).toHaveBeenCalledWith({ username: 'local' });
+    expect(mockUserRepository.create).toHaveBeenCalledWith({
+      username: 'local'
+    });
     expect(mockUserRepository.save).toHaveBeenCalled();
     expect(mockRes.status).toHaveBeenCalledWith(200);
   });
@@ -154,7 +160,9 @@ describe('Chat API Handler', () => {
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
     expect(mockRes.status).toHaveBeenCalledWith(500);
-    expect(mockRes.json).toHaveBeenCalledWith({ message: 'AppDataSource is null' });
+    expect(mockRes.json).toHaveBeenCalledWith({
+      message: 'AppDataSource is null'
+    });
   });
 
   it('should handle errors and return 500', async () => {
@@ -164,8 +172,13 @@ describe('Chat API Handler', () => {
 
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error during Chat table creation', error);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Error during Chat table creation',
+      error
+    );
     expect(mockRes.status).toHaveBeenCalledWith(500);
-    expect(mockRes.json).toHaveBeenCalledWith({ message: 'Internal server error' });
+    expect(mockRes.json).toHaveBeenCalledWith({
+      message: 'Internal server error'
+    });
   });
 });

@@ -3,10 +3,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  OneToMany
+  OneToMany,
+  ManyToOne
 } from 'typeorm';
 
-@Entity('users') // Explicitly name the table
+import type { ImageFile } from '@/src/types/chat';
+
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -18,11 +21,11 @@ export class User {
   })
   username!: string;
 
-  @OneToMany(() => Chat, (chat: Chat) => chat.userId)
+  @OneToMany(() => Chat, chat => chat.user)
   chats!: Chat[];
 }
 
-@Entity('chats') // Explicitly name the table
+@Entity('chats')
 export class Chat {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -36,14 +39,17 @@ export class Chat {
   @Column('simple-json', { nullable: true })
   metadata?: { [key: string]: any };
 
+  @ManyToOne(() => User, user => user.chats)
+  user!: User;
+
   @Column('int')
   userId!: number;
 
-  @OneToMany(() => ChatMessage, (message: ChatMessage) => message.chatId)
+  @OneToMany(() => ChatMessage, message => message.chat)
   messages!: ChatMessage[];
 }
 
-@Entity('chat_messages') // Explicitly name the table
+@Entity('chat_messages')
 export class ChatMessage {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -55,25 +61,31 @@ export class ChatMessage {
   aiMessage!: string;
 
   @CreateDateColumn()
-  timestamp!: Date;
+  createdAt!: Date;
 
   @Column('simple-json', { nullable: true })
   metadata?: { [key: string]: any };
 
+  @ManyToOne(() => Chat, chat => chat.messages)
+  chat!: Chat;
+
   @Column('int')
   chatId!: number;
 
-  @OneToMany(() => ChatImage, (image: ChatImage) => image.messageId)
+  @OneToMany(() => ChatImage, image => image.chatMessage)
   images!: ChatImage[];
 }
 
-@Entity('chat_images') // Explicitly name the table
+@Entity('chat_images')
 export class ChatImage {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column('text')
-  url!: string;
+  @Column('simple-json', { nullable: true })
+  imageFile?: ImageFile;
+
+  @ManyToOne(() => ChatMessage, message => message.images)
+  chatMessage!: ChatMessage;
 
   @Column('int')
   messageId!: number;

@@ -50,7 +50,14 @@ describe('ButtonWithTooltip', () => {
   it('applies the correct CSS classes to the button', () => {
     render(<ButtonWithTooltip {...defaultProps} />);
     const button = screen.getByRole('button', { name: 'Search' });
-    expect(button).toHaveClass('flex', 'items-center', 'justify-center', 'font-bold', 'rounded', 'cursor-pointer');
+    expect(button).toHaveClass(
+      'flex',
+      'items-center',
+      'justify-center',
+      'font-bold',
+      'rounded',
+      'cursor-pointer'
+    );
   });
 
   it('applies the disabled CSS class when isDisabled is true', () => {
@@ -63,16 +70,26 @@ describe('ButtonWithTooltip', () => {
     render(<ButtonWithTooltip {...defaultProps} />);
     const tooltip = screen.getByText('Click to search');
     expect(tooltip).toHaveClass(
-      'absolute', 'top-full', 'left-1/2', 'transform', '-translate-x-1/2', 'mt-4',
-      'hidden', 'group-hover:block', 'bg-gray-100', 'text-black', 'text-xs',
-      'rounded', 'py-1', 'px-5', 'whitespace-nowrap'
+      'absolute',
+      'top-full',
+      'left-1/2',
+      'transform',
+      '-translate-x-1/2',
+      'mt-4',
+      'hidden',
+      'group-hover:block',
+      'bg-gray-100',
+      'text-black',
+      'text-xs',
+      'rounded',
+      'py-1',
+      'px-5',
+      'whitespace-nowrap'
     );
   });
 
   it('Should match component snapshot', () => {
-    const { asFragment } = render(
-      <ButtonWithTooltip {...defaultProps} />
-    );
+    const { asFragment } = render(<ButtonWithTooltip {...defaultProps} />);
     expect(asFragment()).toMatchSnapshot();
   });
 });

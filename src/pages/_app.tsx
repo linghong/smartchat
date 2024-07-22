@@ -3,16 +3,23 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
 import Layout from '@/src/components/Layout';
+import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import '@/src/styles/globals.css';
 import { String } from 'aws-sdk/clients/cloudwatchevents';
 
 const initialFileCategory: OptionType = { value: 'none', label: '1' };
+const initialMessage = {
+  question: '',
+  answer: 'Hi, how can I assist you?'
+};
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
   const [namespacesList, setNamespacesList] = useState(null);
-  const [chatId, setChatId] = useState<String | null>(null);
+  const [chatId, setChatId] = useState<String>('0');
+  const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
+  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]); //the first one is for Hi, how can I assist you?, so the imageSrc is []
   return (
     <>
       <Head>
@@ -22,8 +29,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         isConfigPanelVisible={isConfigPanelVisible}
         setIsConfigPanelVisible={setIsConfigPanelVisible}
         namespacesList={namespacesList}
-        chatId={chatId}
         setChatId={setChatId}
+        setChatHistory={setChatHistory}
+        setImageSrcHistory={setImageSrcHistory}
       >
         <Component
           {...pageProps}
@@ -32,6 +40,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           setNamespacesList={setNamespacesList}
           chatId={chatId}
           setChatId={setChatId}
+          chatHistory={chatHistory}
+          setChatHistory={setChatHistory}
+          imageSrcHistory={imageSrcHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       </Layout>
     </>

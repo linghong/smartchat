@@ -3,7 +3,7 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import Sidebar from '@/src/components/Sidebar';
-import { fetchChats } from '@/src/utils/sqliteApiClient';
+import { fetchChats, fetchChatMessages } from '@/src/utils/sqliteApiClient';
 
 // Mock the MenuItem component
 jest.mock('@/src/components/MenuItem', () => {
@@ -48,13 +48,16 @@ jest.mock('@/src/components/AIHub', () => {
   };
 });
 
-// Mock the fetchChats function
+// Mock the fetchChats and fetchChatMessages functions
 jest.mock('@/src/utils/sqliteApiClient', () => ({
-  fetchChats: jest.fn()
+  fetchChats: jest.fn(),
+  fetchChatMessages: jest.fn()
 }));
 
 const mockSetIsSidebarOpen = jest.fn();
 const mockSetChatId = jest.fn();
+const mockSetChatHistory = jest.fn();
+const mockSetImageSrcHistory = jest.fn();
 
 const mockNamespacesList = [
   { label: 'Namespace 1', value: 'ns1' },
@@ -67,6 +70,9 @@ describe('Sidebar Component', () => {
     (fetchChats as jest.Mock).mockResolvedValue([
       { value: '1', label: 'Test Chat' }
     ]);
+    (fetchChatMessages as jest.Mock).mockResolvedValue([
+      { userMessage: 'Hello', aiMessage: 'Hi there', images: [] }
+    ]);
   });
 
   it('renders Sidebar component with all expected elements', async () => {
@@ -75,8 +81,9 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
-          chatId={null}
           setChatId={mockSetChatId}
+          setChatHistory={mockSetChatHistory}
+          setImageSrcHistory={mockSetImageSrcHistory}
         />
       );
     });
@@ -98,8 +105,9 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
-          chatId={null}
           setChatId={mockSetChatId}
+          setChatHistory={mockSetChatHistory}
+          setImageSrcHistory={mockSetImageSrcHistory}
         />
       );
     });
@@ -119,8 +127,9 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
-          chatId={null}
           setChatId={mockSetChatId}
+          setChatHistory={mockSetChatHistory}
+          setImageSrcHistory={mockSetImageSrcHistory}
         />
       );
     });
@@ -132,14 +141,43 @@ describe('Sidebar Component', () => {
     });
   });
 
+  it('handles chat click correctly', async () => {
+    await act(async () => {
+      render(
+        <Sidebar
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+          setChatId={mockSetChatId}
+          setChatHistory={mockSetChatHistory}
+          setImageSrcHistory={mockSetImageSrcHistory}
+        />
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Chat')).toBeInTheDocument();
+    });
+
+    const chatItem = screen.getByText('Test Chat');
+    await act(async () => {
+      chatItem.click();
+    });
+
+    expect(fetchChatMessages).toHaveBeenCalledWith(1);
+    expect(mockSetChatHistory).toHaveBeenCalled();
+    expect(mockSetImageSrcHistory).toHaveBeenCalled();
+    expect(mockSetChatId).toHaveBeenCalledWith('1');
+  });
+
   it('renders namespaces list correctly', async () => {
     await act(async () => {
       render(
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
-          chatId={null}
           setChatId={mockSetChatId}
+          setChatHistory={mockSetChatHistory}
+          setImageSrcHistory={mockSetImageSrcHistory}
         />
       );
     });
@@ -154,8 +192,9 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
-          chatId={null}
           setChatId={mockSetChatId}
+          setChatHistory={mockSetChatHistory}
+          setImageSrcHistory={mockSetImageSrcHistory}
         />
       );
     });
@@ -177,8 +216,9 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
-          chatId={null}
           setChatId={mockSetChatId}
+          setChatHistory={mockSetChatHistory}
+          setImageSrcHistory={mockSetImageSrcHistory}
         />
       );
     });
@@ -195,30 +235,6 @@ describe('Sidebar Component', () => {
     expect(chatWithAILink).toHaveAttribute('href', '/');
   });
 
-  it('calls setChatId when a chat is clicked', async () => {
-    await act(async () => {
-      render(
-        <Sidebar
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId={null}
-          setChatId={mockSetChatId}
-        />
-      );
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('Test Chat')).toBeInTheDocument();
-    });
-
-    const chatItem = screen.getByText('Test Chat');
-    act(() => {
-      chatItem.click();
-    });
-
-    expect(mockSetChatId).toHaveBeenCalledWith('1');
-  });
-
   it('matches snapshot', async () => {
     let asFragment: (() => DocumentFragment) | undefined;
 
@@ -227,8 +243,9 @@ describe('Sidebar Component', () => {
         <Sidebar
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
-          chatId={null}
           setChatId={mockSetChatId}
+          setChatHistory={mockSetChatHistory}
+          setImageSrcHistory={mockSetImageSrcHistory}
         />
       );
       asFragment = result.asFragment;

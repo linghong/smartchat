@@ -23,15 +23,23 @@ import { OptionType } from '@/src/types/common';
 import { fileToBase64 } from '@/src/utils/fileFetchAndConversion';
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
 import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
-import { updateChats, updateChatMessages } from '@/src/utils/sqliteApiClient';
+import {
+  updateChats,
+  updateChatMessages,
+  fetchChatMessages
+} from '@/src/utils/sqliteApiClient';
 
 interface HomeProps {
   namespaces: string[];
   setNamespacesList: (namespacesList: OptionType[]) => void;
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
-  chatId: string | null;
+  chatId: string;
   setChatId: (chatId: string) => void;
+  chatHistory: Message[];
+  setChatHistory: (chatHistory: Message[]) => void;
+  imageSrcHistory: ImageFile[][];
+  setImageSrcHistory: (ImageSrcHistory: ImageFile[][]) => void;
 }
 
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
@@ -47,7 +55,11 @@ const HomePage: FC<HomeProps> = ({
   isConfigPanelVisible,
   setIsConfigPanelVisible,
   chatId,
-  setChatId
+  setChatId,
+  chatHistory,
+  setChatHistory,
+  imageSrcHistory,
+  setImageSrcHistory
 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
@@ -67,11 +79,9 @@ const HomePage: FC<HomeProps> = ({
   const [isNewChat, setIsNewChat] = useState(false);
   const [userInput, setUserInput] = useState<string>('');
   const [rows, setRows] = useState<number>(1);
-  const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
   const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
 
   const [imageSrc, setImageSrc] = useState<ImageFile[]>([]);
-  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]); //the first one is for Hi, how can I assist you?
   const [isVisionModel, setIsVisionModel] = useState(true);
   const [imageError, setImageError] = useState<string[]>([]);
 
@@ -111,9 +121,8 @@ const HomePage: FC<HomeProps> = ({
         }
 
         const data = await response.json();
-
-        setChatHistory(prevHistory => [
-          ...prevHistory.slice(0, prevHistory.length - 1),
+        setChatHistory([
+          ...chatHistory.slice(0, chatHistory.length),
           { question: userInput, answer: data.answer }
         ]);
 
@@ -130,7 +139,7 @@ const HomePage: FC<HomeProps> = ({
         console.error('error', error);
       }
     },
-    [userInput, chatHistory, setMessageSubjectList]
+    [userInput, chatHistory, setChatHistory, setMessageSubjectList]
   );
 
   const handleSubmit = useCallback(
@@ -142,9 +151,9 @@ const HomePage: FC<HomeProps> = ({
       // prevent form submission if nothing is entered
       if (question.length === 0 && imageSrc.length === 0) return;
 
-      setImageSrcHistory(prev => [...prev, imageSrc]);
+      setImageSrcHistory([...imageSrcHistory, imageSrc]);
 
-      setChatHistory(prev => [...prev, { question: userInput, answer: '' }]);
+      setChatHistory([...chatHistory, { question: userInput, answer: '' }]);
 
       setError(null);
       setLoading(true);
@@ -159,15 +168,14 @@ const HomePage: FC<HomeProps> = ({
         selectedModel,
         selectedNamespace?.value || 'none'
       );
-      const imageUrls = imageSrc.map((img: ImageFile) => img.base64Image);
+
       if (chatHistory.length === 1 || !chatId) {
         const chat = await updateChats(data.subject, {});
 
         setChatId(chat.id);
-
-        updateChatMessages(userInput, data.answer, chat.id, imageUrls);
+        updateChatMessages(userInput, data.answer, chat.id, imageSrc);
       } else {
-        updateChatMessages(userInput, data.answer, parseInt(chatId), imageUrls);
+        updateChatMessages(userInput, data.answer, parseInt(chatId), imageSrc);
       }
     },
     [
@@ -177,9 +185,12 @@ const HomePage: FC<HomeProps> = ({
       fetchChatResponse,
       selectedModel,
       selectedNamespace?.value,
-      chatHistory.length,
       chatId,
-      setChatId
+      setChatId,
+      chatHistory,
+      setChatHistory,
+      imageSrcHistory,
+      setImageSrcHistory
     ]
   );
 

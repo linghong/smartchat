@@ -5,55 +5,64 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  try {
-    const dataSource = await getAppDataSource();
-    if (!dataSource)
-      return res.status(500).json({ message: 'AppDataSource is null' });
+  const dataSource = await getAppDataSource();
+  if (!dataSource)
+    return res.status(500).json({ message: 'AppDataSource is null' });
 
-    const { userMessage, aiMessage, chatId, imageUrls } = req.body;
+  const chatMessageRepository = dataSource.getRepository(ChatMessage);
+  const chatImageRepository = dataSource.getRepository(ChatImage);
 
-    const chatMessageRepository = dataSource.getRepository(ChatMessage);
-    const chatImageRepository = dataSource.getRepository(ChatImage);
+  if (req.method === 'POST') {
+    const { userMessage, aiMessage, chatId, imageSrc } = req.body;
 
-    if (req.method === 'POST') {
-      // save chat messages
+    if (!userMessage || !aiMessage || !chatId) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    try {
       const chatMessage = chatMessageRepository.create({
         userMessage,
         aiMessage,
-        chatId
+        chat: { id: chatId }
       });
       await chatMessageRepository.save(chatMessage);
 
-      // Save chat images
-      if (imageUrls && Array.isArray(imageUrls)) {
-        const images = imageUrls.map((url: string) => ({
-          url,
-          messageId: chatMessage.id
-        }));
-        await chatImageRepository.save(images);
+      if (imageSrc && Array.isArray(imageSrc)) {
+        const chatImages = imageSrc.map(imageFile =>
+          chatImageRepository.create({
+            imageFile,
+            chatMessage: chatMessage,
+            messageId: chatMessage.id // Explicitly set the messageId
+          })
+        );
+        await chatImageRepository.save(chatImages);
       }
 
-      res.status(201).json(chatMessage);
-    } else if (req.method === 'GET') {
-      //fetch chat messages
-      const chatMessages = await chatMessageRepository
-        .createQueryBuilder('chat_message')
-        .select([
-          'chat_message.id',
-          'chat_message.userMessage',
-          'chat_message.aiMessage'
-        ])
-        .where('chat_message.chatId = :chatId', { chatId })
-        .orderBy('chat_message.createdAt', 'DESC')
-        .getMany();
-
-      res.status(201).json(chatMessages);
-    } else {
-      res.setHeader('Allow', ['GET', 'POST']);
-      res.status(405).end(`Method ${req.method} not allowed`);
+      res.status(201).json({ success: true, messageId: chatMessage.id });
+    } catch (error) {
+      console.error('Error saving message:', error);
+      res.status(500).json({ success: false, message: 'Error saving message' });
     }
-  } catch (error) {
-    console.error('Error during database operation', error);
-    res.status(500).json({ message: 'Internal server error' });
+  } else if (req.method === 'GET') {
+    const { chatId } = req.query;
+
+    if (!chatId || Array.isArray(chatId)) {
+      return res.status(400).json({ message: 'Invalid chatId' });
+    }
+    try {
+      const chatMessages = await chatMessageRepository.find({
+        where: { chat: { id: parseInt(chatId) } },
+        relations: ['images'],
+        order: { createdAt: 'ASC' }
+      });
+
+      res.status(200).json(chatMessages);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      res.status(500).json({ message: 'Error fetching messages' });
+    }
+  } else {
+    res.setHeader('Allow', ['GET', 'POST']);
+    res.status(405).end(`Method ${req.method} not allowed`);
   }
 }

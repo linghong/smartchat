@@ -2,14 +2,16 @@ import React, { useState, useEffect, useRef, FC } from 'react';
 
 import MenuItem from '@/src/components/MenuItem';
 import AIHub from '@/src/components/AIHub';
+import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-import { fetchChats } from '@/src/utils/sqliteApiClient';
+import { fetchChats, fetchChatMessages } from '@/src/utils/sqliteApiClient';
 
 interface SidebarProps {
   setIsSidebarOpen: (isSidebarOpen: boolean) => void;
   namespacesList: OptionType[] | null;
-  chatId: string | null;
-  setChatId: (chatId: string | null) => void;
+  setChatId: (chatId: string) => void;
+  setChatHistory: (chatHistory: Message[]) => void;
+  setImageSrcHistory: (ImageSrcHistory: ImageFile[][]) => void;
 }
 
 const models = [
@@ -22,12 +24,16 @@ const models = [
     value: 'model2'
   }
 ];
-
+const initialMessage = {
+  question: '',
+  answer: 'Hi, how can I assist you?'
+};
 const Sidebar: FC<SidebarProps> = ({
   setIsSidebarOpen,
   namespacesList,
-  chatId,
-  setChatId
+  setChatId,
+  setChatHistory,
+  setImageSrcHistory
 }) => {
   const [chats, setChats] = useState<OptionType[]>([]);
   const isFetchingChats = useRef(false);
@@ -36,6 +42,7 @@ const Sidebar: FC<SidebarProps> = ({
     const fetchAllChats = async () => {
       // avoid calling db twice, which causes the second call fetching data in the middle of the first call to complete the db inlization
       if (isFetchingChats.current) return;
+
       isFetchingChats.current = true;
       try {
         const chats = await fetchChats();
@@ -50,8 +57,23 @@ const Sidebar: FC<SidebarProps> = ({
     fetchAllChats();
   }, []);
 
-  const handleChatClick = (chatId: string) => {
+  const handleChatClick = async (chatId: string) => {
+    const chatMessages = await fetchChatMessages(parseInt(chatId));
+    if (chatMessages === null) {
+      console.log('fetch Chat Messages returns an error');
+      return;
+    }
+    const newChatHistory = chatMessages.map((m: any) => ({
+      question: m.userMessage,
+      answer: m.aiMessage
+    }));
+
+    const newImageSrcHistory = chatMessages.map((msg: any) => {
+      return msg.images.map((img: any) => img.imageFile);
+    });
     setChatId(chatId);
+    setChatHistory([initialMessage, ...newChatHistory]);
+    setImageSrcHistory([[], ...newImageSrcHistory]);
   };
 
   return (
