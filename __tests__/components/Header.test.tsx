@@ -4,6 +4,8 @@ import '@testing-library/jest-dom';
 import { useRouter } from 'next/router';
 
 import Header from '@/src/components/Header';
+import { Message, ImageFile } from '@/src/types/chat';
+import { initialMessage } from '@/src/pages/_app';
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
@@ -11,6 +13,9 @@ jest.mock('next/router', () => ({
 
 const setIsSidebarOpen = jest.fn();
 const setIsConfigPanelVisible = jest.fn();
+const setChatId = jest.fn();
+const setChatHistory = jest.fn();
+const setImageSrcHistory = jest.fn();
 const mockPush = jest.fn();
 
 describe('Header Component', () => {
@@ -20,9 +25,7 @@ describe('Header Component', () => {
       pathname: '/',
       push: mockPush
     });
-    setIsSidebarOpen.mockClear();
-    setIsConfigPanelVisible.mockClear();
-    mockPush.mockClear();
+    jest.clearAllMocks();
   });
 
   it('should render the page title correctly', () => {
@@ -32,6 +35,9 @@ describe('Header Component', () => {
         setIsSidebarOpen={setIsSidebarOpen}
         isConfigPanelVisible={false}
         setIsConfigPanelVisible={setIsConfigPanelVisible}
+        setChatId={setChatId}
+        setChatHistory={setChatHistory}
+        setImageSrcHistory={setImageSrcHistory}
       />
     );
 
@@ -58,6 +64,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -73,6 +82,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
     });
@@ -101,6 +113,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -117,6 +132,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -133,6 +151,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -148,6 +169,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -163,6 +187,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -179,6 +206,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -193,6 +223,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -209,6 +242,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -223,6 +259,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={false}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -234,6 +273,9 @@ describe('Header Component', () => {
           setIsSidebarOpen={setIsSidebarOpen}
           isConfigPanelVisible={true}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
+          setChatId={setChatId}
+          setChatHistory={setChatHistory}
+          setImageSrcHistory={setImageSrcHistory}
         />
       );
 
@@ -248,6 +290,9 @@ describe('Header Component', () => {
         setIsSidebarOpen={setIsSidebarOpen}
         isConfigPanelVisible={false}
         setIsConfigPanelVisible={setIsConfigPanelVisible}
+        setChatId={setChatId}
+        setChatHistory={setChatHistory}
+        setImageSrcHistory={setImageSrcHistory}
       />
     );
     expect(asFragment()).toMatchSnapshot();

@@ -52,6 +52,9 @@ const Layout: FC<LayoutProps> = ({
         setIsSidebarOpen={setIsSidebarOpen}
         isConfigPanelVisible={isConfigPanelVisible}
         setIsConfigPanelVisible={setIsConfigPanelVisible}
+        setChatId={setChatId}
+        setChatHistory={setChatHistory}
+        setImageSrcHistory={setImageSrcHistory}
       />
       <div className="flex flex-row w-full h-full">
         {isMobile && isSidebarOpen && (

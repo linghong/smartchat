@@ -7,18 +7,27 @@ import {
 } from 'react-icons/ai';
 import { useRouter } from 'next/router';
 
+import { initialMessage } from '@/src/pages/_app';
+import { Message, ImageFile } from '@/src/types/chat';
+
 interface HeaderProps {
   setIsSidebarOpen: (isSideBarOpen: boolean) => void;
   isSidebarOpen: boolean;
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
+  setChatId: (chatId: string) => void;
+  setChatHistory: (chatHistory: Message[]) => void;
+  setImageSrcHistory: (ImageSrcHistory: ImageFile[][]) => void;
 }
 
 const Header: FC<HeaderProps> = ({
   isSidebarOpen,
   setIsSidebarOpen,
   isConfigPanelVisible,
-  setIsConfigPanelVisible
+  setIsConfigPanelVisible,
+  setChatId,
+  setChatHistory,
+  setImageSrcHistory
 }) => {
   const router = useRouter();
   const pathName = router.pathname;
@@ -35,6 +44,9 @@ const Header: FC<HeaderProps> = ({
     if (window.innerWidth <= 480) {
       setIsSidebarOpen(false);
     }
+    setChatId('0');
+    setChatHistory([initialMessage]);
+    setImageSrcHistory([[]]);
   };
 
   const toggleSidebar = (e: MouseEvent<HTMLButtonElement>) => {

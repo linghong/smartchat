@@ -4,7 +4,9 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
   transform: {
-    '^.+\\.(ts|tsx)$': 'babel-jest'
+    '^.+\\.(ts|tsx)$': 'babel-jest',
+    '.+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$':
+      'jest-transform-stub'
   },
   transformIgnorePatterns: ['/node_modules/(?!clui|yargs).+\\.js$'],
   moduleNameMapper: {
