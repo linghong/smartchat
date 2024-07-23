@@ -285,7 +285,7 @@ const HomePage: FC<HomeProps> = ({
     //when copying a paragraph
     const newRows = newValue.match(/\n/g)?.length ?? 0;
     setRows(Math.min(newRows + 1, 8));
-   
+
     // automatically adjust the height of the textarea as the user types
     if (textAreaRef.current) {
       textAreaRef.current.style.height = 'auto';
@@ -351,7 +351,7 @@ const HomePage: FC<HomeProps> = ({
       setChatHistory([initialMessage]);
       setIsNewChat(false);
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [isNewChat]);
 
   return (

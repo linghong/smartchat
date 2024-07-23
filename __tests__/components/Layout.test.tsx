@@ -9,8 +9,11 @@ jest.mock('@/src/components/Header', () => {
   return {
     __esModule: true,
     default: ({
-      setIsSidebarOpen
+      setIsSidebarOpen,
+      isConfigPanelVisible,
+      setIsConfigPanelVisible
     }: {
+      isSidebarOpen: boolean;
       setIsSidebarOpen: (isOpen: boolean) => void;
       isConfigPanelVisible: boolean;
       setIsConfigPanelVisible: (isVisible: boolean) => void;
@@ -26,12 +29,18 @@ jest.mock('@/src/components/Sidebar', () => {
       setIsSidebarOpen,
       namespacesList,
       chatId,
-      setChatId
+      setChatId,
+      setChatHistory,
+      setImageSrcHistory,
+      setIsConfigPanelVisible
     }: {
       setIsSidebarOpen: (isOpen: boolean) => void;
       namespacesList: any[] | null;
       chatId: string | null;
       setChatId: (chatId: string | null) => void;
+      setChatHistory: (chatHistory: any[]) => void;
+      setImageSrcHistory: (ImageSrcHistory: any[][]) => void;
+      setIsConfigPanelVisible: (isVisible: boolean) => void;
     }) => <div>Sidebar Mock</div>
   };
 });
@@ -49,8 +58,10 @@ describe('Layout Component', () => {
     isConfigPanelVisible: false,
     setIsConfigPanelVisible: jest.fn(),
     namespacesList: null,
-    chatId: null,
-    setChatId: jest.fn()
+    chatId: '0',
+    setChatId: jest.fn(),
+    setChatHistory: jest.fn(),
+    setImageSrcHistory: jest.fn()
   };
 
   beforeEach(() => {

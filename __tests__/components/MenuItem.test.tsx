@@ -103,7 +103,7 @@ describe('MenuItem Component', () => {
     );
 
     const menuItem = screen.getByText('Test Title').closest('div');
-    expect(menuItem).toHaveClass('bg-slate-400 text-indigo-200 rounded-sm');
+    expect(menuItem).toHaveClass('hover:bg-slate-500 focus:bg-indigo-100');
   });
 
   it('should not apply active class when the link does not match the current pathname', () => {

@@ -14,6 +14,7 @@ interface MenuItemProps {
   defaultOpen?: boolean;
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
   onItemClick?: (id: string) => void;
+  activeItemId?: string;
 }
 
 const MenuItem: FC<MenuItemProps> = ({
@@ -22,14 +23,15 @@ const MenuItem: FC<MenuItemProps> = ({
   itemList,
   defaultOpen = false,
   setIsSidebarOpen,
-  onItemClick
+  onItemClick,
+  activeItemId
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const router = useRouter();
   const isActive = link && router.pathname === link;
 
-  const toggle = useCallback(() => setIsOpen(prev => !prev), []);
+  const handleToggle = useCallback(() => setIsOpen(prev => !prev), []);
 
   const handleLinkClick = useCallback(
     async (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -45,7 +47,7 @@ const MenuItem: FC<MenuItemProps> = ({
   );
 
   const Row = useCallback(
-    ({ index, style }: { index: number; style: React.CSSProperties }) => {
+    ({ index }: { index: number; style: React.CSSProperties }) => {
       if (!itemList) return null;
       const item = itemList[index];
 
@@ -54,18 +56,18 @@ const MenuItem: FC<MenuItemProps> = ({
           onItemClick(id);
         }
       };
+      const isActiveLi = activeItemId === item.value;
 
       return (
         <li
-          style={style}
-          className="px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-400 hover:rounded focus:bg-indigo-100"
+          className={`px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-600 hover:rounded focus:bg-indigo-100 ${isActiveLi ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-200'}`}
           onClick={() => handleClick(item.value)}
         >
           {item.label}
         </li>
       );
     },
-    [itemList, onItemClick]
+    [itemList, onItemClick, activeItemId]
   );
 
   const listHeight = useMemo(() => {
@@ -78,7 +80,7 @@ const MenuItem: FC<MenuItemProps> = ({
   return (
     <li className="mt-6 font-semibold">
       <div
-        className={`flex justify-between items-center px-1 py-1 border-b cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100  ${isActive ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-50'}`}
+        className={`flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100 }`}
       >
         {link ? (
           <Link
@@ -94,7 +96,7 @@ const MenuItem: FC<MenuItemProps> = ({
         <button
           role="button"
           className="cursor-pointer transition-colors duration-200 hover:text-indigo-300"
-          onClick={toggle}
+          onClick={handleToggle}
           aria-label={isOpen ? 'Collapse' : 'Expand'}
         >
           {isOpen ? <AiFillCaretUp size={18} /> : <AiFillCaretDown size={18} />}

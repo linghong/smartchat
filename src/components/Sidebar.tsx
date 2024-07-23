@@ -7,8 +7,10 @@ import { OptionType } from '@/src/types/common';
 import { fetchChats, fetchChatMessages } from '@/src/utils/sqliteApiClient';
 
 interface SidebarProps {
+  setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
   setIsSidebarOpen: (isSidebarOpen: boolean) => void;
   namespacesList: OptionType[] | null;
+  chatId: string;
   setChatId: (chatId: string) => void;
   setChatHistory: (chatHistory: Message[]) => void;
   setImageSrcHistory: (ImageSrcHistory: ImageFile[][]) => void;
@@ -29,8 +31,10 @@ const initialMessage = {
   answer: 'Hi, how can I assist you?'
 };
 const Sidebar: FC<SidebarProps> = ({
+  setIsConfigPanelVisible,
   setIsSidebarOpen,
   namespacesList,
+  chatId,
   setChatId,
   setChatHistory,
   setImageSrcHistory
@@ -40,7 +44,9 @@ const Sidebar: FC<SidebarProps> = ({
 
   useEffect(() => {
     const fetchAllChats = async () => {
-      // avoid calling db twice, which causes the second call fetching data in the middle of the first call to complete the db inlization
+      // Avoid calling db twice in dev environment,
+      // Otherwise, the second call may fetch data in the middle of the first call's db initialization, causing issue of table metadata data missing.
+      // If you want, you can remove this isFetchChats check before building the code for production.
       if (isFetchingChats.current) return;
 
       isFetchingChats.current = true;
@@ -71,6 +77,8 @@ const Sidebar: FC<SidebarProps> = ({
     const newImageSrcHistory = chatMessages.map((msg: any) => {
       return msg.images.map((img: any) => img.imageFile);
     });
+
+    setIsConfigPanelVisible(false);
     setChatId(chatId);
     setChatHistory([initialMessage, ...newChatHistory]);
     setImageSrcHistory([[], ...newImageSrcHistory]);
@@ -100,6 +108,7 @@ const Sidebar: FC<SidebarProps> = ({
           itemList={chats}
           setIsSidebarOpen={setIsSidebarOpen}
           onItemClick={handleChatClick}
+          activeItemId={chatId}
           defaultOpen={true}
         />
       </ul>

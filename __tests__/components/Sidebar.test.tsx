@@ -12,13 +12,15 @@ jest.mock('@/src/components/MenuItem', () => {
     itemList,
     link,
     defaultOpen,
-    onItemClick
+    onItemClick,
+    activeItemId
   }: {
     title: string;
     itemList: any[];
     link: string;
     defaultOpen: boolean;
     onItemClick?: (id: string) => void;
+    activeItemId?: string;
   }) {
     return (
       <div>
@@ -31,6 +33,7 @@ jest.mock('@/src/components/MenuItem', () => {
               <li
                 key={item.value}
                 onClick={() => onItemClick && onItemClick(item.value)}
+                data-active={item.value === activeItemId}
               >
                 {item.label}
               </li>
@@ -48,12 +51,12 @@ jest.mock('@/src/components/AIHub', () => {
   };
 });
 
-// Mock the fetchChats and fetchChatMessages functions
 jest.mock('@/src/utils/sqliteApiClient', () => ({
   fetchChats: jest.fn(),
   fetchChatMessages: jest.fn()
 }));
 
+const mockSetIsConfigPanelVisible = jest.fn();
 const mockSetIsSidebarOpen = jest.fn();
 const mockSetChatId = jest.fn();
 const mockSetChatHistory = jest.fn();
@@ -79,8 +82,10 @@ describe('Sidebar Component', () => {
     await act(async () => {
       render(
         <Sidebar
+          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId="0"
           setChatId={mockSetChatId}
           setChatHistory={mockSetChatHistory}
           setImageSrcHistory={mockSetImageSrcHistory}
@@ -103,8 +108,10 @@ describe('Sidebar Component', () => {
     await act(async () => {
       render(
         <Sidebar
+          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId="0"
           setChatId={mockSetChatId}
           setChatHistory={mockSetChatHistory}
           setImageSrcHistory={mockSetImageSrcHistory}
@@ -125,8 +132,10 @@ describe('Sidebar Component', () => {
     await act(async () => {
       render(
         <Sidebar
+          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId="0"
           setChatId={mockSetChatId}
           setChatHistory={mockSetChatHistory}
           setImageSrcHistory={mockSetImageSrcHistory}
@@ -145,8 +154,10 @@ describe('Sidebar Component', () => {
     await act(async () => {
       render(
         <Sidebar
+          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId="0"
           setChatId={mockSetChatId}
           setChatHistory={mockSetChatHistory}
           setImageSrcHistory={mockSetImageSrcHistory}
@@ -164,6 +175,7 @@ describe('Sidebar Component', () => {
     });
 
     expect(fetchChatMessages).toHaveBeenCalledWith(1);
+    expect(mockSetIsConfigPanelVisible).toHaveBeenCalledWith(false);
     expect(mockSetChatHistory).toHaveBeenCalled();
     expect(mockSetImageSrcHistory).toHaveBeenCalled();
     expect(mockSetChatId).toHaveBeenCalledWith('1');
@@ -173,8 +185,10 @@ describe('Sidebar Component', () => {
     await act(async () => {
       render(
         <Sidebar
+          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId="0"
           setChatId={mockSetChatId}
           setChatHistory={mockSetChatHistory}
           setImageSrcHistory={mockSetImageSrcHistory}
@@ -190,8 +204,10 @@ describe('Sidebar Component', () => {
     await act(async () => {
       render(
         <Sidebar
+          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId="0"
           setChatId={mockSetChatId}
           setChatHistory={mockSetChatHistory}
           setImageSrcHistory={mockSetImageSrcHistory}
@@ -214,8 +230,10 @@ describe('Sidebar Component', () => {
     await act(async () => {
       render(
         <Sidebar
+          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId="0"
           setChatId={mockSetChatId}
           setChatHistory={mockSetChatHistory}
           setImageSrcHistory={mockSetImageSrcHistory}
@@ -235,14 +253,37 @@ describe('Sidebar Component', () => {
     expect(chatWithAILink).toHaveAttribute('href', '/');
   });
 
+  it('sets active chat correctly', async () => {
+    await act(async () => {
+      render(
+        <Sidebar
+          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+          chatId="1"
+          setChatId={mockSetChatId}
+          setChatHistory={mockSetChatHistory}
+          setImageSrcHistory={mockSetImageSrcHistory}
+        />
+      );
+    });
+
+    await waitFor(() => {
+      const activeChat = screen.getByText('Test Chat');
+      expect(activeChat.closest('li')).toHaveAttribute('data-active', 'true');
+    });
+  });
+
   it('matches snapshot', async () => {
     let asFragment: (() => DocumentFragment) | undefined;
 
     await act(async () => {
       const result = render(
         <Sidebar
+          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
+          chatId="0"
           setChatId={mockSetChatId}
           setChatHistory={mockSetChatHistory}
           setImageSrcHistory={mockSetImageSrcHistory}

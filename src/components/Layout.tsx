@@ -11,6 +11,7 @@ interface LayoutProps {
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
   namespacesList: OptionType[] | null;
+  chatId: string;
   setChatId: (chatId: string) => void;
   setChatHistory: (chatHistory: Message[]) => void;
   setImageSrcHistory: (ImageSrcHistory: ImageFile[][]) => void;
@@ -21,6 +22,7 @@ const Layout: FC<LayoutProps> = ({
   isConfigPanelVisible,
   setIsConfigPanelVisible,
   namespacesList,
+  chatId,
   setChatId,
   setChatHistory,
   setImageSrcHistory
@@ -57,9 +59,11 @@ const Layout: FC<LayoutProps> = ({
             <Sidebar
               setIsSidebarOpen={setIsSidebarOpen}
               namespacesList={namespacesList}
+              chatId={chatId}
               setChatId={setChatId}
               setChatHistory={setChatHistory}
               setImageSrcHistory={setImageSrcHistory}
+              setIsConfigPanelVisible={setIsConfigPanelVisible}
             />
           </div>
         )}
@@ -75,9 +79,11 @@ const Layout: FC<LayoutProps> = ({
               <Sidebar
                 setIsSidebarOpen={setIsSidebarOpen}
                 namespacesList={namespacesList}
+                chatId={chatId}
                 setChatId={setChatId}
                 setChatHistory={setChatHistory}
                 setImageSrcHistory={setImageSrcHistory}
+                setIsConfigPanelVisible={setIsConfigPanelVisible}
               />
             </div>
             <div className="flex flex-col w-full ml-56 xl:ml-64 2xl:ml-72">
