@@ -208,18 +208,6 @@ const HomePage: FC<HomeProps> = ({
     setBasePrompt(basePrompt);
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
-    setUserInput(newValue);
-
-    // Close config panel when user starts typing
-    if (newValue.length >= 1 && isConfigPanelVisible) {
-      setIsConfigPanelVisible(false);
-    }
-    const newRows = newValue.match(/\n/g)?.length ?? 0;
-    setRows(Math.min(newRows + 1, 8));
-  };
-
   const handleImageUpload = async (file: File) => {
     if (!isVisionModel) return;
     if (!file) return;
@@ -237,6 +225,7 @@ const HomePage: FC<HomeProps> = ({
         selectedModel?.value || '',
         newImage
       );
+
       if (imageVadiationError.length !== 0) {
         setImageError([...imageError, ...imageVadiationError]);
         return;
@@ -284,11 +273,31 @@ const HomePage: FC<HomeProps> = ({
     }
   };
 
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setUserInput(newValue);
+
+    // Close config panel when user starts typing
+    if (newValue.length >= 1 && isConfigPanelVisible) {
+      setIsConfigPanelVisible(false);
+    }
+
+    //when copying a paragraph
+    const newRows = newValue.match(/\n/g)?.length ?? 0;
+    setRows(Math.min(newRows + 1, 8));
+   
+    // automatically adjust the height of the textarea as the user types
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = 'auto';
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+    }
+  };
+
   useEffect(() => {
     setNamespacesList(fetchedCategoryOptions);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // for input text area
+  // for input text area rows
   useEffect(() => {
     const handleShiftEnter = (e: KeyboardEvent) => {
       if (e.key !== 'Enter') return;
@@ -342,7 +351,7 @@ const HomePage: FC<HomeProps> = ({
       setChatHistory([initialMessage]);
       setIsNewChat(false);
     }
-    // eslint-disable-next-line
+  // eslint-disable-next-line
   }, [isNewChat]);
 
   return (
