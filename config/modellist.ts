@@ -72,15 +72,29 @@ const modelOptions: OptionType[] = [
     vision: false
   },
   {
-    value: 'llama3-8b-8192',
-    label: 'LLaMA3 8b',
+    value: 'llama-3.1-70b-versatile',
+    label: 'Llama3.1 70b',
+    category: 'groq',
+    contextWindow: 128000,
+    vision: false
+  },
+  {
+    value: 'llama-3.1-8b-instant',
+    label: 'Llama3.1 8b',
+    category: 'groq',
+    contextWindow: 128000,
+    vision: false
+  },
+  {
+    value: 'llama3-70b-8192',
+    label: 'Llama3 70b',
     category: 'groq',
     contextWindow: 8192,
     vision: false
   },
   {
-    value: 'llama3-70b-8192',
-    label: 'LLaMA3 70b',
+    value: 'llama3-8b-8192',
+    label: 'Llama3 8b',
     category: 'groq',
     contextWindow: 8192,
     vision: false
