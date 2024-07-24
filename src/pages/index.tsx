@@ -161,6 +161,11 @@ const HomePage: FC<HomeProps> = ({
       setImageSrc([]);
       setRows(1); // Reset the textarea rows to initial state
 
+      // Reset the textarea height
+      if (textAreaRef.current) {
+        textAreaRef.current.style.height = 'auto';
+      }
+
       const data = await fetchChatResponse(
         basePrompt,
         question,
