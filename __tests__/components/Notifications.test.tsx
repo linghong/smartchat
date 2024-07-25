@@ -1,20 +1,37 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import renderer from 'react-test-renderer';
+import { render, screen } from '@testing-library/react';
 import Notifications from '@/src/components/Notifications';
 
 describe('Notifications Component', () => {
   it('renders loading notification when isLoading is true', () => {
-    const { getByText } = render(
-      <Notifications isLoading successMessage={null} errorMessage={null} />
+    render(
+      <Notifications
+        isLoading={true}
+        loadingMessage=""
+        successMessage={null}
+        errorMessage={null}
+      />
     );
-    expect(getByText('Uploading your data...')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
+  });
+
+  it('renders loading notification with custom message when provided', () => {
+    const { getByText } = render(
+      <Notifications
+        isLoading={true}
+        loadingMessage="Custom loading message"
+        successMessage={null}
+        errorMessage={null}
+      />
+    );
+    expect(getByText('Custom loading message')).toBeInTheDocument();
   });
 
   it('renders success message when provided', () => {
     const { getByText } = render(
       <Notifications
         isLoading={false}
+        loadingMessage=""
         successMessage="Success"
         errorMessage={null}
       />
@@ -26,6 +43,7 @@ describe('Notifications Component', () => {
     const { getByText } = render(
       <Notifications
         isLoading={false}
+        loadingMessage=""
         successMessage={null}
         errorMessage="Error"
       />
@@ -38,6 +56,7 @@ describe('Notifications Component', () => {
     const { getByText } = render(
       <Notifications
         isLoading={false}
+        loadingMessage=""
         successMessage={null}
         errorMessage={null}
         uploadErrors={uploadErrors}
@@ -51,6 +70,7 @@ describe('Notifications Component', () => {
     const { getByText } = render(
       <Notifications
         isLoading={false}
+        loadingMessage=""
         successMessage={null}
         errorMessage={null}
         inputErrors={inputErrors}
@@ -59,16 +79,39 @@ describe('Notifications Component', () => {
     expect(getByText('Name is required')).toBeInTheDocument();
   });
 
-  it('matches the snapshot', () => {
-    const tree = renderer
-      .create(
-        <Notifications
-          isLoading={false}
-          successMessage="Success"
-          errorMessage="Error"
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+  it('renders multiple notifications when multiple props are provided', () => {
+    const uploadErrors = { file: 'File is too large' };
+    const inputErrors = { name: 'Name is required' };
+    const { getByText } = render(
+      <Notifications
+        isLoading={true}
+        loadingMessage="Loading..."
+        successMessage="Success"
+        errorMessage="Error"
+        uploadErrors={uploadErrors}
+        inputErrors={inputErrors}
+      />
+    );
+    expect(getByText('Loading...')).toBeInTheDocument();
+    expect(getByText('Success')).toBeInTheDocument();
+    expect(getByText('Error')).toBeInTheDocument();
+    expect(getByText('File is too large')).toBeInTheDocument();
+    expect(getByText('Name is required')).toBeInTheDocument();
+  });
+
+  it('matches snapshot with multiple notifications', () => {
+    const uploadErrors = { file: 'File is too large' };
+    const inputErrors = { name: 'Name is required' };
+    const { asFragment } = render(
+      <Notifications
+        isLoading={true}
+        loadingMessage="Loading..."
+        successMessage="Success"
+        errorMessage="Error"
+        uploadErrors={uploadErrors}
+        inputErrors={inputErrors}
+      />
+    );
+    expect(asFragment()).toMatchSnapshot();
   });
 });

@@ -1,28 +1,61 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Notifications Component matches the snapshot 1`] = `
-[
+exports[`Notifications Component matches snapshot with multiple notifications 1`] = `
+<DocumentFragment>
   <div
-    className="p-4"
+    class="p-4"
+  >
+    <p
+      aria-live="assertive"
+      class="bold text-gray-600"
+      role="status"
+    >
+      Loading...
+    </p>
+  </div>
+  <div
+    class="p-4"
   >
     <p
       aria-live="polite"
-      className="bold text-green-600"
+      class="bold text-green-600"
       role="status"
     >
       Success
     </p>
-  </div>,
+  </div>
   <div
-    className="p-4"
+    class="p-4"
   >
     <p
       aria-live="assertive"
-      className="bold text-red-600"
+      class="bold text-red-600"
       role="alert"
     >
       Error
     </p>
-  </div>,
-]
+  </div>
+  <div
+    class="p-4"
+  >
+    <p
+      aria-live="assertive"
+      class="bold text-red-600"
+      role="alert"
+    >
+      File is too large
+    </p>
+  </div>
+  <div
+    class="p-4"
+  >
+    <p
+      aria-live="assertive"
+      class="bold text-red-600"
+      role="alert"
+    >
+      Name is required
+    </p>
+  </div>
+</DocumentFragment>
 `;
