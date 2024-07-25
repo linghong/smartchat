@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChatMessageList matches snapshot when loading 1`] = `
+<DocumentFragment>
+  <div
+    class="flex-grow overflow-y-auto bg-white border-2 border-stone-200"
+  >
+    <div
+      aria-atomic="true"
+      aria-live="polite"
+      class="w-full h-full overflow-y-auto rounded-lg"
+    >
+      <div
+        data-testid="chat-message-0"
+      >
+        <div>
+          Hello
+        </div>
+        <div>
+          <div
+            data-testid="loading-indicator"
+          >
+            Loading...
+          </div>
+          <div>
+            GPT-4
+          </div>
+          <div />
+        </div>
+      </div>
+      <div
+        data-testid="chat-message-1"
+      >
+        <div />
+        <div>
+          <div
+            data-testid="loading-indicator"
+          >
+            Loading...
+          </div>
+          <div>
+            GPT-4
+          </div>
+          <div>
+            Hi there!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ChatMessageList matches snapshot with chat history 1`] = `
+<DocumentFragment>
+  <div
+    class="flex-grow overflow-y-auto bg-white border-2 border-stone-200"
+  >
+    <div
+      aria-atomic="true"
+      aria-live="polite"
+      class="w-full h-full overflow-y-auto rounded-lg"
+    >
+      <div
+        data-testid="chat-message-0"
+      >
+        <div>
+          Hello
+        </div>
+        <div>
+          <div>
+            GPT-4
+          </div>
+          <div />
+        </div>
+      </div>
+      <div
+        data-testid="chat-message-1"
+      >
+        <div />
+        <div>
+          <div>
+            GPT-4
+          </div>
+          <div>
+            Hi there!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ChatMessageList matches snapshot with empty chat history 1`] = `
+<DocumentFragment>
+  <div
+    class="flex-grow overflow-y-auto bg-white border-2 border-stone-200"
+  >
+    <div
+      aria-atomic="true"
+      aria-live="polite"
+      class="w-full h-full overflow-y-auto rounded-lg"
+    />
+  </div>
+</DocumentFragment>
+`;
