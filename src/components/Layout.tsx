@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, ReactNode } from 'react';
+import { useState, useEffect, FC, ReactNode, Dispatch } from 'react';
 
 import Footer from '@/src/components/Footer';
 import Header from '@/src/components/Header';
@@ -9,12 +9,12 @@ import { OptionType } from '@/src/types/common';
 interface LayoutProps {
   children: ReactNode;
   isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
+  setIsConfigPanelVisible: Dispatch<React.SetStateAction<boolean>>;
   namespacesList: OptionType[] | null;
   chatId: string;
-  setChatId: (chatId: string) => void;
-  setChatHistory: (chatHistory: Message[]) => void;
-  setImageSrcHistory: (ImageSrcHistory: ImageFile[][]) => void;
+  setChatId: Dispatch<React.SetStateAction<string>>;
+  setChatHistory: Dispatch<React.SetStateAction<Message[]>>;
+  setImageSrcHistory: Dispatch<React.SetStateAction<ImageFile[][]>>;
 }
 
 const Layout: FC<LayoutProps> = ({

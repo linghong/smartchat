@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, FC } from 'react';
+import React, { useState, useEffect, useRef, FC, Dispatch } from 'react';
 
 import MenuItem from '@/src/components/MenuItem';
 import AIHub from '@/src/components/AIHub';
@@ -7,13 +7,13 @@ import { OptionType } from '@/src/types/common';
 import { fetchChats, fetchChatMessages } from '@/src/utils/sqliteApiClient';
 
 interface SidebarProps {
-  setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
-  setIsSidebarOpen: (isSidebarOpen: boolean) => void;
+  setIsConfigPanelVisible: Dispatch<React.SetStateAction<boolean>>;
+  setIsSidebarOpen: Dispatch<React.SetStateAction<boolean>>;
   namespacesList: OptionType[] | null;
   chatId: string;
-  setChatId: (chatId: string) => void;
-  setChatHistory: (chatHistory: Message[]) => void;
-  setImageSrcHistory: (ImageSrcHistory: ImageFile[][]) => void;
+  setChatId: Dispatch<React.SetStateAction<string>>;
+  setChatHistory: Dispatch<React.SetStateAction<Message[]>>;
+  setImageSrcHistory: Dispatch<React.SetStateAction<ImageFile[][]>>;
 }
 
 const models = [
@@ -65,23 +65,28 @@ const Sidebar: FC<SidebarProps> = ({
 
   const handleChatClick = async (chatId: string) => {
     const chatMessages = await fetchChatMessages(parseInt(chatId));
-    if (chatMessages === null) {
-      console.log('fetch Chat Messages returns an error');
-      return;
+
+    // Check if chatMessages is an array and not empty
+    if (Array.isArray(chatMessages) && chatMessages.length > 0) {
+      const newChatHistory: Message[] = chatMessages.map(m => ({
+        question: m.userMessage,
+        answer: m.aiMessage
+      }));
+
+      const newImageSrcHistory: ImageFile[][] = chatMessages.map((msg: any) => {
+        // Assuming msg.images is an array of { imageFile: ... } objects
+        return msg.images.map((img: any) => img.imageFile);
+      });
+      setIsConfigPanelVisible(false);
+      setChatId(chatId);
+      setChatHistory([initialMessage, ...newChatHistory]);
+      setImageSrcHistory([[], ...newImageSrcHistory]);
+    } else {
+      // Handle the case where there are no chat messages
+      console.log(`No message fetched for chatId ${chatId}`);
+      setChatHistory([initialMessage]);
+      setImageSrcHistory([[]]);
     }
-    const newChatHistory = chatMessages.map((m: any) => ({
-      question: m.userMessage,
-      answer: m.aiMessage
-    }));
-
-    const newImageSrcHistory = chatMessages.map((msg: any) => {
-      return msg.images.map((img: any) => img.imageFile);
-    });
-
-    setIsConfigPanelVisible(false);
-    setChatId(chatId);
-    setChatHistory([initialMessage, ...newChatHistory]);
-    setImageSrcHistory([[], ...newImageSrcHistory]);
   };
 
   return (

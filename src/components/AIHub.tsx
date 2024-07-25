@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import {
-  AiFillCaretDown,
-  AiFillCaretUp,
-  AiOutlineRobot,
-  AiOutlineBulb
-} from 'react-icons/ai';
+import { AiFillCaretDown, AiFillCaretUp, AiOutlineBulb } from 'react-icons/ai';
 
 interface AIHubLink {
   title: string;

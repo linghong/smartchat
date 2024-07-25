@@ -5,7 +5,7 @@ import ImageModal from '@/src/components/ImageModal';
 import { ImageFile } from '@/src/types/chat';
 
 interface ImageListWithModalProps {
-  imageSrc: ImageFile[];
+  imageSrc: ImageFile[] | undefined;
   handleImageDelete: (index: number) => void;
   isDeleteIconShow?: boolean;
 }
@@ -26,7 +26,9 @@ const ImageListWithModal: FC<ImageListWithModalProps> = ({
   const closeModal = () => {
     setModalOpen(false);
   };
-
+  if (!imageSrc || imageSrc.length === 0) {
+    return null;
+  }
   return (
     <>
       <div className="flex flex-row justify-start w-full p-2">

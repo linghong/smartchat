@@ -6,9 +6,9 @@ import Layout from '@/src/components/Layout';
 import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import '@/src/styles/globals.css';
-import { String } from 'aws-sdk/clients/cloudwatchevents';
 
 const initialFileCategory: OptionType = { value: 'none', label: '1' };
+
 export const initialMessage = {
   question: '',
   answer: 'Hi, how can I assist you?'
@@ -17,7 +17,7 @@ export const initialMessage = {
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
   const [namespacesList, setNamespacesList] = useState(null);
-  const [chatId, setChatId] = useState<String>('0'); //chatId is '0', it is at NewChat status
+  const [chatId, setChatId] = useState<string>('0'); //chatId is '0', it is at NewChat status
   const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
   const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]); //the first one is for Hi, how can I assist you?, so the imageSrc is []
 

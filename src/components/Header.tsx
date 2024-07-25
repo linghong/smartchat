@@ -1,4 +1,4 @@
-import { FC, MouseEvent } from 'react';
+import { FC, MouseEvent, Dispatch } from 'react';
 import {
   AiOutlineMenu,
   AiOutlineForm,
@@ -11,13 +11,13 @@ import { initialMessage } from '@/src/pages/_app';
 import { Message, ImageFile } from '@/src/types/chat';
 
 interface HeaderProps {
-  setIsSidebarOpen: (isSideBarOpen: boolean) => void;
+  setIsSidebarOpen: Dispatch<React.SetStateAction<boolean>>;
   isSidebarOpen: boolean;
   isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: (isConfigPanelVisible: boolean) => void;
-  setChatId: (chatId: string) => void;
-  setChatHistory: (chatHistory: Message[]) => void;
-  setImageSrcHistory: (ImageSrcHistory: ImageFile[][]) => void;
+  setIsConfigPanelVisible: Dispatch<React.SetStateAction<boolean>>;
+  setChatId: Dispatch<React.SetStateAction<string>>;
+  setChatHistory: Dispatch<React.SetStateAction<Message[]>>;
+  setImageSrcHistory: Dispatch<React.SetStateAction<ImageFile[][]>>;
 }
 
 const Header: FC<HeaderProps> = ({
