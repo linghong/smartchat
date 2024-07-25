@@ -6,12 +6,12 @@ exports[`ImageModal should match snapshot 1`] = `
     aria-describedby="Extended view of the uploaded image"
     aria-labelledby="modalTitle"
     aria-modal="true"
-    class="w-full fixed p-10 inset-0 bg-slate-500 bg-opacity-90 flex items-center justify-center z-100"
+    class="w-full fixed p-10 inset-0 bg-slate-500 bg-opacity-90 flex items-center justify-center z-50"
     role="dialog"
   >
     <img
       alt="Expanded view"
-      class="p-6"
+      class="p-6 max-w-full max-h-full"
       data-nimg="fill"
       decoding="async"
       loading="lazy"
