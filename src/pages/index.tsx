@@ -30,6 +30,8 @@ interface HomeProps {
   setChatHistory: Dispatch<React.SetStateAction<Message[]>>;
   imageSrcHistory: ImageFile[][];
   setImageSrcHistory: Dispatch<React.SetStateAction<ImageFile[][]>>;
+  isConfigPanelVisible: boolean;
+  setIsConfigPanelVisible: Dispatch<React.SetStateAction<boolean>>;
 }
 
 const HomePage: React.FC<HomeProps> = ({
@@ -40,10 +42,11 @@ const HomePage: React.FC<HomeProps> = ({
   chatHistory,
   setChatHistory,
   imageSrcHistory,
-  setImageSrcHistory
+  setImageSrcHistory,
+  isConfigPanelVisible,
+  setIsConfigPanelVisible
 }) => {
   // --- State Variables ---
-  const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>(
     initialFileCategory
   );
@@ -183,7 +186,7 @@ const HomePage: React.FC<HomeProps> = ({
   }, [isNewChat]);
 
   return (
-    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 h-full mx-auto">
+    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 h-full mx-auto z-80">
       {isConfigPanelVisible && (
         <div className="flex-shrink-0">
           <AIConfigPanel
