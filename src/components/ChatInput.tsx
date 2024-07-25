@@ -127,7 +127,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   const handleImageDelete = (id: number) => {
-    setImageSrc([...imageSrc.slice(0, id), ...imageSrc.slice(id + 1)]);
+    setImageSrc(prevImages => prevImages.filter((_, index) => index !== id));
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
