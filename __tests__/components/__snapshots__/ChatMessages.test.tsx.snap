@@ -7,7 +7,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
     class="flex px-3 py-2 text-black"
   >
     <div
-      class="w-16 flex flex-col justify-start items-center ai-answer"
+      class="w-16 px-2 flex flex-col justify-start items-center user"
     >
       <img
         alt="User avatar"
@@ -23,10 +23,10 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
       />
     </div>
     <div
-      class="w-11/12 user-question"
+      class="flex-1 user-question"
     >
       <div
-        class="space-wrap"
+        class="user-question space-wrap"
       >
         What is AI?
       </div>
@@ -70,13 +70,13 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
   </article>
   <article
     aria-labelledby="ai-response"
-    class="flex px-3 py-2 bg-slate-100 color-black ease-in duration-300"
+    class="flex px-3 py-2 bg-slate-100 text-black ease-in duration-300"
   >
     <div
-      class="w-16 flex flex-col justify-start items-center ai-answer"
+      class="w-16 px-2 flex flex-col justify-start items-center ai"
     >
       <img
-        alt="AI bot avatar"
+        alt="AI avatar"
         class="h-8 w-8 mr-4 rounded-sm false"
         data-nimg="1"
         decoding="async"
@@ -94,7 +94,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
       </label>
     </div>
     <div
-      class=" bot-response answer space-wrap"
+      class="flex-1 styledContent ai-answer space-wrap"
     >
       AI stands for Artificial Intelligence.
     </div>

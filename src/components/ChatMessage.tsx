@@ -23,7 +23,27 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   handleImageDelete
 }) => {
   const convertNewlinesToBreaks = (text: string) => {
-    return text.replace(/\n/g, '<br>');
+    // First, protect code blocks
+    let formatted = text.replace(/```([\s\S]*?)```/g, match => {
+      return match.replace(/\n/g, '&!newline!&');
+    });
+
+    // Then, replace newlines with <br> tags
+    formatted = formatted.replace(/\n/g, '<br>');
+
+    // Add a consistent class to inline <code> tags
+    formatted = formatted.replace(
+      /<code>(.*?)<\/code>/g,
+      (match, p1) => `<code class="inline-code">${p1}</code>`
+    );
+
+    // Handle code blocks
+    formatted = formatted.replace(/```([\s\S]*?)```/g, (match, code) => {
+      const cleanCode = code.replace(/&!newline!&/g, '\n').trim();
+      return `<pre><code>${cleanCode}</code></pre>`;
+    });
+
+    return formatted;
   };
 
   return (
@@ -33,7 +53,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           className="flex px-3 py-2 text-black"
           aria-label="user-message"
         >
-          <div className="w-16 flex flex-col justify-start items-center ai-answer">
+          <div className="w-16 px-2 flex flex-col justify-start items-center user">
             <Image
               src="/user.png"
               alt="User avatar"
@@ -43,9 +63,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
               priority
             />
           </div>
-          <div className="w-11/12 user-question">
+          <div className="flex-1 user-question">
             <div
-              className="space-wrap"
+              className="user-question space-wrap"
               dangerouslySetInnerHTML={{
                 __html: convertNewlinesToBreaks(message.question)
               }}
@@ -59,30 +79,28 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           </div>
         </article>
       )}
-      {
-        <article
-          className="flex px-3 py-2 bg-slate-100 color-black ease-in duration-300"
-          aria-labelledby="ai-response"
-        >
-          <div className="w-16 flex flex-col justify-start items-center ai-answer">
-            <Image
-              src="/bot.png"
-              alt="AI bot avatar"
-              width="30"
-              height="30"
-              className={`h-8 w-8 mr-4 rounded-sm ${loading && lastIndex && 'animate-pulse'}`}
-              priority
-            />
-            <label className="text-xs">{modelName}</label>
-          </div>
-          <div
-            className=" bot-response answer space-wrap"
-            dangerouslySetInnerHTML={{
-              __html: convertNewlinesToBreaks(message.answer)
-            }}
+      <article
+        className="flex px-3 py-2 bg-slate-100 text-black ease-in duration-300"
+        aria-labelledby="ai-response"
+      >
+        <div className="w-16 px-2 flex flex-col justify-start items-center ai">
+          <Image
+            src="/bot.png"
+            alt="AI avatar"
+            width="30"
+            height="30"
+            className={`h-8 w-8 mr-4 rounded-sm ${loading && lastIndex && 'animate-pulse'}`}
+            priority
           />
-        </article>
-      }
+          <label className="text-xs">{modelName}</label>
+        </div>
+        <div
+          className="flex-1 styledContent ai-answer space-wrap"
+          dangerouslySetInnerHTML={{
+            __html: convertNewlinesToBreaks(message.answer)
+          }}
+        />
+      </article>
     </>
   );
 };

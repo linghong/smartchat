@@ -5,6 +5,18 @@ import '@testing-library/jest-dom';
 import ChatMessage from '@/src/components/ChatMessage';
 import { Message, ImageFile } from '@/src/types/chat';
 
+// Mock the console methods to suppress output during tests
+beforeAll(() => {
+  jest.spyOn(console, 'log').mockImplementation(() => {});
+  jest.spyOn(console, 'warn').mockImplementation(() => {});
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+afterAll(() => {
+  jest.restoreAllMocks();
+});
+
+
 describe('ChatMessage Component', () => {
   let index: number;
   let message: Message;
@@ -62,6 +74,11 @@ describe('ChatMessage Component', () => {
     ).toBeInTheDocument();
   });
 
+  it('renders the user and AI avatars', () => {
+    expect(screen.getByAltText('User avatar')).toBeInTheDocument();
+    expect(screen.getByAltText('AI avatar')).toBeInTheDocument();
+  });
+
   it('applies animate-pulse class when loading and is the last index', () => {
     act(() => {
       render(
@@ -76,7 +93,7 @@ describe('ChatMessage Component', () => {
         />
       );
     });
-    const botImages = screen.getAllByAltText('AI bot avatar') as HTMLElement[];
+    const botImages = screen.getAllByAltText('AI avatar') as HTMLElement[];
     expect(botImages[botImages.length - 1]).toHaveClass('animate-pulse');
   });
 
@@ -95,7 +112,7 @@ describe('ChatMessage Component', () => {
       );
     });
 
-    const botImages = screen.getAllByAltText('AI bot avatar') as HTMLElement[];
+    const botImages = screen.getAllByAltText('AI avatar') as HTMLElement[];
     expect(botImages[botImages.length - 1]).not.toHaveClass('animate-pulse');
   });
 
