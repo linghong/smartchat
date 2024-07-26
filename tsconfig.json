@@ -24,7 +24,7 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "typeRoots": ["./typings", "./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": [
     "next-env.d.ts",
