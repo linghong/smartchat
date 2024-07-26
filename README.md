@@ -1,10 +1,10 @@
 # SmartChat: A Next.js Chatbot Platform
 
-SmartChat is a cutting-edge chatbot platform and full-stack application developed with Next.js[Next.js](https://nextjs.org/) and TypeScript. It supports both regular chat and enhanced chat using the RAG (Retrieval-Augmented Generation) database. When using enhanced RAG chat, users can upload PDF documents, which are then segmented and stored within the Pinecone vector database. When users pose questions related to the uploaded data, the chatbot fetches and references the relevant sections from the stored PDF data to provide precise answers.
+SmartChat is a cutting-edge AI chatbot platform and full-stack application developed with Next.js[Next.js](https://nextjs.org/) and TypeScript. It supports both regular chat and enhanced chat using the RAG (Retrieval-Augmented Generation) database. When using enhanced RAG chat, users can upload PDF documents, which are then segmented and stored within the Pinecone vector database. When users pose questions related to the uploaded data, the chatbot fetches and references the relevant sections from the stored PDF data to provide precise answers.
 
 ## Features
 
-### Chatbot Using Various AI Models
+### Chat Platform Using Various AI Models
 
 This AI chat platform allows you to select from a variety of Generative AI models:
 
@@ -20,9 +20,9 @@ This AI chat platform allows you to select from a variety of Generative AI model
 2. From Open Sources Models Self-hosted in a GPU Server
    The platform can also relay messages to a remote backend (refer to the [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi))repository, Once configured, this backend server can run open-source AI models.
 
-This models generate responses to user messages, and send back to the SmatChat platform.
+The models generate responses to user messages, and send back to the SmartChat platform.
 
-### Multimodal Response
+### Multimodal AI Models
 
 Users can upload one or more images or take desktop screenshots, and ask questions about them, or combine them with text input, including fetched information from Retrieval-Augmented Generation (RAG). The chatbot can then provide a comprehensive response.
 
@@ -31,57 +31,63 @@ The following models support those capabilities:
 2.Gemini-1.5-Flash and Gemini-1.5-Pro
 3.Claude 3.5 Sonnet, Claude 3 Haiku, and Claude-3-opus
 
-### PDF Upload for Embedding:
+### Local SQLite Database for Privacy
 
-Users have the ability to upload documents in PDF format, with options to customize how their data is processed to be embeded to suit their preferences.
+To ensure privacy and maintain control over critical information, the app uses TypeORM with SQLite to store chat messages, AI Assistant config information, and other critical content.
 
-### Vector Database Storage:
+### Retrieval Augmented Generation (RAG) with PDFs
 
-Data extracted from the uploaded PDFs undergoes a series of transformations. It is chunked and embedded using an advanced embedding model before being securely stored in Pinecone, a high-performance vector database, ensuring efficient and precise retrieval of information when needed.
-
-### Intelligent Responses:
-
-Empowered by the Retrieval-Augmented Generation (RAG), the chatbot can intelligently reference specific parts of the uploaded data to deliver contextually aware responses to user inquiries.
+Users have the ability to upload documents in PDF format, with options to customize how their data is processed to be embedded to suit their preferences. Data extracted from the uploaded PDFs is chunked and embedded using an advanced embedding model before being securely stored in Pinecone, a high-performance vector database, ensuring efficient and precise retrieval of information when needed.
 
 ### AI Model Finetuning:
 
-Users can refine AI models to meet their specific needs by uploading training data and selecting appropriate fine-tuning parameters. If fine-tuning OpenAI models, the requirements are sent to the OpenAI server. For open-source models, the requirements are sent to a self-hosted server, which can be set up using the code (under development) at [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi), which processes the fine-tuning requirements, allowing for a more tailored user experience.
+Users can refine AI models to meet their specific needs by uploading training data and selecting appropriate fine-tuning parameters. If fine-tuning OpenAI models, the requirements are sent to the OpenAI server. For open-source models, the requirements are sent to a self-hosted server, which can be set up using the code at [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi). This server processes the fine-tuning requirements (which need to be developed), allowing for a more tailored user experience.
 
 ## Screenshots
 
 Here are some screenshots that illustrate various features of the SmartChat platform:
 
-### SmartChat Home Interface
+### Chat Interface With Config Panel
 
-<div align="center" padding: 10px;">
-  <img src="images/chat-no-rag.png" width="90%" alt="SmartChat Home">
+<div align="center">
+  <img src="images/chat-with-config.png" width="90%" alt="SmartChat Home" style="border: 2px solid black;">
 </div>  
-*The SmartChat home screen showing the chat interface without RAG initiated.*
+*The SmartChat home screen showing the chat interface without RAG initiated  and with the Config panel open.*
+
+### Coding Display Example
+
+<div align="center">
+  <img src="images/chat-with-code.png" width="90%" alt="SmartChat With Code" style="border: 2px solid black;">
+</div>  
+* The SmartChat home screen showing the chat interface with the Config panel closed and displaying a coding block.*
+
+### Visual Model Example
+
+<div align="center">
+  <img src="images/chat-with-image.png" width="90%" alt="SmartChat With Image">
+</div>  
+*The AI model GPT-4o is discussing the screenshot image with the user.*
 
 ### RAG Response Generation
 
-<div align="center" padding: 10px;">
-  <img src="images/chat-with-rag.png" width="90%" alt="RAG Response Generation">
+<div align="center">
+  <img src="images/pdf-rag.png" width="90%" alt="RAG Response Generation">
 </div> 
-*Example of the chatbot generating a response using embedded data.*
+*An example of the chatbot generating a response using embedded data.*
 
 ### PDF Upload Feature
 
-<div align="center" padding: 10px;">
-  <img src="images/pdf-upload.png" width="90%" alt="PDF Upload Feature">
+<div align="center">
+  <img src="images/rag-embedding.png" width="90%" alt="PDF Upload Feature">
 </div>  
-*Screenshot of the PDF upload interface, which allows users to process documents for chatbot interaction.*
+*A screenshot of the PDF upload interface, which allows users to process documents for embedding pdf file in Pinecone.*
 
 ### Finetuning Data Submissions Page
 
-<div align="center" padding: 10px;">
-  <img src="images/finetuning.png" width="90%" alt="Finetuning Data Submissions Page">
+<div align="center">
+  <img src="images/model-finetuning.png" width="90%" alt="Finetuning Data Submissions Page">
 </div>
 *This interface allows users to submit data to OpenAI for fine-tuning OpenAI models or to the SmartChat-FastAPI server for fine-tuning using open-source generative models hosted on the GPU, tailored to specific needs.*
-
-### Local SQLite Database for Privacy
-
-To ensure privacy and maintain control over critical information, the app uses TypeORM with SQLite to store chat messages and other critical content.
 
 ## Getting Started
 
