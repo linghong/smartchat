@@ -47,7 +47,7 @@ const MenuItem: FC<MenuItemProps> = ({
   );
 
   const Row = useCallback(
-    ({ index }: { index: number; style: React.CSSProperties }) => {
+    ({ index, style }: { index: number; style: React.CSSProperties }) => {
       if (!itemList) return null;
       const item = itemList[index];
 
@@ -59,12 +59,13 @@ const MenuItem: FC<MenuItemProps> = ({
       const isActiveLi = activeItemId === item.value;
 
       return (
-        <li
+        <div
+          style={style}
           className={`px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-600 hover:rounded focus:bg-indigo-100 ${isActiveLi ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-200'}`}
           onClick={() => handleClick(item.value)}
         >
           {item.label}
-        </li>
+        </div>
       );
     },
     [itemList, onItemClick, activeItemId]
@@ -78,7 +79,7 @@ const MenuItem: FC<MenuItemProps> = ({
   }, [itemList]);
 
   return (
-    <li className="mt-6 font-semibold">
+    <div className="mt-6 font-semibold">
       <div
         className={`flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100 }`}
       >
@@ -103,13 +104,16 @@ const MenuItem: FC<MenuItemProps> = ({
         </button>
       </div>
       {isOpen && (
-        <ul className="px-1 py-2 font-medium text-slate-200 max-h-80">
+        <div
+          className="px-1 py-2 font-medium text-slate-200"
+          style={{ height: listHeight }}
+        >
           {itemList && (
-            <AutoSizer disableHeight>
-              {({ width }) => (
+            <AutoSizer>
+              {({ width, height }) => (
                 <List
                   width={width}
-                  height={listHeight}
+                  height={height}
                   itemCount={itemList.length}
                   itemSize={40}
                   className="custom-scrollbar"
@@ -119,9 +123,9 @@ const MenuItem: FC<MenuItemProps> = ({
               )}
             </AutoSizer>
           )}
-        </ul>
+        </div>
       )}
-    </li>
+    </div>
   );
 };
 

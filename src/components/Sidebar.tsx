@@ -93,7 +93,6 @@ const Sidebar: FC<SidebarProps> = ({
       setImageSrcHistory([[], ...newImageSrcHistory]);
     } else {
       // Handle the case where there are no chat messages
-      console.log(`No message fetched for chatId ${chatId}`);
       setChatHistory([initialMessage]);
       setImageSrcHistory([[]]);
     }

@@ -2,7 +2,7 @@
 
 exports[`MenuItem Component should match MenuItem component snapshot 1`] = `
 <DocumentFragment>
-  <li
+  <div
     class="mt-6 font-semibold"
   >
     <div
@@ -34,6 +34,6 @@ exports[`MenuItem Component should match MenuItem component snapshot 1`] = `
         </svg>
       </button>
     </div>
-  </li>
+  </div>
 </DocumentFragment>
 `;

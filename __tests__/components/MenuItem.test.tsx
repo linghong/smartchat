@@ -122,7 +122,7 @@ describe('MenuItem Component', () => {
     expect(menuItem).not.toHaveClass('bg-slate-400 text-indigo-200 rounded-sm');
   });
 
-  it('should render MenuItem component with default open state', () => {
+  it('should render MenuItem component with default open state and correct height', () => {
     render(
       <MenuItem
         title="Test Title"
@@ -134,10 +134,49 @@ describe('MenuItem Component', () => {
       />
     );
 
-    // Ensure the virtualized list is visible initially due to defaultOpen
-    expect(screen.getByTestId('virtualized-list')).toBeInTheDocument();
+    const listContainer = screen.getByTestId('virtualized-list').parentElement;
+    expect(listContainer).toHaveStyle('height: 80px'); // 2 items * 40px per item
+    expect(screen.getByTestId('virtualized-list')).toBeInTheDocument(); // Ensure the virtualized list is visible initially due to defaultOpen
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 2')).toBeInTheDocument();
+  });
+
+  it('should limit the height of the list to 360px when there are many items', () => {
+    const manyItems = Array.from({ length: 20 }, (_, i) => ({
+      label: `Item ${i + 1}`,
+      value: `${i + 1}`
+    }));
+
+    render(
+      <MenuItem title="Test Title" itemList={manyItems} defaultOpen={true} />
+    );
+
+    const listContainer = screen.getByTestId('virtualized-list').parentElement;
+    expect(listContainer).toHaveStyle('height: 360px'); // Max height
+  });
+
+  it('should pass correct props to FixedSizeList', () => {
+    const { FixedSizeList } = require('react-window');
+    render(
+      <MenuItem
+        title="Test Title"
+        itemList={[
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
+        ]}
+        defaultOpen={true}
+      />
+    );
+
+    expect(FixedSizeList).toHaveBeenCalledWith(
+      expect.objectContaining({
+        width: 300,
+        height: 400,
+        itemCount: 2,
+        itemSize: 40
+      }),
+      expect.anything()
+    );
   });
 
   it('should have hover and focus classes', () => {
