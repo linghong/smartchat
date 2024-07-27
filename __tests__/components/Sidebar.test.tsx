@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitFor,
+  act,
+  fireEvent
+} from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import Sidebar from '@/src/components/Sidebar';
@@ -59,6 +65,7 @@ jest.mock('@/src/utils/sqliteApiClient', () => ({
 const mockSetIsConfigPanelVisible = jest.fn();
 const mockSetIsSidebarOpen = jest.fn();
 const mockSetChatId = jest.fn();
+const mockSetChats = jest.fn();
 const mockSetChatHistory = jest.fn();
 const mockSetImageSrcHistory = jest.fn();
 
@@ -67,30 +74,38 @@ const mockNamespacesList = [
   { label: 'Namespace 2', value: 'ns2' }
 ];
 
+const mockChats = [
+  { value: '1', label: 'Test Chat 1' },
+  { value: '2', label: 'Test Chat 2' }
+];
+
 describe('Sidebar Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (fetchChats as jest.Mock).mockResolvedValue([
-      { value: '1', label: 'Test Chat' }
-    ]);
+    (fetchChats as jest.Mock).mockResolvedValue(mockChats);
     (fetchChatMessages as jest.Mock).mockResolvedValue([
       { userMessage: 'Hello', aiMessage: 'Hi there', images: [] }
     ]);
   });
 
+  const renderSidebar = (chatId = '0') =>
+    render(
+      <Sidebar
+        setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+        chatId={chatId}
+        setChatId={mockSetChatId}
+        chats={mockChats}
+        setChats={mockSetChats}
+        setChatHistory={mockSetChatHistory}
+        setImageSrcHistory={mockSetImageSrcHistory}
+      />
+    );
+
   it('renders Sidebar component with all expected elements', async () => {
     await act(async () => {
-      render(
-        <Sidebar
-          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId="0"
-          setChatId={mockSetChatId}
-          setChatHistory={mockSetChatHistory}
-          setImageSrcHistory={mockSetImageSrcHistory}
-        />
-      );
+      renderSidebar();
     });
 
     expect(screen.getByText('Embed RAG File')).toBeInTheDocument();
@@ -106,17 +121,7 @@ describe('Sidebar Component', () => {
     (fetchChats as jest.Mock).mockRejectedValue(new Error('Fetch failed'));
 
     await act(async () => {
-      render(
-        <Sidebar
-          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId="0"
-          setChatId={mockSetChatId}
-          setChatHistory={mockSetChatHistory}
-          setImageSrcHistory={mockSetImageSrcHistory}
-        />
-      );
+      renderSidebar();
     });
 
     await waitFor(() => {
@@ -130,48 +135,29 @@ describe('Sidebar Component', () => {
 
   it('fetches and renders chats on mount', async () => {
     await act(async () => {
-      render(
-        <Sidebar
-          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId="0"
-          setChatId={mockSetChatId}
-          setChatHistory={mockSetChatHistory}
-          setImageSrcHistory={mockSetImageSrcHistory}
-        />
-      );
+      renderSidebar();
     });
 
     expect(fetchChats).toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(screen.getByText('Test Chat')).toBeInTheDocument();
+      expect(screen.getByText('Test Chat 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Chat 2')).toBeInTheDocument();
     });
   });
 
   it('handles chat click correctly', async () => {
     await act(async () => {
-      render(
-        <Sidebar
-          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId="0"
-          setChatId={mockSetChatId}
-          setChatHistory={mockSetChatHistory}
-          setImageSrcHistory={mockSetImageSrcHistory}
-        />
-      );
+      renderSidebar();
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Test Chat')).toBeInTheDocument();
+      expect(screen.getByText('Test Chat 1')).toBeInTheDocument();
     });
 
-    const chatItem = screen.getByText('Test Chat');
+    const chatItem = screen.getByText('Test Chat 1');
     await act(async () => {
-      chatItem.click();
+      fireEvent.click(chatItem);
     });
 
     expect(fetchChatMessages).toHaveBeenCalledWith(1);
@@ -183,36 +169,17 @@ describe('Sidebar Component', () => {
 
   it('renders namespaces list correctly', async () => {
     await act(async () => {
-      render(
-        <Sidebar
-          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId="0"
-          setChatId={mockSetChatId}
-          setChatHistory={mockSetChatHistory}
-          setImageSrcHistory={mockSetImageSrcHistory}
-        />
-      );
+      renderSidebar();
     });
 
-    expect(screen.queryByText('Namespace 1')).toBeNull(); // Not visible because Embed RAG File is not defaultOpen
+    // Not visible because Embed RAG File is not defaultOpen
+    expect(screen.queryByText('Namespace 1')).toBeNull();
     expect(screen.queryByText('Namespace 2')).toBeNull();
   });
 
   it('initially renders child menu items correctly based on defaultOpen state', async () => {
     await act(async () => {
-      render(
-        <Sidebar
-          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId="0"
-          setChatId={mockSetChatId}
-          setChatHistory={mockSetChatHistory}
-          setImageSrcHistory={mockSetImageSrcHistory}
-        />
-      );
+      renderSidebar();
     });
 
     expect(screen.queryByText('Namespace 1')).not.toBeInTheDocument();
@@ -220,25 +187,16 @@ describe('Sidebar Component', () => {
     expect(screen.queryByText('Model 1')).not.toBeInTheDocument();
     expect(screen.queryByText('Model 2')).not.toBeInTheDocument();
 
-    // Wait for the chat data to be fetched and rendered
+    // Visible because defaultOpen is true for Chat With AI
     await waitFor(() => {
-      expect(screen.getByText('Test Chat')).toBeInTheDocument();
-    }); // Visible because defaultOpen is true for Chat With AI
+      expect(screen.getByText('Test Chat 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Chat 2')).toBeInTheDocument();
+    });
   });
 
   it('has the correct href for Each MenuItem', async () => {
     await act(async () => {
-      render(
-        <Sidebar
-          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId="0"
-          setChatId={mockSetChatId}
-          setChatHistory={mockSetChatHistory}
-          setImageSrcHistory={mockSetImageSrcHistory}
-        />
-      );
+      renderSidebar();
     });
 
     const embedRagFileLink = screen.getByText('Embed RAG File').closest('a');
@@ -255,40 +213,62 @@ describe('Sidebar Component', () => {
 
   it('sets active chat correctly', async () => {
     await act(async () => {
-      render(
-        <Sidebar
-          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId="1"
-          setChatId={mockSetChatId}
-          setChatHistory={mockSetChatHistory}
-          setImageSrcHistory={mockSetImageSrcHistory}
-        />
-      );
+      renderSidebar('2');
     });
 
     await waitFor(() => {
-      const activeChat = screen.getByText('Test Chat');
+      const activeChat = screen.getByText('Test Chat 2');
       expect(activeChat.closest('li')).toHaveAttribute('data-active', 'true');
     });
+  });
+
+  it('handles empty chat messages correctly', async () => {
+    (fetchChatMessages as jest.Mock).mockResolvedValue([]);
+
+    await act(async () => {
+      renderSidebar();
+    });
+
+    const chatItem = await screen.findByText('Test Chat 1');
+    await act(async () => {
+      fireEvent.click(chatItem);
+    });
+
+    expect(mockSetChatHistory).toHaveBeenCalledWith([
+      { question: '', answer: 'Hi, how can I assist you?' }
+    ]);
+    expect(mockSetImageSrcHistory).toHaveBeenCalledWith([[]]);
+  });
+
+  it('handles chat messages with images correctly', async () => {
+    (fetchChatMessages as jest.Mock).mockResolvedValue([
+      {
+        userMessage: 'Hello',
+        aiMessage: 'Hi there',
+        images: [{ imageFile: 'image1.jpg' }, { imageFile: 'image2.jpg' }]
+      }
+    ]);
+
+    await act(async () => {
+      renderSidebar();
+    });
+
+    const chatItem = await screen.findByText('Test Chat 1');
+    await act(async () => {
+      fireEvent.click(chatItem);
+    });
+
+    expect(mockSetImageSrcHistory).toHaveBeenCalledWith([
+      [],
+      ['image1.jpg', 'image2.jpg']
+    ]);
   });
 
   it('matches snapshot', async () => {
     let asFragment: (() => DocumentFragment) | undefined;
 
     await act(async () => {
-      const result = render(
-        <Sidebar
-          setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-          chatId="0"
-          setChatId={mockSetChatId}
-          setChatHistory={mockSetChatHistory}
-          setImageSrcHistory={mockSetImageSrcHistory}
-        />
-      );
+      const result = renderSidebar();
       asFragment = result.asFragment;
     });
 

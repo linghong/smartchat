@@ -1,4 +1,11 @@
-import { useState, useEffect, FC, ReactNode, Dispatch } from 'react';
+import {
+  useState,
+  useEffect,
+  FC,
+  ReactNode,
+  Dispatch,
+  SetStateAction
+} from 'react';
 
 import Footer from '@/src/components/Footer';
 import Header from '@/src/components/Header';
@@ -9,12 +16,14 @@ import { OptionType } from '@/src/types/common';
 interface LayoutProps {
   children: ReactNode;
   isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: Dispatch<React.SetStateAction<boolean>>;
+  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
   namespacesList: OptionType[] | null;
   chatId: string;
-  setChatId: Dispatch<React.SetStateAction<string>>;
-  setChatHistory: Dispatch<React.SetStateAction<Message[]>>;
-  setImageSrcHistory: Dispatch<React.SetStateAction<ImageFile[][]>>;
+  setChatId: Dispatch<SetStateAction<string>>;
+  chats: OptionType[];
+  setChats: Dispatch<SetStateAction<OptionType[]>>;
+  setChatHistory: Dispatch<SetStateAction<Message[]>>;
+  setImageSrcHistory: Dispatch<SetStateAction<ImageFile[][]>>;
 }
 
 const Layout: FC<LayoutProps> = ({
@@ -24,6 +33,8 @@ const Layout: FC<LayoutProps> = ({
   namespacesList,
   chatId,
   setChatId,
+  chats,
+  setChats,
   setChatHistory,
   setImageSrcHistory
 }) => {
@@ -65,6 +76,8 @@ const Layout: FC<LayoutProps> = ({
               chatId={chatId}
               setChatId={setChatId}
               setChatHistory={setChatHistory}
+              chats={chats}
+              setChats={setChats}
               setImageSrcHistory={setImageSrcHistory}
               setIsConfigPanelVisible={setIsConfigPanelVisible}
             />
@@ -84,6 +97,8 @@ const Layout: FC<LayoutProps> = ({
                 namespacesList={namespacesList}
                 chatId={chatId}
                 setChatId={setChatId}
+                chats={chats}
+                setChats={setChats}
                 setChatHistory={setChatHistory}
                 setImageSrcHistory={setImageSrcHistory}
                 setIsConfigPanelVisible={setIsConfigPanelVisible}

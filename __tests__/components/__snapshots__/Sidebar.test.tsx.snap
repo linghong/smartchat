@@ -40,7 +40,12 @@ exports[`Sidebar Component matches snapshot 1`] = `
           <li
             data-active="false"
           >
-            Test Chat
+            Test Chat 1
+          </li>
+          <li
+            data-active="false"
+          >
+            Test Chat 2
           </li>
         </ul>
       </div>

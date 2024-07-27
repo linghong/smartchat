@@ -16,8 +16,11 @@ export const initialMessage = {
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
+
   const [namespacesList, setNamespacesList] = useState(null);
+
   const [chatId, setChatId] = useState<string>('0'); //chatId is '0', it is at NewChat status
+  const [chats, setChats] = useState<OptionType[]>([]);
   const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
   const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]); //the first one is for Hi, how can I assist you?, so the imageSrc is []
 
@@ -32,6 +35,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         namespacesList={namespacesList}
         chatId={chatId}
         setChatId={setChatId}
+        chats={chats}
+        setChats={setChats}
         setChatHistory={setChatHistory}
         setImageSrcHistory={setImageSrcHistory}
       >
@@ -42,6 +47,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           setNamespacesList={setNamespacesList}
           chatId={chatId}
           setChatId={setChatId}
+          setChats={setChats}
           chatHistory={chatHistory}
           setChatHistory={setChatHistory}
           imageSrcHistory={imageSrcHistory}

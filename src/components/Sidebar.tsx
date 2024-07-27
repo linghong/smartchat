@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, FC, Dispatch } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  FC,
+  Dispatch,
+  SetStateAction
+} from 'react';
 
 import MenuItem from '@/src/components/MenuItem';
 import AIHub from '@/src/components/AIHub';
@@ -7,13 +14,15 @@ import { OptionType } from '@/src/types/common';
 import { fetchChats, fetchChatMessages } from '@/src/utils/sqliteApiClient';
 
 interface SidebarProps {
-  setIsConfigPanelVisible: Dispatch<React.SetStateAction<boolean>>;
-  setIsSidebarOpen: Dispatch<React.SetStateAction<boolean>>;
+  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
+  setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
   namespacesList: OptionType[] | null;
   chatId: string;
-  setChatId: Dispatch<React.SetStateAction<string>>;
-  setChatHistory: Dispatch<React.SetStateAction<Message[]>>;
-  setImageSrcHistory: Dispatch<React.SetStateAction<ImageFile[][]>>;
+  setChatId: Dispatch<SetStateAction<string>>;
+  chats: OptionType[];
+  setChats: Dispatch<SetStateAction<OptionType[]>>;
+  setChatHistory: Dispatch<SetStateAction<Message[]>>;
+  setImageSrcHistory: Dispatch<SetStateAction<ImageFile[][]>>;
 }
 
 const models = [
@@ -36,10 +45,11 @@ const Sidebar: FC<SidebarProps> = ({
   namespacesList,
   chatId,
   setChatId,
+  chats,
+  setChats,
   setChatHistory,
   setImageSrcHistory
 }) => {
-  const [chats, setChats] = useState<OptionType[]>([]);
   const isFetchingChats = useRef(false);
 
   useEffect(() => {

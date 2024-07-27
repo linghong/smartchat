@@ -26,6 +26,8 @@ interface HomeProps {
   setNamespacesList: Dispatch<React.SetStateAction<OptionType[]>>;
   chatId: string;
   setChatId: Dispatch<React.SetStateAction<string>>;
+  chats: OptionType[];
+  setChats: Dispatch<React.SetStateAction<OptionType[]>>;
   chatHistory: Message[];
   setChatHistory: Dispatch<React.SetStateAction<Message[]>>;
   imageSrcHistory: ImageFile[][];
@@ -39,6 +41,8 @@ const HomePage: React.FC<HomeProps> = ({
   setNamespacesList,
   chatId,
   setChatId,
+  chats,
+  setChats,
   chatHistory,
   setChatHistory,
   imageSrcHistory,
@@ -139,8 +143,10 @@ const HomePage: React.FC<HomeProps> = ({
         selectedModel,
         selectedNamespace?.value || 'none'
       );
+
       setLoading(false);
       setMessageSubjectList(prevList => [...prevList, data.subject]);
+
       setChatHistory((prevHistory: Message[]) => [
         ...prevHistory.slice(0, -1), // remove the last one that only has user message,b ut no AI response
         { question: question, answer: data.answer }
@@ -150,6 +156,11 @@ const HomePage: React.FC<HomeProps> = ({
       if (chatHistory.length === 1 || !chatId) {
         const chat = await updateChats(data.subject, {});
         setChatId(chat.id);
+        const newChat = {
+          label: chat.title,
+          value: chat.id.toString()
+        };
+        setChats(prevChats => [newChat, ...prevChats]);
         updateChatMessages(question, data.answer, chat.id, imageSrc);
       } else {
         updateChatMessages(question, data.answer, parseInt(chatId), imageSrc);
