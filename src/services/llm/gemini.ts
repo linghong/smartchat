@@ -3,6 +3,10 @@ import { GoogleGenerativeAI, Part } from '@google/generative-ai';
 import { GEMINI_API_KEY } from '@/config/env';
 import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
+import { handleErrors } from '@/src/utils/fetchResponseRetry';
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second
 
 export const getCurrentUserParts = async (
   imageSrc: ImageFile[],
@@ -87,21 +91,28 @@ const getGeminiChatCompletion = async (
     userTextWithFetchedData
   );
 
-  try {
-    const chat = model.startChat({
-      history: buildChatArray(chatHistory),
-      generationConfig: {
-        maxOutputTokens: maxReturnMessageToken
-      }
-    });
+  let retryCount = 0;
+  let lastError: any = null;
+  while (retryCount < MAX_RETRIES) {
+    try {
+      const chat = model.startChat({
+        history: buildChatArray(chatHistory),
+        generationConfig: {
+          maxOutputTokens: maxReturnMessageToken
+        }
+      });
 
-    const result = await chat.sendMessage(currentUserParts);
-    const text = result.response.text();
+      const result = await chat.sendMessage(currentUserParts);
+      const text = result.response.text();
 
-    return text;
-  } catch (error) {
+      return text;
+    } catch (error: any) {
+      lastError = error;
+      await handleErrors(error, retryCount);
+      retryCount++;
+    }
     throw new Error(
-      `Failed to fetch response from Google ${selectedModel.value} model, ${error}`
+      `Failed to fetch response from Google ${selectedModel.value} model. Error: ${lastError?.message}`
     );
   }
 };

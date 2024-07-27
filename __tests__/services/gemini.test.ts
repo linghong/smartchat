@@ -113,7 +113,7 @@ describe('getGeminiChatCompletion', () => {
         imageSrc
       )
     ).rejects.toThrow(
-      'Failed to fetch response from Google model-id model, Error: API Error'
+      'Failed to fetch response from Google model-id model. Error: API Error'
     );
   });
 });
