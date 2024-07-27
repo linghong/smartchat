@@ -108,12 +108,6 @@ const HomePage: React.FC<HomeProps> = ({
 
         const data = await response.json();
 
-        setChatHistory((prevHistory: Message[]) => [
-          ...prevHistory,
-          { question: question, answer: data.answer }
-        ]);
-        setMessageSubjectList(prevList => [...prevList, data.subject]);
-        setLoading(false);
         return data;
       } catch (error) {
         console.error('Error fetching chat response:', error);
@@ -125,16 +119,17 @@ const HomePage: React.FC<HomeProps> = ({
   );
 
   const handleSubmit = async (question: string, imageSrc: ImageFile[]) => {
+    setError(null);
+    setLoading(true);
     setImageSrcHistory((prevHistory: ImageFile[][]) => [
       ...prevHistory,
       imageSrc
     ]);
+
     setChatHistory((prevHistory: Message[]) => [
       ...prevHistory,
-      { question, answer: '' }
+      { question: question, answer: '' }
     ]);
-    setError(null);
-    setLoading(true);
 
     try {
       const data = await fetchChatResponse(
@@ -144,7 +139,14 @@ const HomePage: React.FC<HomeProps> = ({
         selectedModel,
         selectedNamespace?.value || 'none'
       );
+      setLoading(false);
+      setMessageSubjectList(prevList => [...prevList, data.subject]);
+      setChatHistory((prevHistory: Message[]) => [
+        ...prevHistory.slice(0, -1), // remove the last one that only has user message,b ut no AI response
+        { question: question, answer: data.answer }
+      ]);
 
+      //save to database
       if (chatHistory.length === 1 || !chatId) {
         const chat = await updateChats(data.subject, {});
         setChatId(chat.id);
