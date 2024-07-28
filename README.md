@@ -1,6 +1,18 @@
-# SmartChat: A Next.js Chatbot Platform
+# SmartChat: A Personal AI Assistant
 
-SmartChat is a cutting-edge AI chatbot platform and full-stack application developed with Next.js[Next.js](https://nextjs.org/) and TypeScript. It supports both regular chat and enhanced chat using the RAG (Retrieval-Augmented Generation) database. When using enhanced RAG chat, users can upload PDF documents, which are then segmented and stored within the Pinecone vector database. When users pose questions related to the uploaded data, the chatbot fetches and references the relevant sections from the stored PDF data to provide precise answers.
+## Introduction
+
+SmartChat is a multimodal AI assistant platform comprising two components: a local application (this repository) and a cloud-based GPU server.
+
+### Local Application:
+
+The local application is a full-stack application developed with Next.js and TypeScript, with plan to also run small AI models in a Python environment. It operates on a local computer, serving as the main interface for users to keep their most important information securely on their local machine.
+
+The primary interface of the local application is a multimodal AI chat platform. This platform leverages various AI models and supports both standard chat and enhanced chat with RAG (Retrieval-Augmented Generation) capabilities. When users ask questions related to uploaded data, the chatbot fetches and references relevant sections from stored PDF data to provide accurate and precise answers.
+
+### Cloud GPU Server:
+
+The cloud-based GPU server is designed for running AI models or any AI tasks that require substantial GPU resources, which are not feasible to run locally. Refer to the [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi) repository for more details.
 
 ## Features
 

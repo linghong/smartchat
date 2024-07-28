@@ -16,7 +16,6 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-
 describe('ChatMessage Component', () => {
   let index: number;
   let message: Message;
