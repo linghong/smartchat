@@ -2,16 +2,12 @@
 
 ## Introduction
 
-SmartChat is a multimodal AI assistant platform comprising two components: a local application (this repository) and a cloud-based GPU server.
+SmartChat is a multimodal AI assistant platform comprising two components: a full stack local application (this repository) and a cloud-based GPU server ([SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi) repository).
 
-### Local Application:
+**Local Application**:
+The local application is a full-stack application developed with Next.js and TypeScript, with plan to also run small AI models in a Python environment. It operates on a local computer, serving as the main interface for users to keep their most important information securely on their local machine. This interface is a multimodal AI chat platform, leveraging various AI models and supports both standard chat and enhanced chat with RAG (Retrieval-Augmented Generation) capabilities. When users ask questions related to uploaded data, the chatbot fetches and references relevant sections from stored PDF data to provide accurate and precise answers.
 
-The local application is a full-stack application developed with Next.js and TypeScript, with plan to also run small AI models in a Python environment. It operates on a local computer, serving as the main interface for users to keep their most important information securely on their local machine.
-
-The primary interface of the local application is a multimodal AI chat platform. This platform leverages various AI models and supports both standard chat and enhanced chat with RAG (Retrieval-Augmented Generation) capabilities. When users ask questions related to uploaded data, the chatbot fetches and references relevant sections from stored PDF data to provide accurate and precise answers.
-
-### Cloud GPU Server:
-
+**Cloud GPU Server**:
 The cloud-based GPU server is designed for running AI models or any AI tasks that require substantial GPU resources, which are not feasible to run locally. Refer to the [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi) repository for more details.
 
 ## Features
@@ -21,15 +17,18 @@ The cloud-based GPU server is designed for running AI models or any AI tasks tha
 This AI chat platform allows you to select from a variety of Generative AI models:
 
 1. From APIs:
-   1.OpenAI: GPT-4o,GPT-4o Mini, GPT4 Turbo, GPT-4, and GPT-3.5 Turbo
-   2.Google: Gemini-1.5-flash and Gemini-1.5-pro
-   3.Anthropic: Claude 3.5 Sonnet, Claude 3 Haiku, and Claude 3 Opus
-   4.Open-source models hosted on Groq:
-   Meta's Llama3.1-8b Instruct, Llama3.1-70b Instruct, Llama3-8b Instruct and Llama3-70b Instruct
-   Mistral's Mixtral 8x7b
-   Google's Gemma 7b and Gemma2 9b
 
-2. From Open Sources Models Self-hosted in a GPU Server
+   1. OpenAI: GPT-4o,GPT-4o Mini, GPT4 Turbo, GPT-4, and GPT-3.5 Turbo
+   2. Google: Gemini-1.5-flash and Gemini-1.5-pro
+   3. Anthropic: Claude 3.5 Sonnet, Claude 3 Haiku, and Claude 3 Opus
+   4. Open-source models hosted on Groq:
+
+   - Meta's Llama3.1-8b Instruct, Llama3.1-70b Instruct, Llama3-8b Instruct and Llama3-70b Instruct
+   - Mistral's Mixtral 8x7b
+   - Google's Gemma 7b and Gemma2 9b
+
+2. From Open Sources Models Self-hosted in a GPU Server:
+
    The platform can also relay messages to a remote backend (refer to the [SmartChat-FastAPI](https://github.com/linghong/smartchat-fastapi))repository, Once configured, this backend server can run open-source AI models.
 
 The models generate responses to user messages, and send back to the SmartChat platform.
@@ -63,43 +62,49 @@ Here are some screenshots that illustrate various features of the SmartChat plat
 
 <div align="center">
   <img src="images/chat-with-config.png" width="90%" alt="SmartChat Home" style="border: 2px solid black;">
-</div>  
-*The SmartChat home screen showing the chat interface without RAG initiated  and with the Config panel open.*
+</div>
+
+_The SmartChat home screen showing the chat interface without RAG initiated and with the Config panel open._
 
 ### Coding Display Example
 
 <div align="center">
   <img src="images/chat-with-code.png" width="90%" alt="SmartChat With Code" style="border: 2px solid black;">
-</div>  
-* The SmartChat home screen showing the chat interface with the Config panel closed and displaying a coding block.*
+</div>
+
+_The SmartChat home screen showing the chat interface with the Config panel closed and displaying a coding block._
 
 ### Visual Model Example
 
 <div align="center">
   <img src="images/chat-with-image.png" width="90%" alt="SmartChat With Image">
-</div>  
-*The AI model GPT-4o is discussing the screenshot image with the user.*
+</div>
+
+_The AI model GPT-4o is discussing the screenshot image with the user._
 
 ### RAG Response Generation
 
 <div align="center">
   <img src="images/pdf-rag.png" width="90%" alt="RAG Response Generation">
-</div> 
-*An example of the chatbot generating a response using embedded data.*
+</div>
+
+_An example of the chatbot generating a response using embedded data._
 
 ### PDF Upload Feature
 
 <div align="center">
   <img src="images/rag-embedding.png" width="90%" alt="PDF Upload Feature">
-</div>  
-*A screenshot of the PDF upload interface, which allows users to process documents for embedding pdf file in Pinecone.*
+</div>
+
+_A screenshot of the PDF upload interface, which allows users to process documents for embedding pdf file in Pinecone._
 
 ### Finetuning Data Submissions Page
 
 <div align="center">
   <img src="images/model-finetuning.png" width="90%" alt="Finetuning Data Submissions Page">
 </div>
-*This interface allows users to submit data to OpenAI for fine-tuning OpenAI models or to the SmartChat-FastAPI server for fine-tuning using open-source generative models hosted on the GPU, tailored to specific needs.*
+
+_This interface allows users to submit data to OpenAI for fine-tuning OpenAI models or to the SmartChat-FastAPI server for fine-tuning using open-source generative models hosted on the GPU, tailored to specific needs._
 
 ## Getting Started
 
@@ -184,7 +189,7 @@ You can deploy the app to any cloud environment, just as you would with other Ne
 
 ## How to Contribute
 
-Whether you want to report a bug, improve documentation, or contribute code, your help is greatly appreciated.
+Whether you want to report a bug, improve documentation, or contribute code, your help is greatly appreciated. Please open an issue. Provide as much detail as possible to help address it quickly.
 
 ### Steps to Contribute
 
@@ -212,6 +217,4 @@ yarn test
 
 ## Issues and Feature Requests
 
-If you encounter any problems or have suggestions for improvements, please open an issue. Provide as much detail as possible to help us understand and address the issue quickly.
-
-We are always looking to improve SmartChat. If you have an idea for a new feature and want to contribute it, please open a feature request and describe your idea in detail.
+If you encounter any problems or have suggestions for improvements, please open an issue. Provide as much detail as possible to help address it quickly.
