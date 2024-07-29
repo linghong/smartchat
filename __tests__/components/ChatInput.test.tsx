@@ -127,6 +127,58 @@ describe('ChatInput', () => {
     });
   });
 
+  it('handles image deletion', async () => {
+    render(<ChatInput {...defaultProps} />);
+    const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
+    const input = screen.getByLabelText('Upload image');
+
+    Object.defineProperty(input, 'files', {
+      value: [file]
+    });
+
+    fireEvent.change(input);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Click to view larger image 1' })
+      ).toBeInTheDocument();
+    });
+
+    const deleteButton = screen.getByLabelText('Delete image 1');
+    fireEvent.click(deleteButton);
+
+    expect(
+      screen.queryByRole('button', { name: 'Click to view larger image 1' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('handles multiple image uploads', async () => {
+    render(<ChatInput {...defaultProps} />);
+    const file1 = new File(['dummy content 1'], 'test1.png', {
+      type: 'image/png'
+    });
+    const file2 = new File(['dummy content 2'], 'test2.png', {
+      type: 'image/png'
+    });
+    const input = screen.getByLabelText('Upload image');
+
+    fireEvent.change(input, { target: { files: [file1] } });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Click to view larger image 1' })
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.change(input, { target: { files: [file2] } });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Click to view larger image 2' })
+      ).toBeInTheDocument();
+    });
+  });
+
   it('handles screen capture correctly', async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({
       ok: true,

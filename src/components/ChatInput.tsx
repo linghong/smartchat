@@ -232,6 +232,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           <textarea
             ref={textAreaRef}
             autoFocus={false}
+            spellCheck="true"
             rows={rows}
             id="userInput"
             name="userInput"

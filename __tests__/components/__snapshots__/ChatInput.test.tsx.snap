@@ -89,6 +89,7 @@ exports[`ChatInput matches snapshot 1`] = `
           name="userInput"
           placeholder="Click to send. Shift + Enter for a new line."
           rows="1"
+          spellcheck="true"
         />
         <button
           class="p-1 border-none opacity-60 hover:stone-600 disabled:cursor-not-allowed"
@@ -206,6 +207,7 @@ exports[`ChatInput matches snapshot when isVisionModel is false 1`] = `
           name="userInput"
           placeholder="Click to send. Shift + Enter for a new line."
           rows="1"
+          spellcheck="true"
         />
         <button
           class="p-1 border-none opacity-60 hover:stone-600 disabled:cursor-not-allowed"
