@@ -4,21 +4,19 @@ import { Message, ImageFile } from '@/src/types/chat';
 import ImageListWithModal from '@/src/components/ImageListWithModal';
 
 type ChatMessageProps = {
-  index: number;
+  isNew: boolean;
   message: Message;
   lastIndex: boolean;
   loading: boolean;
   imageSrc: ImageFile[];
-  modelName: string;
   handleImageDelete: (e: any) => void;
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
-  index,
+  isNew,
   message,
   imageSrc,
   lastIndex,
-  modelName,
   loading,
   handleImageDelete
 }) => {
@@ -48,7 +46,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
   return (
     <>
-      {index !== 0 && (
+      {!isNew && (
         <article
           className="flex px-3 py-2 text-black"
           aria-label="user-message"
@@ -92,7 +90,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             className={`h-8 w-8 mr-4 rounded-sm ${loading && lastIndex && 'animate-pulse'}`}
             priority
           />
-          <label className="text-xs">{modelName}</label>
+          <label className="text-xs">{message.model}</label>
         </div>
         <div
           className="flex-1 styledContent ai-answer space-wrap"

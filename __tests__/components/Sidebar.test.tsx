@@ -79,6 +79,12 @@ const mockChats = [
   { value: '2', label: 'Test Chat 2' }
 ];
 
+const mockSelectedModel = {
+  value: 'gemini-1.5-pro',
+  label: 'Gemini-1.5 Pro',
+  vision: true
+};
+
 describe('Sidebar Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -235,7 +241,11 @@ describe('Sidebar Component', () => {
     });
 
     expect(mockSetChatHistory).toHaveBeenCalledWith([
-      { question: '', answer: 'Hi, how can I assist you?' }
+      {
+        question: '',
+        answer: 'Hi, how can I assist you?',
+        model: 'Gemini-1.5 Pro'
+      }
     ]);
     expect(mockSetImageSrcHistory).toHaveBeenCalledWith([[]]);
   });
@@ -259,7 +269,6 @@ describe('Sidebar Component', () => {
     });
 
     expect(mockSetImageSrcHistory).toHaveBeenCalledWith([
-      [],
       ['image1.jpg', 'image2.jpg']
     ]);
   });

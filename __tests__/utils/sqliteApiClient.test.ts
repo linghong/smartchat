@@ -72,12 +72,19 @@ describe('sqliteApiClient', () => {
     it('should create a new chat message successfully', async () => {
       const mockChatMessage = {
         id: 1,
+        model: 'GPT-4',
         userMessage: 'Hello',
         aiMessage: 'Hi there'
       };
       fetchMock.mockResponseOnce(JSON.stringify(mockChatMessage));
 
-      const result = await updateChatMessages('Hello', 'Hi there', 1, []);
+      const result = await updateChatMessages(
+        'Hello',
+        'Hi there',
+        'GPT-4',
+        1,
+        []
+      );
       expect(result).toEqual(mockChatMessage);
       expect(fetchMock).toHaveBeenCalledWith('/api/chats/1/messages', {
         method: 'POST',
@@ -86,7 +93,8 @@ describe('sqliteApiClient', () => {
           chatId: 1,
           userMessage: 'Hello',
           aiMessage: 'Hi there',
-          imageSrc: []
+          imageSrc: [],
+          model: 'GPT-4'
         })
       });
     });
@@ -95,7 +103,13 @@ describe('sqliteApiClient', () => {
       fetchMock.mockRejectOnce(new Error('Network error'));
       console.error = jest.fn();
 
-      const result = await updateChatMessages('Hello', 'Hi there', 1, []);
+      const result = await updateChatMessages(
+        'Hello',
+        'Hi there',
+        'GPT-4',
+        1,
+        []
+      );
       expect(result).toBeUndefined();
       expect(console.error).toHaveBeenCalledWith(
         "Chat message isn't saved on the database",
@@ -107,12 +121,17 @@ describe('sqliteApiClient', () => {
   describe('fetchChatMessages', () => {
     it('should fetch chat messages successfully', async () => {
       const mockChatMessages = [
-        { id: 1, userMessage: 'Hello', aiMessage: 'Hi there' },
-        { id: 2, userMessage: 'How are you?', aiMessage: "I'm good, thanks!" }
+        { id: 1, userMessage: 'Hello', aiMessage: 'Hi there', model: 'GPT-4' },
+        {
+          id: 2,
+          userMessage: 'How are you?',
+          aiMessage: "I'm good, thanks!",
+          model: 'GPT-4'
+        }
       ];
       fetchMock.mockResponseOnce(JSON.stringify(mockChatMessages));
 
-      const result = await fetchChatMessages('1');
+      const result = await fetchChatMessages(1);
       expect(result).toEqual(mockChatMessages);
       expect(fetchMock).toHaveBeenCalledWith('/api/chats/1/messages', {
         method: 'GET',
@@ -124,7 +143,7 @@ describe('sqliteApiClient', () => {
       fetchMock.mockRejectOnce(new Error('Network error'));
       console.error = jest.fn();
 
-      const result = await fetchChatMessages('1');
+      const result = await fetchChatMessages(1);
       expect(result).toBeNull();
       expect(console.error).toHaveBeenCalledWith(
         'Error fetching chat messages',

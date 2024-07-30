@@ -22,6 +22,7 @@ export interface ImageFile {
 export interface Message {
   question: string;
   answer: string;
+  model: string;
 }
 
 export interface OpenAIChatContentImage {

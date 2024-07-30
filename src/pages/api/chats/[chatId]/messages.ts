@@ -13,7 +13,7 @@ export default async function handler(
   const chatImageRepository = dataSource.getRepository(ChatImage);
 
   if (req.method === 'POST') {
-    const { userMessage, aiMessage, chatId, imageSrc } = req.body;
+    const { userMessage, aiMessage, model, chatId, imageSrc } = req.body;
 
     if (!userMessage || !aiMessage || !chatId) {
       return res.status(400).json({ message: 'Missing required fields' });
@@ -23,6 +23,7 @@ export default async function handler(
       const chatMessage = chatMessageRepository.create({
         userMessage,
         aiMessage,
+        model,
         chat: { id: chatId }
       });
       await chatMessageRepository.save(chatMessage);

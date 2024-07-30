@@ -5,7 +5,8 @@ import React, {
   useRef,
   ChangeEvent,
   FormEvent,
-  Dispatch
+  Dispatch,
+  SetStateAction
 } from 'react';
 import { RiScreenshot2Fill } from 'react-icons/ri';
 
@@ -24,9 +25,9 @@ import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
 interface ChatInputProps {
   onSubmit: (question: string, imageSrc: ImageFile[]) => void;
   isVisionModel: boolean;
-  selectedModel: OptionType | null;
+  selectedModel: OptionType;
   isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: Dispatch<React.SetStateAction<boolean>>;
+  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({

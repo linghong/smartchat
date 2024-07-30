@@ -18,6 +18,7 @@ interface LayoutProps {
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
   namespacesList: OptionType[] | null;
+  setSelectedModel: Dispatch<SetStateAction<OptionType>>;
   chatId: string;
   setChatId: Dispatch<SetStateAction<string>>;
   chats: OptionType[];
@@ -31,6 +32,7 @@ const Layout: FC<LayoutProps> = ({
   isConfigPanelVisible,
   setIsConfigPanelVisible,
   namespacesList,
+  setSelectedModel,
   chatId,
   setChatId,
   chats,
@@ -61,6 +63,7 @@ const Layout: FC<LayoutProps> = ({
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        setSelectedModel={setSelectedModel}
         isConfigPanelVisible={isConfigPanelVisible}
         setIsConfigPanelVisible={setIsConfigPanelVisible}
         setChatId={setChatId}

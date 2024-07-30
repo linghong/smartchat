@@ -1,10 +1,14 @@
 import React, { FC } from 'react';
+import { ActionMeta, SingleValue } from 'react-select';
 import DropdownSelect from '@/src/components/DropdownSelect';
 import { OptionType } from '@/src/types/common';
 
 interface AIConfigPanelProps {
-  selectedModel: OptionType | null;
-  handleModelChange: (selectedOption: OptionType | null) => void;
+  selectedModel: OptionType;
+  handleModelChange: (
+    selectedOption: SingleValue<OptionType>,
+    actionMeta: ActionMeta<OptionType>
+  ) => void;
   selectedNamespace: OptionType | null;
   handleNamespaceChange: (selectedOption: OptionType | null) => void;
   basePrompt: string;

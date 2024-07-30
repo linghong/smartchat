@@ -5,14 +5,11 @@ import Head from 'next/head';
 import Layout from '@/src/components/Layout';
 import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
+
 import '@/src/styles/globals.css';
+import { initialMessage, defaultModel } from '@/src/utils/initialData';
 
 const initialFileCategory: OptionType = { value: 'none', label: '1' };
-
-export const initialMessage = {
-  question: '',
-  answer: 'Hi, how can I assist you?'
-};
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
@@ -21,6 +18,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   const [chatId, setChatId] = useState<string>('0'); //chatId is '0', it is at NewChat status
   const [chats, setChats] = useState<OptionType[]>([]);
+  const [selectedModel, setSelectedModel] = useState<OptionType>(defaultModel);
   const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
   const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]); //the first one is for Hi, how can I assist you?, so the imageSrc is []
 
@@ -33,6 +31,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         isConfigPanelVisible={isConfigPanelVisible}
         setIsConfigPanelVisible={setIsConfigPanelVisible}
         namespacesList={namespacesList}
+        setSelectedModel={setSelectedModel}
         chatId={chatId}
         setChatId={setChatId}
         chats={chats}
@@ -45,6 +44,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           isConfigPanelVisible={isConfigPanelVisible}
           setIsConfigPanelVisible={setIsConfigPanelVisible}
           setNamespacesList={setNamespacesList}
+          selectedModel={selectedModel}
+          setSelectedModel={setSelectedModel}
           chatId={chatId}
           setChatId={setChatId}
           setChats={setChats}

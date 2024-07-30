@@ -10,6 +10,7 @@ import React, {
 import MenuItem from '@/src/components/MenuItem';
 import AIHub from '@/src/components/AIHub';
 import { Message, ImageFile } from '@/src/types/chat';
+import { initialMessage } from '@/src/utils/initialData';
 import { OptionType } from '@/src/types/common';
 import { fetchChats, fetchChatMessages } from '@/src/utils/sqliteApiClient';
 
@@ -35,10 +36,7 @@ const models = [
     value: 'model2'
   }
 ];
-const initialMessage = {
-  question: '',
-  answer: 'Hi, how can I assist you?'
-};
+
 const Sidebar: FC<SidebarProps> = ({
   setIsConfigPanelVisible,
   setIsSidebarOpen,
@@ -80,7 +78,8 @@ const Sidebar: FC<SidebarProps> = ({
     if (Array.isArray(chatMessages) && chatMessages.length > 0) {
       const newChatHistory: Message[] = chatMessages.map(m => ({
         question: m.userMessage,
-        answer: m.aiMessage
+        answer: m.aiMessage,
+        model: m.model
       }));
 
       const newImageSrcHistory: ImageFile[][] = chatMessages.map((msg: any) => {
@@ -89,8 +88,8 @@ const Sidebar: FC<SidebarProps> = ({
       });
       setIsConfigPanelVisible(false);
       setChatId(chatId);
-      setChatHistory([initialMessage, ...newChatHistory]);
-      setImageSrcHistory([[], ...newImageSrcHistory]);
+      setChatHistory(newChatHistory);
+      setImageSrcHistory(newImageSrcHistory);
     } else {
       // Handle the case where there are no chat messages
       setChatHistory([initialMessage]);

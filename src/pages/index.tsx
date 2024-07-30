@@ -1,6 +1,14 @@
-import { useState, useCallback, useEffect, ChangeEvent, Dispatch } from 'react';
+import {
+  useState,
+  useCallback,
+  useEffect,
+  ChangeEvent,
+  Dispatch,
+  SetStateAction
+} from 'react';
 
 import { GetStaticProps } from 'next';
+import { SingleValue, ActionMeta } from 'react-select';
 
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ChatInput from '@/src/components/ChatInput';
@@ -12,36 +20,34 @@ import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
+import { initialMessage } from '@/src/utils/initialData';
 import { updateChats, updateChatMessages } from '@/src/utils/sqliteApiClient';
 
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
 
-const initialMessage: Message = {
-  question: '',
-  answer: 'Hi, how can I assist you?'
-};
-
 interface HomeProps {
   namespaces: string[];
-  setNamespacesList: Dispatch<React.SetStateAction<OptionType[]>>;
+  setNamespacesList: Dispatch<SetStateAction<OptionType[]>>;
+  selectedModel: OptionType;
+  setSelectedModel: Dispatch<SetStateAction<OptionType | null>>;
   chatId: string;
-  setChatId: Dispatch<React.SetStateAction<string>>;
-  chats: OptionType[];
-  setChats: Dispatch<React.SetStateAction<OptionType[]>>;
+  setChatId: Dispatch<SetStateAction<string>>;
+  setChats: Dispatch<SetStateAction<OptionType[]>>;
   chatHistory: Message[];
-  setChatHistory: Dispatch<React.SetStateAction<Message[]>>;
+  setChatHistory: Dispatch<SetStateAction<Message[]>>;
   imageSrcHistory: ImageFile[][];
-  setImageSrcHistory: Dispatch<React.SetStateAction<ImageFile[][]>>;
+  setImageSrcHistory: Dispatch<SetStateAction<ImageFile[][]>>;
   isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: Dispatch<React.SetStateAction<boolean>>;
+  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
 }
 
 const HomePage: React.FC<HomeProps> = ({
   namespaces,
   setNamespacesList,
+  selectedModel,
+  setSelectedModel,
   chatId,
   setChatId,
-  chats,
   setChats,
   chatHistory,
   setChatHistory,
@@ -54,9 +60,6 @@ const HomePage: React.FC<HomeProps> = ({
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>(
     initialFileCategory
   );
-  const [selectedModel, setSelectedModel] = useState<OptionType | null>(
-    modelOptions[0]
-  );
   const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
   const [basePrompt, setBasePrompt] = useState('');
   const [isNewChat, setIsNewChat] = useState(false);
@@ -68,8 +71,20 @@ const HomePage: React.FC<HomeProps> = ({
     namespaces.map(ns => ({ value: ns, label: ns })) ?? [];
 
   // --- Handlers ---
-  const handleModelChange = (selectedOption: OptionType | null) => {
+  const handleModelChange = (
+    selectedOption: SingleValue<OptionType>,
+    actionMeta: ActionMeta<OptionType>
+  ) => {
     setSelectedModel(selectedOption);
+    //when it  just start
+    if (selectedOption && (isNewChat || chatHistory.length === 1)) {
+      setChatHistory(prevHistory => [
+        {
+          ...prevHistory[0],
+          model: selectedOption.label
+        }
+      ]);
+    }
   };
 
   const handleNamespaceChange = (selectedOption: OptionType | null) => {
@@ -85,7 +100,7 @@ const HomePage: React.FC<HomeProps> = ({
       basePrompt: string,
       question: string,
       imageSrc: ImageFile[],
-      selectedModel: OptionType | null,
+      selectedModel: OptionType,
       namespace: string
     ) => {
       try {
@@ -132,7 +147,7 @@ const HomePage: React.FC<HomeProps> = ({
 
     setChatHistory((prevHistory: Message[]) => [
       ...prevHistory,
-      { question: question, answer: '' }
+      { question: question, answer: '', model: selectedModel.label }
     ]);
 
     try {
@@ -149,7 +164,7 @@ const HomePage: React.FC<HomeProps> = ({
 
       setChatHistory((prevHistory: Message[]) => [
         ...prevHistory.slice(0, -1), // remove the last one that only has user message,b ut no AI response
-        { question: question, answer: data.answer }
+        { question: question, answer: data.answer, model: selectedModel.label }
       ]);
 
       //save to database
@@ -160,13 +175,28 @@ const HomePage: React.FC<HomeProps> = ({
           label: chat.title,
           value: chat.id.toString()
         };
+        //add new chat to the first of the list
         setChats(prevChats => [newChat, ...prevChats]);
-        updateChatMessages(question, data.answer, chat.id, imageSrc);
+
+        updateChatMessages(
+          question,
+          data.answer,
+          selectedModel.label,
+          chat.id,
+          imageSrc
+        );
       } else {
-        updateChatMessages(question, data.answer, parseInt(chatId), imageSrc);
+        // update chat title in database
+        updateChatMessages(
+          question,
+          data.answer,
+          selectedModel.label,
+          parseInt(chatId),
+          imageSrc
+        );
       }
     } catch (error) {
-      setError(`Error on response from AI model ${selectedModel?.value}`);
+      setError(`Error on response from AI model ${selectedModel.value}`);
       console.error('error', error);
     } finally {
       setLoading(false);
@@ -219,13 +249,12 @@ const HomePage: React.FC<HomeProps> = ({
         chatHistory={chatHistory}
         loading={loading}
         imageSrcHistory={imageSrcHistory}
-        selectedModel={selectedModel}
         handleImageDelete={handleImageDelete}
       />
 
       <ChatInput
         onSubmit={handleSubmit}
-        isVisionModel={!!selectedModel?.vision}
+        isVisionModel={!!selectedModel.vision}
         selectedModel={selectedModel}
         isConfigPanelVisible={isConfigPanelVisible}
         setIsConfigPanelVisible={setIsConfigPanelVisible}

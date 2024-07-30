@@ -60,6 +60,9 @@ export class ChatMessage {
   @Column('text')
   aiMessage!: string;
 
+  @Column('text')
+  model!: string;
+
   @CreateDateColumn()
   createdAt!: Date;
 

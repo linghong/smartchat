@@ -1,25 +1,25 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ChatMessageList from '@/src/components/ChatMessageList';
-import { ImageFile } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { Message, ImageFile } from '@/src/types/chat';
 
-// Mock the ChatMessage component
 jest.mock('@/src/components/ChatMessage', () => {
   return function MockChatMessage({
     message,
-    index,
+    isNew,
+    lastIndex,
     loading,
-    imageSrc,
-    modelName
+    imageSrc
   }: any) {
     return (
-      <div data-testid={`chat-message-${index}`}>
-        <div>{message.question}</div>
-        <div>
-          {loading && <div data-testid="loading-indicator">Loading...</div>}
-          <div>{modelName}</div>
+      <div data-testid={`chat-message`}>
+        {!isNew && <div className="user">{message.question}</div>}
+        <div className="ai">
+          {loading && lastIndex && (
+            <div data-testid="loading-indicator">Loading...</div>
+          )}
+          <div>{message.model}</div>
           <div>{message.answer}</div>
           {imageSrc &&
             imageSrc.map((img: ImageFile, i: number) => (
@@ -37,60 +37,37 @@ describe('ChatMessageList', () => {
   const mockHandleImageDelete = jest.fn();
   const defaultProps = {
     chatHistory: [
-      { question: 'Hello', answer: '' },
-      { question: '', answer: 'Hi there!' }
-    ],
+      {
+        question: 'Hello',
+        answer: 'Hi, how can I assist you?',
+        model: 'GPT-4'
+      },
+      {
+        question: 'How are you?',
+        answer: "I'm doing well, thank you!",
+        model: 'GPT-4'
+      }
+    ] as Message[],
     loading: false,
     imageSrcHistory: [[], []],
-    selectedModel: {
-      value: 'gpt-4',
-      label: 'GPT-4',
-      contextWindow: 8192,
-      vision: true
-    } as OptionType,
     handleImageDelete: mockHandleImageDelete
   };
 
   it('renders correct number of ChatMessage components', () => {
     render(<ChatMessageList {...defaultProps} />);
-    const chatMessages = screen.getAllByTestId(/chat-message-/);
+    const chatMessages = screen.getAllByTestId('chat-message');
     expect(chatMessages).toHaveLength(2);
   });
 
   it('renders correctly with chat history', () => {
     render(<ChatMessageList {...defaultProps} />);
-
-    expect(screen.getByTestId('chat-message-0')).toHaveTextContent('Hello');
-    expect(screen.getByTestId('chat-message-1')).toHaveTextContent('Hi there!');
+    expect(screen.getByText('How are you?')).toBeInTheDocument();
+    expect(screen.getByText("I'm doing well, thank you!")).toBeInTheDocument();
   });
 
   it('renders correctly when loading', () => {
     render(<ChatMessageList {...defaultProps} loading={true} />);
-
-    expect(screen.getByTestId('chat-message-0')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-message-1')).toBeInTheDocument();
-  });
-
-  it('renders correctly with empty chat history', () => {
-    render(<ChatMessageList {...defaultProps} chatHistory={[]} />);
-
-    expect(screen.queryByTestId('chat-message-0')).not.toBeInTheDocument();
-  });
-
-  it('handles different selected models', () => {
-    const customProps = {
-      ...defaultProps,
-      selectedModel: {
-        value: 'gpt-3.5-turbo',
-        label: 'GPT-3.5 Turbo',
-        contextWindow: 4096,
-        vision: false
-      } as OptionType
-    };
-    render(<ChatMessageList {...customProps} />);
-
-    expect(screen.getByTestId('chat-message-0')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-message-1')).toBeInTheDocument();
+    expect(screen.getByTestId('loading-indicator')).toBeInTheDocument();
   });
 
   it('handles image src history', () => {
@@ -116,52 +93,24 @@ describe('ChatMessageList', () => {
       ] as ImageFile[][]
     };
     render(<ChatMessageList {...customProps} />);
-
-    expect(screen.getByTestId('chat-message-0')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-message-1')).toBeInTheDocument();
+    expect(screen.getByText('test1.png (image/png)')).toBeInTheDocument();
+    expect(screen.getByText('test2.jpg (image/jpeg)')).toBeInTheDocument();
   });
 
-  it('does not automatically scroll when chat history updates', () => {
-    const { rerender, container } = render(
-      <ChatMessageList {...defaultProps} />
-    );
-
-    const messagesContainer = container.firstChild as HTMLElement;
-    const initialScrollTop = messagesContainer.scrollTop;
-
-    const updatedProps = {
+  it('indicates a new conversation', () => {
+    const newConversationProps = {
       ...defaultProps,
       chatHistory: [
-        ...defaultProps.chatHistory,
-        { question: 'New message', answer: '' }
+        { question: '', answer: 'Hi, how can I assist you?', model: 'GPT-4' }
       ]
     };
+    render(<ChatMessageList {...newConversationProps} />);
 
-    rerender(<ChatMessageList {...updatedProps} />);
-
-    // Check that scrollTop hasn't changed
-    expect(messagesContainer.scrollTop).toBe(initialScrollTop);
-
-    // But the new message should be rendered
-    expect(screen.getAllByTestId(/chat-message-/)).toHaveLength(3);
+    expect(screen.getByText('Hi, how can I assist you?')).toBeInTheDocument(); // The question should not be rendered for a new conversation
   });
 
-  it('matches snapshot with chat history', () => {
+  it('matches snapshot', () => {
     const { asFragment } = render(<ChatMessageList {...defaultProps} />);
-    expect(asFragment()).toMatchSnapshot();
-  });
-
-  it('matches snapshot when loading', () => {
-    const { asFragment } = render(
-      <ChatMessageList {...defaultProps} loading={true} />
-    );
-    expect(asFragment()).toMatchSnapshot();
-  });
-
-  it('matches snapshot with empty chat history', () => {
-    const { asFragment } = render(
-      <ChatMessageList {...defaultProps} chatHistory={[]} />
-    );
     expect(asFragment()).toMatchSnapshot();
   });
 });

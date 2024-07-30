@@ -62,6 +62,7 @@ export const fetchChats = async (): Promise<OptionType[]> => {
 export const updateChatMessages = async (
   userMessage: string,
   aiMessage: string,
+  model: string,
   chatId: number,
   imageSrc: ImageFile[]
 ) => {
@@ -75,7 +76,8 @@ export const updateChatMessages = async (
         chatId,
         userMessage,
         aiMessage,
-        imageSrc
+        imageSrc,
+        model
       })
     });
     if (!res) {

@@ -28,7 +28,8 @@ describe('ChatMessage Component', () => {
   beforeEach(() => {
     message = {
       question: 'What is AI?',
-      answer: 'AI stands for Artificial Intelligence.'
+      answer: 'AI stands for Artificial Intelligence.',
+      model: 'gpt-4o'
     };
     loading = false;
     lastIndex = true;
@@ -56,7 +57,6 @@ describe('ChatMessage Component', () => {
         lastIndex={lastIndex}
         loading={loading}
         imageSrc={imageSrc}
-        modelName={modelName}
         handleImageDelete={handleImageDelete}
       />
     );
@@ -87,7 +87,6 @@ describe('ChatMessage Component', () => {
           lastIndex={true}
           loading={true}
           imageSrc={imageSrc}
-          modelName={modelName}
           handleImageDelete={handleImageDelete}
         />
       );
@@ -105,7 +104,6 @@ describe('ChatMessage Component', () => {
           lastIndex={true}
           loading={false}
           imageSrc={imageSrc}
-          modelName={modelName}
           handleImageDelete={handleImageDelete}
         />
       );
@@ -123,7 +121,6 @@ describe('ChatMessage Component', () => {
         lastIndex={lastIndex}
         loading={loading}
         imageSrc={imageSrc}
-        modelName={modelName}
         handleImageDelete={handleImageDelete}
       />
     );

@@ -1,4 +1,4 @@
-import { FC, MouseEvent, Dispatch } from 'react';
+import { FC, MouseEvent, Dispatch, SetStateAction } from 'react';
 import {
   AiOutlineMenu,
   AiOutlineForm,
@@ -7,17 +7,19 @@ import {
 } from 'react-icons/ai';
 import { useRouter } from 'next/router';
 
-import { initialMessage } from '@/src/pages/_app';
+import { initialMessage, defaultModel } from '@/src/utils/initialData';
 import { Message, ImageFile } from '@/src/types/chat';
+import { OptionType } from '@/src/types/common';
 
 interface HeaderProps {
-  setIsSidebarOpen: Dispatch<React.SetStateAction<boolean>>;
+  setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
   isSidebarOpen: boolean;
   isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: Dispatch<React.SetStateAction<boolean>>;
-  setChatId: Dispatch<React.SetStateAction<string>>;
-  setChatHistory: Dispatch<React.SetStateAction<Message[]>>;
-  setImageSrcHistory: Dispatch<React.SetStateAction<ImageFile[][]>>;
+  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
+  setChatId: Dispatch<SetStateAction<string>>;
+  setSelectedModel: Dispatch<SetStateAction<OptionType>>;
+  setChatHistory: Dispatch<SetStateAction<Message[]>>;
+  setImageSrcHistory: Dispatch<SetStateAction<ImageFile[][]>>;
 }
 
 const Header: FC<HeaderProps> = ({
@@ -26,6 +28,7 @@ const Header: FC<HeaderProps> = ({
   isConfigPanelVisible,
   setIsConfigPanelVisible,
   setChatId,
+  setSelectedModel,
   setChatHistory,
   setImageSrcHistory
 }) => {
@@ -45,6 +48,7 @@ const Header: FC<HeaderProps> = ({
       setIsSidebarOpen(false);
     }
     setChatId('0');
+    setSelectedModel(defaultModel);
     setChatHistory([initialMessage]);
     setImageSrcHistory([[]]);
   };
