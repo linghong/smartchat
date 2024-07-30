@@ -57,6 +57,23 @@ describe('extractMessageContent', () => {
     const result = extractMessageContent(message);
     expect(result).toBe('');
   });
+  it('should remove {{{\\...}}} tags and subject title from the message', () => {
+    const message = 'This is a test message. {{{ Subject Title}}}';
+    const result = extractMessageContent(message);
+    expect(result).toBe('This is a test message.');
+  });
+
+  it('should remove {{{\\...}}}} tags and subject title from the message', () => {
+    const message = 'This is a test message. {{{ Subject Title}}}}';
+    const result = extractMessageContent(message);
+    expect(result).toBe('This is a test message.');
+  });
+
+  it('should handle messages with multiple tag formats', () => {
+    const message = 'Test. {{First}} {{{Second}}} **{{{Fourth}}}**';
+    const result = extractMessageContent(message);
+    expect(result).toBe('Test. {{First}} {{{Second}}}');
+  });
 });
 
 describe('extractSubjectTitle', () => {
@@ -131,5 +148,30 @@ describe('extractSubjectTitle', () => {
       'This is a test {{{First Title}}} message {{{Second Title}}}';
     const result = extractSubjectTitle(message);
     expect(result).toBe('Second Title');
+  });
+  it('should extract the subject title from {{{\\...}}} tags', () => {
+    const message = 'This is a test message. {{{ Subject Title}}}';
+    const result = extractSubjectTitle(message);
+    expect(result).toBe('Subject Title');
+  });
+
+  it('should extract the subject title from {{{\\...}}}} tags', () => {
+    const message = 'This is a test message. {{{ Subject Title}}}}';
+    const result = extractSubjectTitle(message);
+    expect(result).toBe('Subject Title');
+  });
+
+  it('should handle messages with multiple tag formats and extract the last one', () => {
+    const message =
+      'Test. {{First}} {{{Second}}} {{{ Third}}} **{{{Fourth}}}**';
+    const result = extractSubjectTitle(message);
+    expect(result).toBe('Fourth');
+  });
+
+  it('should handle tags with special characters', () => {
+    const message =
+      'Test message. {{{ Title with spaces and symbols!@#$%^&*()_+}}}';
+    const result = extractSubjectTitle(message);
+    expect(result).toBe('Title with spaces and symbols!@#$%^&*()_+');
   });
 });
