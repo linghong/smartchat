@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import handler from '@/src/pages/api/chats/index';
-import { getAppDataSource, Chat, User } from '@/src/db';
+import { getAppDataSource, Chat, User, ChatMessage, ChatImage } from '@/src/db';
 
 // Mock the db dependencies
 jest.mock('@/src/db', () => ({
@@ -48,7 +48,8 @@ describe('Chat API Handler', () => {
     mockChatRepository = {
       create: jest.fn(),
       save: jest.fn(),
-      createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder)
+      createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+      findOne: jest.fn()
     } as unknown as jest.Mocked<Repository<Chat>>;
 
     (getAppDataSource as jest.Mock).mockResolvedValue(mockDataSource);
@@ -76,7 +77,8 @@ describe('Chat API Handler', () => {
       userId: 1,
       metadata: { key: 'value' },
       createdAt: new Date(),
-      messages: []
+      messages: [],
+      user: mockUser
     };
     mockChatRepository.create.mockReturnValue(mockChat);
     mockChatRepository.save.mockResolvedValue(mockChat);
@@ -145,13 +147,13 @@ describe('Chat API Handler', () => {
   });
 
   it('should return 405 for unsupported methods', async () => {
-    mockReq.method = 'PUT';
+    mockReq.method = 'HEAD';
 
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
     expect(mockRes.setHeader).toHaveBeenCalledWith('Allow', ['GET', 'POST']);
     expect(mockRes.status).toHaveBeenCalledWith(405);
-    expect(mockRes.end).toHaveBeenCalledWith('Method PUT Not Allowed');
+    expect(mockRes.end).toHaveBeenCalledWith('Method HEAD Not Allowed');
   });
 
   it('should return 500 if AppDataSource is null', async () => {
@@ -180,5 +182,14 @@ describe('Chat API Handler', () => {
     expect(mockRes.json).toHaveBeenCalledWith({
       message: 'Internal server error'
     });
+  });
+  it('should return 405 for unsupported methods', async () => {
+    mockReq.method = 'HEAD';
+
+    await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+    expect(mockRes.setHeader).toHaveBeenCalledWith('Allow', ['GET', 'POST']);
+    expect(mockRes.status).toHaveBeenCalledWith(405);
+    expect(mockRes.end).toHaveBeenCalledWith('Method HEAD Not Allowed');
   });
 });

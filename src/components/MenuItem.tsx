@@ -1,7 +1,12 @@
 import React, { useState, useCallback, FC, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
+import {
+  AiFillCaretDown,
+  AiFillCaretUp,
+  AiFillDelete,
+  AiFillEdit
+} from 'react-icons/ai';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -15,6 +20,8 @@ interface MenuItemProps {
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
   onItemClick?: (id: string) => void;
   activeItemId?: string;
+  onDeleteClick?: (id: string) => void;
+  onEditClick?: (id: string) => void;
 }
 
 const MenuItem: FC<MenuItemProps> = ({
@@ -24,7 +31,9 @@ const MenuItem: FC<MenuItemProps> = ({
   defaultOpen = false,
   setIsSidebarOpen,
   onItemClick,
-  activeItemId
+  activeItemId,
+  onDeleteClick,
+  onEditClick
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -61,14 +70,26 @@ const MenuItem: FC<MenuItemProps> = ({
       return (
         <div
           style={style}
-          className={`px-3 py-2 tracking-tight text-sm font-normal truncate transition-colors duration-200 hover:bg-slate-600 hover:rounded focus:bg-indigo-100 ${isActiveLi ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-200'}`}
+          className={`flex justify-between items-center px-3 py-2 tracking-tight text-sm font-normal transition-colors duration-200 hover:bg-slate-600 hover:rounded focus:bg-indigo-100 ${isActiveLi ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-200'}`}
           onClick={() => handleClick(item.value)}
         >
-          {item.label}
+          <span className="truncate" onClick={() => handleClick(item.value)}>
+            {item.label}
+          </span>
+          <div className="flex space-x-1">
+            <AiFillEdit
+              className="cursor-pointer hover:text-indigo-300"
+              onClick={() => onEditClick && onEditClick(item.value)}
+            />
+            <AiFillDelete
+              className="cursor-pointer hover:text-red-500"
+              onClick={() => onDeleteClick && onDeleteClick(item.value)}
+            />
+          </div>
         </div>
       );
     },
-    [itemList, onItemClick, activeItemId]
+    [itemList, onItemClick, activeItemId, onDeleteClick, onEditClick]
   );
 
   const listHeight = useMemo(() => {

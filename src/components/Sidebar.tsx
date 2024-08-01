@@ -12,7 +12,12 @@ import AIHub from '@/src/components/AIHub';
 import { Message, ImageFile } from '@/src/types/chat';
 import { initialMessage } from '@/src/utils/initialData';
 import { OptionType } from '@/src/types/common';
-import { fetchChats, fetchChatMessages } from '@/src/utils/sqliteApiClient';
+import {
+  fetchChats,
+  fetchChatMessages,
+  deleteChat,
+  editChatTitle
+} from '@/src/utils/sqliteApiClient';
 
 interface SidebarProps {
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
@@ -97,6 +102,35 @@ const Sidebar: FC<SidebarProps> = ({
     }
   };
 
+  const handleDeleteChat = async (id: string) => {
+    try {
+      await deleteChat(id);
+      setChats(prevChats => prevChats.filter(chat => chat.value !== id));
+      if (chatId === id) {
+        setChatId('');
+        setChatHistory([initialMessage]);
+        setImageSrcHistory([[]]);
+      }
+    } catch (error: any) {
+      console.error(`Failed to delete chat: ${error.message}`);
+    }
+  };
+  const handleEditChat = async (id: string) => {
+    const newTitle = prompt('Enter new chat title:');
+    if (newTitle) {
+      try {
+        await editChatTitle(id, newTitle);
+        setChats(prevChats =>
+          prevChats.map(chat =>
+            chat.value === id ? { ...chat, label: newTitle } : chat
+          )
+        );
+      } catch (error: any) {
+        console.error(`Failed to update chat title: ${error.message}`);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full">
       <ul className="flex-grow px-2 pt-10 ">
@@ -123,6 +157,8 @@ const Sidebar: FC<SidebarProps> = ({
           onItemClick={handleChatClick}
           activeItemId={chatId}
           defaultOpen={true}
+          onDeleteClick={handleDeleteChat}
+          onEditClick={handleEditChat}
         />
       </ul>
       <AIHub />

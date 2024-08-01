@@ -53,6 +53,64 @@ export const fetchChats = async (): Promise<OptionType[]> => {
 };
 
 /**
+ * Deletes a chat with the given chatId.
+ * @param chatId - The ID of the chat to delete.
+ * @returns A promise that resolves to the result of the deletion.
+ */
+export const deleteChat = async (chatId: string) => {
+  try {
+    console.log('chaId', chatId, typeof chatId);
+    const res = await fetch(`/api/chats/${chatId}/chat`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error: ${res.statusText}`);
+    }
+
+    const result = await res.json();
+    console.log('Chat deleted successfully', result);
+    return result;
+  } catch (error) {
+    console.error('Failed to delete chat:', error);
+    return null;
+  }
+};
+
+/**
+ * Updates the title of a chat with the given chatId.
+ * @param chatId - The ID of the chat to update.
+ * @param newTitle - The new title for the chat.
+ * @returns A promise that resolves to the result of the update.
+ */
+export const editChatTitle = async (chatId: string, newTitle: string) => {
+  try {
+    console.log(chatId, newTitle);
+    const res = await fetch(`/api/chats/${chatId}/chat`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title: newTitle })
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error: ${res.statusText}`);
+    }
+
+    const result = await res.json();
+    console.log('Chat title updated successfully', result);
+    return result;
+  } catch (error) {
+    console.error('Failed to update chat title:', error);
+    return null;
+  }
+};
+
+/**
  * Create a new chat message with the given details.
  * @param userMessage - The message from the user.
  * @param aiMessage - The message from the AI.

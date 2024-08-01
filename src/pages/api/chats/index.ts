@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { DataSource } from 'typeorm';
 
-import { getAppDataSource, Chat, User } from '@/src/db';
+import { getAppDataSource, Chat, User, ChatMessage, ChatImage } from '@/src/db';
 
 // Only one User for the local app.
 // fixed user with username 'local' and the id automatically created by the database with 1
@@ -64,13 +64,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await userRepository.save(user);
     }
 
-    if (req.method === 'POST') {
-      await handlePostRequest(req, res, dataSource, user);
-    } else if (req.method === 'GET') {
-      await handleGetRequest(req, res, dataSource, user);
-    } else {
-      res.setHeader('Allow', ['GET', 'POST']);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
+    switch (req.method) {
+      case 'POST':
+        await handlePostRequest(req, res, dataSource, user);
+        break;
+      case 'GET':
+        await handleGetRequest(req, res, dataSource, user);
+        break;
+      default:
+        res.setHeader('Allow', ['GET', 'POST']);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
     }
   } catch (error) {
     console.error('Error during Chat table creation', error);
