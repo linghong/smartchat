@@ -59,13 +59,29 @@ export const getGroqChatCompletion = async (
   });
   const maxReturnMessageToken = 4000;
 
-  const systemContent = `You are a responsible and knowledgeable AI assistant. You have access to a vast amount of general knowledge. In addition, for some user questions, the system may provide you with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the markers "'''fetchedStart" and "fetchedEnd'''". 
-  
-  Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. For difficult problems, solve step-by-step.
+  const systemPromptBase =
+    'You are a responsible and knowledgeable AI assistant. You have access to a vast amount of general knowledge.';
 
+  const systemPromptRAG =
+    fetchedText.length !== 0
+      ? `In addition, for some user questions, the system may provide AI with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the tag pair "'''fetchedStart" and "fetchedEnd'''". This tag pair is for AI to know the source of the text. Ai assistant is not supposed to disclose the tag pair in your message.
+  
+  Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response.`
+      : '';
+
+  const systemPromptProcedure =
+    'For difficult problems, solve it step-by-step.';
+
+  const systemPromptFormatting = `
   Formatting: 
-  Always include a concise subject title at the end of each response, enclosed within triple curly braces like this: "{{{write your subject title here}}}".
+  Every message AI assistant sends to users, no matter how simple, must include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{write your subject title here}}}. This is absolutely critical because message without title could crash the site.
   `;
+
+  const systemContent =
+    systemPromptBase +
+    systemPromptRAG +
+    systemPromptProcedure +
+    systemPromptFormatting;
 
   //gemma 7b think
   const messages = buildChatMessages(
