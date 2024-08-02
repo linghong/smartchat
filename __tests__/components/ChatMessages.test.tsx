@@ -18,6 +18,7 @@ afterAll(() => {
 
 describe('ChatMessage Component', () => {
   let index: number;
+  let isNew: boolean;
   let message: Message;
   let loading: boolean;
   let lastIndex: boolean;
@@ -52,7 +53,7 @@ describe('ChatMessage Component', () => {
 
     render(
       <ChatMessage
-        index={index}
+        isNew={false}
         message={message}
         lastIndex={lastIndex}
         loading={loading}
@@ -82,7 +83,7 @@ describe('ChatMessage Component', () => {
     act(() => {
       render(
         <ChatMessage
-          index={index}
+          isNew={false}
           message={message}
           lastIndex={true}
           loading={true}
@@ -99,7 +100,7 @@ describe('ChatMessage Component', () => {
     act(() => {
       render(
         <ChatMessage
-          index={index}
+          isNew={true}
           message={message}
           lastIndex={true}
           loading={false}
@@ -116,7 +117,7 @@ describe('ChatMessage Component', () => {
   it('ChatMessage component snapshot', () => {
     const { asFragment } = render(
       <ChatMessage
-        index={index}
+        isNew={false}
         message={message}
         lastIndex={lastIndex}
         loading={loading}
