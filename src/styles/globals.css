@@ -43,6 +43,7 @@ pre {
   white-space: pre-wrap;
   word-wrap: break-word; /* Break long words */
   overflow-x: auto; /* Allow horizontal scrolling if needed */
+  border-radius: 4px;
 }
 
 pre code {
@@ -65,13 +66,6 @@ pre code {
   border-radius: 4px;
 }
 
-.styledContent {
-  width: 100%;
-  max-width: calc(100% - 4rem);
-  line-height: 1.6;
-  color: #565353;
-}
-
 .space-wrap {
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -80,6 +74,20 @@ pre code {
 .user-question,
 .ai-answer {
   padding: 0.5rem 0;
+}
+
+.styledContent {
+  width: 100%;
+  max-width: calc(100% - 4rem);
+  line-height: 1.6;
+  color: #565353;
+}
+
+.styledContent pre {
+  padding: 0.5em;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 1em;
 }
 
 .styledContent p {
@@ -94,13 +102,6 @@ pre code {
 
 .styledContent li {
   margin-bottom: 0.5em;
-}
-
-.styledContent pre {
-  padding: 0.5em;
-  border-radius: 4px;
-  overflow-x: auto;
-  margin-bottom: 1em;
 }
 
 .styledContent code {
@@ -118,10 +119,6 @@ pre code {
   content: '';
   display: block;
   margin-bottom: 0.5em;
-}
-
-.styledContent * + br {
-  display: none;
 }
 
 /* for MenuItem.tsx */
