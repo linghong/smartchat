@@ -55,6 +55,11 @@ const MenuItem: FC<MenuItemProps> = ({
     [link, router, setIsSidebarOpen]
   );
 
+  // Constants
+  const ITEM_HEIGHT = 40; // Height of each item
+  const MAX_VISIBLE_ITEMS = 9; // Maximum number of items visible without scrolling
+  const MAX_HEIGHT = MAX_VISIBLE_ITEMS * ITEM_HEIGHT;
+
   const Row = useCallback(
     ({ index, style }: { index: number; style: React.CSSProperties }) => {
       if (!itemList) return null;
@@ -93,11 +98,9 @@ const MenuItem: FC<MenuItemProps> = ({
   );
 
   const listHeight = useMemo(() => {
-    const itemHeight = 40; // Assuming each item is 40px high
-    const maxHeight = 360; // Maximum height of the list
-    const calculatedHeight = itemList ? itemList.length * itemHeight : 0;
-    return Math.min(calculatedHeight, maxHeight);
-  }, [itemList]);
+    if (!itemList) return 0;
+    return Math.min(itemList.length * ITEM_HEIGHT, MAX_HEIGHT);
+  }, [itemList, MAX_HEIGHT]);
 
   return (
     <div className="mt-6 font-semibold">
@@ -124,20 +127,24 @@ const MenuItem: FC<MenuItemProps> = ({
           {isOpen ? <AiFillCaretUp size={18} /> : <AiFillCaretDown size={18} />}
         </button>
       </div>
-      {isOpen && (
+      {isOpen && itemList && itemList.length > 0 && (
         <div
           className="px-1 py-2 font-medium text-slate-200"
           style={{ height: listHeight }}
         >
           {itemList && (
-            <AutoSizer>
-              {({ width, height }) => (
+            <AutoSizer disableHeight>
+              {({ width }) => (
                 <List
                   width={width}
-                  height={height}
+                  height={listHeight}
                   itemCount={itemList.length}
-                  itemSize={40}
-                  className="custom-scrollbar"
+                  itemSize={ITEM_HEIGHT}
+                  className={
+                    itemList.length > MAX_VISIBLE_ITEMS
+                      ? 'custom-scrollbar'
+                      : ''
+                  }
                 >
                   {Row}
                 </List>

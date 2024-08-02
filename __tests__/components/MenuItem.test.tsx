@@ -157,23 +157,48 @@ describe('MenuItem Component', () => {
 
   it('should pass correct props to FixedSizeList', () => {
     const { FixedSizeList } = require('react-window');
+    const itemList = [
+      { label: 'Item 1', value: '1' },
+      { label: 'Item 2', value: '2' }
+    ];
     render(
-      <MenuItem
-        title="Test Title"
-        itemList={[
-          { label: 'Item 1', value: '1' },
-          { label: 'Item 2', value: '2' }
-        ]}
-        defaultOpen={true}
-      />
+      <MenuItem title="Test Title" itemList={itemList} defaultOpen={true} />
     );
+    const ITEM_HEIGHT = 40;
+    const MAX_HEIGHT = 360; // 9 * ITEM_HEIGHT
+    const expectedHeight = Math.min(itemList.length * ITEM_HEIGHT, MAX_HEIGHT);
 
     expect(FixedSizeList).toHaveBeenCalledWith(
       expect.objectContaining({
         width: 300,
-        height: 400,
-        itemCount: 2,
-        itemSize: 40
+        height: expectedHeight,
+        itemCount: itemList.length,
+        itemSize: ITEM_HEIGHT
+      }),
+      expect.anything()
+    );
+  });
+
+  it('should limit the height of the list to MAX_HEIGHT when there are many items', () => {
+    const { FixedSizeList } = require('react-window');
+    const manyItems = Array.from({ length: 20 }, (_, i) => ({
+      label: `Item ${i + 1}`,
+      value: `${i + 1}`
+    }));
+
+    render(
+      <MenuItem title="Test Title" itemList={manyItems} defaultOpen={true} />
+    );
+
+    const ITEM_HEIGHT = 40;
+    const MAX_HEIGHT = 360; // 9 * ITEM_HEIGHT
+
+    expect(FixedSizeList).toHaveBeenCalledWith(
+      expect.objectContaining({
+        width: 300,
+        height: MAX_HEIGHT,
+        itemCount: manyItems.length,
+        itemSize: ITEM_HEIGHT
       }),
       expect.anything()
     );
