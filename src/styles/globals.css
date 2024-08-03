@@ -58,7 +58,7 @@ pre code {
 
 .ai-answer code.inline-code {
   font-size: inherit;
-  font-weight: normal;
+  font-weight: 500;
   font-family: 'Courier New', Courier, monospace;
   background-color: #f0f0f0;
   color: #333;
@@ -76,49 +76,49 @@ pre code {
   padding: 0.5rem 0;
 }
 
-.styledContent {
+.ai-answer {
   width: 100%;
   max-width: calc(100% - 4rem);
   line-height: 1.6;
   color: #565353;
 }
 
-.styledContent pre {
+.ai-answer pre {
   padding: 0.5em;
   border-radius: 4px;
   overflow-x: auto;
   margin-bottom: 1em;
 }
 
-.styledContent p {
+.ai-answer p {
   margin-bottom: 1em;
 }
 
-.styledContent ul,
-.styledContent ol {
+.ai-answer ul,
+.ai-answer ol {
   margin-bottom: 1em;
   padding-left: 0.5em;
 }
 
-.styledContent li {
+.ai-answer li {
   margin-bottom: 0.5em;
 }
 
-.styledContent code {
+.ai-answer code {
   font-family: 'Courier New', Courier, monospace;
   padding: 0.2em 0.6em;
   border-radius: 3px;
 }
 
-.styledContent h3 {
+.ai-answer h3 {
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
 
-.styledContent br {
+.ai-answer br {
   content: '';
   display: block;
-  margin-bottom: 0.5em;
+  margin-bottom: 0em;
 }
 
 /* for MenuItem.tsx */
