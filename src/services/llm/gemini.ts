@@ -61,30 +61,27 @@ const getGeminiChatCompletion = async (
 
   const maxReturnMessageToken = 10000;
 
-  const systemPromptBase =
-    'You are a responsible and knowledgeable AI assistant. You are capable of processing image. You have access to a vast amount of general knowledge.';
+  const systemBase =
+    'You are a responsible and knowledgeable muitimodal AI assistant with the capability to view and interpret images as well as provide text-based responses. When a user presents an image, you should analyze the image and describe its contents accurately. Additionally, you should acknowledge your ability to view and interpret images in your responses.';
 
-  const systemPromptProcedure =
-    'For difficult problems, solve it step-by-step.';
-
-  const systemPromptRAG =
+  const systemRAG =
     fetchedText.length !== 0
       ? ` In addition, for some user questions, the system may provide you with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the markers "'''fetchedStart" and "fetchedEnd'''".
 
   Your Task: 
-  Your primary goal is to provide the best possible answer to the user's question. If the text between "'''fetchedStart" and "fetchedEnd'''" is directly relevant and useful, incorporate it into your answer. If the provided text is not relevant or if no such text is provided, rely on your general knowledge to answer completely. For challenging or multi-step questions, break down your reasoning or solution process into clear steps.`
+  Your primary goal is to provide the best possible answer to the user's question. If the text between "'''fetchedStart" and "fetchedEnd'''" is directly relevant and useful, incorporate it into your answer. If the provided text is not relevant or if no such text is provided, rely on your general knowledge to answer completely.`
       : '';
 
-  const systemPromptFormatting = `
+  const systemStrategery =
+    'For challenging or multi-step questions, break down your reasoning or solution process into clear steps, then solve it step-by-step.';
+
+  const systemSubjectTitle = `
   Formatting: 
   Every message you send to users, no matter how simple, must include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}. This is absolutely critical. Otherwise, your messages will be displayed in the app without a title, which causes a bug.
   `;
 
   const systemContent =
-    systemPromptBase +
-    systemPromptRAG +
-    systemPromptProcedure +
-    systemPromptFormatting;
+    systemBase + systemRAG + systemStrategery + systemSubjectTitle;
 
   const userTextWithFetchedData =
     fetchedText !== ''

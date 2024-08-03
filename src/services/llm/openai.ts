@@ -83,16 +83,40 @@ export const getOpenAIChatCompletion = async (
 ): Promise<string | undefined> => {
   const maxReturnMessageToken = selectedModel.contextWindow ? 4096 : 2000;
 
-  const baseSystemContent = `You are an AI assistant, skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response. Also, only give answer for the question asked, don't provide text not related to the user's question. 
-  
-  Always include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}.`;
+  const systemBase = selectedModel.vision
+    ? `You are an muitimodal AI assistant with the capability to view and interpret images as well as provide text-based responses. When a user presents an image, you should analyze the image and describe its contents accurately. Additionally, you should acknowledge your ability to view and interpret images in your responses.`
+    : 'You are a responsible and knowledgeable AI assistant.';
 
-  const htmlTagContent =
+  const systemRAG =
+    fetchedText.length !== 0
+      ? `You are skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response.`
+      : '';
+
+  const systemStrategery =
+    'For challenging or multi-step questions, break down your reasoning or solution process into clear steps, then solve it step-by-step.';
+
+  const systemSpecial =
+    selectedModel.value === 'gpt-4'
+      ? `Also, only give answer for the question asked, don't provide text not related to the user's question.`
+      : '';
+
+  const systemSubjectTitle = `
+  Formatting:
+  Always include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}.
+  `;
+
+  const systemHtmlTag =
     selectedModel.value === 'gpt-4'
       ? 'When presenting information, please ensure to split your responses into paragraphs using <p> HTML tag. If you are providing a list, use the <ul> and <li> tags for unordered lists, <ol> and <li> tags for ordered lists. Highlight the important points using <strong> tag for bold text. Always remember to close any HTML tags that you open.'
       : '';
 
-  const systemContent = baseSystemContent + htmlTagContent;
+  const systemContent =
+    systemBase +
+    systemRAG +
+    +systemStrategery +
+    systemSpecial +
+    systemSubjectTitle +
+    systemHtmlTag;
 
   const chatArray = buildChatArray(
     systemContent,
