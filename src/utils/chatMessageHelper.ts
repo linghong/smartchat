@@ -52,7 +52,6 @@ export const extractMessageContent = (message: string): string => {
  */
 export const extractSubjectTitle = (message: string): string => {
   if (message === '') return '';
-
   const openingPattern = `(${extractTitleOpeningPatterns.join('|')})`;
   const closingPattern = `(${extractTitleClosingPatterns.join('|')})`;
   const regex = new RegExp(
@@ -60,11 +59,51 @@ export const extractSubjectTitle = (message: string): string => {
   );
 
   const match = message.trim().match(regex);
+  const innerContent = match ? match[3].trim() : '';
 
-  if (match) {
-    const innerContent = match[3].trim();
-    return innerContent !== '' ? innerContent : 'New Chat';
+  return innerContent !== '' ? innerContent : extractFirstSentence(message);
+};
+
+function extractFirstSentence(text: string, maxLength: number = 50) {
+  // Remove code blocks
+  let processedText = text.replace(/<pre><code>[\s\S]*?<\/code><\/pre>/g, '');
+
+  // Split by new lines to get the first line
+  let lines = processedText.split('\n');
+
+  // Regular expression to match the first sentence
+  const sentenceEndRegex = /[!?;](?:\s|$)/;
+
+  // Find the first sentence
+  let firstSentence = lines[0].split('. ')[0].split(sentenceEndRegex)[0].trim();
+
+  // Remove text inside parentheses
+  firstSentence = firstSentence.replace(/\s*\([^)]*\)/g, '');
+
+  // If the sentence is shorter than maxLength, return it as is
+  if (firstSentence.length <= maxLength) {
+    return firstSentence.trim();
   }
 
-  return 'New Chat';
-};
+  // Try to break the sentence at appropriate points
+  const breakPoints = [
+    ': ',
+    ' which ',
+    ' who ',
+    ' what ',
+    ' where ',
+    ' if ',
+    ' when ',
+    ' while ',
+    ' as if '
+  ];
+
+  for (let point of breakPoints) {
+    let index = firstSentence.indexOf(point);
+    if (index > 0 && index < maxLength) {
+      return firstSentence.slice(0, index).trim();
+    }
+  }
+  // If no good break point is found, truncate it and add ellipsis
+  return firstSentence.slice(0, maxLength);
+}
