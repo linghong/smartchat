@@ -119,33 +119,12 @@ describe('ChatMessage Component', () => {
     expect(botImage).not.toHaveClass('animate-pulse');
   });
 
-  it('renders code blocks correctly', () => {
-    const messageWithCode = {
-      ...message,
-      answer: 'Here\'s a code example:\n```python\nprint("Hello, World!")\n```'
-    };
-    render(
-      <ChatMessage
-        isNew={false}
-        message={messageWithCode}
-        lastIndex={lastIndex}
-        loading={loading}
-        imageSrc={imageSrc}
-        handleImageDelete={handleImageDelete}
-      />
-    );
-    expect(screen.getByText('Here\'s a code example:')).toBeInTheDocument();
-    expect(screen.getByText('print("Hello, World!")')).toBeInTheDocument();
-    const codeBlock = screen.getByText('print("Hello, World!")');
-    expect(codeBlock.closest('pre')).toBeInTheDocument();
-    expect(codeBlock.closest('code')).toHaveClass('language-python');
-  });
-
   it('sanitizes and formats messages correctly', () => {
     const messageWithHtml = {
       ...message,
       question: 'Is <script>alert("XSS")</script> sanitized?',
-      answer: 'Yes, it is <strong>sanitized</strong> and <code>formatted</code>.'
+      answer:
+        'Yes, it is <strong>sanitized</strong> and <code>formatted</code>.'
     };
     render(
       <ChatMessage
@@ -158,15 +137,21 @@ describe('ChatMessage Component', () => {
       />
     );
     expect(screen.queryByText('alert("XSS")')).not.toBeInTheDocument();
-    expect(screen.getByText('Is <script>alert("XSS")</script> sanitized?')).toBeInTheDocument();
-    expect(screen.getByText((content, element) => {
-      return element?.tagName.toLowerCase() === 'strong' && content === 'sanitized';
-    })).toBeInTheDocument();
+    expect(
+      screen.getByText('Is <script>alert("XSS")</script> sanitized?')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((content, element) => {
+        return (
+          element?.tagName.toLowerCase() === 'strong' && content === 'sanitized'
+        );
+      })
+    ).toBeInTheDocument();
     const codeElement = screen.getByText('formatted');
     expect(codeElement.tagName).toBe('CODE');
     expect(codeElement).toHaveClass('inline-code');
   });
-  
+
   it('renders image thumbnails when imageSrc is provided', () => {
     render(
       <ChatMessage
@@ -193,8 +178,188 @@ describe('ChatMessage Component', () => {
         handleImageDelete={handleImageDelete}
       />
     );
-    expect(screen.queryByTitle('Uploaded image thumbnail 1')).not.toBeInTheDocument();
-    expect(screen.queryByTitle('Uploaded image thumbnail 2')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTitle('Uploaded image thumbnail 1')
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTitle('Uploaded image thumbnail 2')
+    ).not.toBeInTheDocument();
+  });
+
+  describe('Code block and formatting tests', () => {
+    it('convert code to code block in user messages', () => {
+      const InlineCodeMessage = {
+        question: `Here's some code, any error?
+  
+        \`\`\`javascript
+        function example() {
+            console.log("Hello, World!");
+        }
+        \`\`\``,
+        answer: 'No error',
+        model: 'gpt-4'
+      };
+
+      render(
+        <ChatMessage
+          isNew={false}
+          message={InlineCodeMessage}
+          lastIndex={true}
+          loading={false}
+          imageSrc={[]}
+          handleImageDelete={jest.fn()}
+        />
+      );
+
+      const codeBlock = screen.getByText((content, element) => {
+        return (
+          element?.tagName.toLowerCase() === 'code' &&
+          content.includes('function example()')
+        );
+      });
+      expect(codeBlock).toBeInTheDocument();
+      expect(codeBlock.closest('code')).toHaveClass('language-javascript');
+    });
+
+    it('renders code blocks in ai answer correctly', () => {
+      const messageWithCode = {
+        question: 'Give me a code example.',
+        answer:
+          'Here\'s a code example:\n<pre>><code class="python">print("Hello, World!")\n</code></pre>',
+        model: 'gpt-4'
+      };
+      render(
+        <ChatMessage
+          isNew={false}
+          message={messageWithCode}
+          lastIndex={lastIndex}
+          loading={loading}
+          imageSrc={imageSrc}
+          handleImageDelete={handleImageDelete}
+        />
+      );
+      expect(screen.getByText("Here's a code example:")).toBeInTheDocument();
+      expect(screen.getByText('print("Hello, World!")')).toBeInTheDocument();
+      const codeBlock = screen.getByText('print("Hello, World!")');
+      expect(codeBlock.closest('pre')).toBeInTheDocument();
+      expect(codeBlock.closest('code')).toHaveClass('python');
+    });
+
+    it('handles multiple code blocks and text content', () => {
+      const messageWithMultipleCodeBlocks = {
+        question: 'Show me multiple code examples',
+        answer: `Here's a Python example:
+        <pre><code class=\"python\">
+        def greet(name):
+            print(f"Hello, {name}!")
+        </code></pre>
+
+        And here's a JavaScript example:
+        <pre><code class="javascript">
+        function greet(name) {
+            console.log(\`Hello, \${name}!\`);
+        }
+        </code></pre>
+        
+        Both examples demonstrate a simple greeting function.`,
+        model: 'gpt-4'
+      };
+
+      render(
+        <ChatMessage
+          isNew={false}
+          message={messageWithMultipleCodeBlocks}
+          lastIndex={true}
+          loading={false}
+          imageSrc={[]}
+          handleImageDelete={jest.fn()}
+        />
+      );
+
+      const pythonCodeBlock = screen.getByText((content, element) => {
+        return (
+          element?.tagName.toLowerCase() === 'code' &&
+          content.includes('def greet(name):')
+        );
+      });
+      expect(pythonCodeBlock).toBeInTheDocument();
+      expect(pythonCodeBlock.closest('code')).toHaveClass('python');
+
+      const javascriptCodeBlock = screen.getByText((content, element) => {
+        return (
+          element?.tagName.toLowerCase() === 'code' &&
+          content.includes('function greet(name)')
+        );
+      });
+      expect(javascriptCodeBlock).toBeInTheDocument();
+      expect(javascriptCodeBlock.closest('code')).toHaveClass('javascript');
+
+      const textContent1 = screen.getByText(content =>
+        content.includes("Here's a Python example:")
+      );
+      expect(textContent1).toBeInTheDocument();
+
+      const textContent2 = screen.getByText(content =>
+        content.includes(
+          'Both examples demonstrate a simple greeting function.'
+        )
+      );
+      expect(textContent2).toBeInTheDocument();
+    });
+
+    it('preserves newlines in formatted text', () => {
+      const messageWithNewlines = {
+        question: 'Give me a multi-line response',
+        answer: `This is line 1.
+                This is line 2.
+
+                This is line 4 after an empty line.`,
+        model: 'gpt-4'
+      };
+
+      render(
+        <ChatMessage
+          isNew={false}
+          message={messageWithNewlines}
+          lastIndex={true}
+          loading={false}
+          imageSrc={[]}
+          handleImageDelete={jest.fn()}
+        />
+      );
+
+      const formattedText = screen.getByText(content =>
+        content.includes('This is line 1.')
+      );
+      expect(formattedText).toBeInTheDocument();
+      expect(formattedText.innerHTML).toContain('<br>');
+      expect(formattedText.innerHTML).toContain('<br><br>');
+    });
+
+    it('handles inline code correctly', () => {
+      const messageWithInlineCode = {
+        question: 'How do I print in Python?',
+        answer:
+          'In Python, you can use the <code>print()</code> function to output text to the console.',
+        model: 'gpt-4'
+      };
+
+      render(
+        <ChatMessage
+          isNew={false}
+          message={messageWithInlineCode}
+          lastIndex={true}
+          loading={false}
+          imageSrc={[]}
+          handleImageDelete={jest.fn()}
+        />
+      );
+
+      const inlineCode = screen.getByText('print()');
+      expect(inlineCode).toBeInTheDocument();
+      expect(inlineCode.tagName).toBe('CODE');
+      expect(inlineCode).toHaveClass('inline-code');
+    });
   });
 
   it('ChatMessage component snapshot', () => {

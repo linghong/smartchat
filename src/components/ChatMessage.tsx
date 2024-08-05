@@ -69,12 +69,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     return formatted;
   };
 
-  const renderMessage = (content: string) => {
+  const renderAIMessage = (content: string) => {
     // separate text and code
     const parts = [];
 
     const codeRegex =
-      /<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g;
+      /<pre><code(?: class="language-(\w+)")?>([\s\S]*?)<\/code><\/pre>/g;
     let lastIndex = 0;
     let match;
 
@@ -102,6 +102,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       lastIndex = match.index + match[0].length;
     }
 
+    // When there is zero codeblock in the text
+    // Or when there is no more codeblocks found, but still have some text left
     if (lastIndex < content.length) {
       parts.push(
         <span
@@ -166,7 +168,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           <label className="text-xs">{message.model}</label>
         </div>
         <div className="flex-1 styledContent ai-answer space-wrap">
-          {renderMessage(message.answer)}
+          {renderAIMessage(message.answer)}
         </div>
       </article>
     </>
