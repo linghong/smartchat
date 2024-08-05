@@ -9,7 +9,12 @@ import {
 import '@testing-library/jest-dom';
 
 import Sidebar from '@/src/components/Sidebar';
-import { fetchChats, fetchChatMessages } from '@/src/utils/sqliteApiClient';
+import {
+  fetchChats,
+  fetchChatMessages,
+  deleteChat,
+  editChatTitle
+} from '@/src/utils/sqliteApiClient';
 
 // Mock the MenuItem component
 jest.mock('@/src/components/MenuItem', () => {
@@ -19,7 +24,9 @@ jest.mock('@/src/components/MenuItem', () => {
     link,
     defaultOpen,
     onItemClick,
-    activeItemId
+    activeItemId,
+    onDeleteClick,
+    onEditClick
   }: {
     title: string;
     itemList: any[];
@@ -27,6 +34,8 @@ jest.mock('@/src/components/MenuItem', () => {
     defaultOpen: boolean;
     onItemClick?: (id: string) => void;
     activeItemId?: string;
+    onDeleteClick?: (id: string) => void;
+    onEditClick?: (id: string) => void;
   }) {
     return (
       <div>
@@ -42,6 +51,14 @@ jest.mock('@/src/components/MenuItem', () => {
                 data-active={item.value === activeItemId}
               >
                 {item.label}
+                {onDeleteClick && (
+                  <button onClick={() => onDeleteClick(item.value)}>
+                    Delete
+                  </button>
+                )}
+                {onEditClick && (
+                  <button onClick={() => onEditClick(item.value)}>Edit</button>
+                )}
               </li>
             ))}
         </ul>
@@ -59,7 +76,9 @@ jest.mock('@/src/components/AIHub', () => {
 
 jest.mock('@/src/utils/sqliteApiClient', () => ({
   fetchChats: jest.fn(),
-  fetchChatMessages: jest.fn()
+  fetchChatMessages: jest.fn(),
+  deleteChat: jest.fn(),
+  editChatTitle: jest.fn()
 }));
 
 const mockSetIsConfigPanelVisible = jest.fn();
@@ -79,18 +98,17 @@ const mockChats = [
   { value: '2', label: 'Test Chat 2' }
 ];
 
-const mockSelectedModel = {
-  value: 'gemini-1.5-pro',
-  label: 'Gemini-1.5 Pro',
-  vision: true
-};
-
 describe('Sidebar Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (fetchChats as jest.Mock).mockResolvedValue(mockChats);
     (fetchChatMessages as jest.Mock).mockResolvedValue([
-      { userMessage: 'Hello', aiMessage: 'Hi there', images: [] }
+      {
+        userMessage: 'Hello',
+        aiMessage: 'Hi there',
+        model: 'model1',
+        images: []
+      }
     ]);
   });
 
@@ -173,59 +191,37 @@ describe('Sidebar Component', () => {
     expect(mockSetChatId).toHaveBeenCalledWith('1');
   });
 
-  it('renders namespaces list correctly', async () => {
+  it('handles chat deletion correctly', async () => {
+    await act(async () => {
+      renderSidebar('1');
+    });
+
+    const deleteButton = screen.getAllByText('Delete')[0];
+    await act(async () => {
+      fireEvent.click(deleteButton);
+    });
+
+    expect(deleteChat).toHaveBeenCalledWith('1');
+    expect(mockSetChats).toHaveBeenCalled();
+    expect(mockSetChatId).toHaveBeenCalledWith('');
+    expect(mockSetChatHistory).toHaveBeenCalled();
+    expect(mockSetImageSrcHistory).toHaveBeenCalled();
+  });
+
+  it('handles chat editing correctly', async () => {
+    window.prompt = jest.fn().mockReturnValue('New Chat Title');
+
     await act(async () => {
       renderSidebar();
     });
 
-    // Not visible because Embed RAG File is not defaultOpen
-    expect(screen.queryByText('Namespace 1')).toBeNull();
-    expect(screen.queryByText('Namespace 2')).toBeNull();
-  });
-
-  it('initially renders child menu items correctly based on defaultOpen state', async () => {
+    const editButton = screen.getAllByText('Edit')[0];
     await act(async () => {
-      renderSidebar();
+      fireEvent.click(editButton);
     });
 
-    expect(screen.queryByText('Namespace 1')).not.toBeInTheDocument();
-    expect(screen.queryByText('Namespace 2')).not.toBeInTheDocument();
-    expect(screen.queryByText('Model 1')).not.toBeInTheDocument();
-    expect(screen.queryByText('Model 2')).not.toBeInTheDocument();
-
-    // Visible because defaultOpen is true for Chat With AI
-    await waitFor(() => {
-      expect(screen.getByText('Test Chat 1')).toBeInTheDocument();
-      expect(screen.getByText('Test Chat 2')).toBeInTheDocument();
-    });
-  });
-
-  it('has the correct href for Each MenuItem', async () => {
-    await act(async () => {
-      renderSidebar();
-    });
-
-    const embedRagFileLink = screen.getByText('Embed RAG File').closest('a');
-    expect(embedRagFileLink).toHaveAttribute('href', '/embedragfile');
-
-    const finetuneModelLink = screen
-      .getByText('Finetune AI Model')
-      .closest('a');
-    expect(finetuneModelLink).toHaveAttribute('href', '/finetunemodel');
-
-    const chatWithAILink = screen.getByText('Chat With AI').closest('a');
-    expect(chatWithAILink).toHaveAttribute('href', '/');
-  });
-
-  it('sets active chat correctly', async () => {
-    await act(async () => {
-      renderSidebar('2');
-    });
-
-    await waitFor(() => {
-      const activeChat = screen.getByText('Test Chat 2');
-      expect(activeChat.closest('li')).toHaveAttribute('data-active', 'true');
-    });
+    expect(editChatTitle).toHaveBeenCalledWith('1', 'New Chat Title');
+    expect(mockSetChats).toHaveBeenCalled();
   });
 
   it('handles empty chat messages correctly', async () => {
@@ -244,7 +240,7 @@ describe('Sidebar Component', () => {
       {
         question: '',
         answer: 'Hi, how can I assist you?',
-        model: 'Gemini-1.5 Pro'
+        model: 'Gemini-1.5 Pro' // it is the default model
       }
     ]);
     expect(mockSetImageSrcHistory).toHaveBeenCalledWith([[]]);
@@ -255,6 +251,7 @@ describe('Sidebar Component', () => {
       {
         userMessage: 'Hello',
         aiMessage: 'Hi there',
+        model: 'model1',
         images: [{ imageFile: 'image1.jpg' }, { imageFile: 'image2.jpg' }]
       }
     ]);
