@@ -29,7 +29,7 @@ export const decodeHTMLEntities = (input: string) => {
     '&lt;': '<',
     '&gt;': '>',
     '&quot;': '"',
-    '&#039;': "'",
+    '&#39;': "'",
     '&apos;': "'",
     '&nbsp;': ' ',
     //LatinCharacters Symbols
