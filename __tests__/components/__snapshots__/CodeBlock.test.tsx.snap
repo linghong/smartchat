@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CodeBlock matches snapshot 1`] = `
+<DocumentFragment>
+  <pre
+    data-language="javascript"
+    data-testid="mock-syntax-highlighter"
+    style="padding: 1em; border-radius: 5px; font-size: 14px;"
+  >
+    const greeting = "Hello, World!";
+  </pre>
+</DocumentFragment>
+`;
