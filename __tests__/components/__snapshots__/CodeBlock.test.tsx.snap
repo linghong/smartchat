@@ -2,12 +2,70 @@
 
 exports[`CodeBlock matches snapshot 1`] = `
 <DocumentFragment>
-  <pre
-    data-language="javascript"
-    data-testid="mock-syntax-highlighter"
-    style="padding: 1em; border-radius: 5px; font-size: 14px;"
+  <div
+    class="relative border border-gray-200 rounded-md"
   >
-    const greeting = "Hello, World!";
-  </pre>
+    <div
+      class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-md"
+    >
+      <span
+        class="text-sm font-medium text-gray-600"
+      >
+        javascript
+      </span>
+      <div
+        class="flex space-x-2"
+      >
+        <button
+          class="p-1 rounded-md hover:bg-gray-200 transition-colors"
+          title="Unwrap lines"
+        >
+          <svg
+            class="text-blue-500"
+            fill="currentColor"
+            height="18"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 24 24"
+            width="18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15 18H16.5C17.8807 18 19 16.8807 19 15.5C19 14.1193 17.8807 13 16.5 13H3V11H16.5C18.9853 11 21 13.0147 21 15.5C21 17.9853 18.9853 20 16.5 20H15V22L11 19L15 16V18ZM3 4H21V6H3V4ZM9 18V20H3V18H9Z"
+            />
+          </svg>
+        </button>
+        <button
+          class="p-1 rounded-md hover:bg-gray-200 transition-colors"
+          title="Copy code"
+        >
+          <svg
+            fill="currentColor"
+            height="18"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 24 24"
+            width="18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="relative overflow-x-auto"
+    >
+      <pre
+        data-language="javascript"
+        data-testid="mock-syntax-highlighter"
+        style="padding: 1em; font-size: 14px;"
+      >
+        const greeting = "Hello, World!";
+      </pre>
+    </div>
+  </div>
 </DocumentFragment>
 `;

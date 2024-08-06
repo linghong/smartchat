@@ -47,7 +47,6 @@ describe('CodeBlock', () => {
 
     expect(syntaxHighlighter).toHaveStyle({
       padding: '1em',
-      borderRadius: '5px',
       fontSize: '14px'
     });
   });
