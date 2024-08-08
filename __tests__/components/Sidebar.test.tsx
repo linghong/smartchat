@@ -240,7 +240,7 @@ describe('Sidebar Component', () => {
       {
         question: '',
         answer: 'Hi, how can I assist you?',
-        model: 'Gemini-1.5 Pro' // it is the default model
+        model: 'Gemini-1.5 Pro Exp' // it is the default model
       }
     ]);
     expect(mockSetImageSrcHistory).toHaveBeenCalledWith([[]]);

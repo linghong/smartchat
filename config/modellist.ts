@@ -2,17 +2,24 @@ import { OptionType } from '@/src/types/common';
 
 const modelOptions: OptionType[] = [
   {
+    value: 'gemini-1.5-pro-exp-0801',
+    label: 'Gemini-1.5 Pro Exp',
+    category: 'google',
+    contextWindow: 2097512,
+    vision: true
+  },
+  {
     value: 'gemini-1.5-pro',
     label: 'Gemini-1.5 Pro',
     category: 'google',
-    contextWindow: 128000,
+    contextWindow: 2097512,
     vision: true
   },
   {
     value: 'gemini-1.5-flash',
     label: 'Gemini-1.5 Flash',
     category: 'google',
-    contextWindow: 128000,
+    contextWindow: 1048576,
     vision: true
   },
   {
@@ -44,7 +51,7 @@ const modelOptions: OptionType[] = [
     vision: true
   },
   {
-    value: 'gpt-4o',
+    value: 'gpt-4o-2024-08-06',
     label: 'GPT-4o',
     category: 'openai',
     contextWindow: 128000,
