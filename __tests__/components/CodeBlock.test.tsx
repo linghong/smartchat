@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act
+} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import CodeBlock from '@/src/components/CodeBlock';
 
@@ -10,11 +16,13 @@ jest.mock('react-syntax-highlighter/dist/cjs/prism', () => {
     language: string;
     style: any;
     customStyle: React.CSSProperties;
-  }> = ({ children, language, customStyle }) => (
+    wrapLongLines: boolean;
+  }> = ({ children, language, customStyle, wrapLongLines }) => (
     <pre
       data-testid="mock-syntax-highlighter"
       data-language={language}
       style={customStyle}
+      data-wrap-lines={wrapLongLines || undefined}
     >
       {children}
     </pre>
@@ -23,9 +31,24 @@ jest.mock('react-syntax-highlighter/dist/cjs/prism', () => {
   return MockSyntaxHighlighter;
 });
 
+// Mock clipboard API
+const mockClipboard = {
+  writeText: jest.fn(() => Promise.resolve())
+};
+Object.assign(navigator, { clipboard: mockClipboard });
+
 describe('CodeBlock', () => {
   const testCode = 'const greeting = "Hello, World!";';
   const testLanguage = 'javascript';
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+    jest.clearAllMocks();
+  });
 
   it('renders the CodeBlock component', () => {
     render(<CodeBlock code={testCode} language={testLanguage} />);
@@ -47,23 +70,66 @@ describe('CodeBlock', () => {
 
     expect(syntaxHighlighter).toHaveStyle({
       padding: '1em',
-      fontSize: '14px'
+      fontSize: '14px',
+      maxWidth: '100%',
+      overflowX: 'auto'
     });
   });
 
-  it('renders different languages correctly', () => {
-    const pythonCode = 'print("Hello, World!")';
-    render(<CodeBlock code={pythonCode} language="python" />);
+  it('toggles code wrapping', async () => {
+    render(<CodeBlock code={testCode} language={testLanguage} />);
     const syntaxHighlighter = screen.getByTestId('mock-syntax-highlighter');
+    const wrapButton = screen.getByTitle('Wrap lines');
 
-    expect(syntaxHighlighter).toHaveAttribute('data-language', 'python');
-    expect(syntaxHighlighter).toHaveTextContent(pythonCode);
+    expect(syntaxHighlighter).not.toHaveAttribute('data-wrap-lines');
+
+    await act(async () => {
+      fireEvent.click(wrapButton);
+    });
+
+    expect(syntaxHighlighter).toHaveAttribute('data-wrap-lines', 'true');
+
+    await act(async () => {
+      fireEvent.click(wrapButton);
+    });
+
+    expect(syntaxHighlighter).not.toHaveAttribute('data-wrap-lines');
   });
 
-  it('matches snapshot', () => {
-    const { asFragment } = render(
-      <CodeBlock code={testCode} language={testLanguage} />
+  it('copies code to clipboard and shows confirmation', async () => {
+    render(<CodeBlock code={testCode} language={testLanguage} />);
+    const copyButton = screen.getByTitle('Copy code');
+
+    // Assert the initial state
+    const checkIcon = screen.getByRole('img', { name: /copy code/i });
+    expect(checkIcon).not.toHaveClass('text-green-500');
+
+    await act(async () => {
+      fireEvent.click(copyButton);
+    });
+
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(testCode);
+
+    // Assert the state after clicking the "Copy code" button
+    const updatedCheckIcon = screen.getByRole('img', { name: /copy code/i });
+    expect(updatedCheckIcon).toHaveClass('text-green-500');
+
+    await waitFor(
+      () => {
+        const finalCheckIcon = screen.getByRole('img', { name: /copy code/i });
+        expect(finalCheckIcon).not.toHaveClass('text-green-500');
+      },
+      { timeout: 3000 }
     );
-    expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('displays the correct language in the header', () => {
+    render(<CodeBlock code={testCode} language={testLanguage} />);
+    expect(screen.getByText(testLanguage)).toBeInTheDocument();
+  });
+
+  it('displays "Code" in the header when language is not provided', () => {
+    render(<CodeBlock code={testCode} language="" />);
+    expect(screen.getByText('Code')).toBeInTheDocument();
   });
 });

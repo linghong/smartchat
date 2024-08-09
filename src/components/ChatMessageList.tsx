@@ -29,7 +29,7 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
   return (
     <div className="flex-grow overflow-y-auto bg-white border-2 border-stone-200">
       <div
-        className="w-full h-full overflow-y-auto rounded-lg"
+        className="w-full h-full rounded-lg"
         aria-live="polite"
         aria-atomic="true"
         ref={messagesRef}
