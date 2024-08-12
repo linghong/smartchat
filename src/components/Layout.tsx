@@ -45,7 +45,7 @@ const Layout: FC<LayoutProps> = ({
 
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= 480);
+      setIsMobile(window.innerWidth < 640);
     };
 
     // Run on initial mount
@@ -74,6 +74,7 @@ const Layout: FC<LayoutProps> = ({
       {isMobile && isSidebarOpen && (
         <div className="bg-slate-500 text-slate-50 h-full w-full">
           <Sidebar
+            isSidebarOpen={isSidebarOpen}
             setIsSidebarOpen={setIsSidebarOpen}
             namespacesList={namespacesList}
             chatId={chatId}
@@ -96,6 +97,7 @@ const Layout: FC<LayoutProps> = ({
         <div className="flex flex-row w-full h-full overflow-hidden">
           <div className="flex-shrink-0 bg-slate-500 text-slate-50 h-full text-md w-full sm:w-40 md:w-48 lg:w-52 xl:w-64 2xl:w-72 z-10">
             <Sidebar
+              isSidebarOpen={isSidebarOpen}
               setIsSidebarOpen={setIsSidebarOpen}
               namespacesList={namespacesList}
               chatId={chatId}

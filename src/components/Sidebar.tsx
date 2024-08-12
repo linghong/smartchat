@@ -6,6 +6,7 @@ import React, {
   Dispatch,
   SetStateAction
 } from 'react';
+import { useRouter } from 'next/router';
 
 import MenuItem from '@/src/components/MenuItem';
 import AIHub from '@/src/components/AIHub';
@@ -20,6 +21,7 @@ import {
 } from '@/src/utils/sqliteApiClient';
 
 interface SidebarProps {
+  isSidebarOpen: boolean;
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
   setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
   namespacesList: OptionType[] | null;
@@ -43,6 +45,7 @@ const models = [
 ];
 
 const Sidebar: FC<SidebarProps> = ({
+  isSidebarOpen,
   setIsConfigPanelVisible,
   setIsSidebarOpen,
   namespacesList,
@@ -54,6 +57,8 @@ const Sidebar: FC<SidebarProps> = ({
   setImageSrcHistory
 }) => {
   const isFetchingChats = useRef(false);
+  const router = useRouter();
+  const pathName = router.pathname;
 
   useEffect(() => {
     const fetchAllChats = async () => {
@@ -91,8 +96,14 @@ const Sidebar: FC<SidebarProps> = ({
         // Assuming msg.images is an array of { imageFile: ... } objects
         return msg.images.map((img: any) => img.imageFile);
       });
+      // On mobile or narrow screen size, only either the sidebar or chat content is visible at a time
+      if (window.innerWidth < 640) {
+        setIsSidebarOpen(false);
+      }
+
       setIsConfigPanelVisible(false);
       setChatId(chatId);
+
       setChatHistory(newChatHistory);
       setImageSrcHistory(newImageSrcHistory);
     } else {
@@ -133,7 +144,7 @@ const Sidebar: FC<SidebarProps> = ({
 
   return (
     <div className="flex flex-col w-full h-full">
-      <ul className="flex-grow px-2 pt-10 ">
+      <ul className="flex-grow px-2 pt-3">
         <MenuItem
           key="embedragfile"
           title="Embed RAG File"

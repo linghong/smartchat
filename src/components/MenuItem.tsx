@@ -47,7 +47,7 @@ const MenuItem: FC<MenuItemProps> = ({
       e.preventDefault();
       if (link) {
         await router.push(link);
-        if (setIsSidebarOpen && window.innerWidth <= 480) {
+        if (setIsSidebarOpen && window.innerWidth <= 640) {
           setIsSidebarOpen(false);
         }
       }

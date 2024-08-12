@@ -12,8 +12,8 @@ import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
 interface HeaderProps {
-  setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
   isSidebarOpen: boolean;
+  setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
   setChatId: Dispatch<SetStateAction<string>>;
@@ -44,7 +44,7 @@ const Header: FC<HeaderProps> = ({
   const onNewChat = async () => {
     // await its completion to ensure that any state changes occur after navigating, so that the sidebar won't open before the navigation completes
     await router.push('/');
-    if (window.innerWidth <= 480) {
+    if (window.innerWidth < 640) {
       setIsSidebarOpen(false);
     }
     setChatId('0');

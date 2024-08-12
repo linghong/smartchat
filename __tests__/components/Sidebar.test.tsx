@@ -26,7 +26,8 @@ jest.mock('@/src/components/MenuItem', () => {
     onItemClick,
     activeItemId,
     onDeleteClick,
-    onEditClick
+    onEditClick,
+    setIsSidebarOpen
   }: {
     title: string;
     itemList: any[];
@@ -36,6 +37,7 @@ jest.mock('@/src/components/MenuItem', () => {
     activeItemId?: string;
     onDeleteClick?: (id: string) => void;
     onEditClick?: (id: string) => void;
+    setIsSidebarOpen?: (isOpen: boolean) => void;
   }) {
     return (
       <div>
@@ -47,7 +49,10 @@ jest.mock('@/src/components/MenuItem', () => {
             itemList?.map(item => (
               <li
                 key={item.value}
-                onClick={() => onItemClick && onItemClick(item.value)}
+                onClick={() => {
+                  onItemClick && onItemClick(item.value);
+                  setIsSidebarOpen && setIsSidebarOpen(false);
+                }}
                 data-active={item.value === activeItemId}
               >
                 {item.label}
@@ -79,6 +84,12 @@ jest.mock('@/src/utils/sqliteApiClient', () => ({
   fetchChatMessages: jest.fn(),
   deleteChat: jest.fn(),
   editChatTitle: jest.fn()
+}));
+
+jest.mock('next/router', () => ({
+  useRouter: () => ({
+    pathname: '/'
+  })
 }));
 
 const mockSetIsConfigPanelVisible = jest.fn();
@@ -115,6 +126,7 @@ describe('Sidebar Component', () => {
   const renderSidebar = (chatId = '0') =>
     render(
       <Sidebar
+        isSidebarOpen={true}
         setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
         setIsSidebarOpen={mockSetIsSidebarOpen}
         namespacesList={mockNamespacesList}
@@ -189,6 +201,7 @@ describe('Sidebar Component', () => {
     expect(mockSetChatHistory).toHaveBeenCalled();
     expect(mockSetImageSrcHistory).toHaveBeenCalled();
     expect(mockSetChatId).toHaveBeenCalledWith('1');
+    expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false);
   });
 
   it('handles chat deletion correctly', async () => {
@@ -240,7 +253,7 @@ describe('Sidebar Component', () => {
       {
         question: '',
         answer: 'Hi, how can I assist you?',
-        model: 'Gemini-1.5 Pro Exp' // it is the default model
+        model: 'Gemini-1.5 Pro Exp'
       }
     ]);
     expect(mockSetImageSrcHistory).toHaveBeenCalledWith([[]]);
