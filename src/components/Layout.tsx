@@ -70,60 +70,59 @@ const Layout: FC<LayoutProps> = ({
         setChatHistory={setChatHistory}
         setImageSrcHistory={setImageSrcHistory}
       />
-      <div className="flex flex-row w-full h-full">
-        {isMobile && isSidebarOpen && (
-          <div className="bg-slate-500 text-slate-50 h-full w-full">
+
+      {isMobile && isSidebarOpen && (
+        <div className="bg-slate-500 text-slate-50 h-full w-full">
+          <Sidebar
+            setIsSidebarOpen={setIsSidebarOpen}
+            namespacesList={namespacesList}
+            chatId={chatId}
+            setChatId={setChatId}
+            setChatHistory={setChatHistory}
+            chats={chats}
+            setChats={setChats}
+            setImageSrcHistory={setImageSrcHistory}
+            setIsConfigPanelVisible={setIsConfigPanelVisible}
+          />
+        </div>
+      )}
+      {isMobile && !isSidebarOpen && (
+        <main className="flex flex-col w-full lg:w-70vw h-full px-2">
+          {children}
+          <Footer />
+        </main>
+      )}
+      {!isMobile && isSidebarOpen && (
+        <div className="flex flex-row w-full h-full overflow-hidden">
+          <div className="flex-shrink-0 bg-slate-500 text-slate-50 h-full text-md w-full sm:w-40 md:w-48 lg:w-52 xl:w-64 2xl:w-72 z-10">
             <Sidebar
               setIsSidebarOpen={setIsSidebarOpen}
               namespacesList={namespacesList}
               chatId={chatId}
               setChatId={setChatId}
-              setChatHistory={setChatHistory}
               chats={chats}
               setChats={setChats}
+              setChatHistory={setChatHistory}
               setImageSrcHistory={setImageSrcHistory}
               setIsConfigPanelVisible={setIsConfigPanelVisible}
             />
           </div>
-        )}
-        {isMobile && !isSidebarOpen && (
-          <main className="flex flex-col w-full lg:w-70vw h-full px-2">
-            {children}
-            <Footer />
-          </main>
-        )}
-        {!isMobile && isSidebarOpen && (
-          <div className="flex flex-row w-full h-full">
-            <div className="bg-slate-500 text-slate-50 h-full text-md w-full xs:w-56 xl:w-64 2xl:w-72 fixed top-0 left-0 bottom-0 z-10">
-              <Sidebar
-                setIsSidebarOpen={setIsSidebarOpen}
-                namespacesList={namespacesList}
-                chatId={chatId}
-                setChatId={setChatId}
-                chats={chats}
-                setChats={setChats}
-                setChatHistory={setChatHistory}
-                setImageSrcHistory={setImageSrcHistory}
-                setIsConfigPanelVisible={setIsConfigPanelVisible}
-              />
-            </div>
-            <div className="flex flex-col w-full ml-56 xl:ml-64 2xl:ml-72">
-              <main
-                className={`flex flex-col h-full w-full max-w-screen-2xl mx-auto px-2 sm:px-4 lg:px-8`}
-              >
-                <div className="flex-grow">{children}</div>
-                <Footer />
-              </main>
-            </div>
+          <div className="relative flex flex-col w-full h-full max-w-full flex-1 overflow-hidden">
+            <main
+              className={`flex flex-col h-full w-full lg:w-9/12 xl:w-8/12 max-w-screen-2xl mx-auto px-2 sm:px-4 lg:px-8`}
+            >
+              <div className="flex-grow">{children}</div>
+              <Footer />
+            </main>
           </div>
-        )}
-        {!isMobile && !isSidebarOpen && (
-          <main className="flex flex-col h-full w-full lg:w-70vw px-2 mx-auto">
-            {children}
-            <Footer />
-          </main>
-        )}
-      </div>
+        </div>
+      )}
+      {!isMobile && !isSidebarOpen && (
+        <main className="flex flex-col h-full w-full lg:w-70vw px-2 mx-auto">
+          {children}
+          <Footer />
+        </main>
+      )}
     </div>
   );
 };

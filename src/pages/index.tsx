@@ -134,7 +134,7 @@ const HomePage: React.FC<HomeProps> = ({
         setError('Problem fetch response from AI. Try again.');
       }
     },
-    [chatHistory, setChatHistory, setMessageSubjectList]
+    [chatHistory]
   );
 
   const handleSubmit = async (question: string, imageSrc: ImageFile[]) => {
@@ -229,7 +229,7 @@ const HomePage: React.FC<HomeProps> = ({
   }, [isNewChat]);
 
   return (
-    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 h-full mx-auto z-80">
+    <div className="flex flex-col w-full  h-full mx-auto z-80">
       {isConfigPanelVisible && (
         <div className="flex-shrink-0">
           <AIConfigPanel
@@ -244,13 +244,14 @@ const HomePage: React.FC<HomeProps> = ({
           />
         </div>
       )}
-
-      <ChatMessageList
-        chatHistory={chatHistory}
-        loading={loading}
-        imageSrcHistory={imageSrcHistory}
-        handleImageDelete={handleImageDelete}
-      />
+      <div className="flex-grow overflow-y-auto">
+        <ChatMessageList
+          chatHistory={chatHistory}
+          loading={loading}
+          imageSrcHistory={imageSrcHistory}
+          handleImageDelete={handleImageDelete}
+        />
+      </div>
 
       <ChatInput
         onSubmit={handleSubmit}

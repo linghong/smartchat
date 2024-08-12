@@ -86,7 +86,6 @@ pre code {
 .ai-answer pre {
   padding: 0.5em;
   border-radius: 4px;
-  overflow-x: auto;
   margin-bottom: 1em;
 }
 

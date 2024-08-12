@@ -9,6 +9,7 @@ jest.mock('@/src/components/Header', () => {
   return {
     __esModule: true,
     default: ({
+      isSidebarOpen,
       setIsSidebarOpen,
       isConfigPanelVisible,
       setIsConfigPanelVisible
@@ -26,7 +27,6 @@ jest.mock('@/src/components/Sidebar', () => {
   return {
     __esModule: true,
     default: ({
-      setIsSidebarOpen,
       namespacesList,
       chatId,
       setChatId,
@@ -34,7 +34,6 @@ jest.mock('@/src/components/Sidebar', () => {
       setImageSrcHistory,
       setIsConfigPanelVisible
     }: {
-      setIsSidebarOpen: (isOpen: boolean) => void;
       namespacesList: any[] | null;
       chatId: string | null;
       setChatId: (chatId: string | null) => void;
