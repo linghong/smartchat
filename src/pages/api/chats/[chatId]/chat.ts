@@ -27,17 +27,21 @@ const handleDeleteRequest = async (
     }
 
     // Delete all images associated with the chat's messages
-    for (const message of chat.messages) {
-      if (message.images) {
-        await transactionalEntityManager.remove(ChatImage, message.images);
+    if (chat.messages) {
+      for (const message of chat.messages) {
+        if (message.images) {
+          await transactionalEntityManager.delete(ChatImage, {
+            messageId: message.id
+          });
+        }
       }
     }
 
     // Delete all messages associated with the chat
-    await transactionalEntityManager.remove(ChatMessage, chat.messages);
+    await transactionalEntityManager.delete(ChatMessage, { chatId: chat.id });
 
     // Finally, delete the chat itself
-    await transactionalEntityManager.remove(Chat, chat);
+    await transactionalEntityManager.delete(Chat, { id: chat.id });
   });
 
   res

@@ -4,7 +4,9 @@ import {
   Repository,
   SelectQueryBuilder,
   EntityManager,
-  EntityNotFoundError
+  EntityNotFoundError,
+  ConnectionIsNotSetError,
+  EntityMetadataNotFoundError
 } from 'typeorm';
 import handler from '@/src/pages/api/chats/[chatId]/chat';
 import { getAppDataSource, Chat, ChatMessage, ChatImage } from '@/src/db';
@@ -143,21 +145,10 @@ describe('Chat API Handler', () => {
     });
   });
 
-  it('should handle EntityNotFoundError', async () => {
-    mockReq.method = 'DELETE';
-    mockDataSource.transaction.mockRejectedValue(
-      new EntityNotFoundError(Chat, 1)
-    );
-
-    await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
-
-    expect(mockRes.status).toHaveBeenCalledWith(404);
-    expect(mockRes.json).toHaveBeenCalledWith({ message: 'Chat not found' });
-  });
-
   describe('DELETE request', () => {
     beforeEach(() => {
       mockReq.method = 'DELETE';
+      mockReq.query = { chatId: '1' };
     });
 
     it('should delete a chat and associated data on DELETE request', async () => {
@@ -231,6 +222,7 @@ describe('Chat API Handler', () => {
 
       // Mock the findOne method to return the mockChat
       mockEntityManager.findOne.mockResolvedValue(mockChat as Chat);
+      mockEntityManager.delete = jest.fn().mockResolvedValue({ affected: 1 });
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -239,8 +231,7 @@ describe('Chat API Handler', () => {
         where: { id: 1 },
         relations: ['messages', 'messages.images']
       });
-      expect(mockEntityManager.remove).toHaveBeenCalledTimes(4); // once for each message's images, once for messages, once for chat
-      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockEntityManager.delete).toHaveBeenCalledTimes(4); // once for each message's images, once for messages, once for chat
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'Chat and all associated data deleted successfully'
@@ -254,6 +245,51 @@ describe('Chat API Handler', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Chat not found' });
+    });
+
+    it('should handle case when chat has no messages', async () => {
+      const mockChat: Partial<Chat> = {
+        id: 1,
+        title: 'Test Chat',
+        createdAt: new Date(),
+        messages: []
+      };
+
+      mockEntityManager.findOne.mockResolvedValue(mockChat as Chat);
+      mockEntityManager.delete = jest.fn().mockResolvedValue({ affected: 1 });
+
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockEntityManager.delete).toHaveBeenCalledTimes(2); // Chat, ChatMessage
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+    });
+
+    it('should handle case when messages have no images', async () => {
+      const mockChat: Partial<Chat> = {
+        id: 1,
+        title: 'Test Chat',
+        createdAt: new Date(),
+        messages: [
+          {
+            id: 1,
+            userMessage: 'User message 1',
+            aiMessage: 'AI response 1',
+            model: 'gpt-3.5-turbo',
+            createdAt: new Date(),
+            chat: {} as Chat,
+            chatId: 1,
+            images: []
+          }
+        ]
+      };
+
+      mockEntityManager.findOne.mockResolvedValue(mockChat as Chat);
+      mockEntityManager.delete = jest.fn().mockResolvedValue({ affected: 1 });
+
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockEntityManager.delete).toHaveBeenCalledTimes(3); // Chat, ChatMessage ChatImage
+      expect(mockRes.status).toHaveBeenCalledWith(200);
     });
   });
 
@@ -327,6 +363,48 @@ describe('Chat API Handler', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Chat not found' });
+    });
+  });
+
+  describe('Error handling', () => {
+    it('should handle EntityNotFoundError', async () => {
+      mockReq.method = 'DELETE';
+      mockDataSource.transaction.mockRejectedValue(
+        new EntityNotFoundError(Chat, 1)
+      );
+
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Chat not found' });
+    });
+
+    it('should handle ConnectionIsNotSetError', async () => {
+      mockReq.method = 'DELETE';
+      mockDataSource.transaction.mockRejectedValue(
+        new ConnectionIsNotSetError('test')
+      );
+
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockRes.status).toHaveBeenCalledWith(500);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Database connection error'
+      });
+    });
+
+    it('should handle EntityMetadataNotFoundError', async () => {
+      mockReq.method = 'DELETE';
+      mockDataSource.transaction.mockRejectedValue(
+        new EntityMetadataNotFoundError('test')
+      );
+
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockRes.status).toHaveBeenCalledWith(500);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Entity metadata error'
+      });
     });
   });
 });
