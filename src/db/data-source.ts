@@ -11,22 +11,26 @@ const options: DataSourceOptions = {
   logging: false, //change to true or ['query', 'error', 'schema'] for debug purpose
   subscribers: []
 };
+
 class AppDataSourceSingleton {
   private static instance: DataSource;
 
   private constructor() {}
 
-  public static async getInstance(): Promise<DataSource | null> {
+  public static async getInstance(): Promise<DataSource> {
     if (!AppDataSourceSingleton.instance) {
       AppDataSourceSingleton.instance = new DataSource(options);
+    }
+
+    if (!AppDataSourceSingleton.instance.isInitialized) {
       try {
         await AppDataSourceSingleton.instance.initialize();
-        return AppDataSourceSingleton.instance;
       } catch (e) {
         console.error('Error during data source initialization', e);
-        return null;
+        throw e;
       }
     }
+
     return AppDataSourceSingleton.instance;
   }
 }

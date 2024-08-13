@@ -62,20 +62,12 @@ const Sidebar: FC<SidebarProps> = ({
 
   useEffect(() => {
     const fetchAllChats = async () => {
-      // Avoid calling db twice in dev environment,
-      // Otherwise, the second call may fetch data in the middle of the first call's db initialization, causing issue of table metadata data missing.
-      // If you want, you can remove this isFetchChats check before building the code for production.
-      if (isFetchingChats.current) return;
-
-      isFetchingChats.current = true;
       try {
         const chats = await fetchChats();
         if (chats) setChats(chats);
       } catch (error: any) {
         console.error(`Failed to fetch chats: ${error.message}`);
-      } finally {
-        isFetchingChats.current = false;
-      }
+      } 
     };
 
     fetchAllChats();

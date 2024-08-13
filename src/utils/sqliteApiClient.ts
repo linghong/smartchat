@@ -20,7 +20,7 @@ export const updateChats = async (chatTitle: string, metadata: any) => {
       })
     });
     if (!res) {
-      console.log('Error on post data to Chats table');
+      console.error('Error on post data to Chats table');
     }
     const chat = await res.json();
 
@@ -59,7 +59,6 @@ export const fetchChats = async (): Promise<OptionType[]> => {
  */
 export const deleteChat = async (chatId: string) => {
   try {
-    console.log('chaId', chatId, typeof chatId);
     const res = await fetch(`/api/chats/${chatId}/chat`, {
       method: 'DELETE',
       headers: {
@@ -72,7 +71,7 @@ export const deleteChat = async (chatId: string) => {
     }
 
     const result = await res.json();
-    console.log('Chat deleted successfully', result);
+    console.info('Chat deleted successfully', result);
     return result;
   } catch (error) {
     console.error('Failed to delete chat:', error);
@@ -88,7 +87,6 @@ export const deleteChat = async (chatId: string) => {
  */
 export const editChatTitle = async (chatId: string, newTitle: string) => {
   try {
-    console.log(chatId, newTitle);
     const res = await fetch(`/api/chats/${chatId}/chat`, {
       method: 'PUT',
       headers: {
@@ -102,7 +100,7 @@ export const editChatTitle = async (chatId: string, newTitle: string) => {
     }
 
     const result = await res.json();
-    console.log('Chat title updated successfully', result);
+    console.info('Chat title updated successfully', result);
     return result;
   } catch (error) {
     console.error('Failed to update chat title:', error);
@@ -139,7 +137,7 @@ export const updateChatMessages = async (
       })
     });
     if (!res) {
-      console.log('Error on post message to ChatMessage table');
+      console.error('Error on post message to ChatMessage table');
     }
     const chatMessage = await res.json();
 
@@ -164,7 +162,7 @@ export const fetchChatMessages = async (chatId: number) => {
     });
 
     if (!res) {
-      console.log('Error on fetching chat messages');
+      console.error('Error on fetching chat messages');
       return null;
     }
     const chatMessages = await res.json();
