@@ -116,10 +116,9 @@ support nodejs v18 and plus
 yarn install
 ```
 
-### Setup OpenAI and Pinecone
+### Setup APIs for OpenAI and other accounts
 
-Sign up for an account on OpenAI, Google, Groq, Athropic, and Pinecone.
-Generate the necessary API keys from the respective platforms.
+Sign up for an account on OpenAI, Google, Groq, Athropic, and Pinecone. Generate the necessary API keys from the respective platforms.
 
 ### Create Pinecone Index
 
@@ -183,7 +182,58 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### Lint and CI/CD
 
-## Deployment
+For lint run:
+
+```bash
+yarn lint
+```
+
+The app uses GitAction for CI/CD
+
+### Access on Mobile Phone
+
+The app is designed with a responsive display, so you can access it on your phone as well.
+
+#### Preparation
+
+1. Change Computer Settings: adjust your computer settings to allow the screen to sleep while keeping the system running.
+
+2. Find Your Computer’s Local IP Address:
+   On Windows: Open Command Prompt and type `ipconfig`. Look for the "IPv4 Address" under your active network connection (e.g., Wi-Fi or Ethernet).
+
+On macOS: Open Terminal and type `ifconfig`. Look for the "inet" address under the `en0` interface. It will look something like 192.168.x.x or 10.x.x.x.
+
+3. Run Your App: Ensure the app is running on your computer by executing the commands yarn build followed by yarn start.
+
+#### Accessing the App at Home
+
+Using your phone, open a web browser. Enter the IP address of your computer followed by the port number your app is running on. For example: http://192.168.1.XX:3000
+
+#### Accessing the App on the Go
+
+The ngrok tunnels are secured using HTTPS. When accessing the app via the HTTPS URL (e.g., https://abcd1234.ngrok.io) from your phone, the connection is encrypted using TLS (Transport Layer Security). This encryption ensures that the credentials, along with all other data, are protected during transit. Additionally, ngrok URLs are temporary and can be easily regenerated. To use ngrok:
+
+1. Install ngrok: Download and install ngrok from ngrok.com.
+
+2. Authenticate ngrok with Your Authtoken: Sign up for a ngrok account. On your ngrok dashboard, copy your authtoken. Open your terminal and run `ngrok config add-authtoken <TOKEN>`. Replace <TOKEN> with your actual authtoken.
+
+3. Expose Your Local App: Open your terminal and run `ngrok http -auth="username:password" 3000`. Replace `3000` with the port your app is running on, and replace `username` and `password` with your desired credentials.
+
+4. Access Your App: ngrok will provide a public URL (e.g., https://abcd1234.ngrok.io). Use this URL on your phone to access your app.
+
+5. Manage Access and Security: Only run ngrok temporarily when you need to access the app remotely, and stop the tunnel when you’re done to limit public exposure time. Regularly monitor traffic through your ngrok dashboard to ensure that only you are accessing your app. If you’re on a paid plan, you can block specific IP addresses on ngrok dashboard to further secure access.
+
+#### Troubleshooting
+
+If you cannot access the app, ensure your computer’s firewall isn’t blocking incoming connections on the port your app is running on. For security purpose, do not open any additional incoming ports in your firewall.
+
+On Windows: You may need to create an inbound rule in the Windows Firewall to allow traffic on that specific port.
+
+On macOS: Go to System Preferences > Security & Privacy > Firewall, and check if the firewall is blocking incoming connections.
+
+#### Deploying Online
+
+Alternatively, you can deploy your app online, but you must add a login layer to the current code to prevent public access and protect your API credentials from exposure.
 
 You can deploy the app to any cloud environment, just as you would with other Next.js apps. For a seamless deployment experience, consider using the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), which is recommended by the creators of Next.js.
 
@@ -215,6 +265,6 @@ yarn test
 
 4. Commit your changes with a clear message and push to your fork. Open a pull request to the main repository, detailing your changes and any related issues.
 
-## Issues and Feature Requests
+### Issues Reports and Feature Requests
 
 If you encounter any problems or have suggestions for improvements, please open an issue. Provide as much detail as possible to help address it quickly.
