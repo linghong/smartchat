@@ -42,6 +42,8 @@ const Layout: FC<LayoutProps> = ({
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const token =
+    typeof window !== 'undefined' ? window.localStorage.getItem('token') : null;
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -59,7 +61,7 @@ const Layout: FC<LayoutProps> = ({
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-screen">
+    <div className={`flex flex-col w-full h-screen `}>
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
@@ -95,20 +97,22 @@ const Layout: FC<LayoutProps> = ({
       )}
       {!isMobile && isSidebarOpen && (
         <div className="flex flex-row w-full h-full overflow-hidden">
-          <div className="flex-shrink-0 bg-slate-500 text-slate-50 h-full text-md w-full sm:w-40 md:w-48 lg:w-52 xl:w-64 2xl:w-72 z-10">
-            <Sidebar
-              isSidebarOpen={isSidebarOpen}
-              setIsSidebarOpen={setIsSidebarOpen}
-              namespacesList={namespacesList}
-              chatId={chatId}
-              setChatId={setChatId}
-              chats={chats}
-              setChats={setChats}
-              setChatHistory={setChatHistory}
-              setImageSrcHistory={setImageSrcHistory}
-              setIsConfigPanelVisible={setIsConfigPanelVisible}
-            />
-          </div>
+          {
+            <div className="flex-shrink-0 bg-slate-500 text-slate-50 h-full text-md w-full sm:w-40 md:w-48 lg:w-52 xl:w-64 2xl:w-72 z-10">
+              <Sidebar
+                isSidebarOpen={isSidebarOpen}
+                setIsSidebarOpen={setIsSidebarOpen}
+                namespacesList={namespacesList}
+                chatId={chatId}
+                setChatId={setChatId}
+                chats={chats}
+                setChats={setChats}
+                setChatHistory={setChatHistory}
+                setImageSrcHistory={setImageSrcHistory}
+                setIsConfigPanelVisible={setIsConfigPanelVisible}
+              />
+            </div>
+          }
           <div className="relative flex flex-col w-full h-full max-w-full flex-1 overflow-hidden">
             <main
               className={`flex flex-col h-full w-full lg:w-9/12 xl:w-8/12 max-w-screen-2xl mx-auto px-2 sm:px-4 lg:px-8`}

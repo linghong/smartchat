@@ -1,4 +1,11 @@
-import { FC, MouseEvent, Dispatch, SetStateAction } from 'react';
+import {
+  useState,
+  useEffect,
+  FC,
+  MouseEvent,
+  Dispatch,
+  SetStateAction
+} from 'react';
 import {
   AiOutlineMenu,
   AiOutlineForm,
@@ -7,9 +14,10 @@ import {
 } from 'react-icons/ai';
 import { useRouter } from 'next/router';
 
-import { initialMessage, defaultModel } from '@/src/utils/initialData';
+import SignOut from '@/src/components/SignOut';
 import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
+import { initialMessage, defaultModel } from '@/src/utils/initialData';
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -40,6 +48,17 @@ const Header: FC<HeaderProps> = ({
     '/finetunemodel': 'Finetune AI Model',
     '/embedragfile': 'Embed RAG File'
   };
+
+  const [isLoggedOut, setIsLoggedOut] = useState(true);
+
+  useEffect(() => {
+    const token = window.localStorage.getItem('token');
+    if (token) {
+      setIsLoggedOut(false);
+    } else {
+      setIsLoggedOut(true);
+    }
+  }, [router]);
 
   const onNewChat = async () => {
     // await its completion to ensure that any state changes occur after navigating, so that the sidebar won't open before the navigation completes
@@ -83,20 +102,23 @@ const Header: FC<HeaderProps> = ({
       <div className="flex text-white text-md font-bold focus:bg-indigo-100">
         {pageCollection[pathName]}
       </div>
-      <button
-        onClick={toggleConfigPanel}
-        className="flex items-center space-x-2 rounded-full hover:bg-slate-500 transition-colors duration-200"
-        aria-label={isConfigPanelVisible ? 'Hide Config' : 'Show Config'}
-      >
-        {isConfigPanelVisible ? (
-          <AiOutlineEyeInvisible size={20} className="text-white" />
-        ) : (
-          <AiOutlineEye size={20} className="text-white" />
-        )}
-        <span className="text-white text-sm hidden sm:inline">
-          {isConfigPanelVisible ? 'Hide' : 'Show'} AI Assistant Config
-        </span>
-      </button>
+      <div className="flex space-x-6">
+        <button
+          onClick={toggleConfigPanel}
+          className="flex items-center space-x-2 rounded-full hover:bg-slate-500 transition-colors duration-200"
+          aria-label={isConfigPanelVisible ? 'Hide Config' : 'Show Config'}
+        >
+          {isConfigPanelVisible ? (
+            <AiOutlineEyeInvisible size={20} className="text-white" />
+          ) : (
+            <AiOutlineEye size={20} className="text-white" />
+          )}
+          <span className="text-white text-sm hidden sm:inline">
+            {isConfigPanelVisible ? 'Hide' : 'Show'} AI Assistant Config
+          </span>
+        </button>
+        {!isLoggedOut && <SignOut />}
+      </div>
     </header>
   );
 };

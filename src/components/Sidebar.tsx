@@ -13,12 +13,12 @@ import AIHub from '@/src/components/AIHub';
 import { Message, ImageFile } from '@/src/types/chat';
 import { initialMessage } from '@/src/utils/initialData';
 import { OptionType } from '@/src/types/common';
+import { fetchChats } from '@/src/utils/sqliteChatApiClient';
 import {
-  fetchChats,
-  fetchChatMessages,
   deleteChat,
-  editChatTitle
-} from '@/src/utils/sqliteApiClient';
+  editChatTitle,
+  fetchChatMessages
+} from '@/src/utils/sqliteChatIdApiClient';
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -62,19 +62,29 @@ const Sidebar: FC<SidebarProps> = ({
 
   useEffect(() => {
     const fetchAllChats = async () => {
+      const token = window.localStorage.getItem('token');
+
+      if (!token || isFetchingChats.current) return;
+
       try {
-        const chats = await fetchChats();
+        const chats = await fetchChats(token);
+
         if (chats) setChats(chats);
       } catch (error: any) {
         console.error(`Failed to fetch chats: ${error.message}`);
-      } 
+      }
     };
 
     fetchAllChats();
-  }, []);
+  }, []); //ensure this runs again if token changes
 
   const handleChatClick = async (chatId: string) => {
-    const chatMessages = await fetchChatMessages(parseInt(chatId));
+    const token = window.localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    const chatMessages = await fetchChatMessages(token, parseInt(chatId));
 
     // Check if chatMessages is an array and not empty
     if (Array.isArray(chatMessages) && chatMessages.length > 0) {
@@ -106,8 +116,13 @@ const Sidebar: FC<SidebarProps> = ({
   };
 
   const handleDeleteChat = async (id: string) => {
+    const token = window.localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
     try {
-      await deleteChat(id);
+      await deleteChat(token, id);
       setChats(prevChats => prevChats.filter(chat => chat.value !== id));
       if (chatId === id) {
         setChatId('');
@@ -119,10 +134,15 @@ const Sidebar: FC<SidebarProps> = ({
     }
   };
   const handleEditChat = async (id: string) => {
+    const token = window.localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
     const newTitle = prompt('Enter new chat title:');
     if (newTitle) {
       try {
-        await editChatTitle(id, newTitle);
+        await editChatTitle(token, id, newTitle);
         setChats(prevChats =>
           prevChats.map(chat =>
             chat.value === id ? { ...chat, label: newTitle } : chat
