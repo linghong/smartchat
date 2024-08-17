@@ -29,6 +29,15 @@ if (!PINECONE_API_KEY) throw new Error('Missing Pinecone API key');
 const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME;
 if (!PINECONE_INDEX_NAME) console.error('Missing Pinecone index name');
 
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) throw new Error('Missing required JWT_SECRET');
+
+const DEFAULT_USERNAME = process.env.DEFAULT_USERNAME;
+const DEFAULT_PASSWORD = process.env.DEFAULT_PASSWORD;
+if (!DEFAULT_USERNAME || !DEFAULT_PASSWORD) {
+  throw new Error('Missing required default username and password');
+}
+
 export {
   GEMINI_API_KEY,
   CLAUDE_API_KEY,
@@ -37,5 +46,8 @@ export {
   OPENAI_API_KEY,
   PINECONE_API_KEY,
   PINECONE_INDEX_NAME,
-  NEXT_PUBLIC_SERVER_SECRET_KEY
+  NEXT_PUBLIC_SERVER_SECRET_KEY,
+  JWT_SECRET,
+  DEFAULT_USERNAME,
+  DEFAULT_PASSWORD
 };

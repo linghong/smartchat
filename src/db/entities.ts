@@ -17,9 +17,17 @@ export class User {
   @Column({
     type: 'varchar',
     length: 255,
-    nullable: false
+    nullable: false,
+    unique: true
   })
   username!: string;
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: false
+  })
+  password!: string;
 
   @OneToMany(() => Chat, chat => chat.user)
   chats!: Chat[];

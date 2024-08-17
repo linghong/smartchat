@@ -8,8 +8,10 @@ import {
   ConnectionIsNotSetError,
   EntityMetadataNotFoundError
 } from 'typeorm';
+
 import handler from '@/src/pages/api/chats/[chatId]/chat';
 import { getAppDataSource, Chat, ChatMessage, ChatImage } from '@/src/db';
+import { withAuth } from '@/src/middleware/auth';
 
 // Mock the db dependencies
 jest.mock('@/src/db', () => ({
@@ -17,6 +19,10 @@ jest.mock('@/src/db', () => ({
   Chat: jest.fn(),
   ChatMessage: jest.fn(),
   ChatImage: jest.fn()
+}));
+
+jest.mock('@/src/middleware/auth', () => ({
+  withAuth: jest.fn((handler) => handler)
 }));
 
 describe('Chat API Handler', () => {
@@ -48,12 +54,12 @@ describe('Chat API Handler', () => {
       where: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       getMany: jest.fn()
-    } as unknown as jest.Mocked<SelectQueryBuilder<Chat>>;
+    } as unknown as jest.Mocked;
 
     mockEntityManager = {
       findOne: jest.fn(),
       remove: jest.fn()
-    } as unknown as jest.Mocked<EntityManager>;
+    } as unknown as jest.Mocked;
 
     mockDataSource = {
       getRepository: jest.fn(),
@@ -66,22 +72,22 @@ describe('Chat API Handler', () => {
         release: jest.fn(),
         manager: mockEntityManager
       })
-    } as unknown as jest.Mocked<DataSource>;
+    } as unknown as jest.Mocked;
 
     mockChatRepository = {
       create: jest.fn(),
       save: jest.fn(),
       createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
       findOne: jest.fn()
-    } as unknown as jest.Mocked<Repository<Chat>>;
+    } as unknown as jest.Mocked;
 
     mockChatMessageRepository = {
       remove: jest.fn()
-    } as unknown as jest.Mocked<Repository<ChatMessage>>;
+    } as unknown as jest.Mocked;
 
     mockChatImageRepository = {
       remove: jest.fn()
-    } as unknown as jest.Mocked<Repository<ChatImage>>;
+    } as unknown as jest.Mocked;
 
     (getAppDataSource as jest.Mock).mockResolvedValue(mockDataSource);
     mockDataSource.getRepository.mockImplementation(entity => {
@@ -115,7 +121,7 @@ describe('Chat API Handler', () => {
 
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.json).toHaveBeenCalledWith({
-      message: 'AppDataSource is null'
+      error: 'Internal server error'
     });
   });
 
@@ -125,7 +131,7 @@ describe('Chat API Handler', () => {
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
-    expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid chat ID' });
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'Invalid chat ID' });
   });
 
   it('should handle Internal server errors and return 500', async () => {
@@ -141,7 +147,7 @@ describe('Chat API Handler', () => {
     );
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.json).toHaveBeenCalledWith({
-      message: 'Internal server error'
+      error: 'Internal server error'
     });
   });
 
@@ -151,11 +157,10 @@ describe('Chat API Handler', () => {
       mockReq.query = { chatId: '1' };
     });
 
-    it('should delete a chat and associated data on DELETE request', async () => {
-      mockReq.method = 'DELETE';
-      mockReq.query = { chatId: '1' };
-
-      const mockChat: Partial<Chat> = {
+   it('should delete a chat and associated data on DELETE request', async () => {
+    mockReq.method = 'DELETE';
+    mockReq.query = { chatId: '1' };
+      const mockChat: Partial = {
         id: 1,
         title: 'Test Chat',
         createdAt: new Date(),
@@ -219,13 +224,10 @@ describe('Chat API Handler', () => {
           }
         ]
       };
-
-      // Mock the findOne method to return the mockChat
       mockEntityManager.findOne.mockResolvedValue(mockChat as Chat);
       mockEntityManager.delete = jest.fn().mockResolvedValue({ affected: 1 });
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
-
       expect(mockDataSource.transaction).toHaveBeenCalled();
       expect(mockEntityManager.findOne).toHaveBeenCalledWith(Chat, {
         where: { id: 1 },
@@ -244,7 +246,7 @@ describe('Chat API Handler', () => {
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Chat not found' });
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Chat not found' });
     });
 
     it('should handle case when chat has no messages', async () => {
@@ -328,7 +330,7 @@ describe('Chat API Handler', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
-        message: 'Title is required'
+        error: 'Title is required'
       });
     });
 
@@ -339,7 +341,7 @@ describe('Chat API Handler', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
-        message: 'Title is required'
+        error: 'Title is required'
       });
     });
 
@@ -351,18 +353,19 @@ describe('Chat API Handler', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
-        message: 'Title must be a string between 1 and 255 characters'
+        error: 'Title must be a string between 1 and 255 characters'
       });
     });
 
     it('should return 404 if chat not found on PUT request', async () => {
+      mockReq.query = { chatId: '1' };
       mockReq.body = { title: 'Updated Chat Title' };
       mockChatRepository.findOne.mockResolvedValue(null);
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Chat not found' });
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Chat not found' });
     });
   });
 
@@ -376,7 +379,7 @@ describe('Chat API Handler', () => {
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Chat not found' });
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Chat not found' });
     });
 
     it('should handle ConnectionIsNotSetError', async () => {
@@ -389,7 +392,7 @@ describe('Chat API Handler', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.json).toHaveBeenCalledWith({
-        message: 'Database connection error'
+        error: 'Database connection error'
       });
     });
 
@@ -403,7 +406,7 @@ describe('Chat API Handler', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.json).toHaveBeenCalledWith({
-        message: 'Entity metadata error'
+        error: 'Entity metadata error'
       });
     });
   });

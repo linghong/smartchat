@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getAppDataSource, ChatMessage, ChatImage } from '@/src/db';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+import { getAppDataSource, ChatMessage, ChatImage } from '@/src/db';
+import { withAuth } from '@/src/middleware/auth';
+
+const handler = withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
   const dataSource = await getAppDataSource();
   if (!dataSource)
     return res.status(500).json({ message: 'AppDataSource is null' });
@@ -66,4 +65,6 @@ export default async function handler(
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} not allowed`);
   }
-}
+});
+
+export default handler;

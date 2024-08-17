@@ -7,6 +7,9 @@ process.env.GEMINI_API_KEY = 'fake-gemini-api-key';
 process.env.CLAUDE_API_KEY = 'fake-claude-api-key';
 process.env.NEXT_PUBLIC_API_URL = 'http://localhost:3000';
 process.env.NEXT_PUBLIC_SERVER_SECRET_KEY = 'fake-server-secret';
+process.env.JWT_SECRET = 'fake-JWT-secret';
+process.env.DEFAULT_USERNAME = 'fake-default-username';
+process.env.DEFAULT_PASSWORD = 'fake-default-password';
 
 const { TextEncoder, TextDecoder } = require('util');
 global.TextEncoder = TextEncoder;

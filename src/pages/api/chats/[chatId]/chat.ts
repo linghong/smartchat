@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { getAppDataSource, Chat, User, ChatMessage, ChatImage } from '@/src/db';
+import { withAuth } from '@/src/middleware/auth';
 
 const handleDeleteRequest = async (
   res: NextApiResponse,
@@ -23,7 +24,7 @@ const handleDeleteRequest = async (
     });
 
     if (!chat) {
-      return res.status(404).json({ message: 'Chat not found' });
+      return res.status(404).json({ error: 'Chat not found' });
     }
 
     // Delete all images associated with the chat's messages
@@ -59,20 +60,20 @@ const handlePutRequest = async (
   const chatRepository = dataSource.getRepository(Chat);
 
   if (!title) {
-    return res.status(400).json({ message: 'Title is required' });
+    return res.status(400).json({ error: 'Title is required' });
   }
 
   if (typeof title !== 'string' || title.length < 1 || title.length > 255) {
     return res
       .status(400)
-      .json({ message: 'Title must be a string between 1 and 255 characters' });
+      .json({ error: 'Title must be a string between 1 and 255 characters' });
   }
 
   // First, find the chat
   const chat = await chatRepository.findOne({ where: { id: chatIdNum } });
 
   if (!chat) {
-    return res.status(404).json({ message: 'Chat not found' });
+    return res.status(404).json({ error: 'Chat not found' });
   }
 
   // Update the chat title
@@ -82,19 +83,19 @@ const handlePutRequest = async (
   res.status(200).json({ message: 'Chat title updated successfully' });
 };
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
   // validation
   const { chatId } = req.query;
   const chatIdNum = Number(chatId);
   if (isNaN(chatIdNum)) {
-    return res.status(400).json({ message: 'Invalid chat ID' });
+    return res.status(400).json({ error: 'Invalid chat ID' });
   }
 
   try {
     const dataSource = await getAppDataSource();
 
     if (!dataSource)
-      return res.status(500).json({ message: 'AppDataSource is null' });
+      return res.status(500).json({ error: 'Internal server error' });
 
     switch (req.method) {
       case 'DELETE':
@@ -110,15 +111,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } catch (error) {
     console.error('Error during Chat operation', error);
     if (error instanceof EntityNotFoundError) {
-      res.status(404).json({ message: 'Chat not found' });
+      res.status(404).json({ error: 'Chat not found' });
     } else if (error instanceof ConnectionIsNotSetError) {
-      res.status(500).json({ message: 'Database connection error' });
+      res.status(500).json({ error: 'Database connection error' });
     } else if (error instanceof EntityMetadataNotFoundError) {
-      res.status(500).json({ message: 'Entity metadata error' });
+      res.status(500).json({ error: 'Entity metadata error' });
     } else {
-      res.status(500).json({ message: 'Internal server error' });
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
-};
+});
 
 export default handler;
