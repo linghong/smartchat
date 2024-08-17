@@ -8,21 +8,22 @@ import {
 } from 'react';
 
 import { GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 import { SingleValue, ActionMeta } from 'react-select';
 
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ChatInput from '@/src/components/ChatInput';
 import ChatMessageList from '@/src/components/ChatMessageList';
 import Notification from '@/src/components/Notification';
+import WithAuth from '@/src/components/WithAuth';
 
 import { modelOptions } from '@/config/modellist';
 import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
 import { initialMessage } from '@/src/utils/initialData';
-import { updateChats, updateChatMessages } from '@/src/utils/sqliteApiClient';
-
+import { updateChats } from '@/src/utils/sqliteChatApiClient';
+import { updateChatMessages } from '@/src/utils/sqliteChatIdApiClient';
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
 
 interface HomeProps {
@@ -56,6 +57,8 @@ const HomePage: React.FC<HomeProps> = ({
   isConfigPanelVisible,
   setIsConfigPanelVisible
 }) => {
+  const router = useRouter();
+
   // --- State Variables ---
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>(
     initialFileCategory
@@ -137,6 +140,51 @@ const HomePage: React.FC<HomeProps> = ({
     [chatHistory]
   );
 
+  const saveChatMessageToDb = async (
+    question: string,
+    imageSrc: ImageFile[],
+    data: any
+  ) => {
+    const token = window.localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    // when it is a new chat stream, create a new chat in db before save chat message
+    // then add this new chat to chats
+    if (chatHistory.length === 1 || !chatId) {
+      const chat = await updateChats(token, data.subject, {});
+
+      // update chat state
+      setChatId(chat.id);
+      const newChat = {
+        label: chat.title,
+        value: chat.id.toString()
+      };
+      setChats(prevChats => [newChat, ...prevChats]); // add new chat to the first of the chat list
+
+      updateChatMessages(
+        token,
+        chat.id,
+        question,
+        data.answer,
+        selectedModel.label,
+        imageSrc
+      );
+
+      // when it is an existing chat, directly save chat message
+    } else {
+      updateChatMessages(
+        token,
+        parseInt(chatId),
+        question,
+        data.answer,
+        selectedModel.label,
+        imageSrc
+      );
+    }
+  };
+
   const handleSubmit = async (question: string, imageSrc: ImageFile[]) => {
     setError(null);
     setLoading(true);
@@ -167,36 +215,17 @@ const HomePage: React.FC<HomeProps> = ({
         { question: question, answer: data.answer, model: selectedModel.label }
       ]);
 
-      //save to database
-      if (chatHistory.length === 1 || !chatId) {
-        const chat = await updateChats(data.subject, {});
-        setChatId(chat.id);
-        const newChat = {
-          label: chat.title,
-          value: chat.id.toString()
-        };
-        //add new chat to the first of the list
-        setChats(prevChats => [newChat, ...prevChats]);
+      // Retrieve the token just before making the API call
+      const token = window.localStorage.getItem('token');
 
-        updateChatMessages(
-          question,
-          data.answer,
-          selectedModel.label,
-          chat.id,
-          imageSrc
-        );
-      } else {
-        // update chat title in database
-        updateChatMessages(
-          question,
-          data.answer,
-          selectedModel.label,
-          parseInt(chatId),
-          imageSrc
-        );
+      if (!token) {
+        setError('You must be logged in to submit a message.');
+        return;
       }
+
+      saveChatMessageToDb(question, imageSrc, data);
     } catch (error) {
-      setError(`Error on response from AI model ${selectedModel.value}`);
+      setError('Error on saving chats in database');
       console.error('error', error);
     } finally {
       setLoading(false);
@@ -277,4 +306,4 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-export default HomePage;
+export default WithAuth(HomePage);

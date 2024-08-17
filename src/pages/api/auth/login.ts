@@ -57,7 +57,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         password: hashedPassword
       });
       await userRepository.save(user);
-
     } else if (!user) {
       return res.status(401).json({ error: 'Invalid log credentials' });
     }

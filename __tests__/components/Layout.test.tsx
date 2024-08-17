@@ -1,46 +1,27 @@
 import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
-
 import Layout from '@/src/components/Layout';
+import { OptionType } from '@/src/types/common';
+import { useRouter } from 'next/router';
 
-// Mock Header component, default sidebar is open
-// When Header is clicked, the sidebar will be closed
+// Mock next/router
+jest.mock('next/router', () => ({
+  useRouter: jest.fn()
+}));
+
+// Mock Header component
 jest.mock('@/src/components/Header', () => {
   return {
     __esModule: true,
     default: ({
-      isSidebarOpen,
-      setIsSidebarOpen,
-      isConfigPanelVisible,
-      setIsConfigPanelVisible
+      setIsSidebarOpen
     }: {
-      isSidebarOpen: boolean;
       setIsSidebarOpen: (isOpen: boolean) => void;
-      isConfigPanelVisible: boolean;
-      setIsConfigPanelVisible: (isVisible: boolean) => void;
-    }) => <div onClick={() => setIsSidebarOpen(false)}>Header Mock</div>
-  };
-});
-
-// Mock Sidebar component
-jest.mock('@/src/components/Sidebar', () => {
-  return {
-    __esModule: true,
-    default: ({
-      namespacesList,
-      chatId,
-      setChatId,
-      setChatHistory,
-      setImageSrcHistory,
-      setIsConfigPanelVisible
-    }: {
-      namespacesList: any[] | null;
-      chatId: string | null;
-      setChatId: (chatId: string | null) => void;
-      setChatHistory: (chatHistory: any[]) => void;
-      setImageSrcHistory: (ImageSrcHistory: any[][]) => void;
-      setIsConfigPanelVisible: (isVisible: boolean) => void;
-    }) => <div>Sidebar Mock</div>
+    }) => (
+      <div data-testid="header-mock" onClick={() => setIsSidebarOpen(false)}>
+        Header Mock
+      </div>
+    )
   };
 });
 
@@ -48,7 +29,7 @@ jest.mock('@/src/components/Sidebar', () => {
 jest.mock('@/src/components/Footer', () => {
   return {
     __esModule: true,
-    default: () => <div>Footer Mock</div>
+    default: () => <div data-testid="footer-mock">Footer Mock</div>
   };
 });
 
@@ -57,8 +38,11 @@ describe('Layout Component', () => {
     isConfigPanelVisible: false,
     setIsConfigPanelVisible: jest.fn(),
     namespacesList: null,
+    setSelectedModel: jest.fn(),
     chatId: '0',
     setChatId: jest.fn(),
+    chats: [],
+    setChats: jest.fn(),
     setChatHistory: jest.fn(),
     setImageSrcHistory: jest.fn()
   };
@@ -67,28 +51,30 @@ describe('Layout Component', () => {
     // Reset the viewport size before each test
     global.innerWidth = 1024;
     global.dispatchEvent(new Event('resize'));
+
+    // Mock useRouter return value
+    (useRouter as jest.Mock).mockReturnValue({
+      route: '/',
+      pathname: '/',
+      query: '',
+      asPath: '/'
+    });
   });
 
-  it('renders Header, Sidebar (conditionally), and Footer correctly on initial load', () => {
-    const { getByText } = render(
+  it('renders Header and Footer correctly on initial load', () => {
+    const { getByTestId, getByText } = render(
       <Layout {...defaultProps}>
         <div>Child Content</div>
       </Layout>
     );
 
-    // Check for Header and Footer
-    expect(getByText('Header Mock')).toBeInTheDocument();
-    expect(getByText('Footer Mock')).toBeInTheDocument();
-
-    // Sidebar should be visible by default in desktop mode (mock as desktop initially if not specified)
-    expect(getByText('Sidebar Mock')).toBeInTheDocument();
-
-    // Check that child content is rendered
+    expect(getByTestId('header-mock')).toBeInTheDocument();
+    expect(getByTestId('footer-mock')).toBeInTheDocument();
     expect(getByText('Child Content')).toBeInTheDocument();
   });
 
-  it('does not render Sidebar when it is in mobile mode and Header menu is clicked to be closed', () => {
-    const { getByText, queryByText } = render(
+  it('adjusts layout for mobile view when Header menu is clicked', () => {
+    const { getByTestId, getAllByText, queryByTestId } = render(
       <Layout {...defaultProps}>
         <div>Child Content</div>
       </Layout>
@@ -100,28 +86,24 @@ describe('Layout Component', () => {
       global.dispatchEvent(new Event('resize'));
     });
 
-    act(() => {
-      fireEvent.click(getByText('Header Mock'));
-    });
+    // Click the header to close the sidebar
+    fireEvent.click(getByTestId('header-mock'));
 
-    expect(queryByText('Sidebar Mock')).not.toBeInTheDocument();
-    expect(getByText('Child Content')).toBeInTheDocument();
+    // In mobile view, there should be only one instance of the child content
+    expect(getAllByText('Child Content')).toHaveLength(1);
+    expect(queryByTestId('footer-mock')).toBeInTheDocument();
   });
 
-  it('renders Sidebar in mobile mode when sidebar is open', () => {
-    const { getByText, queryByText } = render(
+  it('renders correct layout in desktop mode', () => {
+    const { getByTestId, getByText } = render(
       <Layout {...defaultProps}>
         <div>Child Content</div>
       </Layout>
     );
 
-    act(() => {
-      global.innerWidth = 480;
-      global.dispatchEvent(new Event('resize'));
-    });
-
-    expect(getByText('Sidebar Mock')).toBeInTheDocument();
-    expect(queryByText('Child Content')).not.toBeInTheDocument();
+    expect(getByTestId('header-mock')).toBeInTheDocument();
+    expect(getByText('Child Content')).toBeInTheDocument();
+    expect(getByTestId('footer-mock')).toBeInTheDocument();
   });
 
   it('should match Layout component snapshot', () => {

@@ -9,12 +9,12 @@ import {
 import '@testing-library/jest-dom';
 
 import Sidebar from '@/src/components/Sidebar';
+import { fetchChats } from '@/src/utils/sqliteChatApiClient';
 import {
-  fetchChats,
-  fetchChatMessages,
   deleteChat,
-  editChatTitle
-} from '@/src/utils/sqliteApiClient';
+  editChatTitle,
+  fetchChatMessages
+} from '@/src/utils/sqliteChatIdApiClient';
 
 // Mock the MenuItem component
 jest.mock('@/src/components/MenuItem', () => {
@@ -79,11 +79,14 @@ jest.mock('@/src/components/AIHub', () => {
   };
 });
 
-jest.mock('@/src/utils/sqliteApiClient', () => ({
-  fetchChats: jest.fn(),
-  fetchChatMessages: jest.fn(),
+jest.mock('@/src/utils/sqliteChatApiClient', () => ({
+  fetchChats: jest.fn()
+}));
+
+jest.mock('@/src/utils/sqliteChatIdApiClient', () => ({
   deleteChat: jest.fn(),
-  editChatTitle: jest.fn()
+  editChatTitle: jest.fn(),
+  fetchChatMessages: jest.fn()
 }));
 
 jest.mock('next/router', () => ({
@@ -121,6 +124,16 @@ describe('Sidebar Component', () => {
         images: []
       }
     ]);
+
+    // Mock localStorage
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn(() => 'mock-token'),
+        setItem: jest.fn(),
+        removeItem: jest.fn()
+      },
+      writable: true
+    });
   });
 
   const renderSidebar = (chatId = '0') =>
@@ -162,7 +175,7 @@ describe('Sidebar Component', () => {
 
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Failed to fetch chats: Fetch failed'
+        expect.stringContaining('Failed to fetch chats')
       );
     });
 
@@ -174,12 +187,12 @@ describe('Sidebar Component', () => {
       renderSidebar();
     });
 
-    expect(fetchChats).toHaveBeenCalled();
-
     await waitFor(() => {
-      expect(screen.getByText('Test Chat 1')).toBeInTheDocument();
-      expect(screen.getByText('Test Chat 2')).toBeInTheDocument();
+      expect(fetchChats).toHaveBeenCalled();
     });
+
+    expect(screen.getByText('Test Chat 1')).toBeInTheDocument();
+    expect(screen.getByText('Test Chat 2')).toBeInTheDocument();
   });
 
   it('handles chat click correctly', async () => {
@@ -196,7 +209,7 @@ describe('Sidebar Component', () => {
       fireEvent.click(chatItem);
     });
 
-    expect(fetchChatMessages).toHaveBeenCalledWith(1);
+    expect(fetchChatMessages).toHaveBeenCalledWith('mock-token', 1);
     expect(mockSetIsConfigPanelVisible).toHaveBeenCalledWith(false);
     expect(mockSetChatHistory).toHaveBeenCalled();
     expect(mockSetImageSrcHistory).toHaveBeenCalled();
@@ -214,7 +227,7 @@ describe('Sidebar Component', () => {
       fireEvent.click(deleteButton);
     });
 
-    expect(deleteChat).toHaveBeenCalledWith('1');
+    expect(deleteChat).toHaveBeenCalledWith('mock-token', '1');
     expect(mockSetChats).toHaveBeenCalled();
     expect(mockSetChatId).toHaveBeenCalledWith('');
     expect(mockSetChatHistory).toHaveBeenCalled();
@@ -233,7 +246,11 @@ describe('Sidebar Component', () => {
       fireEvent.click(editButton);
     });
 
-    expect(editChatTitle).toHaveBeenCalledWith('1', 'New Chat Title');
+    expect(editChatTitle).toHaveBeenCalledWith(
+      'mock-token',
+      '1',
+      'New Chat Title'
+    );
     expect(mockSetChats).toHaveBeenCalled();
   });
 

@@ -8,6 +8,7 @@ import FieldSet from '@/src/components/FieldSet';
 import Notifications from '@/src/components/Notifications';
 import PlusIcon from '@/src/components/PlusIcon';
 import UploadFile from '@/src/components/UploadFile';
+import WithAuth from '@/src/components/WithAuth';
 import { useFormSubmission, useInputChange } from '@/src/hooks';
 import {
   OptionType,
@@ -382,8 +383,6 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
   );
 };
 
-export default UploadFilePage;
-
 export const getStaticProps: GetStaticProps = async () => {
   const namespaces = await fetchNamespaces();
 
@@ -394,3 +393,5 @@ export const getStaticProps: GetStaticProps = async () => {
     revalidate: 60 * 60 * 24 // This is optional. It ensures regeneration of the page after every 24 hour
   };
 };
+
+export default WithAuth(UploadFilePage);

@@ -6,6 +6,7 @@ import DropdownSelect from '@/src/components/DropdownSelect';
 import FieldSet from '@/src/components/FieldSet';
 import Notifications from '@/src/components/Notifications';
 import UploadFile from '@/src/components/UploadFile';
+import WithAuth from '@/src/components/WithAuth';
 import { useFormSubmission, useInputChange } from '@/src/hooks';
 import {
   OptionType,
@@ -393,4 +394,4 @@ const FinetuneModel: FC = () => {
   );
 };
 
-export default FinetuneModel;
+export default WithAuth(FinetuneModel);
