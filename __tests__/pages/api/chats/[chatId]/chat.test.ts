@@ -22,7 +22,7 @@ jest.mock('@/src/db', () => ({
 }));
 
 jest.mock('@/src/middleware/auth', () => ({
-  withAuth: jest.fn((handler) => handler)
+  withAuth: jest.fn(handler => handler)
 }));
 
 describe('Chat API Handler', () => {
@@ -157,9 +157,9 @@ describe('Chat API Handler', () => {
       mockReq.query = { chatId: '1' };
     });
 
-   it('should delete a chat and associated data on DELETE request', async () => {
-    mockReq.method = 'DELETE';
-    mockReq.query = { chatId: '1' };
+    it('should delete a chat and associated data on DELETE request', async () => {
+      mockReq.method = 'DELETE';
+      mockReq.query = { chatId: '1' };
       const mockChat: Partial = {
         id: 1,
         title: 'Test Chat',

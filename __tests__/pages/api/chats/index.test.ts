@@ -10,7 +10,7 @@ jest.mock('@/src/db', () => ({
   User: jest.fn()
 }));
 jest.mock('@/src/middleware/auth', () => ({
-  withAuth: jest.fn((handler) => handler)
+  withAuth: jest.fn(handler => handler)
 }));
 describe('Chat API Handler', () => {
   let mockReq: Partial;
@@ -66,7 +66,10 @@ describe('Chat API Handler', () => {
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse, 1);
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalledWith(mockChat);
-    expect(consoleInfoSpy).toHaveBeenCalledWith('Chat created successfully:', mockChat);
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      'Chat created successfully:',
+      mockChat
+    );
   });
   it('should return 400 if title is missing in POST request', async () => {
     mockReq.method = 'POST';
