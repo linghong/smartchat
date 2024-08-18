@@ -46,6 +46,9 @@ jobs:
           echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> $GITHUB_ENV
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> $GITHUB_ENV
           echo "CLAUDE_API_KEY=${{ secrets.CLAUDE_API_KEY }}" >> $GITHUB_ENV
+          echo "JWT_SECRET=${{ secrets.GWT_SECRET }}" >> $GITHUB_ENV
+          echo "DEFAULT_USERNAME=${{ secrets.DEFAULT_USERNAME }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASSWORD=${{ secrets.DEFAULT_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Rebuild project
         run: yarn build
