@@ -155,6 +155,13 @@ const HomePage: React.FC<HomeProps> = ({
     if (chatHistory.length === 1 || !chatId) {
       const chat = await updateChats(token, data.subject, {});
 
+      // Check if chat is null
+      if (!chat || !chat.id) {
+        setError('Failed to create or retrieve chat.');
+        console.error('Failed to create or retrieve chat.');
+        return;
+      }
+
       // update chat state
       setChatId(chat.id);
       const newChat = {
@@ -206,6 +213,23 @@ const HomePage: React.FC<HomeProps> = ({
         selectedModel,
         selectedNamespace?.value || 'none'
       );
+
+      if (!data) {
+        if (
+          selectedModel.category !== 'hf-large' &&
+          selectedModel.category !== 'hf-small'
+        ) {
+          setError(
+            `We’re experiencing issues with ${selectedModel.label} AI service provided by ${selectedModel.category}.  Please try again later.`
+          );
+          return;
+        } else {
+          setError(
+            'Backend server error. Please check if your SmartChat-Python app is running.'
+          );
+          return;
+        }
+      }
 
       setLoading(false);
       setMessageSubjectList(prevList => [...prevList, data.subject]);

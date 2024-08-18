@@ -22,7 +22,7 @@ export const deleteChat = async (token: string, chatId: string) => {
     }
 
     const result = await res.json();
-    console.info('Chat deleted successfully', result);
+
     return result;
   } catch (error) {
     console.error('Failed to delete chat:', error);
@@ -57,7 +57,7 @@ export const editChatTitle = async (
     }
 
     const result = await res.json();
-    console.info('Chat title updated successfully', result);
+
     return result;
   } catch (error) {
     console.error('Failed to update chat title:', error);
