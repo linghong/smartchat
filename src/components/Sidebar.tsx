@@ -133,24 +133,22 @@ const Sidebar: FC<SidebarProps> = ({
       console.error(`Failed to delete chat: ${error.message}`);
     }
   };
-  const handleEditChat = async (id: string) => {
+  const handleEditChat = async (id: string, newTitle: string) => {
     const token = window.localStorage.getItem('token');
     if (!token) {
       router.push('/login');
       return;
     }
-    const newTitle = prompt('Enter new chat title:');
-    if (newTitle) {
-      try {
-        await editChatTitle(token, id, newTitle);
-        setChats(prevChats =>
-          prevChats.map(chat =>
-            chat.value === id ? { ...chat, label: newTitle } : chat
-          )
-        );
-      } catch (error: any) {
-        console.error(`Failed to update chat title: ${error.message}`);
-      }
+
+    try {
+      await editChatTitle(token, id, newTitle);
+      setChats(prevChats =>
+        prevChats.map(chat =>
+          chat.value === id ? { ...chat, label: newTitle } : chat
+        )
+      );
+    } catch (error: any) {
+      console.error(`Failed to update chat title: ${error.message}`);
     }
   };
 

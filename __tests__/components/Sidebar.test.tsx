@@ -36,7 +36,7 @@ jest.mock('@/src/components/MenuItem', () => {
     onItemClick?: (id: string) => void;
     activeItemId?: string;
     onDeleteClick?: (id: string) => void;
-    onEditClick?: (id: string) => void;
+    onEditClick?: (id: string, newTitle: string) => void;
     setIsSidebarOpen?: (isOpen: boolean) => void;
   }) {
     return (
@@ -62,7 +62,9 @@ jest.mock('@/src/components/MenuItem', () => {
                   </button>
                 )}
                 {onEditClick && (
-                  <button onClick={() => onEditClick(item.value)}>Edit</button>
+                  <button onClick={() => onEditClick(item.value, 'New Title')}>
+                    Edit
+                  </button>
                 )}
               </li>
             ))}
@@ -89,9 +91,11 @@ jest.mock('@/src/utils/sqliteChatIdApiClient', () => ({
   fetchChatMessages: jest.fn()
 }));
 
+const mockPush = jest.fn();
 jest.mock('next/router', () => ({
   useRouter: () => ({
-    pathname: '/'
+    pathname: '/',
+    push: mockPush
   })
 }));
 
@@ -133,6 +137,12 @@ describe('Sidebar Component', () => {
         removeItem: jest.fn()
       },
       writable: true
+    });
+
+    // Mock window.innerWidth
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      value: 1024
     });
   });
 
@@ -235,8 +245,6 @@ describe('Sidebar Component', () => {
   });
 
   it('handles chat editing correctly', async () => {
-    window.prompt = jest.fn().mockReturnValue('New Chat Title');
-
     await act(async () => {
       renderSidebar();
     });
@@ -246,11 +254,7 @@ describe('Sidebar Component', () => {
       fireEvent.click(editButton);
     });
 
-    expect(editChatTitle).toHaveBeenCalledWith(
-      'mock-token',
-      '1',
-      'New Chat Title'
-    );
+    expect(editChatTitle).toHaveBeenCalledWith('mock-token', '1', 'New Title');
     expect(mockSetChats).toHaveBeenCalled();
   });
 
@@ -298,6 +302,21 @@ describe('Sidebar Component', () => {
     expect(mockSetImageSrcHistory).toHaveBeenCalledWith([
       ['image1.jpg', 'image2.jpg']
     ]);
+  });
+
+  it('handles mobile view correctly', async () => {
+    window.innerWidth = 600;
+
+    await act(async () => {
+      renderSidebar();
+    });
+
+    const chatItem = await screen.findByText('Test Chat 1');
+    await act(async () => {
+      fireEvent.click(chatItem);
+    });
+
+    expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false);
   });
 
   it('matches snapshot', async () => {
