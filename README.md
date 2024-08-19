@@ -108,21 +108,36 @@ _This interface allows users to submit data to OpenAI for fine-tuning OpenAI mod
 
 ## Getting Started
 
-### Clone the Repository and Install Dependency:
+### Install Nodejs and Yarn
 
-support nodejs v18 and plus
+Visit the Node.js website and click the download button. Open the downloaded file and follow the instructions to install Node.js.
+
+After installing Node.js, open your terminal (or Command Prompt on Windows).
+Run the following command to install Yarn globally:
+
+```bash
+npm install --global yarn
+```
+
+### Clone or Download the SmartChat Project Code
+
+For non-developer, go to the [GitHub SmartChat page](https://github.com/linghong/smartchat). Click the green "Code" button and select "Download ZIP." Save the ZIP file to your computer and unzip it.
+
+### Install Dependency:
+
+Open the terminal (or Command Prompt on Windows), navigate to your project folder bt typing `cd /Users/username/path-to/your-folder` on macOS terminal, or `cd C:\Users\username\path-to\your-folder` on window Command Prompt. Install Dependency by typing:
 
 ```bash
 yarn install
 ```
 
-### Setup APIs for OpenAI and other accounts
+### Setup APIs for OpenAI and Other Accounts
 
-Sign up for an account on OpenAI, Google, Groq, Athropic, and Pinecone. Generate the necessary API keys from the respective platforms.
+Create accounts and generate API keys for OpenAI, Google, Groq, Anthropic, and Pinecone in their websites.
 
 ### Create Pinecone Index
 
-Access your Pinecone account and establish an index with the dimension set to 1536 and the metric set to cosine.
+Access your Pinecone account and Create an index with the dimension set to 1536 and the metric set to cosine.
 
 ### Configure Environment Variables
 
@@ -132,69 +147,29 @@ Copy the .env.example file and rename it to .env.
 cp .env.example .env
 ```
 
-Open the newly created .env file and replace the placeholders with the actual keys you obtained from OpenAI, Google Gemini, Groq, Anthropic, and Pinecone.
-
-### Manage Local SQLite Database
-
-To ensure privacy and maintain control over critical information, the app uses TypeORM with SQLite to store chat content and settings.
-
-The database configuration and initialization are handled in the `data-source.ts` file located in the `src/db` folder. All migration files are stored in the `src/db/migration` directory and can be managed using TypeORM CLI commands.
-Generate a migration:
-
-```bash
-npx typeorm migration:generate -n YourMigrationName
-```
-
-Run a migration to apply it to your database:
-
-```bash
-npx typeorm migration:run
-```
-
-Revert the latest migration:
-
-```bash
-npx typeorm migration:revert
-
-```
-
-To run SQL query in the terminal, type:
-
-```bash
-sqlite3 database.sqlite
-```
-
-To exit the SQLite prompt, type:
-
-```bash
-sqlite> .quit
-```
-
-### Run the Development Server:
-
-```bash
-yarn dev
-```
+Open the .env file and replace the placeholders with the actual keys you obtained from OpenAI, Google Gemini, Groq, Anthropic, and Pinecone, etc.
 
 ### Access the App
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-### Lint and CI/CD
-
-For lint run:
+In the terminal, run:
 
 ```bash
-yarn lint
+yarn build
 ```
 
-The app uses GitAction for CI/CD
+After the build completes successfully, run:
 
-### Access on Mobile Phone
+```bash
+yarn start
+```
+
+Then open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+
+## Access on Mobile Phone
 
 The app is designed with a responsive display, so you can access it on your phone as well.
 
-#### Preparation
+### Preparation
 
 1. Change Computer Settings: adjust your computer settings to allow the screen to sleep while keeping the system running.
 
@@ -205,11 +180,11 @@ On macOS: Open Terminal and type `ifconfig`. Look for the "inet" address under t
 
 3. Run Your App: Ensure the app is running on your computer by executing the commands yarn build followed by yarn start.
 
-#### Accessing the App at Home
+### Accessing the App at Home
 
 Using your phone, open a web browser. Enter the IP address of your computer followed by the port number your app is running on. For example: http://192.168.1.XX:3000
 
-#### Accessing the App on the Go
+### Accessing the App on the Go
 
 The ngrok tunnels are secured using HTTPS. When accessing the app via the HTTPS URL (e.g., https://abcd1234.ngrok.io) from your phone, the connection is encrypted using TLS (Transport Layer Security). This encryption ensures that the credentials, along with all other data, are protected during transit. Additionally, ngrok URLs are temporary and can be easily regenerated. To use ngrok:
 
@@ -223,7 +198,7 @@ The ngrok tunnels are secured using HTTPS. When accessing the app via the HTTPS 
 
 5. Manage Access and Security: Only run ngrok temporarily when you need to access the app remotely, and stop the tunnel when you’re done to limit public exposure time. Regularly monitor traffic through your ngrok dashboard to ensure that only you are accessing your app. If you’re on a paid plan, you can block specific IP addresses on ngrok dashboard to further secure access.
 
-#### Troubleshooting
+### Troubleshooting
 
 If you cannot access the app, ensure your computer’s firewall isn’t blocking incoming connections on the port your app is running on. For security purpose, do not open any additional incoming ports in your firewall.
 
@@ -231,11 +206,66 @@ On Windows: You may need to create an inbound rule in the Windows Firewall to al
 
 On macOS: Go to System Preferences > Security & Privacy > Firewall, and check if the firewall is blocking incoming connections.
 
-#### Deploying Online
+### Deploying Online
 
-Alternatively, you can deploy your app online, but you must add a login layer to the current code to prevent public access and protect your API credentials from exposure.
+Alternatively, you can deploy your app online. You can deploy the app to any cloud environment, just as you would with other Next.js apps. For a seamless deployment experience, consider using the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), which is recommended by the creators of Next.js.
 
-You can deploy the app to any cloud environment, just as you would with other Next.js apps. For a seamless deployment experience, consider using the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), which is recommended by the creators of Next.js.
+## For Further Development
+
+### Start the Development Server:
+
+The app supports nodejs v18, v20 and later versions. To start the development, run the following commands::
+
+```bash
+yarn install
+yarn dev
+```
+
+Then open [http://localhost:3000](http://localhost:3000) in your browser to view the app.
+
+### About the Local SQLite Database
+
+To ensure privacy and maintain control over critical information, the app uses TypeORM with SQLite to store chat content and settings.
+
+The database configuration and initialization are handled in the `data-source.ts` file located in the `src/db` folder. All migration files are stored in the `src/db/migration` directory and can be managed using TypeORM CLI commands.
+Generate a migration:
+
+```bash
+npx typeorm migration:generate -n YourMigrationName
+```
+
+Apply a migration to your database:
+
+```bash
+npx typeorm migration:run
+```
+
+Revert the latest migration:
+
+```bash
+npx typeorm migration:revert
+
+```
+
+Run SQL query in the terminal:
+
+```bash
+sqlite3 database.sqlite
+```
+
+Exit the SQLite prompt:
+
+```bash
+sqlite> .quit
+```
+
+### Lint and CI/CD
+
+The app uses GitHub Actions for CI/CD to automate testing and deployment processes. To run the linter, execute:
+
+```bash
+yarn lint
+```
 
 ## How to Contribute
 
