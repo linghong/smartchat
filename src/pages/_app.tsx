@@ -16,16 +16,7 @@ const initialFileCategory: OptionType = { value: 'none', label: '1' };
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const isFullPagePage = router.pathname === '/login';
-
-  const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
-
   const [namespacesList, setNamespacesList] = useState(null);
-
-  const [chatId, setChatId] = useState<string>('0'); //chatId is '0', it is at NewChat status
-  const [chats, setChats] = useState<OptionType[]>([]);
-  const [selectedModel, setSelectedModel] = useState<OptionType>(defaultModel);
-  const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
-  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]); //the first one is for Hi, how can I assist you?, so the imageSrc is []
 
   return (
     <>
@@ -37,33 +28,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <Component {...pageProps} />
         </FullPageLayout>
       ) : (
-        <Layout
-          isConfigPanelVisible={isConfigPanelVisible}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          namespacesList={namespacesList}
-          setSelectedModel={setSelectedModel}
-          chatId={chatId}
-          setChatId={setChatId}
-          chats={chats}
-          setChats={setChats}
-          setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
-        >
-          <Component
-            {...pageProps}
-            isConfigPanelVisible={isConfigPanelVisible}
-            setIsConfigPanelVisible={setIsConfigPanelVisible}
-            setNamespacesList={setNamespacesList}
-            selectedModel={selectedModel}
-            setSelectedModel={setSelectedModel}
-            chatId={chatId}
-            setChatId={setChatId}
-            setChats={setChats}
-            chatHistory={chatHistory}
-            setChatHistory={setChatHistory}
-            imageSrcHistory={imageSrcHistory}
-            setImageSrcHistory={setImageSrcHistory}
-          />
+        <Layout namespacesList={namespacesList}>
+          <Component {...pageProps} setNamespacesList={setNamespacesList} />
         </Layout>
       )}
     </>

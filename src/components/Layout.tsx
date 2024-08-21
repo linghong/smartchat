@@ -2,48 +2,62 @@ import {
   useState,
   useEffect,
   FC,
-  ReactNode,
+  ReactElement,
   Dispatch,
-  SetStateAction
+  SetStateAction,
+  cloneElement
 } from 'react';
+import { useRouter } from 'next/router';
 
 import Footer from '@/src/components/Footer';
 import Header from '@/src/components/Header';
 import Sidebar from '@/src/components/Sidebar';
 import { Message, ImageFile } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
+import { initialMessage, defaultModel } from '@/src/utils/initialData';
 
 interface LayoutProps {
-  children: ReactNode;
-  isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
+  children: ReactElement;
   namespacesList: OptionType[] | null;
-  setSelectedModel: Dispatch<SetStateAction<OptionType>>;
-  chatId: string;
-  setChatId: Dispatch<SetStateAction<string>>;
-  chats: OptionType[];
-  setChats: Dispatch<SetStateAction<OptionType[]>>;
-  setChatHistory: Dispatch<SetStateAction<Message[]>>;
-  setImageSrcHistory: Dispatch<SetStateAction<ImageFile[][]>>;
 }
 
-const Layout: FC<LayoutProps> = ({
-  children,
-  isConfigPanelVisible,
-  setIsConfigPanelVisible,
-  namespacesList,
-  setSelectedModel,
-  chatId,
-  setChatId,
-  chats,
-  setChats,
-  setChatHistory,
-  setImageSrcHistory
-}) => {
+const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
+  const [chats, setChats] = useState<OptionType[]>([]);
+  const [chatId, setChatId] = useState<string>('0'); //chatId is '0', it is at NewChat status
+  const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
+  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]); //the first one is for Hi, how can I assist you?, so the imageSrc is []
+
+  const [selectedModel, setSelectedModel] = useState<OptionType>(defaultModel);
+
+  const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+
   const token =
     typeof window !== 'undefined' ? window.localStorage.getItem('token') : null;
+
+  const router = useRouter();
+
+  // Check if the current route is the homepage ("/")
+  const isHomePage = router.pathname === '/';
+
+  // Pass the prop only to the HomePage
+  const childrenWithProps = isHomePage
+    ? cloneElement(children, {
+        isConfigPanelVisible,
+        setIsConfigPanelVisible,
+        imageSrcHistory,
+        setImageSrcHistory,
+        chatHistory,
+        setChatHistory,
+        chatId,
+        setChatId,
+        chats,
+        setChats,
+        selectedModel,
+        setSelectedModel
+      })
+    : children;
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -91,7 +105,7 @@ const Layout: FC<LayoutProps> = ({
       )}
       {isMobile && !isSidebarOpen && (
         <main className="flex flex-col w-full lg:w-70vw h-full px-2">
-          {children}
+          {childrenWithProps}
           <Footer />
         </main>
       )}
@@ -117,7 +131,7 @@ const Layout: FC<LayoutProps> = ({
             <main
               className={`flex flex-col h-full w-full lg:w-9/12 xl:w-8/12 max-w-screen-2xl mx-auto px-2 sm:px-4 lg:px-8`}
             >
-              <div className="flex-grow">{children}</div>
+              <div className="flex-grow">{childrenWithProps}</div>
               <Footer />
             </main>
           </div>
@@ -125,7 +139,7 @@ const Layout: FC<LayoutProps> = ({
       )}
       {!isMobile && !isSidebarOpen && (
         <main className="flex flex-col h-full w-full lg:w-70vw px-2 mx-auto">
-          {children}
+          {childrenWithProps}
           <Footer />
         </main>
       )}

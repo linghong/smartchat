@@ -180,7 +180,13 @@ exports[`Layout Component should match Layout component snapshot 1`] = `
           <div
             class="flex-grow"
           >
-            <div>
+            <div
+              chathistory="[object Object]"
+              chatid="0"
+              chats=""
+              imagesrchistory=""
+              selectedmodel="[object Object]"
+            >
               Child Content
             </div>
           </div>
