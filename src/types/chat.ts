@@ -19,6 +19,13 @@ export interface ImageFile {
   height?: number;
 }
 
+export interface FileData {
+  base64Content: string;
+  type: string;
+  size: number;
+  name: string;
+}
+
 export interface Message {
   question: string;
   answer: string;

@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FileThumbnail renders correctly 1`] = `
+<div
+  class="w-24 h-24 relative group"
+>
+  <svg
+    class="w-full h-full"
+    viewBox="0 0 100 100"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g
+      class="fill-gray-100 stroke-gray-700 stroke-2"
+    >
+      <path
+        d="M20 10 H70 L80 20 V90 H20 Z"
+      />
+      <path
+        class="fill-none"
+        d="M70 10 V20 H80"
+      />
+    </g>
+    <text
+      class="text-xs font-sans fill-gray-700"
+      text-anchor="middle"
+      x="50"
+      y="55"
+    >
+      File
+    </text>
+    <text
+      class="text-[8px] font-sans fill-gray-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      text-anchor="middle"
+      x="50"
+      y="97"
+    >
+      test-file.txt
+    </text>
+  </svg>
+  <div
+    class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 truncate"
+  >
+    test-file.txt
+  </div>
+</div>
+`;
