@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { User, Chat, ChatMessage, ChatImage } from '@/src/db/entities';
+import { User, Chat, ChatMessage, ChatFile } from '@/src/db/entities';
 
 const options: DataSourceOptions = {
   type: 'sqlite',
   database: 'database.sqlite',
-  entities: [User, Chat, ChatMessage, ChatImage],
+  entities: [User, Chat, ChatMessage, ChatFile],
   synchronize: true, //change to false on production
   migrations: ['src/db/migration/*.ts'],
   logging: false, //change to true or ['query', 'error', 'schema'] for debug purpose

@@ -7,7 +7,7 @@ import {
   ManyToOne
 } from 'typeorm';
 
-import type { ImageFile } from '@/src/types/chat';
+import type { FileData } from '@/src/types/chat';
 
 @Entity('users')
 export class User {
@@ -83,19 +83,22 @@ export class ChatMessage {
   @Column('int')
   chatId!: number;
 
-  @OneToMany(() => ChatImage, image => image.chatMessage)
-  images!: ChatImage[];
+  @OneToMany(() => ChatFile, file => file.chatMessage)
+  files!: ChatFile[];
 }
 
-@Entity('chat_images')
-export class ChatImage {
+@Entity('chat_files')
+export class ChatFile {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column('simple-json', { nullable: true })
-  imageFile?: ImageFile;
+  fileData?: FileData;
 
-  @ManyToOne(() => ChatMessage, message => message.images)
+  @Column('varchar')
+  type!: string;
+
+  @ManyToOne(() => ChatMessage, message => message.files)
   chatMessage!: ChatMessage;
 
   @Column('int')
