@@ -22,7 +22,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return resolve(result);
     });
   });
-
   // Apply validation middleware
   await validateLoginInput(req, res);
 
@@ -36,11 +35,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const dataSource = await getAppDataSource();
+
     if (!dataSource) {
       return res.status(500).json({ error: 'Internal server error' });
     }
 
     const userRepository = dataSource.getRepository(User);
+
     let user = await userRepository.findOne({ where: { username } });
 
     // This app is for one person
@@ -52,10 +53,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       password === DEFAULT_PASSWORD
     ) {
       const hashedPassword = await bcrypt.hash(password, 10);
+
       user = userRepository.create({
         username,
         password: hashedPassword
       });
+
       await userRepository.save(user);
     } else if (!user) {
       return res.status(401).json({ error: 'Invalid log credentials' });

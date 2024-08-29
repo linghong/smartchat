@@ -2,19 +2,25 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { marked } from 'marked';
 
 import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone';
-import getGeminiChatCompletion from '@/src/services/llm/gemini';
+
 import getClaudeChatCompletion from '@/src/services/llm/claude';
+import getGeminiChatCompletion from '@/src/services/llm/gemini';
 import { getGroqChatCompletion } from '@/src/services/llm/groq';
 import {
   createEmbedding,
   getOpenAIChatCompletion
 } from '@/src/services/llm/openai';
 import getOpenModelChatCompletion from '@/src/services/llm/opensourceai';
+
+import {
+  processImageFiles,
+  processNonMediaFiles
+} from '@/src/utils/processMessageFile';
+import { FileData, ImageFile } from '@/src/types/chat';
 import {
   extractMessageContent,
   extractSubjectTitle
 } from '@/src/utils/chatMessageHelper';
-import { ImageFile } from '@/src/types/chat';
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,16 +30,12 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const {
-    basePrompt,
-    question,
-    namespace,
-    selectedModel,
-    chatHistory,
-    imageSrc
-  } = req.body;
+  const { basePrompt, namespace, selectedModel, chatHistory, fileSrc } =
+    req.body;
 
-  if (!question && imageSrc.length === 0) {
+  let { question } = req.body;
+
+  if (!question && fileSrc.length === 0) {
     return res.status(400).json({ message: 'No question in the request' });
   }
 
@@ -41,13 +43,12 @@ export default async function handler(
     return res.status(500).json('Model name is missing.');
   }
 
-  const base64ImageSrc = imageSrc?.map((imgSrc: ImageFile) => ({
-    ...imgSrc,
-    base64Image: imgSrc.base64Image.split(',')[1]
-  }));
+  const base64ImageSrc = processImageFiles(fileSrc);
 
-  // replacing newlines with spaces
-  const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
+  question += await processNonMediaFiles(fileSrc);
+
+  // Replace multiple newlines with a single newline to avoid excessive spacing
+  const pretreatedQuestion = question.trim().replace(/\n\s*\n/g, '\n');
 
   try {
     let fetchedText = '';
@@ -67,7 +68,7 @@ export default async function handler(
         chatResponse = await getOpenAIChatCompletion(
           basePrompt,
           chatHistory,
-          sanitizedQuestion,
+          pretreatedQuestion,
           fetchedText,
           selectedModel,
           base64ImageSrc
@@ -78,7 +79,7 @@ export default async function handler(
         chatResponse = await getGroqChatCompletion(
           basePrompt,
           chatHistory,
-          sanitizedQuestion,
+          pretreatedQuestion,
           fetchedText,
           selectedModel
         );
@@ -88,7 +89,7 @@ export default async function handler(
         chatResponse = await getGeminiChatCompletion(
           basePrompt,
           chatHistory,
-          sanitizedQuestion,
+          pretreatedQuestion,
           fetchedText,
           selectedModel,
           base64ImageSrc
@@ -99,7 +100,7 @@ export default async function handler(
         chatResponse = await getClaudeChatCompletion(
           basePrompt,
           chatHistory,
-          sanitizedQuestion,
+          pretreatedQuestion,
           fetchedText,
           selectedModel,
           base64ImageSrc
@@ -123,7 +124,7 @@ export default async function handler(
         chatResponse = await getOpenModelChatCompletion(
           basePrompt,
           chatHistory,
-          sanitizedQuestion,
+          pretreatedQuestion,
           fetchedText,
           selectedModel,
           url

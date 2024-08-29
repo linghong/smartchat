@@ -34,7 +34,7 @@ export default async function handler(
       base64Image: dataUrl,
       size: pngBuffer.length,
       name: `screenshot_${Date.now()}.png`,
-      mimeType: 'image/png'
+      type: 'image/png'
     });
   } catch (error) {
     console.error('Error capturing or processing screen:', error);
