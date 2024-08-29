@@ -120,7 +120,7 @@ describe('sqliteChatIdApiClient', () => {
           userMessage: 'Hello',
           aiMessage: 'Hi there',
           model: 'GPT-4',
-          imageSrc: []
+          fileSrc: []
         })
       });
     });

@@ -1,5 +1,4 @@
-import { Chat, ImageFile } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { FileData } from '@/src/types/chat';
 
 /**
  * Deletes a chat with the given chatId.
@@ -64,11 +63,14 @@ export const editChatTitle = async (
     return null;
   }
 };
+
 /**
  * Create a new chat message with the given details.
  * @param userMessage - The message from the user.
  * @param aiMessage - The message from the AI.
  * @param chatId - The ID of the chat to which the message belongs.
+ * @param model - The AI model used for the response.
+ * @param files - An array of file data associated with the message.
  * @returns The created chat message or an error message if the creation failed.
  */
 export const updateChatMessages = async (
@@ -77,7 +79,7 @@ export const updateChatMessages = async (
   userMessage: string,
   aiMessage: string,
   model: string,
-  imageSrc: ImageFile[]
+  fileSrc: FileData[]
 ) => {
   if (!token) return null;
   try {
@@ -92,7 +94,7 @@ export const updateChatMessages = async (
         userMessage,
         aiMessage,
         model,
-        imageSrc
+        fileSrc
       })
     });
     if (!res.ok) {
