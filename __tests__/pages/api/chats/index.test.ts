@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import handler from '@/src/pages/api/chats/index';
 import { getAppDataSource, Chat, User } from '@/src/db';
 import { withAuth } from '@/src/middleware/auth';
@@ -17,9 +17,8 @@ describe('Chat API Handler', () => {
   let mockRes: Partial;
   let mockDataSource: jest.Mocked;
   let mockChatRepository: jest.Mocked;
-  let mockQueryBuilder: jest.Mocked;
+  let mockQueryBuilder: any;
   let consoleErrorSpy: jest.SpyInstance;
-  let consoleInfoSpy: jest.SpyInstance;
   beforeEach(() => {
     mockReq = {};
     mockRes = {
@@ -33,7 +32,7 @@ describe('Chat API Handler', () => {
       where: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       getMany: jest.fn()
-    } as unknown as jest.Mocked;
+    };
     mockDataSource = {
       getRepository: jest.fn()
     } as unknown as jest.Mocked;
@@ -45,16 +44,14 @@ describe('Chat API Handler', () => {
     (getAppDataSource as jest.Mock).mockResolvedValue(mockDataSource);
     mockDataSource.getRepository.mockReturnValue(mockChatRepository);
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation(() => {});
   });
   afterEach(() => {
     consoleErrorSpy.mockRestore();
-    consoleInfoSpy.mockRestore();
   });
   it('should create a new chat on POST request', async () => {
     mockReq.method = 'POST';
     mockReq.body = { title: 'Test Chat', metadata: { key: 'value' } };
-    const mockChat: Partial = {
+    const mockChat = {
       id: 1,
       title: 'Test Chat',
       userId: 1,
@@ -66,10 +63,6 @@ describe('Chat API Handler', () => {
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse, 1);
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalledWith(mockChat);
-    expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'Chat created successfully:',
-      mockChat
-    );
   });
   it('should return 400 if title is missing in POST request', async () => {
     mockReq.method = 'POST';
@@ -80,11 +73,11 @@ describe('Chat API Handler', () => {
   });
   it('should fetch chats on GET request', async () => {
     mockReq.method = 'GET';
-    const mockChats: Partial[] = [
+    const mockChats = [
       { id: 1, title: 'Chat 1', createdAt: new Date() },
       { id: 2, title: 'Chat 2', createdAt: new Date() }
     ];
-    mockQueryBuilder.getMany.mockResolvedValue(mockChats as Chat[]);
+    mockQueryBuilder.getMany.mockResolvedValue(mockChats);
     await handler(mockReq as NextApiRequest, mockRes as NextApiResponse, 1);
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith(mockChats);

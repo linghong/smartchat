@@ -7,7 +7,7 @@ import {
   EntityMetadataNotFoundError
 } from 'typeorm';
 
-import { getAppDataSource, Chat, User, ChatMessage, ChatImage } from '@/src/db';
+import { getAppDataSource, Chat, User, ChatMessage, ChatFile } from '@/src/db';
 import { withAuth } from '@/src/middleware/auth';
 
 const handleDeleteRequest = async (
@@ -20,18 +20,18 @@ const handleDeleteRequest = async (
     // Find the chat
     const chat = await transactionalEntityManager.findOne(Chat, {
       where: { id: chatIdNum },
-      relations: ['messages', 'messages.images']
+      relations: ['messages', 'messages.files']
     });
 
     if (!chat) {
       return res.status(404).json({ error: 'Chat not found' });
     }
 
-    // Delete all images associated with the chat's messages
+    // Delete all files associated with the chat's messages
     if (chat.messages) {
       for (const message of chat.messages) {
-        if (message.images) {
-          await transactionalEntityManager.delete(ChatImage, {
+        if (message.files) {
+          await transactionalEntityManager.delete(ChatFile, {
             messageId: message.id
           });
         }

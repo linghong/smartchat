@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { getAppDataSource, ChatMessage, ChatImage } from '@/src/db';
+import { getAppDataSource, ChatMessage, ChatFile } from '@/src/db';
 import { withAuth } from '@/src/middleware/auth';
 
 const handler = withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
@@ -9,10 +9,10 @@ const handler = withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(500).json({ message: 'AppDataSource is null' });
 
   const chatMessageRepository = dataSource.getRepository(ChatMessage);
-  const chatImageRepository = dataSource.getRepository(ChatImage);
+  const chatFileRepository = dataSource.getRepository(ChatFile);
 
   if (req.method === 'POST') {
-    const { userMessage, aiMessage, model, chatId, imageSrc } = req.body;
+    const { userMessage, aiMessage, model, chatId, fileSrc } = req.body;
 
     if (!userMessage || !aiMessage || !chatId) {
       return res.status(400).json({ message: 'Missing required fields' });
@@ -27,15 +27,16 @@ const handler = withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
       });
       await chatMessageRepository.save(chatMessage);
 
-      if (imageSrc && Array.isArray(imageSrc)) {
-        const chatImages = imageSrc.map(imageFile =>
-          chatImageRepository.create({
-            imageFile,
+      if (fileSrc && Array.isArray(fileSrc)) {
+        const chatFiles = fileSrc.map(fileData =>
+          chatFileRepository.create({
+            fileData,
+            type: fileData.type,
             chatMessage: chatMessage,
-            messageId: chatMessage.id // Explicitly set the messageId
+            messageId: chatMessage.id
           })
         );
-        await chatImageRepository.save(chatImages);
+        await chatFileRepository.save(chatFiles);
       }
 
       res.status(201).json({ success: true, messageId: chatMessage.id });
@@ -52,7 +53,7 @@ const handler = withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const chatMessages = await chatMessageRepository.find({
         where: { chat: { id: parseInt(chatId) } },
-        relations: ['images'],
+        relations: ['files'],
         order: { createdAt: 'ASC' }
       });
 

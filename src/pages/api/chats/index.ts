@@ -23,7 +23,7 @@ const handlePostRequest = async (
     metadata
   });
   await chatRepository.save(chat);
-  console.info('Chat created successfully:', chat);
+
   res.status(201).json(chat);
 };
 

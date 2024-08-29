@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 import handler from '@/src/pages/api/chats/[chatId]/chat';
-import { getAppDataSource, Chat, ChatMessage, ChatImage } from '@/src/db';
+import { getAppDataSource, Chat, ChatMessage, ChatFile } from '@/src/db';
 import { withAuth } from '@/src/middleware/auth';
 
 // Mock the db dependencies
@@ -18,7 +18,7 @@ jest.mock('@/src/db', () => ({
   getAppDataSource: jest.fn(),
   Chat: jest.fn(),
   ChatMessage: jest.fn(),
-  ChatImage: jest.fn()
+  ChatFile: jest.fn()
 }));
 
 jest.mock('@/src/middleware/auth', () => ({
@@ -31,7 +31,7 @@ describe('Chat API Handler', () => {
   let mockDataSource: jest.Mocked<DataSource>;
   let mockChatRepository: jest.Mocked<Repository<Chat>>;
   let mockChatMessageRepository: jest.Mocked<Repository<ChatMessage>>;
-  let mockChatImageRepository: jest.Mocked<Repository<ChatImage>>;
+  let mockChatFileRepository: jest.Mocked<Repository<ChatFile>>;
   let mockQueryBuilder: jest.Mocked<SelectQueryBuilder<Chat>>;
   let mockEntityManager: jest.Mocked<EntityManager>;
   let consoleErrorSpy: jest.SpyInstance;
@@ -85,7 +85,7 @@ describe('Chat API Handler', () => {
       remove: jest.fn()
     } as unknown as jest.Mocked;
 
-    mockChatImageRepository = {
+    mockChatFileRepository = {
       remove: jest.fn()
     } as unknown as jest.Mocked;
 
@@ -93,7 +93,7 @@ describe('Chat API Handler', () => {
     mockDataSource.getRepository.mockImplementation(entity => {
       if (entity === Chat) return mockChatRepository;
       if (entity === ChatMessage) return mockChatMessageRepository;
-      if (entity === ChatImage) return mockChatImageRepository;
+      if (entity === ChatFile) return mockChatFileRepository;
       return {} as any;
     });
 
@@ -174,12 +174,12 @@ describe('Chat API Handler', () => {
             metadata: { key: 'value' },
             chat: {} as Chat,
             chatId: 1,
-            images: [
+            files: [
               {
                 id: 1,
-                imageFile: {
-                  base64Image: 'base64string',
-                  mimeType: 'image/jpeg',
+                fileData: {
+                  base64Content: 'base64string',
+                  type: 'image/jpeg',
                   size: 1000,
                   name: 'image1.jpg'
                 },
@@ -188,9 +188,9 @@ describe('Chat API Handler', () => {
               },
               {
                 id: 2,
-                imageFile: {
-                  base64Image: 'base64string',
-                  mimeType: 'image/jpeg',
+                fileData: {
+                  base64Content: 'base64string',
+                  type: 'image/jpeg',
                   size: 1000,
                   name: 'image2.jpg'
                 },
@@ -208,12 +208,12 @@ describe('Chat API Handler', () => {
             metadata: { key: 'value' },
             chat: {} as Chat,
             chatId: 1,
-            images: [
+            files: [
               {
                 id: 3,
-                imageFile: {
-                  base64Image: 'base64string',
-                  mimeType: 'image/jpeg',
+                fileData: {
+                  base64Content: 'base64string',
+                  type: 'image/jpeg',
                   size: 1000,
                   name: 'image3.jpg'
                 },
@@ -231,7 +231,7 @@ describe('Chat API Handler', () => {
       expect(mockDataSource.transaction).toHaveBeenCalled();
       expect(mockEntityManager.findOne).toHaveBeenCalledWith(Chat, {
         where: { id: 1 },
-        relations: ['messages', 'messages.images']
+        relations: ['messages', 'messages.files']
       });
       expect(mockEntityManager.delete).toHaveBeenCalledTimes(4); // once for each message's images, once for messages, once for chat
       expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -280,7 +280,7 @@ describe('Chat API Handler', () => {
             createdAt: new Date(),
             chat: {} as Chat,
             chatId: 1,
-            images: []
+            files: []
           }
         ]
       };
@@ -290,7 +290,7 @@ describe('Chat API Handler', () => {
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
-      expect(mockEntityManager.delete).toHaveBeenCalledTimes(3); // Chat, ChatMessage ChatImage
+      expect(mockEntityManager.delete).toHaveBeenCalledTimes(3); // Chat, ChatMessage ChatFile
       expect(mockRes.status).toHaveBeenCalledWith(200);
     });
   });
