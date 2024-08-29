@@ -12,7 +12,7 @@ export type ChatType = {
 
 export interface ImageFile {
   base64Image: string;
-  mimeType: string;
+  type: string;
   size: number;
   name: string;
   width?: number;
@@ -24,6 +24,8 @@ export interface FileData {
   type: string;
   size: number;
   name: string;
+  width?: number;
+  height?: number;
 }
 
 export interface Message {
