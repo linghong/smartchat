@@ -15,8 +15,12 @@ const mockGoogleGenerativeAI = GoogleGenerativeAI as jest.MockedClass<
 describe('getGeminiChatCompletion', () => {
   const basePrompt = 'Base Prompt';
   const chatHistory: Message[] = [
-    { question: '', answer: 'I am an AI assistant. Do you need help?' },
-    { question: 'Question 1', answer: 'Answer 1' }
+    {
+      question: '',
+      answer: 'I am an AI assistant. Do you need help?',
+      model: 'gpt-4'
+    },
+    { question: 'Question 1', answer: 'Answer 1', model: 'gpt-4' }
   ];
   const userMessage = 'User Message';
   const fetchedText = 'Fetched Text';

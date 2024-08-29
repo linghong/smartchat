@@ -184,7 +184,7 @@ exports[`Layout Component should match Layout component snapshot 1`] = `
               chathistory="[object Object]"
               chatid="0"
               chats=""
-              imagesrchistory=""
+              filesrchistory=""
               selectedmodel="[object Object]"
             >
               Child Content

@@ -1,12 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import ChatInput from '@/src/components/ChatInput';
-
-// Mock the file-to-base64 conversion utility
-jest.mock('@/src/utils/fileFetchAndConversion', () => ({
-  fileToBase64: jest.fn().mockResolvedValue('mocked-base64-string')
-}));
 
 // Mock the image validation utility
 jest.mock('@/src/utils/mediaValidationHelper', () => ({
@@ -20,7 +16,10 @@ describe('ChatInput', () => {
   const defaultProps = {
     onSubmit: mockOnSubmit,
     isVisionModel: true,
-    selectedModel: { value: 'gpt-4-vision', label: 'GPT-4 Vision' },
+    selectedModel: {
+      value: 'ai-model',
+      label: 'AI model'
+    },
     isConfigPanelVisible: false,
     setIsConfigPanelVisible: mockSetIsConfigPanelVisible
   };
@@ -37,7 +36,7 @@ describe('ChatInput', () => {
       )
     ).toBeInTheDocument();
     expect(screen.getByLabelText('Capture Screenshot')).toBeInTheDocument();
-    expect(screen.getByLabelText('Upload Image')).toBeInTheDocument();
+    expect(screen.getByLabelText('Upload File')).toBeInTheDocument();
   });
 
   it('closes config panel when user starts typing', () => {
@@ -103,80 +102,83 @@ describe('ChatInput', () => {
     expect(submitButton).not.toBeDisabled();
   });
 
-  it('disables image upload when isVisionModel is false', () => {
+  it('disables screen capture feature when isVisionModel is false', () => {
     render(<ChatInput {...defaultProps} isVisionModel={false} />);
-    expect(screen.getByLabelText('Upload Image')).toBeDisabled();
     expect(screen.getByLabelText('Capture Screenshot')).toBeDisabled();
   });
 
-  it('handles image upload correctly', async () => {
+  it('handles file upload correctly', async () => {
+    const user = userEvent.setup();
     render(<ChatInput {...defaultProps} />);
+
     const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
-    const input = screen.getByLabelText('Upload image');
-
-    Object.defineProperty(input, 'files', {
-      value: [file]
+    const input = screen.getByLabelText('Upload file', {
+      selector: 'input[type="file"]'
     });
 
-    fireEvent.change(input);
+    await user.upload(input, file);
 
-    await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: 'Click to view larger image 1' })
-      ).toBeInTheDocument();
-    });
-  });
-
-  it('handles image deletion', async () => {
-    render(<ChatInput {...defaultProps} />);
-    const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
-    const input = screen.getByLabelText('Upload image');
-
-    Object.defineProperty(input, 'files', {
-      value: [file]
-    });
-
-    fireEvent.change(input);
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: 'Click to view larger image 1' })
-      ).toBeInTheDocument();
-    });
-
-    const deleteButton = screen.getByLabelText('Delete image 1');
-    fireEvent.click(deleteButton);
-
+    expect(input.files[0]).toBe(file);
+    expect(input.files.item(0)).toBe(file);
+    expect(input.files).toHaveLength(1);
     expect(
-      screen.queryByRole('button', { name: 'Click to view larger image 1' })
-    ).not.toBeInTheDocument();
+      await screen.findByRole('button', {
+        name: /Click to view larger file 1/i
+      })
+    ).toBeInTheDocument();
   });
 
-  it('handles multiple image uploads', async () => {
+  it('handles multiple files uploads', async () => {
+    const user = userEvent.setup();
+
     render(<ChatInput {...defaultProps} />);
+
     const file1 = new File(['dummy content 1'], 'test1.png', {
       type: 'image/png'
     });
     const file2 = new File(['dummy content 2'], 'test2.png', {
       type: 'image/png'
     });
-    const input = screen.getByLabelText('Upload image');
-
-    fireEvent.change(input, { target: { files: [file1] } });
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: 'Click to view larger image 1' })
-      ).toBeInTheDocument();
+    const input = screen.getByLabelText('Upload file', {
+      selector: 'input[type="file"]'
     });
 
-    fireEvent.change(input, { target: { files: [file2] } });
+    await user.upload(input, file1);
+    await user.upload(input, file2);
 
-    await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: 'Click to view larger image 2' })
-      ).toBeInTheDocument();
+    expect(
+      await screen.findByRole('button', {
+        name: /Click to view larger file 1/i
+      })
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole('button', {
+        name: /Click to view larger file 2/i
+      })
+    ).toBeInTheDocument();
+  });
+
+  it('handles file deletion', async () => {
+    const user = userEvent.setup();
+    render(<ChatInput {...defaultProps} />);
+    const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
+    const input = screen.getByLabelText('Upload file', {
+      selector: 'input[type="file"]'
     });
+
+    await user.upload(input, file);
+    expect(
+      await screen.findByRole('button', {
+        name: /Click to view larger file 1/i
+      })
+    ).toBeInTheDocument();
+
+    const deleteButton = screen.getByLabelText('Delete file 1');
+    await fireEvent.click(deleteButton);
+
+    expect(
+      screen.queryByRole('button', { name: /Click to view larger file 1/i })
+    ).not.toBeInTheDocument();
   });
 
   it('handles screen capture correctly', async () => {
@@ -186,7 +188,7 @@ describe('ChatInput', () => {
         Promise.resolve({
           message: 'Success',
           base64Image: 'mocked-base64-string',
-          mimeType: 'image/png',
+          type: 'image/png',
           size: 1000,
           name: 'screenshot.png'
         })
@@ -197,21 +199,23 @@ describe('ChatInput', () => {
     fireEvent.click(captureButton);
 
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: 'Click to view larger image 1' })
-      ).toBeInTheDocument();
+      const thumbnailElement = screen.getByTitle(/Thumbnail for uploaded file/);
+      expect(thumbnailElement).toBeInTheDocument();
+
+      const deleteButton = screen.getByLabelText(/Delete file/);
+      expect(deleteButton).toBeInTheDocument();
     });
   });
 
   it('handles image upload error', async () => {
     const { isSupportedImage } = require('@/src/utils/mediaValidationHelper');
-    isSupportedImage.mockReturnValueOnce(['Unsupported image format']);
+    isSupportedImage.mockReturnValueOnce(['Unsupported file format']);
 
     render(<ChatInput {...defaultProps} />);
     const file = new File(['dummy content'], 'test.unsupported', {
       type: 'image/unsupported'
     });
-    const input = screen.getByLabelText('Upload image');
+    const input = screen.getByLabelText('Upload file');
 
     Object.defineProperty(input, 'files', {
       value: [file]
@@ -220,7 +224,7 @@ describe('ChatInput', () => {
     fireEvent.change(input);
 
     await waitFor(() => {
-      expect(screen.getByText('Unsupported image format')).toBeInTheDocument();
+      expect(screen.getByText('Unsupported file format')).toBeInTheDocument();
     });
   });
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 
 import Header from '@/src/components/Header';
 import { Message, ImageFile } from '@/src/types/chat';
+import { OptionType } from '@/src/types/common';
 import { initialMessage } from '@/src/utils/initialData';
 
 jest.mock('next/router', () => ({
@@ -16,7 +17,7 @@ const setIsConfigPanelVisible = jest.fn();
 const setSelectedModel = jest.fn();
 const setChatId = jest.fn();
 const setChatHistory = jest.fn();
-const setImageSrcHistory = jest.fn();
+const setFileSrcHistory = jest.fn();
 const mockPush = jest.fn();
 
 describe('Header Component', () => {
@@ -39,7 +40,7 @@ describe('Header Component', () => {
         setChatId={setChatId}
         setSelectedModel={setSelectedModel}
         setChatHistory={setChatHistory}
-        setImageSrcHistory={setImageSrcHistory}
+        setFileSrcHistory={setFileSrcHistory}
       />
     );
 
@@ -69,7 +70,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -88,7 +89,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
     });
@@ -120,7 +121,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -140,7 +141,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -160,7 +161,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -179,7 +180,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -198,7 +199,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -218,7 +219,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -236,7 +237,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -256,7 +257,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -274,7 +275,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -289,7 +290,7 @@ describe('Header Component', () => {
           setChatId={setChatId}
           setSelectedModel={setSelectedModel}
           setChatHistory={setChatHistory}
-          setImageSrcHistory={setImageSrcHistory}
+          setFileSrcHistory={setFileSrcHistory}
         />
       );
 
@@ -307,7 +308,7 @@ describe('Header Component', () => {
         setChatId={setChatId}
         setSelectedModel={setSelectedModel}
         setChatHistory={setChatHistory}
-        setImageSrcHistory={setImageSrcHistory}
+        setFileSrcHistory={setFileSrcHistory}
       />
     );
     expect(asFragment()).toMatchSnapshot();

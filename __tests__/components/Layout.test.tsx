@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { cloneElement } from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
 import Layout from '@/src/components/Layout';
 import { OptionType } from '@/src/types/common';
@@ -35,16 +35,7 @@ jest.mock('@/src/components/Footer', () => {
 
 describe('Layout Component', () => {
   const defaultProps = {
-    isConfigPanelVisible: false,
-    setIsConfigPanelVisible: jest.fn(),
-    namespacesList: null,
-    setSelectedModel: jest.fn(),
-    chatId: '0',
-    setChatId: jest.fn(),
-    chats: [],
-    setChats: jest.fn(),
-    setChatHistory: jest.fn(),
-    setImageSrcHistory: jest.fn()
+    namespacesList: null
   };
 
   beforeEach(() => {

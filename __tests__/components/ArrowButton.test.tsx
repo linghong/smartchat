@@ -34,4 +34,9 @@ describe('ArrowButton Component', () => {
     const { asFragment } = render(<ArrowButton disabled={false} />);
     expect(asFragment()).toMatchSnapshot();
   });
+
+  test('renders correctly and matches the snapshot when disabled', () => {
+    const { asFragment } = render(<ArrowButton disabled={true} />);
+    expect(asFragment()).toMatchSnapshot();
+  });
 });

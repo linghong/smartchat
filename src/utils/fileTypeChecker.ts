@@ -1,4 +1,4 @@
-import { ImageFile, FileData } from '@/src/types/chat';
+import { FileData } from '@/src/types/chat';
 
 export const fileType = (fileData: FileData) => {
   const { type } = fileData;

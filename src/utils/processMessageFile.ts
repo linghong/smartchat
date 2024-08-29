@@ -6,9 +6,11 @@ export const processImageFiles = (fileSrc: FileData[]) => {
 
   fileSrc.map((fileData: FileData) => {
     if (fileData.type.startsWith('image/')) {
+      const { type, base64Content } = fileData;
       base64ImageSrc.push({
         ...fileData,
-        base64Image: fileData.base64Content.split(',')[1]
+        base64Image: base64Content.split(',')[1],
+        mimeType: type
       });
     }
   });

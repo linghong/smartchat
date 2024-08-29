@@ -22,7 +22,7 @@ describe('ChatMessage Component', () => {
   let message: Message;
   let loading: boolean;
   let lastIndex: boolean;
-  let imageSrc: ImageFile[];
+  let fileSrc: FileData[];
   let handleImageDelete: jest.Mock;
 
   beforeEach(() => {
@@ -33,17 +33,17 @@ describe('ChatMessage Component', () => {
     };
     loading = false;
     lastIndex = true;
-    handleImageDelete = jest.fn();
-    imageSrc = [
+    handleFileDelete = jest.fn();
+    fileSrc = [
       {
-        base64Image: '/path/to/image1.png',
-        mimeType: 'image/png',
+        base64Content: '/path/to/image1.png',
+        type: 'image/png',
         size: 5000,
         name: 'image1'
       },
       {
-        base64Image: 'path/to/image2.png',
-        mimeType: 'image/png',
+        base64Content: 'path/to/image2.png',
+        type: 'image/png',
         size: 8000,
         name: 'image2'
       }
@@ -61,8 +61,8 @@ describe('ChatMessage Component', () => {
         message={message}
         lastIndex={lastIndex}
         loading={loading}
-        imageSrc={imageSrc}
-        handleImageDelete={handleImageDelete}
+        fileSrc={fileSrc}
+        handleFileDelete={handleFileDelete}
       />
     );
     expect(screen.getByText('What is AI?')).toBeInTheDocument();
@@ -78,8 +78,8 @@ describe('ChatMessage Component', () => {
         message={message}
         lastIndex={lastIndex}
         loading={loading}
-        imageSrc={imageSrc}
-        handleImageDelete={handleImageDelete}
+        fileSrc={fileSrc}
+        handleFileDelete={handleFileDelete}
       />
     );
     expect(screen.getByAltText('User avatar')).toBeInTheDocument();
@@ -94,8 +94,8 @@ describe('ChatMessage Component', () => {
           message={message}
           lastIndex={true}
           loading={true}
-          imageSrc={imageSrc}
-          handleImageDelete={handleImageDelete}
+          fileSrc={fileSrc}
+          handleFileDelete={handleFileDelete}
         />
       );
     });
@@ -111,8 +111,8 @@ describe('ChatMessage Component', () => {
           message={message}
           lastIndex={true}
           loading={false}
-          imageSrc={imageSrc}
-          handleImageDelete={handleImageDelete}
+          fileSrc={fileSrc}
+          handleFileDelete={handleFileDelete}
         />
       );
     });
@@ -136,8 +136,8 @@ describe('ChatMessage Component', () => {
         message={messageWithHtml}
         lastIndex={lastIndex}
         loading={loading}
-        imageSrc={imageSrc}
-        handleImageDelete={handleImageDelete}
+        fileSrc={fileSrc}
+        handleFileDelete={handleFileDelete}
       />
     );
     const result = sanitizeAndFormate(encodeHTMLEntities(userMessage));
@@ -149,19 +149,23 @@ describe('ChatMessage Component', () => {
     expect(codeElement).toHaveClass('inline-code');
   });
 
-  it('renders image thumbnails when imageSrc is provided', () => {
+  it('renders file thumbnails when fileSrc is provided', () => {
     render(
       <ChatMessage
         isNew={false}
         message={message}
         lastIndex={lastIndex}
         loading={loading}
-        imageSrc={imageSrc}
-        handleImageDelete={handleImageDelete}
+        fileSrc={fileSrc}
+        handleFileDelete={handleFileDelete}
       />
     );
-    expect(screen.getByTitle('Uploaded image thumbnail 1')).toBeInTheDocument();
-    expect(screen.getByTitle('Uploaded image thumbnail 2')).toBeInTheDocument();
+    expect(
+      screen.getByTitle('Thumbnail for uploaded file 1')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTitle('Thumbnail for uploaded file 2')
+    ).toBeInTheDocument();
   });
 
   it('does not render image thumbnails for new messages', () => {
@@ -171,8 +175,8 @@ describe('ChatMessage Component', () => {
         message={message}
         lastIndex={lastIndex}
         loading={loading}
-        imageSrc={imageSrc}
-        handleImageDelete={handleImageDelete}
+        fileSrc={fileSrc}
+        handleFileDelete={handleFileDelete}
       />
     );
     expect(
@@ -196,8 +200,8 @@ describe('ChatMessage Component', () => {
         message={messageWithCode}
         lastIndex={lastIndex}
         loading={loading}
-        imageSrc={imageSrc}
-        handleImageDelete={handleImageDelete}
+        fileSrc={fileSrc}
+        handleFileDelete={handleFileDelete}
       />
     );
     expect(screen.getByText("Here's a code example:")).toBeInTheDocument();
@@ -233,8 +237,8 @@ describe('ChatMessage Component', () => {
         message={messageWithMultipleCodeBlocks}
         lastIndex={true}
         loading={false}
-        imageSrc={[]}
-        handleImageDelete={jest.fn()}
+        fileSrc={[]}
+        handleFileDelete={jest.fn()}
       />
     );
 
@@ -274,8 +278,8 @@ describe('ChatMessage Component', () => {
         message={message}
         lastIndex={lastIndex}
         loading={loading}
-        imageSrc={imageSrc}
-        handleImageDelete={handleImageDelete}
+        fileSrc={fileSrc}
+        handleFileDelete={handleFileDelete}
       />
     );
     expect(asFragment()).toMatchSnapshot();

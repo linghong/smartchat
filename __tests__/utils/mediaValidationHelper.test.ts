@@ -4,11 +4,11 @@ import { ImageFile } from '@/src/types/chat';
 describe('isSupportedImage', () => {
   const createImageFile = (
     size: number,
-    mimeType: string,
+    type: string,
     name: string = 'test.jpg'
-  ): ImageFile => ({
+  ): FileData => ({
     size,
-    mimeType,
+    type,
     name,
     base64Image:
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACklEQVR42mP8/wcAAgUBAXkGKD8AAAAASUVORK5CYII=' // Example base64 string

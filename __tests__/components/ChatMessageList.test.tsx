@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ChatMessageList from '@/src/components/ChatMessageList';
-import { Message, ImageFile } from '@/src/types/chat';
+import { Message, FileData } from '@/src/types/chat';
 
 jest.mock('@/src/components/ChatMessage', () => {
   return function MockChatMessage({
@@ -10,7 +10,7 @@ jest.mock('@/src/components/ChatMessage', () => {
     isNew,
     lastIndex,
     loading,
-    imageSrc
+    fileSrc
   }: any) {
     return (
       <div data-testid={`chat-message`}>
@@ -21,10 +21,10 @@ jest.mock('@/src/components/ChatMessage', () => {
           )}
           <div>{message.model}</div>
           <div>{message.answer}</div>
-          {imageSrc &&
-            imageSrc.map((img: ImageFile, i: number) => (
+          {fileSrc &&
+            fileSrc.map((file: FileData, i: number) => (
               <div key={i}>
-                {img.name} ({img.mimeType})
+                {file.name} ({file.type})
               </div>
             ))}
         </div>
@@ -34,7 +34,7 @@ jest.mock('@/src/components/ChatMessage', () => {
 });
 
 describe('ChatMessageList', () => {
-  const mockHandleImageDelete = jest.fn();
+  const mockHandleFileDelete = jest.fn();
   const defaultProps = {
     chatHistory: [
       {
@@ -49,8 +49,8 @@ describe('ChatMessageList', () => {
       }
     ] as Message[],
     loading: false,
-    imageSrcHistory: [[], []],
-    handleImageDelete: mockHandleImageDelete
+    fileSrcHistory: [[], []],
+    handleFileDelete: mockHandleFileDelete
   };
 
   it('renders correct number of ChatMessage components', () => {
@@ -70,27 +70,25 @@ describe('ChatMessageList', () => {
     expect(screen.getByTestId('loading-indicator')).toBeInTheDocument();
   });
 
-  it('handles image src history', () => {
+  it('handles file src history', () => {
     const customProps = {
       ...defaultProps,
-      imageSrcHistory: [
+      fileSrcHistory: [
         [
           {
-            base64Image: 'data:image/png;base64,abc123',
-            mimeType: 'image/png',
-            size: 1000,
+            file: new File([''], 'test1.png', { type: 'image/png' }),
+            type: 'image/png',
             name: 'test1.png'
           }
         ],
         [
           {
-            base64Image: 'data:image/jpeg;base64,def456',
-            mimeType: 'image/jpeg',
-            size: 2000,
+            file: new File([''], 'test2.jpg', { type: 'image/jpeg' }),
+            type: 'image/jpeg',
             name: 'test2.jpg'
           }
         ]
-      ] as ImageFile[][]
+      ] as FileData[][]
     };
     render(<ChatMessageList {...customProps} />);
     expect(screen.getByText('test1.png (image/png)')).toBeInTheDocument();
@@ -106,7 +104,8 @@ describe('ChatMessageList', () => {
     };
     render(<ChatMessageList {...newConversationProps} />);
 
-    expect(screen.getByText('Hi, how can I assist you?')).toBeInTheDocument(); // The question should not be rendered for a new conversation
+    expect(screen.getByText('Hi, how can I assist you?')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-message')).not.toHaveTextContent('');
   });
 
   it('matches snapshot', () => {

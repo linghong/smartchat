@@ -1,6 +1,6 @@
 import {
   blobToFile,
-  fileToBase64,
+  fileToDataURLBase64,
   fetchImageAsBase64,
   getImageDimensions
 } from '@/src/utils/fileFetchAndConversion';
@@ -42,12 +42,12 @@ describe('fileFetchAndConversion', () => {
     });
   });
 
-  describe('fileToBase64', () => {
+  describe('fileToDataURLBase64', () => {
     it('should convert a File to a base64 string', async () => {
       const file = new File(['test content'], 'test.txt', {
         type: 'text/plain'
       });
-      const base64 = await fileToBase64(file);
+      const base64 = await fileToDataURLBase64(file);
 
       expect(base64).toMatch(/^data:text\/plain;base64,/);
     });

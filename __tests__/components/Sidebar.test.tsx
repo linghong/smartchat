@@ -104,7 +104,7 @@ const mockSetIsSidebarOpen = jest.fn();
 const mockSetChatId = jest.fn();
 const mockSetChats = jest.fn();
 const mockSetChatHistory = jest.fn();
-const mockSetImageSrcHistory = jest.fn();
+const mockSetFileSrcHistory = jest.fn();
 
 const mockNamespacesList = [
   { label: 'Namespace 1', value: 'ns1' },
@@ -125,7 +125,7 @@ describe('Sidebar Component', () => {
         userMessage: 'Hello',
         aiMessage: 'Hi there',
         model: 'model1',
-        images: []
+        files: []
       }
     ]);
 
@@ -158,7 +158,7 @@ describe('Sidebar Component', () => {
         chats={mockChats}
         setChats={mockSetChats}
         setChatHistory={mockSetChatHistory}
-        setImageSrcHistory={mockSetImageSrcHistory}
+        setFileSrcHistory={mockSetFileSrcHistory}
       />
     );
 
@@ -222,7 +222,7 @@ describe('Sidebar Component', () => {
     expect(fetchChatMessages).toHaveBeenCalledWith('mock-token', 1);
     expect(mockSetIsConfigPanelVisible).toHaveBeenCalledWith(false);
     expect(mockSetChatHistory).toHaveBeenCalled();
-    expect(mockSetImageSrcHistory).toHaveBeenCalled();
+    expect(mockSetFileSrcHistory).toHaveBeenCalled();
     expect(mockSetChatId).toHaveBeenCalledWith('1');
     expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false);
   });
@@ -241,7 +241,7 @@ describe('Sidebar Component', () => {
     expect(mockSetChats).toHaveBeenCalled();
     expect(mockSetChatId).toHaveBeenCalledWith('');
     expect(mockSetChatHistory).toHaveBeenCalled();
-    expect(mockSetImageSrcHistory).toHaveBeenCalled();
+    expect(mockSetFileSrcHistory).toHaveBeenCalled();
   });
 
   it('handles chat editing correctly', async () => {
@@ -277,16 +277,16 @@ describe('Sidebar Component', () => {
         model: 'Gemini-1.5 Pro Exp'
       }
     ]);
-    expect(mockSetImageSrcHistory).toHaveBeenCalledWith([[]]);
+    expect(mockSetFileSrcHistory).toHaveBeenCalledWith([[]]);
   });
 
-  it('handles chat messages with images correctly', async () => {
+  it('handles chat messages with files correctly', async () => {
     (fetchChatMessages as jest.Mock).mockResolvedValue([
       {
         userMessage: 'Hello',
         aiMessage: 'Hi there',
         model: 'model1',
-        images: [{ imageFile: 'image1.jpg' }, { imageFile: 'image2.jpg' }]
+        files: [{ fileData: 'file1.jpg' }, { fileData: 'file2.jpg' }]
       }
     ]);
 
@@ -299,8 +299,8 @@ describe('Sidebar Component', () => {
       fireEvent.click(chatItem);
     });
 
-    expect(mockSetImageSrcHistory).toHaveBeenCalledWith([
-      ['image1.jpg', 'image2.jpg']
+    expect(mockSetFileSrcHistory).toHaveBeenCalledWith([
+      ['file1.jpg', 'file2.jpg']
     ]);
   });
 

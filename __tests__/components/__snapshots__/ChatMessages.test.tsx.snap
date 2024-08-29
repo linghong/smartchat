@@ -37,11 +37,11 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
           class="w-20 h-full mx-2 relative"
         >
           <div
-            aria-label="Click to view larger image 1"
+            aria-label="Click to view larger file 1"
             class="mr-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100"
             role="button"
             tabindex="0"
-            title="Uploaded image thumbnail 1"
+            title="Thumbnail for uploaded file 1"
           >
             <div
               class="bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer"
@@ -53,11 +53,11 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
           class="w-20 h-full mx-2 relative"
         >
           <div
-            aria-label="Click to view larger image 2"
+            aria-label="Click to view larger file 2"
             class="mr-2 p-1 bg-clip-border bg-slate-100 border-2 border-violet-100"
             role="button"
             tabindex="0"
-            title="Uploaded image thumbnail 2"
+            title="Thumbnail for uploaded file 2"
           >
             <div
               class="bg-no-repeat bg-center bg-contain min-h-[60px] h-full w-full cursor-pointer"

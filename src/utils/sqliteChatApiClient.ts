@@ -1,4 +1,4 @@
-import { Chat, ImageFile } from '@/src/types/chat';
+import { Chat } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
 /**
