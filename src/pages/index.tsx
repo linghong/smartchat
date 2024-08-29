@@ -18,7 +18,7 @@ import Notification from '@/src/components/Notification';
 import WithAuth from '@/src/components/WithAuth';
 
 import { modelOptions } from '@/config/modellist';
-import { Message, ImageFile } from '@/src/types/chat';
+import { Message, FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
 import { initialMessage } from '@/src/utils/initialData';
@@ -36,8 +36,8 @@ interface HomeProps {
   setChats: Dispatch<SetStateAction<OptionType[]>>;
   chatHistory: Message[];
   setChatHistory: Dispatch<SetStateAction<Message[]>>;
-  imageSrcHistory: ImageFile[][];
-  setImageSrcHistory: Dispatch<SetStateAction<ImageFile[][]>>;
+  fileSrcHistory: FileData[][];
+  setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
 }
@@ -52,8 +52,8 @@ const HomePage: React.FC<HomeProps> = ({
   setChats,
   chatHistory,
   setChatHistory,
-  imageSrcHistory,
-  setImageSrcHistory,
+  fileSrcHistory,
+  setFileSrcHistory,
   isConfigPanelVisible,
   setIsConfigPanelVisible
 }) => {
@@ -102,7 +102,7 @@ const HomePage: React.FC<HomeProps> = ({
     async (
       basePrompt: string,
       question: string,
-      imageSrc: ImageFile[],
+      fileSrc: FileData[],
       selectedModel: OptionType,
       namespace: string
     ) => {
@@ -115,7 +115,7 @@ const HomePage: React.FC<HomeProps> = ({
           body: JSON.stringify({
             basePrompt,
             question,
-            imageSrc,
+            fileSrc,
             chatHistory,
             namespace,
             selectedModel
@@ -142,7 +142,7 @@ const HomePage: React.FC<HomeProps> = ({
 
   const saveChatMessageToDb = async (
     question: string,
-    imageSrc: ImageFile[],
+    fileSrc: FileData[],
     data: any
   ) => {
     const token = window.localStorage.getItem('token');
@@ -176,7 +176,7 @@ const HomePage: React.FC<HomeProps> = ({
         question,
         data.answer,
         selectedModel.label,
-        imageSrc
+        fileSrc
       );
 
       // when it is an existing chat, directly save chat message
@@ -187,18 +187,15 @@ const HomePage: React.FC<HomeProps> = ({
         question,
         data.answer,
         selectedModel.label,
-        imageSrc
+        fileSrc
       );
     }
   };
 
-  const handleSubmit = async (question: string, imageSrc: ImageFile[]) => {
+  const handleSubmit = async (question: string, fileSrc: FileData[]) => {
     setError(null);
     setLoading(true);
-    setImageSrcHistory((prevHistory: ImageFile[][]) => [
-      ...prevHistory,
-      imageSrc
-    ]);
+    setFileSrcHistory((prevHistory: FileData[][]) => [...prevHistory, fileSrc]);
 
     setChatHistory((prevHistory: Message[]) => [
       ...prevHistory,
@@ -209,7 +206,7 @@ const HomePage: React.FC<HomeProps> = ({
       const data = await fetchChatResponse(
         basePrompt,
         question,
-        imageSrc,
+        fileSrc,
         selectedModel,
         selectedNamespace?.value || 'none'
       );
@@ -247,7 +244,7 @@ const HomePage: React.FC<HomeProps> = ({
         return;
       }
 
-      saveChatMessageToDb(question, imageSrc, data);
+      saveChatMessageToDb(question, fileSrc, data);
     } catch (error) {
       setError('Error on saving chats in database');
       console.error('error', error);
@@ -256,8 +253,8 @@ const HomePage: React.FC<HomeProps> = ({
     }
   };
 
-  const handleImageDelete = (id: number) => {
-    setImageSrcHistory((prevHistory: ImageFile[][]) => {
+  const handleFileDelete = (id: number) => {
+    setFileSrcHistory((prevHistory: FileData[][]) => {
       const newHistory = [...prevHistory];
       newHistory[newHistory.length - 1] = [
         ...newHistory[newHistory.length - 1].slice(0, id),
@@ -275,7 +272,7 @@ const HomePage: React.FC<HomeProps> = ({
   useEffect(() => {
     if (isNewChat) {
       setChatHistory([initialMessage]);
-      setImageSrcHistory([[]]); // Reset image history as well
+      setFileSrcHistory([[]]); // Reset file history as well
       setIsNewChat(false);
     }
     // eslint-disable-next-line
@@ -301,8 +298,8 @@ const HomePage: React.FC<HomeProps> = ({
         <ChatMessageList
           chatHistory={chatHistory}
           loading={loading}
-          imageSrcHistory={imageSrcHistory}
-          handleImageDelete={handleImageDelete}
+          fileSrcHistory={fileSrcHistory}
+          handleFileDelete={handleFileDelete}
         />
       </div>
 

@@ -8,22 +8,27 @@ import React, {
   Dispatch,
   SetStateAction
 } from 'react';
+import DOMPurify from 'isomorphic-dompurify';
 import { RiScreenshot2Fill } from 'react-icons/ri';
 
-import { ImageFile } from '@/src/types/chat';
+import { FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
 import ArrowButton from '@/src/components/ArrowButton';
 import ButtonWithTooltip from '@/src/components/ButtonWithTooltip';
-import ImageUploadIcon from '@/src/components/ImageUploadIcon';
-import ImageListWithModal from '@/src/components/ImageListWithModal';
+import FileUploadIcon from '@/src/components/FileUploadIcon';
+
+import FileListWithModal from '@/src/components/FileListWithModal';
 import Notification from '@/src/components/Notification';
 
-import { fileToBase64 } from '@/src/utils/fileFetchAndConversion';
+import {
+  fileToDataURLBase64,
+  fileToArrayBufferBase64
+} from '@/src/utils/fileFetchAndConversion';
 import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
 
 interface ChatInputProps {
-  onSubmit: (question: string, imageSrc: ImageFile[]) => void;
+  onSubmit: (question: string, fileSrc: FileData[]) => void;
   isVisionModel: boolean;
   selectedModel: OptionType;
   isConfigPanelVisible: boolean;
@@ -40,20 +45,20 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [userInput, setUserInput] = useState('');
   const [rows, setRows] = useState<number>(1);
-  const [imageSrc, setImageSrc] = useState<ImageFile[]>([]);
-  const [imageError, setImageError] = useState<string[]>([]);
+  const [fileSrc, setFileSrc] = useState<FileData[]>([]);
+  const [fileError, setFileError] = useState<string[]>([]);
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement> | KeyboardEvent) => {
       e.preventDefault();
       const question: string = userInput.trim();
 
-      if (question.length === 0 && imageSrc.length === 0) return;
+      if (question.length === 0 && fileSrc.length === 0) return;
 
-      onSubmit(question, imageSrc);
+      onSubmit(question, fileSrc);
 
       setUserInput('');
-      setImageSrc([]);
+      setFileSrc([]);
 
       // Reset the textarea rows to initial state
       setRows(1);
@@ -63,50 +68,69 @@ const ChatInput: React.FC<ChatInputProps> = ({
         textAreaRef.current.style.height = 'auto';
       }
     },
-    [imageSrc, userInput, onSubmit]
+    [fileSrc, userInput, onSubmit]
   );
 
-  const handleImageUpload = async (file: File) => {
-    if (!isVisionModel) return;
-    if (!file) return;
-
+  const handleImageFile = async (fileData: FileData) => {
+    if (!isVisionModel) {
+      setFileError([...fileError, 'The model only supports text message.']);
+      return;
+    }
     try {
-      const base64Image = await fileToBase64(file);
-      const newImage: ImageFile = {
-        base64Image,
-        mimeType: file.type,
-        size: file.size,
-        name: file.name
-      };
-
       const imageVadiationError = isSupportedImage(
         selectedModel?.value || '',
-        newImage
+        fileData
       );
       if (imageVadiationError.length !== 0) {
-        setImageError([...imageError, ...imageVadiationError]);
+        setFileError([...fileError, ...imageVadiationError]);
         return;
       }
 
-      setImageSrc([...imageSrc, newImage]);
+      setFileSrc([...fileSrc, fileData]);
     } catch {
-      throw new Error('Failed to read the file.');
+      setFileError([...fileError, 'Failed to read the image file']);
+      throw new Error('Failed to read the image file.');
+    }
+  };
+
+  const handleFileUpload = async (file: File) => {
+    if (!file) return;
+
+    const base64Content = await fileToDataURLBase64(file);
+    if (!base64Content) {
+      setFileError([...fileError, 'Error happened when extracting file data']);
+      return;
+    }
+    const fileType = file.type
+      ? file.type
+      : base64Content.slice(5).split(';')[0];
+
+    const fileData: FileData = {
+      base64Content: DOMPurify.sanitize(base64Content),
+      type: fileType,
+      size: file.size,
+      name: file.name
+    };
+
+    if (fileType.startsWith('image/')) {
+      await handleImageFile(fileData);
+    } else {
+      setFileSrc([...fileSrc, fileData]);
     }
   };
 
   const handleScreenCapture = async () => {
     try {
       const response = await fetch('/api/tools/screenshot', { method: 'POST' });
-      const { message, base64Image, mimeType, size, name } =
-        await response.json();
+      const { message, base64Image, type, size, name } = await response.json();
 
       if (!response.ok) {
         alert(message);
         return;
       }
-      const newImage: ImageFile = {
-        base64Image,
-        mimeType,
+      const newImage: FileData = {
+        base64Content: base64Image,
+        type,
         size,
         name
       };
@@ -116,24 +140,25 @@ const ChatInput: React.FC<ChatInputProps> = ({
         newImage
       );
       if (imageVadiationError.length !== 0) {
-        setImageError([...imageError, ...imageVadiationError]);
+        setFileError([...fileError, ...imageVadiationError]);
         return;
       }
 
-      setImageSrc([...imageSrc, newImage]);
+      setFileSrc([...fileSrc, newImage]);
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred while capturing the screen');
     }
   };
 
-  const handleImageDelete = (id: number) => {
-    setImageSrc(prevImages => prevImages.filter((_, index) => index !== id));
+  const handleFileDelete = (id: number) => {
+    setFileSrc(prevFiles => prevFiles.filter((_, index) => index !== id));
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
-    setUserInput(newValue);
+
+    setUserInput(DOMPurify.sanitize(newValue));
 
     // Close config panel when user starts typing
     if (newValue.length >= 1 && isConfigPanelVisible) {
@@ -195,10 +220,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <div className="flex flex-col w-full justify-around flex-shrink-0 items-center  my-1">
-      {imageSrc.length > 0 && (
-        <ImageListWithModal
-          imageSrc={imageSrc}
-          handleImageDelete={handleImageDelete}
+      {fileSrc.length > 0 && (
+        <FileListWithModal
+          fileSrc={fileSrc}
+          handleFileDelete={handleFileDelete}
           isDeleteIconShow={true}
         />
       )}
@@ -214,14 +239,14 @@ const ChatInput: React.FC<ChatInputProps> = ({
           />
           <ButtonWithTooltip
             icon={
-              <ImageUploadIcon
-                onImageUpload={handleImageUpload}
+              <FileUploadIcon
+                onFileUpload={handleFileUpload}
                 isDisabled={!isVisionModel}
               />
             }
             onClick={() => {}}
-            ariaLabel="Upload Image"
-            tooltipText="Upload Image"
+            ariaLabel="Upload File"
+            tooltipText="Upload File"
             isDisabled={!isVisionModel}
             tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
           />
@@ -244,13 +269,13 @@ const ChatInput: React.FC<ChatInputProps> = ({
             aria-label="Enter your message here"
           />
           <ArrowButton
-            disabled={userInput === '' && imageSrc.length === 0}
+            disabled={userInput === '' && fileSrc.length === 0}
             aria-label="Send"
           />
         </form>
       </div>
-      {imageError &&
-        imageError.map((err, i) => (
+      {fileError &&
+        fileError.map((err, i) => (
           <Notification key={i} type="error" message={err} />
         ))}
     </div>

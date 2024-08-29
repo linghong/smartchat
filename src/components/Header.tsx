@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'next/router';
 
 import SignOut from '@/src/components/SignOut';
-import { Message, ImageFile } from '@/src/types/chat';
+import { Message, FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { initialMessage, defaultModel } from '@/src/utils/initialData';
 
@@ -27,7 +27,7 @@ interface HeaderProps {
   setChatId: Dispatch<SetStateAction<string>>;
   setSelectedModel: Dispatch<SetStateAction<OptionType>>;
   setChatHistory: Dispatch<SetStateAction<Message[]>>;
-  setImageSrcHistory: Dispatch<SetStateAction<ImageFile[][]>>;
+  setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
 }
 
 const Header: FC<HeaderProps> = ({
@@ -38,7 +38,7 @@ const Header: FC<HeaderProps> = ({
   setChatId,
   setSelectedModel,
   setChatHistory,
-  setImageSrcHistory
+  setFileSrcHistory
 }) => {
   const router = useRouter();
   const pathName = router.pathname;
@@ -69,7 +69,7 @@ const Header: FC<HeaderProps> = ({
     setChatId('0');
     setSelectedModel(defaultModel);
     setChatHistory([initialMessage]);
-    setImageSrcHistory([[]]);
+    setFileSrcHistory([[]]);
   };
 
   const toggleSidebar = (e: MouseEvent<HTMLButtonElement>) => {

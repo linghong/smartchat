@@ -1,8 +1,8 @@
-import { ImageFile } from '@/src/types/chat';
+import { FileData } from '@/src/types/chat';
 
-export const isSupportedImage = (model: string, image: ImageFile) => {
+export const isSupportedImage = (model: string, image: FileData) => {
   let error: string[] = [];
-  const { size, name, mimeType } = image;
+  const { size, name, type } = image;
 
   switch (model) {
     case 'gpt-4o':
@@ -28,7 +28,7 @@ export const isSupportedImage = (model: string, image: ImageFile) => {
         'image/webp'
       ];
 
-      if (!validOpenAIImageType.includes(mimeType))
+      if (!validOpenAIImageType.includes(type))
         error.push(
           'Only .png, .jpeg, .jpg, .webp, and non-animated .gif. images are supported by OpenAI.'
         );
@@ -51,7 +51,7 @@ export const isSupportedImage = (model: string, image: ImageFile) => {
         'image/heic',
         'image/heif'
       ];
-      if (!validGeminiImageType.includes(mimeType)) {
+      if (!validGeminiImageType.includes(type)) {
         error.push(
           'Only .png, .jpeg, .webp,.heic and .heif images are supported by Gemini.'
         );
@@ -72,7 +72,7 @@ export const isSupportedImage = (model: string, image: ImageFile) => {
         'image/gif'
       ];
 
-      if (!validClaudeImageType.includes(mimeType)) {
+      if (!validClaudeImageType.includes(type)) {
         error.push(
           'Only .png, .jpeg, .webp, .gif images are supported by Claude AI.'
         );

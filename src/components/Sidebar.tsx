@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 
 import MenuItem from '@/src/components/MenuItem';
 import AIHub from '@/src/components/AIHub';
-import { Message, ImageFile } from '@/src/types/chat';
+import { Message, FileData } from '@/src/types/chat';
 import { initialMessage } from '@/src/utils/initialData';
 import { OptionType } from '@/src/types/common';
 import { fetchChats } from '@/src/utils/sqliteChatApiClient';
@@ -30,7 +30,7 @@ interface SidebarProps {
   chats: OptionType[];
   setChats: Dispatch<SetStateAction<OptionType[]>>;
   setChatHistory: Dispatch<SetStateAction<Message[]>>;
-  setImageSrcHistory: Dispatch<SetStateAction<ImageFile[][]>>;
+  setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
 }
 
 const models = [
@@ -54,7 +54,7 @@ const Sidebar: FC<SidebarProps> = ({
   chats,
   setChats,
   setChatHistory,
-  setImageSrcHistory
+  setFileSrcHistory
 }) => {
   const isFetchingChats = useRef(false);
   const router = useRouter();
@@ -94,9 +94,10 @@ const Sidebar: FC<SidebarProps> = ({
         model: m.model
       }));
 
-      const newImageSrcHistory: ImageFile[][] = chatMessages.map((msg: any) => {
-        // Assuming msg.images is an array of { imageFile: ... } objects
-        return msg.images.map((img: any) => img.imageFile);
+      const newFileSrcHistory: FileData[][] = chatMessages.map((msg: any) => {
+        // Assuming msg.files is an array of { fileData: ... } objects
+        if (!msg.files || !Array.isArray(msg.files)) return;
+        return msg.files.map((file: any) => file.fileData);
       });
       // On mobile or narrow screen size, only either the sidebar or chat content is visible at a time
       if (window.innerWidth < 640) {
@@ -107,11 +108,11 @@ const Sidebar: FC<SidebarProps> = ({
       setChatId(chatId);
 
       setChatHistory(newChatHistory);
-      setImageSrcHistory(newImageSrcHistory);
+      setFileSrcHistory(newFileSrcHistory);
     } else {
       // Handle the case where there are no chat messages
       setChatHistory([initialMessage]);
-      setImageSrcHistory([[]]);
+      setFileSrcHistory([[]]);
     }
   };
 
@@ -127,7 +128,7 @@ const Sidebar: FC<SidebarProps> = ({
       if (chatId === id) {
         setChatId('');
         setChatHistory([initialMessage]);
-        setImageSrcHistory([[]]);
+        setFileSrcHistory([[]]);
       }
     } catch (error: any) {
       console.error(`Failed to delete chat: ${error.message}`);

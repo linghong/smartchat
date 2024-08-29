@@ -1,10 +1,10 @@
 import Image from 'next/image';
 
-import { Message, ImageFile } from '@/src/types/chat';
-import ImageListWithModal from '@/src/components/ImageListWithModal';
 import AITextMessage, {
   sanitizeAndFormate
 } from '@/src/components/AITextMessage';
+import FileListWithModal from '@/src/components/FileListWithModal';
+import { Message, FileData } from '@/src/types/chat';
 import { encodeHTMLEntities } from '@/src/utils/htmlEntities';
 
 type ChatMessageProps = {
@@ -12,17 +12,17 @@ type ChatMessageProps = {
   message: Message;
   lastIndex: boolean;
   loading: boolean;
-  imageSrc: ImageFile[];
-  handleImageDelete: (e: any) => void;
+  fileSrc: FileData[];
+  handleFileDelete: (e: any) => void;
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
   isNew,
   message,
-  imageSrc,
+  fileSrc,
   lastIndex,
   loading,
-  handleImageDelete
+  handleFileDelete
 }) => {
   return (
     <>
@@ -49,9 +49,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
               }}
             />
             {
-              <ImageListWithModal
-                imageSrc={imageSrc}
-                handleImageDelete={handleImageDelete}
+              <FileListWithModal
+                fileSrc={fileSrc}
+                handleFileDelete={handleFileDelete}
               />
             }
           </div>

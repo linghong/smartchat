@@ -1,20 +1,20 @@
 import React, { useRef, useEffect } from 'react';
 
-import { Message, ImageFile } from '@/src/types/chat';
+import { Message, FileData } from '@/src/types/chat';
 import ChatMessage from './ChatMessage';
 
 interface ChatMessageListProps {
   chatHistory: Message[];
   loading: boolean;
-  imageSrcHistory: ImageFile[][];
-  handleImageDelete: (id: number) => void;
+  fileSrcHistory: FileData[][];
+  handleFileDelete: (id: number) => void;
 }
 
 const ChatMessageList: React.FC<ChatMessageListProps> = ({
   chatHistory,
   loading,
-  imageSrcHistory,
-  handleImageDelete
+  fileSrcHistory,
+  handleFileDelete
 }) => {
   const messagesRef = useRef<HTMLDivElement>(null);
 
@@ -41,8 +41,8 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
             message={chat}
             lastIndex={index === chatHistory.length - 1}
             loading={loading}
-            imageSrc={imageSrcHistory[index]} // Pass imageSrc here
-            handleImageDelete={handleImageDelete}
+            fileSrc={fileSrcHistory[index]}
+            handleFileDelete={handleFileDelete}
           />
         ))}
       </div>

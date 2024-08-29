@@ -5,14 +5,15 @@ import {
   ReactElement,
   Dispatch,
   SetStateAction,
-  cloneElement
+  cloneElement,
+  ReactNode
 } from 'react';
 import { useRouter } from 'next/router';
 
 import Footer from '@/src/components/Footer';
 import Header from '@/src/components/Header';
 import Sidebar from '@/src/components/Sidebar';
-import { Message, ImageFile } from '@/src/types/chat';
+import { Message, FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { initialMessage, defaultModel } from '@/src/utils/initialData';
 
@@ -21,11 +22,26 @@ interface LayoutProps {
   namespacesList: OptionType[] | null;
 }
 
+interface HomePageProps {
+  isConfigPanelVisible: boolean;
+  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
+  fileSrcHistory: FileData[][];
+  setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
+  chatHistory: Message[];
+  setChatHistory: Dispatch<SetStateAction<Message[]>>;
+  chatId: string;
+  setChatId: Dispatch<SetStateAction<string>>;
+  chats: OptionType[];
+  setChats: Dispatch<SetStateAction<OptionType[]>>;
+  selectedModel: OptionType;
+  setSelectedModel: Dispatch<SetStateAction<OptionType>>;
+}
+
 const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
   const [chats, setChats] = useState<OptionType[]>([]);
   const [chatId, setChatId] = useState<string>('0'); //chatId is '0', it is at NewChat status
   const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
-  const [imageSrcHistory, setImageSrcHistory] = useState<ImageFile[][]>([[]]); //the first one is for Hi, how can I assist you?, so the imageSrc is []
+  const [fileSrcHistory, setFileSrcHistory] = useState<FileData[][]>([[]]); //the first one is for Hi, how can I assist you?, so the fileSrc is []
 
   const [selectedModel, setSelectedModel] = useState<OptionType>(defaultModel);
 
@@ -43,20 +59,23 @@ const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
 
   // Pass the prop only to the HomePage
   const childrenWithProps = isHomePage
-    ? cloneElement(children, {
-        isConfigPanelVisible,
-        setIsConfigPanelVisible,
-        imageSrcHistory,
-        setImageSrcHistory,
-        chatHistory,
-        setChatHistory,
-        chatId,
-        setChatId,
-        chats,
-        setChats,
-        selectedModel,
-        setSelectedModel
-      })
+    ? cloneElement(
+        children as React.ReactElement,
+        {
+          isConfigPanelVisible,
+          setIsConfigPanelVisible,
+          fileSrcHistory,
+          setFileSrcHistory,
+          chatHistory,
+          setChatHistory,
+          chatId,
+          setChatId,
+          chats,
+          setChats,
+          selectedModel,
+          setSelectedModel
+        } as HomePageProps
+      )
     : children;
 
   useEffect(() => {
@@ -84,7 +103,7 @@ const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
         setIsConfigPanelVisible={setIsConfigPanelVisible}
         setChatId={setChatId}
         setChatHistory={setChatHistory}
-        setImageSrcHistory={setImageSrcHistory}
+        setFileSrcHistory={setFileSrcHistory}
       />
 
       {isMobile && isSidebarOpen && (
@@ -98,7 +117,7 @@ const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
             setChatHistory={setChatHistory}
             chats={chats}
             setChats={setChats}
-            setImageSrcHistory={setImageSrcHistory}
+            setFileSrcHistory={setFileSrcHistory}
             setIsConfigPanelVisible={setIsConfigPanelVisible}
           />
         </div>
@@ -122,7 +141,7 @@ const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
                 chats={chats}
                 setChats={setChats}
                 setChatHistory={setChatHistory}
-                setImageSrcHistory={setImageSrcHistory}
+                setFileSrcHistory={setFileSrcHistory}
                 setIsConfigPanelVisible={setIsConfigPanelVisible}
               />
             </div>

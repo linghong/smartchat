@@ -17,12 +17,38 @@ export const blobToFile = (blob: Blob, fileName: string): File => {
  * @param file - The File object to convert.
  * @returns A promise that resolves with the base64 string.
  */
-export const fileToBase64 = (file: File): Promise<string> => {
+export const fileToDataURLBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => resolve(reader.result as string);
     reader.onerror = reject;
     reader.readAsDataURL(file);
+  });
+};
+
+/**
+ * Converts a File object to a base64 string using ArrayBuffer.
+ * @param file - The File object to convert.
+ * @returns A promise that resolves with the base64 string.
+ */
+export const fileToArrayBufferBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const arrayBuffer = e.target?.result as ArrayBuffer;
+
+      // Convert the ArrayBuffer to a string of Unicode code points (byte values)
+      const stringFromBytes = String.fromCharCode(
+        ...new Uint8Array(arrayBuffer)
+      );
+
+      // Use the btoa() function ("binary to ASCII") to encode the string
+      const base64String = btoa(stringFromBytes);
+
+      resolve(base64String);
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
   });
 };
 
