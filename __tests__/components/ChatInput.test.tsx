@@ -18,7 +18,8 @@ describe('ChatInput', () => {
     isVisionModel: true,
     selectedModel: {
       value: 'ai-model',
-      label: 'AI model'
+      label: 'AI model',
+      contextWindow: 8192
     },
     isConfigPanelVisible: false,
     setIsConfigPanelVisible: mockSetIsConfigPanelVisible
@@ -114,12 +115,12 @@ describe('ChatInput', () => {
     const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
     const input = screen.getByLabelText('Upload file', {
       selector: 'input[type="file"]'
-    });
+    }) as HTMLInputElement;
 
     await user.upload(input, file);
 
-    expect(input.files[0]).toBe(file);
-    expect(input.files.item(0)).toBe(file);
+    expect(input.files?.[0]).toBe(file);
+    expect(input.files?.item(0)).toBe(file);
     expect(input.files).toHaveLength(1);
     expect(
       await screen.findByRole('button', {
@@ -156,6 +157,39 @@ describe('ChatInput', () => {
         name: /Click to view larger file 2/i
       })
     ).toBeInTheDocument();
+  });
+
+  it('handles file upload when isVisionModel is false', async () => {
+    const user = userEvent.setup();
+    render(<ChatInput {...defaultProps} isVisionModel={false} />);
+
+    const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
+    const input = screen.getByLabelText('Upload file', {
+      selector: 'input[type="file"]'
+    }) as HTMLInputElement;
+
+    await user.upload(input, file);
+
+    expect(
+      await screen.findByText('The model only supports text message.')
+    ).toBeInTheDocument();
+  });
+
+  it('disables file upload when selectedModel.contextWindow is small', () => {
+    render(
+      <ChatInput
+        {...defaultProps}
+        selectedModel={{ ...defaultProps.selectedModel, contextWindow: 2000 }}
+      />
+    );
+
+    const uploadButton = screen.getByLabelText('Upload File');
+    expect(uploadButton).toBeDisabled();
+
+    const tooltip = screen.getByText(
+      "ai-model's context window is too small to add a file"
+    );
+    expect(tooltip).toBeInTheDocument();
   });
 
   it('handles file deletion', async () => {
@@ -207,25 +241,30 @@ describe('ChatInput', () => {
     });
   });
 
-  it('handles image upload error', async () => {
+  it('handles file upload error for unsupported image format', async () => {
     const { isSupportedImage } = require('@/src/utils/mediaValidationHelper');
     isSupportedImage.mockReturnValueOnce(['Unsupported file format']);
 
+    const user = userEvent.setup();
     render(<ChatInput {...defaultProps} />);
-    const file = new File(['dummy content'], 'test.unsupported', {
-      type: 'image/unsupported'
-    });
-    const input = screen.getByLabelText('Upload file');
 
-    Object.defineProperty(input, 'files', {
-      value: [file]
-    });
+    const file = new File(['dummy content'], 'test.bmp', { type: 'image/bmp' });
+    const input = screen.getByLabelText('Upload file', {
+      selector: 'input[type="file"]'
+    }) as HTMLInputElement;
 
-    fireEvent.change(input);
+    await user.upload(input, file);
 
-    await waitFor(() => {
-      expect(screen.getByText('Unsupported file format')).toBeInTheDocument();
-    });
+    expect(
+      await screen.findByText('Unsupported file format')
+    ).toBeInTheDocument();
+  });
+
+  it('handles screen capture when isVisionModel is false', async () => {
+    render(<ChatInput {...defaultProps} isVisionModel={false} />);
+    const captureButton = screen.getByLabelText('Capture Screenshot');
+
+    expect(captureButton).toBeDisabled();
   });
 
   it('handles screen capture error', async () => {
@@ -256,7 +295,6 @@ describe('ChatInput', () => {
     const consoleSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
-    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
     render(<ChatInput {...defaultProps} />);
     const captureButton = screen.getByLabelText('Capture Screenshot');
@@ -264,13 +302,12 @@ describe('ChatInput', () => {
 
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalled();
-      expect(alertMock).toHaveBeenCalledWith(
-        'An error occurred while capturing the screen'
-      );
+      expect(
+        screen.getByText('An error occurred while capturing the screen')
+      ).toBeInTheDocument();
     });
 
     consoleSpy.mockRestore();
-    alertMock.mockRestore();
   });
 
   it('matches snapshot', () => {

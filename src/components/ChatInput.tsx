@@ -76,21 +76,17 @@ const ChatInput: React.FC<ChatInputProps> = ({
       setFileError([...fileError, 'The model only supports text message.']);
       return;
     }
-    try {
-      const imageVadiationError = isSupportedImage(
-        selectedModel?.value || '',
-        fileData
-      );
-      if (imageVadiationError.length !== 0) {
-        setFileError([...fileError, ...imageVadiationError]);
-        return;
-      }
 
-      setFileSrc([...fileSrc, fileData]);
-    } catch {
-      setFileError([...fileError, 'Failed to read the image file']);
-      throw new Error('Failed to read the image file.');
+    const imageVadiationError = isSupportedImage(
+      selectedModel?.value || '',
+      fileData
+    );
+    if (imageVadiationError.length !== 0) {
+      setFileError([...fileError, ...imageVadiationError]);
+      return;
     }
+
+    setFileSrc([...fileSrc, fileData]);
   };
 
   const handleFileUpload = async (file: File) => {
@@ -147,7 +143,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
       setFileSrc([...fileSrc, newImage]);
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred while capturing the screen');
+      setFileError([
+        ...fileError,
+        'An error occurred while capturing the screen'
+      ]);
     }
   };
 
@@ -218,6 +217,11 @@ const ChatInput: React.FC<ChatInputProps> = ({
     };
   }, [handleSubmit]);
 
+  const isFileUploadIconDisabled =
+    selectedModel.contextWindow && selectedModel.contextWindow > 4000
+      ? false
+      : true;
+
   return (
     <div className="flex flex-col w-full justify-around flex-shrink-0 items-center  my-1">
       {fileSrc.length > 0 && (
@@ -241,14 +245,14 @@ const ChatInput: React.FC<ChatInputProps> = ({
             icon={
               <FileUploadIcon
                 onFileUpload={handleFileUpload}
-                isDisabled={!isVisionModel}
+                isDisabled={isFileUploadIconDisabled}
               />
             }
             onClick={() => {}}
             ariaLabel="Upload File"
             tooltipText="Upload File"
-            isDisabled={!isVisionModel}
-            tooltipDisabledText={`${selectedModel?.value} does not have vision feature`}
+            isDisabled={isFileUploadIconDisabled}
+            tooltipDisabledText={`${selectedModel?.value}'s context window is too small to add a file`}
           />
         </div>
         <form

@@ -34,6 +34,14 @@ export interface Message {
   model: string;
 }
 
+export interface textGenerationConfig {
+  temperature: number;
+  max_tokens?: number;
+  frequency_penalty?: number;
+  presence_penalty?: number;
+  top_p: number;
+}
+
 export interface OpenAIChatContentImage {
   type: 'image_url';
   image_url: {

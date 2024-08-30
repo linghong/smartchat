@@ -161,7 +161,6 @@ exports[`ChatInput matches snapshot when isVisionModel is false 1`] = `
           <button
             aria-label="Upload File"
             class="flex items-center justify-center font-bold  rounded cursor-pointer disabled:cursor-not-allowed"
-            disabled=""
           >
             <label
               class="flex items-center justify-center  text-white font-bold px-2 rounded cursor-pointer"
@@ -171,7 +170,7 @@ exports[`ChatInput matches snapshot when isVisionModel is false 1`] = `
                 accept="image/*, .pdf, .html, .xml, .docx, .txt, .yml, .yaml, .tsx, .ts, .js, .cjs, .coffee, .css, .scss, .sass, less, .xsl, .xlsx,  .jsx, .java, .py, .php, .rb, .erb, .rake, .slim, .cpp, .c, .go, .rs, .log, .cjs, .snap, .sh, .md, .csv, .html, .json, .toml, .sh,  .map,  .xml, .lock, .mod, .metal, .sum, .h, .m, .asp, .net, .dll, .cs, .vb, .fs, .config, .resx, .csproj, .sln"
                 aria-label="Upload file"
                 style="display: none;"
-                type="none"
+                type="file"
               />
               <svg
                 aria-hidden="true"
@@ -193,7 +192,7 @@ exports[`ChatInput matches snapshot when isVisionModel is false 1`] = `
           <span
             class="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 hidden group-hover:block bg-gray-100 text-black text-xs rounded py-1 px-5 whitespace-nowrap"
           >
-            ai-model does not have vision feature
+            Upload File
           </span>
         </div>
       </div>
