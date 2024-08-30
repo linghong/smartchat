@@ -230,7 +230,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
       <div className="flex w-full justify-around items-center border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg">
         <div className="flex w-3/12 ms:w-2/12  sm:w-1/12 items-center justify-around md:mx-1">
           <ButtonWithTooltip
-            icon={<RiScreenshot2Fill size={30} />}
+            icon={<RiScreenshot2Fill size={28} />}
             onClick={handleScreenCapture}
             ariaLabel="Capture Screenshot"
             tooltipText="Capture Screenshot"

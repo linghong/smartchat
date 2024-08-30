@@ -1,5 +1,5 @@
-import React, { useState, useRef, ChangeEvent, FC } from 'react';
-import { RiImageAddFill } from 'react-icons/ri';
+import React, { useRef, ChangeEvent, FC } from 'react';
+import { RiAttachment2 } from 'react-icons/ri';
 
 interface FileUploadIconProps {
   onFileUpload: (file: File) => void;
@@ -41,12 +41,13 @@ const FileUploadIcon: FC<FileUploadIconProps> = ({
         accept={accept}
         aria-label="Upload file"
       />
-      <RiImageAddFill
-        size={24}
+      <RiAttachment2
+        size={26}
         style={{
+          background: '#fafafb',
           cursor: 'pointer',
-          background: '#7b7bdc',
-          border: 'solid black 1px'
+          color: '#2c2e2f',
+          border: 'solid #d7dadf 1px'
         }}
         aria-hidden="true" // Hides the icon from screen readers
       />
