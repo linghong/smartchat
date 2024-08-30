@@ -2,10 +2,24 @@ import { OptionType } from '@/src/types/common';
 
 const modelOptions: OptionType[] = [
   {
-    value: 'gemini-1.5-pro-exp-0801',
+    value: 'gemini-1.5-pro-exp-0827',
     label: 'Gemini-1.5 Pro Exp',
     category: 'google',
     contextWindow: 2097512,
+    vision: true
+  },
+  {
+    value: 'gemini-1.5-pro-exp-0827',
+    label: 'Gemini-1.5 Flash Exp',
+    category: 'google',
+    contextWindow: 1048576,
+    vision: true
+  },
+  {
+    value: 'gemini-1.5-flash-8b-exp-0827',
+    label: 'Gemini-1.5 Flash-8b Exp',
+    category: 'google',
+    contextWindow: 1048576,
     vision: true
   },
   {

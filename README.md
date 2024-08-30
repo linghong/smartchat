@@ -19,7 +19,7 @@ This AI chat platform allows you to select from a variety of Generative AI model
 1. From APIs:
 
    1. OpenAI: GPT-4o, GPT-4o Mini, GPT4 Turbo, GPT-4, and GPT-3.5 Turbo
-   2. Google: Gemini-1.5-flash, Gemini-1.5-pro, Gemini-1.5 Pro Exp
+   2. Google: Gemini-1.5-flash, Gemini-1.5-pro, and the three latest experiment models published on 08/27/2024: Gemini-1.5 Pro, Gemini-1.5 Pro and Gemini 1.5 Flash-8B.
    3. Anthropic: Claude 3.5 Sonnet, Claude 3 Haiku, and Claude 3 Opus
    4. Open-source models hosted on Groq:
 
@@ -90,7 +90,7 @@ _The AI model GPT-4o is discussing the screenshot image with the user._
 
 _An example of the chatbot generating a response using embedded data._
 
-### PDF Upload Feature
+### Files and Images Upload Feature
 
 <div align="center">
   <img src="images/rag-embedding.png" width="90%" alt="PDF Upload Feature">

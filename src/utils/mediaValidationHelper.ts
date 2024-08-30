@@ -34,7 +34,9 @@ export const isSupportedImage = (model: string, image: FileData) => {
         );
       break;
 
-    case 'gemini-1.5-pro-exp-0801':
+    case 'gemini-1.5-pro-exp-0827':
+    case 'gemini-1.5-pro-flash-0827':
+    case 'gemini-1.5-flash-8b-exp-0827':
     case 'gemini-1.5-pro':
     case 'gemini-1.5-flash':
       //Gemini requires size < 2GB, but for security purpose, we will only set next.js to allow for 20MB
