@@ -9,7 +9,7 @@ const modelOptions: OptionType[] = [
     vision: true
   },
   {
-    value: 'gemini-1.5-pro-exp-0827',
+    value: 'gemini-1.5-flash-exp-0827',
     label: 'Gemini-1.5 Flash Exp',
     category: 'google',
     contextWindow: 1048576,
