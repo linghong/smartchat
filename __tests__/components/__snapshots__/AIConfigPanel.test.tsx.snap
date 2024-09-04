@@ -2,59 +2,168 @@
 
 exports[`AIConfigPanel matches snapshot 1`] = `
 <DocumentFragment>
-  <div
-    class="
-    transition-[max-height] duration-500 ease-in-out
-    }
-  "
-  >
-    <div
-      class="flex flex-col w-full bg-gray-50 border-2 border-indigo-100 p-4 shadow-lg shadow-slate-200"
-    >
-      <div
-        class="flex font-bold text-xl justify-center"
-      >
-        Config My AI Assistant
+  <div>
+    <div>
+      <div>
+        Configure AI Assistant
       </div>
-      <div
-        class="flex flex-col lg:flex-row w-full justify-between"
+    </div>
+    <div>
+      <form
+        class="pt-6 pb-2 space-y-6"
       >
-        <div>
-          <span>
-            Choose AI Model:
-          </span>
-          <span>
-            Model 1
-          </span>
-        </div>
-        <div>
-          <span>
-            Select RAG File:
-          </span>
-          <span>
-            Namespace 1
-          </span>
-        </div>
-      </div>
-      <div
-        class="flex flex-col w-full items-center py-2"
-      >
-        <label
-          class="text-base font-bold"
-          for="userSystemPrompt"
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          Enter text here for AI to remember throughout the chat:
-        </label>
-        <textarea
-          aria-label="Enter text here for AI to remember throughout the chat"
-          class="w-full placeholder-gray-400 my-2 p-2 border-2 border-stone-300 rounded focus:ring-stone-100 focus:outline-none hover:bg-stone-50"
-          id="userSystemPrompt"
-          name="userSystemPrompt"
-          rows="3"
+          <div
+            class="space-y-2"
+          >
+            <label
+              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700"
+              for="name"
+            >
+              Name
+            </label>
+            <input
+              class="flex h-10 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300 w-full"
+              id="name"
+              placeholder="Enter assistant name"
+              required=""
+              value="TestBot"
+            />
+          </div>
+          <div
+            class="space-y-2"
+          >
+            <label
+              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              for="role"
+            >
+              Assistant Role
+            </label>
+            <input
+              class="flex h-10 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300 w-full"
+              id="role"
+              placeholder="Enter assistant role"
+              required=""
+              value="Test Assistant"
+            />
+          </div>
+        </div>
+        <div
+          class="space-y-2"
         >
-          Test prompt
-        </textarea>
-      </div>
+          <label
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="namespace"
+          >
+            Select RAG Namespace
+          </label>
+          <div>
+            <select
+              aria-label="namespace"
+              id="namespace"
+            >
+              <option
+                value="none"
+              >
+                None
+              </option>
+              <option
+                value="namespace1"
+              >
+                Namespace 1
+              </option>
+              <option
+                value="namespace2"
+              >
+                Namespace 2
+              </option>
+            </select>
+          </div>
+        </div>
+        <div
+          class="bg-gray-50 p-4 rounded-lg space-y-4"
+        >
+          <div
+            class="space-y-2"
+          >
+            <label
+              class="text-gray-700"
+              for="model"
+            >
+              Choose AI Model
+            </label>
+            <div>
+              <select
+                aria-label="model"
+                id="model"
+              >
+                <option
+                  value="model1"
+                >
+                  Model 1
+                </option>
+                <option
+                  value="model2"
+                >
+                  Model 2
+                </option>
+              </select>
+            </div>
+          </div>
+          <div
+            class="space-y-2"
+          >
+            <label
+              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700"
+              for="topP"
+            >
+              Model Top P: 0.7
+            </label>
+            <div>
+              Slider
+            </div>
+          </div>
+          <div
+            class="space-y-2"
+          >
+            <label
+              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700"
+              for="temperature"
+            >
+              Model Temperature: 0.5
+            </label>
+            <div>
+              Slider
+            </div>
+          </div>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700"
+            for="basePrompt"
+          >
+            Enter text for AI to remember
+          </label>
+          <textarea
+            class="flex min-h-[80px] rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300 w-full resize-none"
+            id="basePrompt"
+            placeholder="Enter text here for AI to remember throughout the chat"
+            rows="4"
+          >
+            Test prompt
+          </textarea>
+        </div>
+        <button
+          class="inline-flex items-center justify-center whitespace-nowrap text-sm ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300 bg-gray-900/90 hover:bg-gray-700/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 h-10 w-full text-white font-semibold py-2 px-4 rounded"
+          type="submit"
+        >
+          Save Configuration
+        </button>
+      </form>
     </div>
   </div>
 </DocumentFragment>

@@ -34,12 +34,32 @@ export interface Message {
   model: string;
 }
 
+type OptionType = {
+  value: string;
+  label: string;
+  category?: string;
+  contextWindow?: number;
+  vision?: boolean;
+};
+
 export interface textGenerationConfig {
   temperature: number;
   max_tokens?: number;
   frequency_penalty?: number;
   presence_penalty?: number;
   top_p: number;
+}
+
+export interface AIConfig {
+  name: string;
+  role: string;
+  model: OptionType;
+  basePrompt: string;
+  temperature: number;
+  topP: number;
+  max_tokens?: number;
+  frequency_penalty?: number;
+  presence_penalty?: number;
 }
 
 export interface OpenAIChatContentImage {

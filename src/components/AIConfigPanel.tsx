@@ -1,76 +1,196 @@
-import React, { FC } from 'react';
-import { ActionMeta, SingleValue } from 'react-select';
-import DropdownSelect from '@/src/components/DropdownSelect';
+import React, { ChangeEvent, FormEvent } from 'react';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@/src/components/ui/card';
+import { Input } from '@/src/components/ui/input';
+import { Textarea } from '@/src/components/ui/textarea';
+import { Button } from '@/src/components/ui/button';
+import CustomSelect from '@/src/components/CustomSelect';
+import { Slider } from '@/src/components/ui/slider';
+import { Label } from '@/src/components/ui/label';
+
 import { OptionType } from '@/src/types/common';
+import { AIConfig } from '@/src/types/chat';
 
 interface AIConfigPanelProps {
   selectedModel: OptionType;
-  handleModelChange: (
-    selectedOption: SingleValue<OptionType>,
-    actionMeta: ActionMeta<OptionType>
-  ) => void;
+  handleModelChange: (newValue: OptionType) => void;
   selectedNamespace: OptionType | null;
   handleNamespaceChange: (selectedOption: OptionType | null) => void;
-  basePrompt: string;
-  handleBasePromptChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  aiConfig: AIConfig;
+  setAIConfig: (config: AIConfig) => void;
   modelOptions: OptionType[];
   fileCategoryOptions: OptionType[];
 }
 
-const AIConfigPanel: FC<AIConfigPanelProps> = ({
+export default function AIConfigPanel({
   selectedModel,
   handleModelChange,
   selectedNamespace,
   handleNamespaceChange,
-  basePrompt,
-  handleBasePromptChange,
+  aiConfig,
+  setAIConfig,
   modelOptions,
   fileCategoryOptions
-}) => {
-  const initialFileCategory: OptionType = { value: 'none', label: 'None' };
+}: AIConfigPanelProps) {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { id, value } = e.target;
+    setAIConfig({ ...aiConfig, [id]: value });
+  };
+
+  const handleSliderChange = (id: string) => (value: number[]) => {
+    setAIConfig({ ...aiConfig, [id]: value[0] });
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    console.log('Form submitted', {
+      aiConfig,
+      selectedNamespace
+    });
+  };
 
   return (
-    <div
-      className={`
-    transition-[max-height] duration-500 ease-in-out
-    }
-  `}
-    >
-      <div className="flex flex-col w-full bg-gray-50 border-2 border-indigo-100 p-4 shadow-lg shadow-slate-200">
-        <div className="flex font-bold text-xl justify-center">
-          Config My AI Assistant
-        </div>
-        <div className="flex flex-col lg:flex-row w-full justify-between">
-          <DropdownSelect
-            selectedOption={selectedModel}
-            onChange={handleModelChange}
-            options={modelOptions}
-            label="Choose AI Model:"
-          />
-          <DropdownSelect
-            selectedOption={selectedNamespace}
-            onChange={handleNamespaceChange}
-            options={[initialFileCategory, ...fileCategoryOptions]}
-            label="Select RAG File:"
-          />
-        </div>
-        <div className="flex flex-col w-full items-center py-2">
-          <label htmlFor="userSystemPrompt" className="text-base font-bold">
-            Enter text here for AI to remember throughout the chat:
-          </label>
-          <textarea
-            id="userSystemPrompt"
-            rows={3}
-            name="userSystemPrompt"
-            onChange={handleBasePromptChange}
-            value={basePrompt}
-            className="w-full placeholder-gray-400 my-2 p-2 border-2 border-stone-300 rounded focus:ring-stone-100 focus:outline-none hover:bg-stone-50"
-            aria-label="Enter text here for AI to remember throughout the chat"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
+    <Card className="w-full mx-auto shadow-lg bg-white">
+      <CardHeader className="bg-gray-50 border-b border-gray-200">
+        <CardTitle className="text-2xl font-bold text-center text-gray-800">
+          Configure AI Assistant
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="pt-6 pb-2 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-gray-700">
+                Name
+              </Label>
+              <Input
+                id="name"
+                value={aiConfig.name}
+                onChange={handleInputChange}
+                placeholder="Enter assistant name"
+                className="w-full"
+                required
+              />
+            </div>
 
-export default AIConfigPanel;
+            <div className="space-y-2">
+              <Label htmlFor="role">Assistant Role</Label>
+              <Input
+                id="role"
+                value={aiConfig.role}
+                onChange={handleInputChange}
+                placeholder="Enter assistant role"
+                className="w-full"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="namespace">Select RAG Namespace</Label>
+            <CustomSelect
+              id="namespace"
+              options={[
+                { value: 'none', label: 'None' },
+                ...fileCategoryOptions
+              ]}
+              value={selectedNamespace?.value || 'none'}
+              onChange={value => {
+                const newSelectedNamespace = [
+                  { value: 'none', label: 'None' },
+                  ...fileCategoryOptions
+                ].find(option => option.value === value);
+                handleNamespaceChange(
+                  value !== 'none' ? newSelectedNamespace || null : null
+                );
+              }}
+              placeholder="Select RAG namespace"
+            />
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="model" className="text-gray-700">
+                Choose AI Model
+              </label>
+              <CustomSelect
+                id="model"
+                options={modelOptions}
+                value={selectedModel.value}
+                onChange={value => {
+                  const newSelectedModel = modelOptions.find(
+                    option => option.value === value
+                  );
+                  if (newSelectedModel) {
+                    handleModelChange(newSelectedModel);
+                  }
+                }}
+                placeholder="Select a model"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="topP" className="text-gray-700">
+                Model Top P: {aiConfig.topP.toFixed(1)}
+              </Label>
+              <Slider
+                id="topP"
+                min={0}
+                max={1}
+                step={0.1}
+                value={[aiConfig.topP]}
+                onValueChange={handleSliderChange('topP')}
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="temperature" className="text-gray-700">
+                Model Temperature: {aiConfig.temperature.toFixed(1)}
+              </Label>
+              <Slider
+                id="temperature"
+                min={0}
+                max={1}
+                step={0.01}
+                value={[aiConfig.temperature]}
+                onValueChange={handleSliderChange('temperature')}
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="basePrompt" className="text-gray-700">
+              Enter text for AI to remember
+            </Label>
+            <Textarea
+              id="basePrompt"
+              rows={4}
+              value={aiConfig.basePrompt}
+              onChange={handleInputChange}
+              placeholder="Enter text here for AI to remember throughout the chat"
+              className="w-full resize-none"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full text-white font-semibold py-2 px-4 rounded"
+            variant="default_bg90"
+          >
+            Save Configuration
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}

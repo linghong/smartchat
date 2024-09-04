@@ -2,14 +2,13 @@ import {
   useState,
   useCallback,
   useEffect,
-  ChangeEvent,
   Dispatch,
   SetStateAction
 } from 'react';
 
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { SingleValue, ActionMeta } from 'react-select';
+import { SingleValue } from 'react-select';
 
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ChatInput from '@/src/components/ChatInput';
@@ -18,12 +17,13 @@ import Notification from '@/src/components/Notification';
 import WithAuth from '@/src/components/WithAuth';
 
 import { modelOptions } from '@/config/modellist';
-import { Message, FileData } from '@/src/types/chat';
+import { Message, FileData, AIConfig } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
-import { initialMessage } from '@/src/utils/initialData';
+import { initialMessage, defaultModel } from '@/src/utils/initialData';
 import { updateChats } from '@/src/utils/sqliteChatApiClient';
 import { updateChatMessages } from '@/src/utils/sqliteChatIdApiClient';
+
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
 
 interface HomeProps {
@@ -64,7 +64,14 @@ const HomePage: React.FC<HomeProps> = ({
     initialFileCategory
   );
   const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
-  const [basePrompt, setBasePrompt] = useState('');
+  const [aiConfig, setAIConfig] = useState<AIConfig>({
+    name: '',
+    role: '',
+    model: selectedModel || defaultModel,
+    basePrompt: '',
+    topP: 1,
+    temperature: 0.1
+  });
   const [isNewChat, setIsNewChat] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,11 +81,9 @@ const HomePage: React.FC<HomeProps> = ({
     namespaces.map(ns => ({ value: ns, label: ns })) ?? [];
 
   // --- Handlers ---
-  const handleModelChange = (
-    selectedOption: SingleValue<OptionType>,
-    actionMeta: ActionMeta<OptionType>
-  ) => {
+  const handleModelChange = (selectedOption: SingleValue<OptionType>) => {
     setSelectedModel(selectedOption);
+
     //when it  just start
     if (selectedOption && (isNewChat || chatHistory.length === 1)) {
       setChatHistory(prevHistory => [
@@ -94,13 +99,8 @@ const HomePage: React.FC<HomeProps> = ({
     setSelectedNamespace(selectedOption);
   };
 
-  const handleBasePromptChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setBasePrompt(e.target.value);
-  };
-
   const fetchChatResponse = useCallback(
     async (
-      basePrompt: string,
       question: string,
       fileSrc: FileData[],
       selectedModel: OptionType,
@@ -113,7 +113,7 @@ const HomePage: React.FC<HomeProps> = ({
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            basePrompt,
+            aiConfig,
             question,
             fileSrc,
             chatHistory,
@@ -137,7 +137,7 @@ const HomePage: React.FC<HomeProps> = ({
         setError('Problem fetch response from AI. Try again.');
       }
     },
-    [chatHistory]
+    [chatHistory, aiConfig]
   );
 
   const saveChatMessageToDb = async (
@@ -204,7 +204,6 @@ const HomePage: React.FC<HomeProps> = ({
 
     try {
       const data = await fetchChatResponse(
-        basePrompt,
         question,
         fileSrc,
         selectedModel,
@@ -217,7 +216,7 @@ const HomePage: React.FC<HomeProps> = ({
           selectedModel.category !== 'hf-small'
         ) {
           setError(
-            `We’re experiencing issues with ${selectedModel.label} AI service provided by ${selectedModel.category}.  Please try again later.`
+            `We're experiencing issues with ${selectedModel.label} AI service provided by ${selectedModel.category}.  Please try again later.`
           );
           return;
         } else {
@@ -232,7 +231,7 @@ const HomePage: React.FC<HomeProps> = ({
       setMessageSubjectList(prevList => [...prevList, data.subject]);
 
       setChatHistory((prevHistory: Message[]) => [
-        ...prevHistory.slice(0, -1), // remove the last one that only has user message,b ut no AI response
+        ...prevHistory.slice(0, -1), // remove the last one that only has user message,but no AI response
         { question: question, answer: data.answer, model: selectedModel.label }
       ]);
 
@@ -279,16 +278,16 @@ const HomePage: React.FC<HomeProps> = ({
   }, [isNewChat]);
 
   return (
-    <div className="flex flex-col w-full  h-full mx-auto z-80">
+    <div className="flex flex-col w-full h-full mx-auto z-80">
       {isConfigPanelVisible && (
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 w-full px-4 pt-2 pb-4">
           <AIConfigPanel
             selectedModel={selectedModel}
             handleModelChange={handleModelChange}
             selectedNamespace={selectedNamespace}
             handleNamespaceChange={handleNamespaceChange}
-            basePrompt={basePrompt}
-            handleBasePromptChange={handleBasePromptChange}
+            aiConfig={aiConfig}
+            setAIConfig={setAIConfig}
             modelOptions={modelOptions}
             fileCategoryOptions={fetchedCategoryOptions}
           />
