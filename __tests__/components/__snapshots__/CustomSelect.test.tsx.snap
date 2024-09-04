@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CustomSelect renders correctly and matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="relative"
+    id="test-select"
+  >
+    <div
+      class="select-trigger w-full p-2 border border-gray-300 rounded-md cursor-pointer bg-white text-left"
+    >
+      <span
+        class="text-gray-900"
+      >
+        Option 2
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
