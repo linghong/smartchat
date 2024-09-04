@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, Part } from '@google/generative-ai';
 
 import { GEMINI_API_KEY } from '@/config/env';
-import { Message, ImageFile } from '@/src/types/chat';
+import { Message, ImageFile, AIConfig } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { handleErrors } from '@/src/utils/fetchResponseRetry';
 
@@ -11,10 +11,10 @@ const RETRY_DELAY = 1000; // 1 second
 export const getCurrentUserParts = async (
   imageSrc: ImageFile[],
   userMessage: string
-) => {
+): Promise<string | (string | Part)[]> => {
   if (imageSrc.length === 0) return userMessage;
 
-  let tempParts: string | (string | Part)[] = [userMessage];
+  let tempParts: (string | Part)[] = [userMessage];
 
   imageSrc.forEach((image: ImageFile) => {
     return tempParts.push({
@@ -48,7 +48,7 @@ export const buildChatArray = (chatHistory: Message[]) => {
 };
 
 const getGeminiChatCompletion = async (
-  basePrompt: string,
+  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
@@ -83,6 +83,7 @@ const getGeminiChatCompletion = async (
   const systemContent =
     systemBase + systemRAG + systemStrategery + systemSubjectTitle;
 
+
   const userTextWithFetchedData =
     fetchedText !== ''
       ? userMessage +
@@ -91,8 +92,8 @@ const getGeminiChatCompletion = async (
         fetchedText +
         " fetchedEnd'''" +
         '\n' +
-        basePrompt
-      : userMessage + '\n' + basePrompt;
+        aiConfig.basePrompt
+      : userMessage + '\n' + aiConfig.basePrompt;
 
   const model = genAI.getGenerativeModel({
     model: selectedModel.value,
@@ -111,7 +112,9 @@ const getGeminiChatCompletion = async (
       const chat = model.startChat({
         history: buildChatArray(chatHistory),
         generationConfig: {
-          maxOutputTokens: maxReturnMessageToken
+          maxOutputTokens: maxReturnMessageToken,
+          temperature: aiConfig.temperature,
+          topP: aiConfig.topP
         }
       });
 

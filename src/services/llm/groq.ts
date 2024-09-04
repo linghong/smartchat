@@ -3,7 +3,7 @@ import { buildChatArray } from '@/src/services/llm/openai';
 import { Groq } from 'groq-sdk';
 
 import { GROQ_API_KEY } from '@/config/env';
-import { Message } from '@/src/types/chat';
+import { Message, AIConfig } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
 const buildChatMessages = (
@@ -46,7 +46,7 @@ const buildChatMessages = (
 };
 
 export const getGroqChatCompletion = async (
-  basePrompt: string,
+  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
@@ -81,7 +81,7 @@ export const getGroqChatCompletion = async (
 
   //gemma 7b think
   const messages = buildChatMessages(
-    basePrompt,
+    aiConfig.basePrompt,
     systemContent,
     userMessage,
     fetchedText,
@@ -94,11 +94,11 @@ export const getGroqChatCompletion = async (
     const completion = await groq.chat.completions.create({
       messages,
       model: selectedModel.value,
-      temperature: 0,
+      temperature: aiConfig.temperature,
       max_tokens: maxReturnMessageToken,
       frequency_penalty: 0,
       presence_penalty: 0,
-      top_p: 1
+      top_p: aiConfig.topP
     });
 
     if (!completion || !completion.choices || !completion.choices.length) {

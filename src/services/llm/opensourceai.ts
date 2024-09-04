@@ -1,9 +1,9 @@
 import { NEXT_PUBLIC_SERVER_SECRET_KEY } from '@/config/env';
-import { Message } from '@/src/types/chat';
+import { Message, AIConfig } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
 const getOpenModelChatCompletion = async (
-  basePrompt: string,
+  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
@@ -14,7 +14,7 @@ const getOpenModelChatCompletion = async (
 
   const data = {
     question: userMessage,
-    basePrompt,
+    basePrompt: aiConfig.basePrompt,
     chatHistory,
     selectedModel: selectedModel.value,
     fetchedText

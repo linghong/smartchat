@@ -10,8 +10,22 @@ beforeEach(() => {
 });
 
 describe('getOpenModelChatCompletion', () => {
-  const basePrompt = 'Test base prompt';
-  const chatHistory: Message[] = [{ question: 'user', answer: 'Hi' }];
+  const aiConfig = {
+    name: 'gpt4-assistant-1',
+    role: 'writing',
+    model: {
+      value: 'gpt-4',
+      label: 'gpt 4',
+      contextWindow: 128000,
+      vision: true
+    },
+    basePrompt: 'Test base prompt',
+    topP: 1,
+    temperature: 0
+  };
+  const chatHistory: Message[] = [
+    { question: 'user', answer: 'Hi', model: 'gpt-4' }
+  ];
   const userMessage = 'Hello, how are you?';
   const fetchedText = 'Sample text';
   const selectedModel = {
@@ -26,7 +40,7 @@ describe('getOpenModelChatCompletion', () => {
     fetchMock.mockResponseOnce(JSON.stringify(mockResponse));
 
     const response = await getOpenModelChatCompletion(
-      basePrompt,
+      aiConfig,
       chatHistory,
       userMessage,
       fetchedText,
@@ -42,7 +56,7 @@ describe('getOpenModelChatCompletion', () => {
       },
       body: JSON.stringify({
         question: userMessage,
-        basePrompt,
+        basePrompt: aiConfig.basePrompt,
         chatHistory,
         selectedModel: selectedModel.value,
         fetchedText
@@ -55,7 +69,7 @@ describe('getOpenModelChatCompletion', () => {
 
     await expect(
       getOpenModelChatCompletion(
-        basePrompt,
+        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
@@ -73,7 +87,7 @@ describe('getOpenModelChatCompletion', () => {
 
     await expect(
       getOpenModelChatCompletion(
-        basePrompt,
+        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,

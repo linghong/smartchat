@@ -13,7 +13,19 @@ const mockGoogleGenerativeAI = GoogleGenerativeAI as jest.MockedClass<
 >;
 
 describe('getGeminiChatCompletion', () => {
-  const basePrompt = 'Base Prompt';
+  const aiConfig = {
+    name: 'gpt4-assistant-1',
+    role: 'writing',
+    model: {
+      value: 'gpt-4',
+      label: 'gpt 4',
+      contextWindow: 128000,
+      vision: true
+    },
+    basePrompt: 'Test base prompt',
+    topP: 1,
+    temperature: 0
+  };
   const chatHistory: Message[] = [
     {
       question: '',
@@ -84,7 +96,7 @@ describe('getGeminiChatCompletion', () => {
     );
 
     const result = await getGeminiChatCompletion(
-      basePrompt,
+      aiConfig,
       chatHistory,
       userMessage,
       fetchedText,
@@ -109,7 +121,7 @@ describe('getGeminiChatCompletion', () => {
 
     await expect(
       getGeminiChatCompletion(
-        basePrompt,
+        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,

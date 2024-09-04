@@ -214,7 +214,7 @@ Alternatively, you can deploy your app online. You can deploy the app to any clo
 
 ### Start the Development Server:
 
-The app supports nodejs v18, v20 and later versions. To start the development, run the following commands::
+The app supports nodejs v18.8.0, v20 and later versions. To start the development, run the following commands::
 
 ```bash
 yarn install

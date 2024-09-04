@@ -23,9 +23,21 @@ jest.mock('groq-sdk', () => ({
 }));
 
 describe('getGroqChatCompletion', () => {
-  const basePrompt = 'Hello, how can I help?';
+  const aiConfig = {
+    name: 'gpt4-assistant-1',
+    role: 'writing',
+    model: {
+      value: 'gpt-4',
+      label: 'gpt 4',
+      contextWindow: 128000,
+      vision: true
+    },
+    basePrompt: 'Hello, how can I help?',
+    topP: 1,
+    temperature: 0
+  };
   const chatHistory: Message[] = [
-    { question: 'Hello', answer: 'How are you?' }
+    { question: 'Hello', answer: 'How are you?', model: 'gpt-4' }
   ];
   const userMessage = "What's the weather like?";
   const fetchedText = 'Sunny and 75 degrees';
@@ -65,7 +77,7 @@ describe('getGroqChatCompletion', () => {
     }));
 
     const response = await getGroqChatCompletion(
-      basePrompt,
+      aiConfig,
       chatHistory,
       userMessage,
       fetchedText,
@@ -86,7 +98,7 @@ describe('getGroqChatCompletion', () => {
 
     await expect(
       getGroqChatCompletion(
-        basePrompt,
+        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
@@ -106,7 +118,7 @@ describe('getGroqChatCompletion', () => {
 
     await expect(
       getGroqChatCompletion(
-        basePrompt,
+        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
@@ -126,7 +138,7 @@ describe('getGroqChatCompletion', () => {
 
     await expect(
       getGroqChatCompletion(
-        basePrompt,
+        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
@@ -146,7 +158,7 @@ describe('getGroqChatCompletion', () => {
 
     await expect(
       getGroqChatCompletion(
-        basePrompt,
+        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,

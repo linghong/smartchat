@@ -4,8 +4,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 
 import { CLAUDE_API_KEY } from '@/config/env';
-import { Message, ImageFile } from '@/src/types/chat';
-
+import { Message, ImageFile, AIConfig } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
 export interface ImageBlockParam {
@@ -96,7 +95,7 @@ const contentForUserImage = (
 };
 
 const getClaudeChatCompletion = async (
-  basePrompt: string,
+  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
@@ -142,8 +141,8 @@ const getClaudeChatCompletion = async (
         fetchedText +
         " fetchedEnd'''" +
         '\n' +
-        basePrompt
-      : userMessage + '\n' + basePrompt;
+        aiConfig.basePrompt
+      : userMessage + '\n' + aiConfig.basePrompt;
 
   const currentUserContent =
     base64ImageSrc && base64ImageSrc?.length !== 0
@@ -160,9 +159,9 @@ const getClaudeChatCompletion = async (
     const message = await anthropic.messages.create({
       model: selectedModel.value,
       system: systemContent,
-      temperature: 0,
+      temperature: aiConfig.temperature,
       max_tokens: maxReturnMessageToken,
-      top_p: 1,
+      top_p: aiConfig.topP,
       messages: [
         ...chatArray,
         {

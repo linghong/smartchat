@@ -2,7 +2,13 @@ import { OpenAI } from 'openai';
 import { encode } from 'gpt-tokenizer';
 
 import { OPENAI_API_KEY } from '@/config/env';
-import { Message, ChatType, ChatRole, ImageFile } from '@/src/types/chat';
+import {
+  Message,
+  ChatType,
+  ChatRole,
+  ImageFile,
+  AIConfig
+} from '@/src/types/chat';
 import { OpenAIChatContentImage } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
@@ -74,7 +80,7 @@ const contentForUserImage = (
   }));
 
 export const getOpenAIChatCompletion = async (
-  basePrompt: string,
+  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
@@ -135,8 +141,8 @@ export const getOpenAIChatCompletion = async (
         fetchedText +
         " fetchedEnd'''" +
         '\n' +
-        basePrompt
-      : userMessage + '\n' + basePrompt;
+        aiConfig.basePrompt
+      : userMessage + '\n' + aiConfig.basePrompt;
 
   const imageContent =
     base64ImageSrc && base64ImageSrc?.length !== 0
@@ -146,11 +152,11 @@ export const getOpenAIChatCompletion = async (
   try {
     const completion = await openaiClient.chat.completions.create({
       model: selectedModel.value,
-      temperature: 0,
+      temperature: aiConfig.temperature,
       max_tokens: maxReturnMessageToken,
       frequency_penalty: 0,
       presence_penalty: 0,
-      top_p: 1,
+      top_p: aiConfig.topP,
       messages: [
         { role: 'system', content: systemContent },
         ...chatArray,

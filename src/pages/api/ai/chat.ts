@@ -16,7 +16,6 @@ import {
   processImageFiles,
   processNonMediaFiles
 } from '@/src/utils/processMessageFile';
-import { FileData, ImageFile } from '@/src/types/chat';
 import {
   extractMessageContent,
   extractSubjectTitle
@@ -30,8 +29,7 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { basePrompt, namespace, selectedModel, chatHistory, fileSrc } =
-    req.body;
+  const { aiConfig, namespace, selectedModel, chatHistory, fileSrc } = req.body;
 
   let { question } = req.body;
 
@@ -66,7 +64,7 @@ export default async function handler(
     switch (category) {
       case 'openai':
         chatResponse = await getOpenAIChatCompletion(
-          basePrompt,
+          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
@@ -77,7 +75,7 @@ export default async function handler(
 
       case 'groq':
         chatResponse = await getGroqChatCompletion(
-          basePrompt,
+          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
@@ -87,7 +85,7 @@ export default async function handler(
 
       case 'google':
         chatResponse = await getGeminiChatCompletion(
-          basePrompt,
+          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
@@ -98,7 +96,7 @@ export default async function handler(
 
       case 'anthropic':
         chatResponse = await getClaudeChatCompletion(
-          basePrompt,
+          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
@@ -122,7 +120,7 @@ export default async function handler(
         }
         const url = `${baseUrl}/api/chat_${category === 'hf-small' ? 'cpu' : 'gpu'}`;
         chatResponse = await getOpenModelChatCompletion(
-          basePrompt,
+          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
