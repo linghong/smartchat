@@ -22,6 +22,8 @@
     "@pinecone-database/pinecone": "^2.2.2",
     "aws-sdk": "^2.1470.0",
     "bcryptjs": "^2.4.3",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
     "express-rate-limit": "^7.4.0",
     "express-validator": "^7.2.0",
@@ -50,7 +52,9 @@
     "screenshot-desktop": "^1.15.0",
     "sqlite3": "^5.1.7",
     "ssh2": "^1.15.0",
+    "tailwind-merge": "^2.5.2",
     "tailwindcss": "^3.4.4",
+    "tailwindcss-animate": "^1.0.7",
     "typeorm": "^0.3.20",
     "typescript": "^5.4.5",
     "xlsx": "^0.18.5"
