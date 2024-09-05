@@ -25,7 +25,7 @@ exports[`AIConfigPanel matches snapshot 1`] = `
               Name
             </label>
             <input
-              class="flex h-10 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300 w-full"
+              class="flex h-10 rounded-md border border-gray-200 px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300 w-full bg-gray-50"
               id="name"
               placeholder="Enter assistant name"
               required=""
@@ -42,7 +42,7 @@ exports[`AIConfigPanel matches snapshot 1`] = `
               Assistant Role
             </label>
             <input
-              class="flex h-10 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300 w-full"
+              class="flex h-10 rounded-md border border-gray-200 px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300 w-full bg-gray-50"
               id="role"
               placeholder="Enter assistant role"
               required=""
@@ -83,7 +83,7 @@ exports[`AIConfigPanel matches snapshot 1`] = `
           </div>
         </div>
         <div
-          class="bg-gray-50 p-4 rounded-lg space-y-4"
+          class="bg-slate-50 p-4 rounded-lg space-y-4"
         >
           <div
             class="space-y-2"
@@ -146,10 +146,10 @@ exports[`AIConfigPanel matches snapshot 1`] = `
             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700"
             for="basePrompt"
           >
-            Enter text for AI to remember
+            Enter Information You Want AI to Remember
           </label>
           <textarea
-            class="flex min-h-[80px] rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300 w-full resize-none"
+            class="flex min-h-[80px] rounded-md border border-gray-200 px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300 w-full resize-none bg-gray-50"
             id="basePrompt"
             placeholder="Enter text here for AI to remember throughout the chat"
             rows="4"
@@ -158,7 +158,7 @@ exports[`AIConfigPanel matches snapshot 1`] = `
           </textarea>
         </div>
         <button
-          class="inline-flex items-center justify-center whitespace-nowrap text-sm ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300 bg-gray-900/90 hover:bg-gray-700/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 h-10 w-full text-white font-semibold py-2 px-4 rounded"
+          class="inline-flex items-center justify-center whitespace-nowrap text-sm ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300 bg-gray-900 hover:bg-gray-900/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 h-10 w-full bg-gradient-to-r from-indigo-100 via-gray-800 to-slate-600 text-white font-semibold py-2 px-4 rounded"
           type="submit"
         >
           Save Configuration

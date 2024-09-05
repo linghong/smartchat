@@ -7,7 +7,7 @@ exports[`CustomSelect renders correctly and matches snapshot 1`] = `
     id="test-select"
   >
     <div
-      class="select-trigger w-full p-2 border border-gray-300 rounded-md cursor-pointer bg-white text-left"
+      class="select-trigger w-full p-2 border border-gray-300 rounded-md cursor-pointer bg-gray-50 text-sm text-left"
     >
       <span
         class="text-gray-900"

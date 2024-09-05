@@ -92,7 +92,7 @@ describe('AIConfigPanel', () => {
     expect(screen.getByText('Choose AI Model')).toBeInTheDocument();
     expect(screen.getByText('Select RAG Namespace')).toBeInTheDocument();
     expect(
-      screen.getByText('Enter text for AI to remember')
+      screen.getByText('Enter Information You Want AI to Remember')
     ).toBeInTheDocument();
   });
 

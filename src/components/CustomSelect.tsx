@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { cn } from '@/src/lib/utils'; // Import the cn function
 
 interface Option {
   value: string;
@@ -11,6 +12,9 @@ interface CustomSelectProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  containerClass?: string;
+  selectedClass?: string;
+  dropdownClass?: string; // New prop for custom classes
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -18,7 +22,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   options,
   value,
   onChange,
-  placeholder = 'Select an option'
+  placeholder = 'Select an option',
+  dropdownClass,
+  selectedClass
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -34,7 +40,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   return (
     <div id={id} className="relative">
       <div
-        className="select-trigger w-full p-2 border border-gray-300 rounded-md cursor-pointer bg-white text-left"
+        className={cn(
+          'select-trigger w-full p-2 border border-gray-300 rounded-md cursor-pointer bg-gray-50 text-sm text-left',
+          selectedClass
+        )}
         onClick={handleToggle}
       >
         <span className={selectedOption ? 'text-gray-900' : 'text-gray-500'}>
@@ -42,16 +51,22 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         </span>
       </div>
       {isOpen && (
-        <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+        <ul
+          className={cn(
+            'absolute z-100 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto',
+            dropdownClass
+          )}
+        >
           {options.map(option => (
             <li
               key={option.value}
               onClick={() => handleSelect(option)}
-              className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+              className={cn(
+                'px-4 py-2 text-sm cursor-pointer hover:bg-gray-100',
                 option.value === value
                   ? 'bg-slate-200 text-slate-900'
                   : 'text-gray-900'
-              }`}
+              )}
             >
               {option.label}
             </li>

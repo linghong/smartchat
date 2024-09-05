@@ -59,12 +59,12 @@ export default function AIConfigPanel({
 
   return (
     <Card className="w-full mx-auto shadow-lg bg-white">
-      <CardHeader className="bg-gray-50 border-b border-gray-200">
-        <CardTitle className="text-2xl font-bold text-center text-gray-800">
+      <CardHeader className="bg-gradient-to-r from-indigo-50 via-gray-200  to-blue-100 border-b border-gray-300  shadow-sm shadow-cyan-200 drop-shadow-sm">
+        <CardTitle className="text-center text-gray-800">
           Configure AI Assistant
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-slate-100">
         <form onSubmit={handleSubmit} className="pt-6 pb-2 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -76,7 +76,7 @@ export default function AIConfigPanel({
                 value={aiConfig.name}
                 onChange={handleInputChange}
                 placeholder="Enter assistant name"
-                className="w-full"
+                className="w-full bg-gray-50"
                 required
               />
             </div>
@@ -88,7 +88,7 @@ export default function AIConfigPanel({
                 value={aiConfig.role}
                 onChange={handleInputChange}
                 placeholder="Enter assistant role"
-                className="w-full"
+                className="w-full bg-gray-50"
                 required
               />
             </div>
@@ -116,7 +116,7 @@ export default function AIConfigPanel({
             />
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+          <div className="bg-slate-50 p-4 rounded-lg space-y-4">
             <div className="space-y-2">
               <label htmlFor="model" className="text-gray-700">
                 Choose AI Model
@@ -170,7 +170,7 @@ export default function AIConfigPanel({
 
           <div className="space-y-2">
             <Label htmlFor="basePrompt" className="text-gray-700">
-              Enter text for AI to remember
+              Enter Information You Want AI to Remember
             </Label>
             <Textarea
               id="basePrompt"
@@ -178,14 +178,13 @@ export default function AIConfigPanel({
               value={aiConfig.basePrompt}
               onChange={handleInputChange}
               placeholder="Enter text here for AI to remember throughout the chat"
-              className="w-full resize-none"
+              className="w-full resize-none bg-gray-50"
             />
           </div>
 
           <Button
             type="submit"
-            className="w-full text-white font-semibold py-2 px-4 rounded"
-            variant="default_bg90"
+            className="w-full bg-gradient-to-r from-indigo-100 via-gray-800  to-slate-600 text-white font-semibold py-2 px-4 rounded"
           >
             Save Configuration
           </Button>
