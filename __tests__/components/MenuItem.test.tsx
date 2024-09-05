@@ -29,6 +29,8 @@ describe('MenuItem Component', () => {
   const mockPush = jest.fn();
   const mockSetIsSidebarOpen = jest.fn();
   const mockOnItemClick = jest.fn();
+  const mockOnDeleteClick = jest.fn();
+  const mockOnEditClick = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -49,6 +51,7 @@ describe('MenuItem Component', () => {
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }
         ]}
+        maxVisibleItem={5}
       />
     );
 
@@ -67,24 +70,26 @@ describe('MenuItem Component', () => {
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }
         ]}
+        maxVisibleItem={5}
       />
     );
-
     // Ensure the item list is not visible initially
     expect(screen.queryByTestId('virtualized-list')).toBeNull();
     expect(screen.queryByText('Item 1')).toBeNull();
     expect(screen.queryByText('Item 2')).toBeNull();
 
-    // Click to toggle the item list
-    fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
+    const toggleButton = screen.getByRole('button', { name: /test title/i });
+
+    fireEvent.click(toggleButton);
 
     // Ensure the item list is visible after toggling
     expect(screen.getByTestId('virtualized-list')).toBeInTheDocument();
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 2')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Collapse' }));
+    fireEvent.click(toggleButton);
 
+    // Ensure the item list is not visible after collapsing
     expect(screen.queryByTestId('virtualized-list')).toBeNull();
     expect(screen.queryByText('Item 1')).toBeNull();
     expect(screen.queryByText('Item 2')).toBeNull();
@@ -99,6 +104,7 @@ describe('MenuItem Component', () => {
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }
         ]}
+        maxVisibleItem={5}
       />
     );
 
@@ -115,6 +121,7 @@ describe('MenuItem Component', () => {
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }
         ]}
+        maxVisibleItem={5}
       />
     );
 
@@ -130,29 +137,15 @@ describe('MenuItem Component', () => {
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }
         ]}
+        maxVisibleItem={5}
         defaultOpen={true}
       />
     );
 
     const listContainer = screen.getByTestId('virtualized-list').parentElement;
-    expect(listContainer).toHaveStyle('height: 80px'); // 2 items * 40px per item
     expect(screen.getByTestId('virtualized-list')).toBeInTheDocument(); // Ensure the virtualized list is visible initially due to defaultOpen
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 2')).toBeInTheDocument();
-  });
-
-  it('should limit the height of the list to 360px when there are many items', () => {
-    const manyItems = Array.from({ length: 20 }, (_, i) => ({
-      label: `Item ${i + 1}`,
-      value: `${i + 1}`
-    }));
-
-    render(
-      <MenuItem title="Test Title" itemList={manyItems} defaultOpen={true} />
-    );
-
-    const listContainer = screen.getByTestId('virtualized-list').parentElement;
-    expect(listContainer).toHaveStyle('height: 360px'); // Max height
   });
 
   it('should pass correct props to FixedSizeList', () => {
@@ -162,11 +155,18 @@ describe('MenuItem Component', () => {
       { label: 'Item 2', value: '2' }
     ];
     render(
-      <MenuItem title="Test Title" itemList={itemList} defaultOpen={true} />
+      <MenuItem
+        title="Test Title"
+        itemList={itemList}
+        maxVisibleItem={5}
+        defaultOpen={true}
+      />
     );
-    const ITEM_HEIGHT = 40;
-    const MAX_HEIGHT = 360; // 9 * ITEM_HEIGHT
-    const expectedHeight = Math.min(itemList.length * ITEM_HEIGHT, MAX_HEIGHT);
+    const ITEM_HEIGHT = 30;
+    const expectedHeight = Math.min(
+      itemList.length * ITEM_HEIGHT,
+      5 * ITEM_HEIGHT
+    );
 
     expect(FixedSizeList).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -186,12 +186,18 @@ describe('MenuItem Component', () => {
       value: `${i + 1}`
     }));
 
-    render(
-      <MenuItem title="Test Title" itemList={manyItems} defaultOpen={true} />
-    );
+    const ITEM_HEIGHT = 30;
+    const MAX_VISIBLEITEM = 5;
+    const MAX_HEIGHT = MAX_VISIBLEITEM * ITEM_HEIGHT;
 
-    const ITEM_HEIGHT = 40;
-    const MAX_HEIGHT = 360; // 9 * ITEM_HEIGHT
+    render(
+      <MenuItem
+        title="Test Title"
+        itemList={manyItems}
+        maxVisibleItem={MAX_VISIBLEITEM}
+        defaultOpen={true}
+      />
+    );
 
     expect(FixedSizeList).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -212,6 +218,7 @@ describe('MenuItem Component', () => {
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }
         ]}
+        maxVisibleItem={5}
       />
     );
     const menuItem = screen.getByText('Test Title').closest('div');
@@ -231,6 +238,7 @@ describe('MenuItem Component', () => {
           { label: 'Item 2', value: '2' }
         ]}
         setIsSidebarOpen={mockSetIsSidebarOpen}
+        maxVisibleItem={5}
       />
     );
 
@@ -252,6 +260,7 @@ describe('MenuItem Component', () => {
           { label: 'Item 2', value: '2' }
         ]}
         setIsSidebarOpen={mockSetIsSidebarOpen}
+        maxVisibleItem={5}
       />
     );
 
@@ -270,6 +279,7 @@ describe('MenuItem Component', () => {
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }
         ]}
+        maxVisibleItem={5}
         onItemClick={mockOnItemClick}
         defaultOpen={true}
       />
@@ -282,6 +292,66 @@ describe('MenuItem Component', () => {
     expect(mockOnItemClick).toHaveBeenCalledWith('2');
   });
 
+  it('should call onDeleteClick when delete icon is clicked', () => {
+    render(
+      <MenuItem
+        title="Test Title"
+        itemList={[
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
+        ]}
+        maxVisibleItem={5}
+        onDeleteClick={mockOnDeleteClick}
+        defaultOpen={true}
+      />
+    );
+
+    const deleteIcons = screen.getAllByLabelText(/Delete Item \d/);
+    fireEvent.click(deleteIcons[0]);
+    expect(mockOnDeleteClick).toHaveBeenCalledWith('1');
+  });
+
+  it('should enter edit mode when edit icon is clicked', () => {
+    render(
+      <MenuItem
+        title="Test Title"
+        itemList={[
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
+        ]}
+        maxVisibleItem={5}
+        onEditClick={mockOnEditClick}
+        defaultOpen={true}
+      />
+    );
+
+    const editIcons = screen.getAllByLabelText(/Edit Item \d/);
+    fireEvent.click(editIcons[0]);
+    expect(screen.getByDisplayValue('Item 1')).toBeInTheDocument();
+  });
+
+  it('should call onEditClick when edit is submitted', () => {
+    render(
+      <MenuItem
+        title="Test Title"
+        itemList={[
+          { label: 'Item 1', value: '1' },
+          { label: 'Item 2', value: '2' }
+        ]}
+        maxVisibleItem={5}
+        onEditClick={mockOnEditClick}
+        defaultOpen={true}
+      />
+    );
+    const editIcons = screen.getAllByLabelText(/Edit Item \d/);
+    fireEvent.click(editIcons[0]);
+    const input = screen.getByDisplayValue('Item 1');
+    fireEvent.change(input, { target: { value: 'Updated Item 1' } });
+    fireEvent.click(screen.getByLabelText('Submit edit'));
+
+    expect(mockOnEditClick).toHaveBeenCalledWith('1', 'Updated Item 1');
+  });
+
   it('should render correct number of items in the virtualized list', () => {
     const itemList = [
       { label: 'Item 1', value: '1' },
@@ -290,7 +360,12 @@ describe('MenuItem Component', () => {
     ];
 
     render(
-      <MenuItem title="Test Title" itemList={itemList} defaultOpen={true} />
+      <MenuItem
+        title="Test Title"
+        itemList={itemList}
+        maxVisibleItem={5}
+        defaultOpen={true}
+      />
     );
 
     const listItems = screen.getAllByText(/Item \d/);
@@ -312,6 +387,7 @@ describe('MenuItem Component', () => {
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }
         ]}
+        maxVisibleItem={5}
       />
     );
     expect(asFragment()).toMatchSnapshot();

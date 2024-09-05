@@ -21,7 +21,8 @@ interface MenuItemProps {
   defaultOpen?: boolean;
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
   onItemClick?: (id: string) => void;
-  activeItemId?: string; //for chat, it is the chatId currently displays the chat content in main component
+  maxVisibleItem?: number;
+  activeItemId?: string;
   onDeleteClick?: (id: string) => void;
   onEditClick?: (id: string, newTitle: string) => void;
 }
@@ -32,6 +33,7 @@ const MenuItem: FC<MenuItemProps> = ({
   itemList,
   defaultOpen = false,
   setIsSidebarOpen,
+  maxVisibleItem = 15,
   onItemClick,
   activeItemId,
   onDeleteClick,
@@ -59,10 +61,8 @@ const MenuItem: FC<MenuItemProps> = ({
     [link, router, setIsSidebarOpen]
   );
 
-  // Constants
-  const ITEM_HEIGHT = 40; // Height of each item
-  const MAX_VISIBLE_ITEMS = 9; // Maximum number of items visible without scrolling
-  const MAX_HEIGHT = MAX_VISIBLE_ITEMS * ITEM_HEIGHT;
+  const ITEM_HEIGHT = 30;
+  const MAX_HEIGHT = maxVisibleItem * ITEM_HEIGHT;
 
   const Row = useCallback(
     ({ index, style }: { index: number; style: React.CSSProperties }) => {
@@ -105,31 +105,40 @@ const MenuItem: FC<MenuItemProps> = ({
                 onChange={e => setEditingTitle(e.target.value)}
                 className="mr-1 p-1 border rounded bg-slate-600 text-slate-200 w-11/12"
                 autoFocus
+                aria-label={`Edit ${item.label}`}
               />
               <button
                 onClick={() => handleEditSubmit(item.value)}
                 className="text-green-500"
+                aria-label="Submit edit"
               >
                 <AiOutlineCheck />
               </button>
             </>
           ) : (
             <>
-              <span
-                className="truncate"
+              <button
+                className="truncate text-left w-full"
                 onClick={() => handleItemPageClick(item.value)}
+                aria-label={item.label}
               >
                 {item.label}
-              </span>
+              </button>
               <div className="flex space-x-1">
-                <AiFillDelete
+                <button
                   className="cursor-pointer hover:text-red-500"
                   onClick={() => onDeleteClick && onDeleteClick(item.value)}
-                />
-                <AiFillEdit
+                  aria-label={`Delete ${item.label}`}
+                >
+                  <AiFillDelete />
+                </button>
+                <button
                   className="cursor-pointer hover:text-indigo-300"
                   onClick={() => handleEditStart(item.value, item.label)}
-                />
+                  aria-label={`Edit ${item.label}`}
+                >
+                  <AiFillEdit />
+                </button>
               </div>
             </>
           )}
@@ -155,13 +164,14 @@ const MenuItem: FC<MenuItemProps> = ({
   return (
     <div className="mt-6 font-semibold">
       <div
-        className={`flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100 }`}
+        className={`flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100`}
       >
         {link ? (
           <Link
             href={link}
             className={`flex-grow px-2 transition-colors duration-200 hover:text-indigo-300`}
             onClick={handleItemListLinkClick}
+            aria-current={isActive ? 'page' : undefined}
           >
             {title}
           </Link>
@@ -169,18 +179,22 @@ const MenuItem: FC<MenuItemProps> = ({
           <span className="flex-grow text-slate-50 ">{title}</span>
         )}
         <button
-          role="button"
           className="cursor-pointer transition-colors duration-200 hover:text-indigo-300"
           onClick={handleToggle}
-          aria-label={isOpen ? 'Collapse' : 'Expand'}
+          aria-expanded={isOpen}
+          aria-controls={`menuitem-list-${title.toLowerCase().replace(/\s+/g, '-')}`}
         >
           {isOpen ? <AiFillCaretUp size={18} /> : <AiFillCaretDown size={18} />}
+          <span className="sr-only">
+            {isOpen ? `Collapse ${title}` : `Expand ${title}`}
+          </span>
         </button>
       </div>
       {isOpen && itemList && itemList.length > 0 && (
         <div
           className="px-1 py-2 font-medium text-slate-200"
           style={{ height: listHeight }}
+          id={`menuitem-list-${title.toLowerCase().replace(/\s+/g, '-')}`}
         >
           <AutoSizer disableHeight>
             {({ width }) => (
@@ -190,7 +204,7 @@ const MenuItem: FC<MenuItemProps> = ({
                 itemCount={itemList.length}
                 itemSize={ITEM_HEIGHT}
                 className={
-                  itemList.length > MAX_VISIBLE_ITEMS ? 'custom-scrollbar' : ''
+                  itemList.length > maxVisibleItem ? 'custom-scrollbar' : ''
                 }
               >
                 {Row}

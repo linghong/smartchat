@@ -6,7 +6,7 @@ exports[`MenuItem Component should match MenuItem component snapshot 1`] = `
     class="mt-6 font-semibold"
   >
     <div
-      class="flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100 }"
+      class="flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100"
     >
       <a
         class="flex-grow px-2 transition-colors duration-200 hover:text-indigo-300"
@@ -15,9 +15,9 @@ exports[`MenuItem Component should match MenuItem component snapshot 1`] = `
         Test Title
       </a>
       <button
-        aria-label="Expand"
+        aria-controls="menuitem-list-test-title"
+        aria-expanded="false"
         class="cursor-pointer transition-colors duration-200 hover:text-indigo-300"
-        role="button"
       >
         <svg
           fill="currentColor"
@@ -32,6 +32,11 @@ exports[`MenuItem Component should match MenuItem component snapshot 1`] = `
             d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
           />
         </svg>
+        <span
+          class="sr-only"
+        >
+          Expand Test Title
+        </span>
       </button>
     </div>
   </div>
