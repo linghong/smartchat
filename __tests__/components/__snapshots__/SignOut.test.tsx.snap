@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SignOut Component renders correctly 1`] = `
+<DocumentFragment>
+  <button
+    aria-label="Sign out"
+    class="flex items-center justify-center p-1 text-white text-sm rounded-full hover:bg-stone-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500"
+  >
+    <svg
+      aria-label="logout"
+      class="lucide lucide-log-out"
+      fill="none"
+      height="16"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+      />
+      <polyline
+        points="16 17 21 12 16 7"
+      />
+      <line
+        x1="21"
+        x2="9"
+        y1="12"
+        y2="12"
+      />
+    </svg>
+    <span
+      class="ml-1"
+    >
+      Log out
+    </span>
+  </button>
+</DocumentFragment>
+`;
