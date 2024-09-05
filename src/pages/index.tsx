@@ -263,6 +263,36 @@ const HomePage: React.FC<HomeProps> = ({
     });
   };
 
+  const handleRetry = () => {
+    if (chatHistory.length > 0) {
+      const lastMessage = chatHistory[chatHistory.length - 1];
+      const lastFileSrc = fileSrcHistory[fileSrcHistory.length - 1];
+
+      // Remove the last message from the chat history
+      setChatHistory(prevHistory => prevHistory.slice(0, -1));
+      setFileSrcHistory(prevHistory => prevHistory.slice(0, -1));
+      // Resend the last user message
+      handleSubmit(lastMessage.question, lastFileSrc);
+    }
+  };
+
+  const handleCopy = () => {
+    if (chatHistory.length > 0) {
+      const lastMessage = chatHistory[chatHistory.length - 1];
+      navigator.clipboard
+        .writeText(lastMessage.answer)
+        .then(() => {
+          // Optionally, you can show a notification that the text was copied
+          setError('Text copied to clipboard');
+          setTimeout(() => setError(null), 3000);
+        })
+        .catch(err => {
+          console.error('Failed to copy text: ', err);
+          setError('Failed to copy text');
+        });
+    }
+  };
+
   useEffect(() => {
     setNamespacesList(fetchedCategoryOptions);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -280,7 +310,7 @@ const HomePage: React.FC<HomeProps> = ({
   return (
     <div className="flex flex-col w-full h-full mx-auto z-80">
       {isConfigPanelVisible && (
-        <div className="flex-shrink-0 w-full px-4 pt-2 pb-4">
+        <div className="flex-shrink-0 w-full px-4 pt-1 pb-4">
           <AIConfigPanel
             selectedModel={selectedModel}
             handleModelChange={handleModelChange}
@@ -299,6 +329,11 @@ const HomePage: React.FC<HomeProps> = ({
           loading={loading}
           fileSrcHistory={fileSrcHistory}
           handleFileDelete={handleFileDelete}
+          modelOptions={modelOptions}
+          selectedModel={selectedModel}
+          handleModelChange={handleModelChange}
+          handleCopy={handleCopy}
+          handleRetry={handleRetry}
         />
       </div>
 
