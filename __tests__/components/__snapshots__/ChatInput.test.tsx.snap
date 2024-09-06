@@ -9,7 +9,7 @@ exports[`ChatInput matches snapshot 1`] = `
       class="flex w-full justify-around items-center border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg"
     >
       <div
-        class="flex w-3/12 ms:w-2/12  sm:w-1/12 items-center justify-around md:mx-1"
+        class="flex w-3/12 ms:w-2/12 sm:w-1/12 items-center justify-around md:mx-1"
       >
         <div
           class="relative group"
@@ -19,6 +19,7 @@ exports[`ChatInput matches snapshot 1`] = `
             class="flex items-center justify-center font-bold  rounded cursor-pointer disabled:cursor-not-allowed"
           >
             <svg
+              aria-hidden="true"
               fill="currentColor"
               height="28"
               stroke="currentColor"
@@ -84,7 +85,7 @@ exports[`ChatInput matches snapshot 1`] = `
       >
         <textarea
           aria-label="Enter your message here"
-          class="w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 focus:ring-stone-100 focus:outline-none"
+          class="w-full max-h-96 placeholder-gray-400 overflow-y-auto p-3 focus:ring-stone-100 focus:outline-none"
           id="userInput"
           name="userInput"
           placeholder="Click to send. Shift + Enter for a new line."
@@ -125,7 +126,7 @@ exports[`ChatInput matches snapshot when isVisionModel is false 1`] = `
       class="flex w-full justify-around items-center border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg"
     >
       <div
-        class="flex w-3/12 ms:w-2/12  sm:w-1/12 items-center justify-around md:mx-1"
+        class="flex w-3/12 ms:w-2/12 sm:w-1/12 items-center justify-around md:mx-1"
       >
         <div
           class="relative group"
@@ -136,6 +137,7 @@ exports[`ChatInput matches snapshot when isVisionModel is false 1`] = `
             disabled=""
           >
             <svg
+              aria-hidden="true"
               fill="currentColor"
               height="28"
               stroke="currentColor"
@@ -201,7 +203,7 @@ exports[`ChatInput matches snapshot when isVisionModel is false 1`] = `
       >
         <textarea
           aria-label="Enter your message here"
-          class="w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 focus:ring-stone-100 focus:outline-none"
+          class="w-full max-h-96 placeholder-gray-400 overflow-y-auto p-3 focus:ring-stone-100 focus:outline-none"
           id="userInput"
           name="userInput"
           placeholder="Click to send. Shift + Enter for a new line."

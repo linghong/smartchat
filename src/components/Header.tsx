@@ -6,12 +6,7 @@ import {
   Dispatch,
   SetStateAction
 } from 'react';
-import {
-  AiOutlineMenu,
-  AiOutlineForm,
-  AiOutlineEye,
-  AiOutlineEyeInvisible
-} from 'react-icons/ai';
+import { Menu, SquarePen, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/router';
 
 import SignOut from '@/src/components/SignOut';
@@ -89,14 +84,14 @@ const Header: FC<HeaderProps> = ({
           aria-label="Toggle Sidebar"
           role="toogle"
         >
-          <AiOutlineMenu size={20} />
+          <Menu size={20} />
         </button>
         <button
           className="hover:text-lg hover:bg-stone-600 hover:font-bold transition-colors duration-200"
           onClick={onNewChat}
           aria-label="New Chat"
         >
-          <AiOutlineForm size={21} />
+          <SquarePen size={21} />
         </button>
       </div>
       <div className="flex text-white text-md font-bold focus:bg-indigo-100">
@@ -105,13 +100,13 @@ const Header: FC<HeaderProps> = ({
       <div className="flex space-x-6">
         <button
           onClick={toggleConfigPanel}
-          className="flex items-center space-x-2 rounded-full hover:bg-slate-500 transition-colors duration-200"
+          className="flex items-center px-2 space-x-2 rounded-full hover:bg-slate-500 transition-colors duration-200"
           aria-label={isConfigPanelVisible ? 'Hide Config' : 'Show Config'}
         >
           {isConfigPanelVisible ? (
-            <AiOutlineEyeInvisible size={20} className="text-white" />
+            <EyeOff size={20} className="text-white" />
           ) : (
-            <AiOutlineEye size={20} className="text-white" />
+            <Eye size={20} className="text-white" />
           )}
           <span className="text-white text-sm hidden sm:inline">
             {isConfigPanelVisible ? 'Hide' : 'Show'} AI Assistant Config

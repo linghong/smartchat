@@ -66,14 +66,14 @@ describe('AIHub Component', () => {
     render(<AIHub />);
     const button = screen.getByRole('button', { name: /AI Hub/i });
     fireEvent.click(button);
-    const icon = button.querySelector('svg[aria-label="caret-down"]');
+    const icon = button.querySelector('svg[aria-label="chevron-down"]');
     expect(icon).toBeInTheDocument();
   });
 
   it('renders the correct icon when the menu is closed', () => {
     render(<AIHub />);
     const button = screen.getByRole('button', { name: /AI Hub/i });
-    const icon = button.querySelector('svg[aria-label="caret-up"]');
+    const icon = button.querySelector('svg[aria-label="chevron-up"]');
     expect(icon).toBeInTheDocument();
   });
 

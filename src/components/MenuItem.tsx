@@ -2,13 +2,13 @@ import React, { useState, useCallback, FC, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
-  AiFillCaretDown,
-  AiFillCaretUp,
-  AiFillDelete,
-  AiFillEdit,
-  AiOutlineCheck,
-  AiOutlineClose
-} from 'react-icons/ai';
+  ChevronDown,
+  ChevronUp,
+  Trash2,
+  Edit,
+  Check,
+  Pencil
+} from 'lucide-react';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -95,7 +95,7 @@ const MenuItem: FC<MenuItemProps> = ({
       return (
         <div
           style={style}
-          className={`flex justify-between items-center px-3 py-2 tracking-tight text-sm font-normal transition-colors duration-200 hover:bg-slate-600 hover:rounded focus:bg-indigo-100 ${isActiveLi ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-200'}`}
+          className={`flex justify-between items-center px-3 py-2 tracking-tight text-sm font-normal transition-colors duration-200 hover:bg-slate-600 hover:rounded focus-within:bg-indigo-100 ${isActiveLi ? 'bg-slate-400 text-indigo-200 rounded-sm' : 'text-slate-200'}`}
         >
           {isEditing ? (
             <>
@@ -109,16 +109,16 @@ const MenuItem: FC<MenuItemProps> = ({
               />
               <button
                 onClick={() => handleEditSubmit(item.value)}
-                className="text-green-500"
+                className="text-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
                 aria-label="Submit edit"
               >
-                <AiOutlineCheck />
+                <Check size="18" />
               </button>
             </>
           ) : (
             <>
               <button
-                className="truncate text-left w-full"
+                className="truncate text-left w-full focus:outline-none focus:ring-2 focus:ring-indigo-300"
                 onClick={() => handleItemPageClick(item.value)}
                 aria-label={item.label}
               >
@@ -126,18 +126,22 @@ const MenuItem: FC<MenuItemProps> = ({
               </button>
               <div className="flex space-x-1">
                 <button
-                  className="cursor-pointer hover:text-red-500"
+                  className="cursor-pointer hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
                   onClick={() => onDeleteClick && onDeleteClick(item.value)}
                   aria-label={`Delete ${item.label}`}
                 >
-                  <AiFillDelete />
+                  <Trash2 size={14} color="#f1f0f5" fill="#e7e7f5" />
                 </button>
                 <button
-                  className="cursor-pointer hover:text-indigo-300"
+                  className="cursor-pointer hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-300"
                   onClick={() => handleEditStart(item.value, item.label)}
                   aria-label={`Edit ${item.label}`}
                 >
-                  <AiFillEdit />
+                  <Pencil
+                    size={14}
+                    color="#f1f0f5"
+                    className="pl-1 border-b 2px white"
+                  />
                 </button>
               </div>
             </>
@@ -169,7 +173,7 @@ const MenuItem: FC<MenuItemProps> = ({
         {link ? (
           <Link
             href={link}
-            className={`flex-grow px-2 transition-colors duration-200 hover:text-indigo-300`}
+            className={`flex-grow px-2 transition-colors duration-200 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-300`}
             onClick={handleItemListLinkClick}
             aria-current={isActive ? 'page' : undefined}
           >
@@ -179,12 +183,12 @@ const MenuItem: FC<MenuItemProps> = ({
           <span className="flex-grow text-slate-50 ">{title}</span>
         )}
         <button
-          className="cursor-pointer transition-colors duration-200 hover:text-indigo-300"
+          className="cursor-pointer transition-colors duration-200 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-300"
           onClick={handleToggle}
           aria-expanded={isOpen}
           aria-controls={`menuitem-list-${title.toLowerCase().replace(/\s+/g, '-')}`}
         >
-          {isOpen ? <AiFillCaretUp size={18} /> : <AiFillCaretDown size={18} />}
+          {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           <span className="sr-only">
             {isOpen ? `Collapse ${title}` : `Expand ${title}`}
           </span>

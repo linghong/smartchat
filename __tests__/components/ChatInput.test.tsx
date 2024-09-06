@@ -171,7 +171,7 @@ describe('ChatInput', () => {
     await user.upload(input, file);
 
     expect(
-      await screen.findByText('The model only supports text message.')
+      await screen.findByText('The model only supports text messages.')
     ).toBeInTheDocument();
   });
 
@@ -233,12 +233,59 @@ describe('ChatInput', () => {
     fireEvent.click(captureButton);
 
     await waitFor(() => {
-      const thumbnailElement = screen.getByTitle(/Thumbnail for uploaded file/);
-      expect(thumbnailElement).toBeInTheDocument();
-
-      const deleteButton = screen.getByLabelText(/Delete file/);
-      expect(deleteButton).toBeInTheDocument();
+      const viewImageButton = screen.getByRole('button', {
+        name: /Click to view larger file/i
+      });
+      expect(viewImageButton).toBeInTheDocument();
     });
+  });
+
+  it('handles screen capture when isVisionModel is false', async () => {
+    render(<ChatInput {...defaultProps} isVisionModel={false} />);
+    const captureButton = screen.getByLabelText('Capture Screenshot');
+
+    expect(captureButton).toBeDisabled();
+  });
+
+  it('handles screen capture error', async () => {
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: false,
+      json: () =>
+        Promise.resolve({
+          message: 'Failed to capture screenshot'
+        })
+    });
+
+    render(<ChatInput {...defaultProps} />);
+    const captureButton = screen.getByLabelText('Capture Screenshot');
+    fireEvent.click(captureButton);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('An error occurred while capturing the screen')
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('handles screen capture network error', async () => {
+    global.fetch = jest.fn().mockRejectedValueOnce(new Error('Network error'));
+
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    render(<ChatInput {...defaultProps} />);
+    const captureButton = screen.getByLabelText('Capture Screenshot');
+    fireEvent.click(captureButton);
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalled();
+      expect(
+        screen.getByText('A network error occurred while capturing the screen')
+      ).toBeInTheDocument();
+    });
+
+    consoleSpy.mockRestore();
   });
 
   it('handles file upload error for unsupported image format', async () => {
@@ -258,56 +305,6 @@ describe('ChatInput', () => {
     expect(
       await screen.findByText('Unsupported file format')
     ).toBeInTheDocument();
-  });
-
-  it('handles screen capture when isVisionModel is false', async () => {
-    render(<ChatInput {...defaultProps} isVisionModel={false} />);
-    const captureButton = screen.getByLabelText('Capture Screenshot');
-
-    expect(captureButton).toBeDisabled();
-  });
-
-  it('handles screen capture error', async () => {
-    global.fetch = jest.fn().mockResolvedValueOnce({
-      ok: false,
-      json: () =>
-        Promise.resolve({
-          message: 'Failed to capture screenshot'
-        })
-    });
-
-    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
-
-    render(<ChatInput {...defaultProps} />);
-    const captureButton = screen.getByLabelText('Capture Screenshot');
-    fireEvent.click(captureButton);
-
-    await waitFor(() => {
-      expect(alertMock).toHaveBeenCalledWith('Failed to capture screenshot');
-    });
-
-    alertMock.mockRestore();
-  });
-
-  it('handles screen capture network error', async () => {
-    global.fetch = jest.fn().mockRejectedValueOnce(new Error('Network error'));
-
-    const consoleSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-
-    render(<ChatInput {...defaultProps} />);
-    const captureButton = screen.getByLabelText('Capture Screenshot');
-    fireEvent.click(captureButton);
-
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalled();
-      expect(
-        screen.getByText('An error occurred while capturing the screen')
-      ).toBeInTheDocument();
-    });
-
-    consoleSpy.mockRestore();
   });
 
   it('matches snapshot', () => {

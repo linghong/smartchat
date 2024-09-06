@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { AiFillCaretDown, AiFillCaretUp, AiOutlineBulb } from 'react-icons/ai';
+import { ChevronDown, ChevronUp, Lightbulb } from 'lucide-react';
 
 interface AIHubLink {
   title: string;
@@ -27,13 +27,13 @@ const AIHub: React.FC = () => {
         className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-600 hover:bg-gray-300 hover:text-gray-600 transition-colors duration-200"
       >
         <span className="flex items-center">
-          <AiOutlineBulb size={20} className="mr-2" />
+          <Lightbulb size={20} className="mr-2" />
           <span className="font-medium">AI Hub</span>
         </span>
         {isOpen ? (
-          <AiFillCaretDown size={20} aria-label="caret-down" />
+          <ChevronDown size={20} aria-label="chevron-down" />
         ) : (
-          <AiFillCaretUp size={20} aria-label="caret-up" />
+          <ChevronUp size={20} aria-label="chevron-up" />
         )}
       </button>
       {isOpen && (

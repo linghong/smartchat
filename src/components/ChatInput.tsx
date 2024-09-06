@@ -73,20 +73,20 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   const handleImageFile = async (fileData: FileData) => {
     if (!isVisionModel) {
-      setFileError([...fileError, 'The model only supports text message.']);
+      setFileError(prev => [...prev, 'The model only supports text messages.']);
       return;
     }
 
-    const imageVadiationError = isSupportedImage(
+    const imageValidationError = isSupportedImage(
       selectedModel?.value || '',
       fileData
     );
-    if (imageVadiationError.length !== 0) {
-      setFileError([...fileError, ...imageVadiationError]);
+    if (imageValidationError.length !== 0) {
+      setFileError(prev => [...prev, ...imageValidationError]);
       return;
     }
 
-    setFileSrc([...fileSrc, fileData]);
+    setFileSrc(prev => [...prev, fileData]);
   };
 
   const handleFileUpload = async (file: File) => {
@@ -94,7 +94,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
     const base64Content = await fileToDataURLBase64(file);
     if (!base64Content) {
-      setFileError([...fileError, 'Error happened when extracting file data']);
+      setFileError(prev => [
+        ...prev,
+        'Error happened when extracting file data'
+      ]);
       return;
     }
     const fileType = file.type
@@ -111,7 +114,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     if (fileType.startsWith('image/')) {
       await handleImageFile(fileData);
     } else {
-      setFileSrc([...fileSrc, fileData]);
+      setFileSrc(prev => [...prev, fileData]);
     }
   };
 
@@ -121,7 +124,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
       const { message, base64Image, type, size, name } = await response.json();
 
       if (!response.ok) {
-        alert(message);
+        setFileError(prev => [
+          ...prev,
+          'An error occurred while capturing the screen'
+        ]);
         return;
       }
       const newImage: FileData = {
@@ -131,21 +137,21 @@ const ChatInput: React.FC<ChatInputProps> = ({
         name
       };
 
-      const imageVadiationError = isSupportedImage(
+      const imageValidationError = isSupportedImage(
         selectedModel?.value || '',
         newImage
       );
-      if (imageVadiationError.length !== 0) {
-        setFileError([...fileError, ...imageVadiationError]);
+      if (imageValidationError.length !== 0) {
+        setFileError(prev => [...prev, ...imageValidationError]);
         return;
       }
 
       setFileSrc([...fileSrc, newImage]);
     } catch (error) {
       console.error('Error:', error);
-      setFileError([
-        ...fileError,
-        'An error occurred while capturing the screen'
+      setFileError(prev => [
+        ...prev,
+        'A network error occurred while capturing the screen'
       ]);
     }
   };
@@ -175,7 +181,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
-  // useEffect for Shift + Enter
+  // for Shift + Enter
   useEffect(() => {
     const handleShiftEnter = (e: KeyboardEvent) => {
       if (e.key !== 'Enter') return;
@@ -190,7 +196,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           const newValue =
             value.substring(0, start) + '\n' + value.substring(end);
           setUserInput(newValue);
-          setRows(rows => rows + 1);
+          setRows(rows => Math.min(rows + 1, 8));
 
           // Update cursor position
           setTimeout(() => {
@@ -218,9 +224,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   }, [handleSubmit]);
 
   const isFileUploadIconDisabled =
-    selectedModel.contextWindow && selectedModel.contextWindow > 4000
-      ? false
-      : true;
+    !selectedModel.contextWindow || selectedModel.contextWindow <= 4000;
 
   return (
     <div className="flex flex-col w-full justify-around flex-shrink-0 items-center  my-1">
@@ -232,9 +236,9 @@ const ChatInput: React.FC<ChatInputProps> = ({
         />
       )}
       <div className="flex w-full justify-around items-center border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg">
-        <div className="flex w-3/12 ms:w-2/12  sm:w-1/12 items-center justify-around md:mx-1">
+        <div className="flex w-3/12 ms:w-2/12 sm:w-1/12 items-center justify-around md:mx-1">
           <ButtonWithTooltip
-            icon={<RiScreenshot2Fill size={28} />}
+            icon={<RiScreenshot2Fill size={28} aria-hidden="true" />}
             onClick={handleScreenCapture}
             ariaLabel="Capture Screenshot"
             tooltipText="Capture Screenshot"
@@ -266,7 +270,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             rows={rows}
             id="userInput"
             name="userInput"
-            className="w-full max-h-96 placeholder-gray-400 overflow-y-auto focus: p-3 focus:ring-stone-100 focus:outline-none"
+            className="w-full max-h-96 placeholder-gray-400 overflow-y-auto p-3 focus:ring-stone-100 focus:outline-none"
             placeholder="Click to send. Shift + Enter for a new line."
             value={userInput}
             onChange={handleInputChange}
@@ -274,7 +278,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           />
           <ArrowButton
             disabled={userInput === '' && fileSrc.length === 0}
-            aria-label="Send"
+            aria-label="Send message"
           />
         </form>
       </div>
