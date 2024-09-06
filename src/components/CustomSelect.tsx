@@ -53,7 +53,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       {isOpen && (
         <ul
           className={cn(
-            'absolute z-100 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto',
+            'absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto',
             dropdownClass
           )}
         >
