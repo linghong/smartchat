@@ -1,21 +1,21 @@
 import React, { ChangeEvent, FormEvent } from 'react';
-
+import { useRouter } from 'next/router';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle
 } from '@/src/components/ui/card';
+import { Slider } from '@/src/components/ui/slider';
+import { Label } from '@/src/components/ui/label';
+
 import { Input } from '@/src/components/ui/input';
 import { Textarea } from '@/src/components/ui/textarea';
 import { Button } from '@/src/components/ui/button';
 import CustomSelect from '@/src/components/CustomSelect';
-import { Slider } from '@/src/components/ui/slider';
-import { Label } from '@/src/components/ui/label';
-
 import { OptionType } from '@/src/types/common';
 import { AIConfig } from '@/src/types/chat';
-
+import { postAIConfig } from '@/src/utils/sqliteAIConfigApiClient';
 interface AIConfigPanelProps {
   selectedModel: OptionType;
   handleModelChange: (newValue: OptionType) => void;
@@ -37,6 +37,8 @@ export default function AIConfigPanel({
   modelOptions,
   fileCategoryOptions
 }: AIConfigPanelProps) {
+  const router = useRouter();
+
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -48,13 +50,20 @@ export default function AIConfigPanel({
     setAIConfig({ ...aiConfig, [id]: value[0] });
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    const token = window.localStorage.getItem('token');
 
-    console.log('Form submitted', {
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    const selectedNamespaceValue = selectedNamespace?.value || '';
+    const response = await postAIConfig(
+      token,
       aiConfig,
-      selectedNamespace
-    });
+      selectedNamespaceValue
+    );
   };
 
   return (
@@ -184,7 +193,7 @@ export default function AIConfigPanel({
 
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-indigo-100 via-gray-800  to-slate-600 text-white font-semibold py-2 px-4 rounded"
+            className="w-full bg-gradient-to-r from-indigo-100 via-gray-800  to-slate-600 text-white font-semibold py-2 px-4 rounded shadow-sm shadow-cyan-200 drop-shadow-sm"
           >
             Save Configuration
           </Button>

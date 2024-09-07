@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import type { FileData } from '@/src/types/chat';
+import type { OptionType } from '@/src/types/common';
 
 @Entity('users')
 export class User {
@@ -31,6 +32,42 @@ export class User {
 
   @OneToMany(() => Chat, chat => chat.user)
   chats!: Chat[];
+}
+
+@Entity('ai_configs')
+export class AIConfig {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column('varchar')
+  name!: string;
+
+  @Column('varchar')
+  role!: string;
+
+  @Column('simple-json')
+  model!: OptionType;
+
+  @Column('float')
+  topP!: number;
+
+  @Column('float')
+  temperature!: number;
+
+  @Column('text')
+  basePrompt?: string;
+
+  @Column('simple-json', { nullable: true })
+  metadata?: { [key: string]: any };
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @ManyToOne(() => User)
+  user!: User;
+
+  @Column('int')
+  userId!: number;
 }
 
 @Entity('chats')
