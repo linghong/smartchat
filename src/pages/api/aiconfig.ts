@@ -77,7 +77,7 @@ const handler = withAuth(
           break;
         default:
           res.setHeader('Allow', ['GET', 'POST']);
-          res.status(405).end(`Method ${req.method} Not Allowed`);
+          res.status(405).end({error:`Method ${req.method} Not Allowed`});
       }
     } catch (error) {
       console.error('Error saving AI Config:', error);

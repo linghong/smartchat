@@ -59,28 +59,26 @@ exports[`AIConfigPanel matches snapshot 1`] = `
           >
             Select RAG Namespace
           </label>
-          <div>
-            <select
-              aria-label="namespace"
-              id="namespace"
+          <select
+            aria-label="namespace"
+            id="namespace"
+          >
+            <option
+              value="none"
             >
-              <option
-                value="none"
-              >
-                None
-              </option>
-              <option
-                value="namespace1"
-              >
-                Namespace 1
-              </option>
-              <option
-                value="namespace2"
-              >
-                Namespace 2
-              </option>
-            </select>
-          </div>
+              None
+            </option>
+            <option
+              value="namespace1"
+            >
+              Namespace 1
+            </option>
+            <option
+              value="namespace2"
+            >
+              Namespace 2
+            </option>
+          </select>
         </div>
         <div
           class="bg-slate-50 p-4 rounded-lg space-y-4"
@@ -94,23 +92,21 @@ exports[`AIConfigPanel matches snapshot 1`] = `
             >
               Choose AI Model
             </label>
-            <div>
-              <select
-                aria-label="model"
-                id="model"
+            <select
+              aria-label="model"
+              id="model"
+            >
+              <option
+                value="model1"
               >
-                <option
-                  value="model1"
-                >
-                  Model 1
-                </option>
-                <option
-                  value="model2"
-                >
-                  Model 2
-                </option>
-              </select>
-            </div>
+                Model 1
+              </option>
+              <option
+                value="model2"
+              >
+                Model 2
+              </option>
+            </select>
           </div>
           <div
             class="space-y-2"

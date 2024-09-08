@@ -1,5 +1,6 @@
-import React, { ChangeEvent, FormEvent } from 'react';
+import React, { ChangeEvent, FormEvent, useState, useEffect, SetStateAction, Dispatch } from 'react';
 import { useRouter } from 'next/router';
+
 import {
   Card,
   CardContent,
@@ -8,21 +9,26 @@ import {
 } from '@/src/components/ui/card';
 import { Slider } from '@/src/components/ui/slider';
 import { Label } from '@/src/components/ui/label';
-
 import { Input } from '@/src/components/ui/input';
 import { Textarea } from '@/src/components/ui/textarea';
 import { Button } from '@/src/components/ui/button';
+import { cn } from '@/src/lib/utils';
+
 import CustomSelect from '@/src/components/CustomSelect';
+import Notification from '@/src/components/Notification';
 import { OptionType } from '@/src/types/common';
 import { AIConfig } from '@/src/types/chat';
-import { postAIConfig } from '@/src/utils/sqliteAIConfigApiClient';
+import {
+  postAIConfig,
+  getAIConfigs
+} from '@/src/utils/sqliteAIConfigApiClient';
 interface AIConfigPanelProps {
   selectedModel: OptionType;
   handleModelChange: (newValue: OptionType) => void;
   selectedNamespace: OptionType | null;
   handleNamespaceChange: (selectedOption: OptionType | null) => void;
   aiConfig: AIConfig;
-  setAIConfig: (config: AIConfig) => void;
+  setAIConfig: Dispatch<SetStateAction<AIConfig>>;
   modelOptions: OptionType[];
   fileCategoryOptions: OptionType[];
 }
@@ -39,19 +45,45 @@ export default function AIConfigPanel({
 }: AIConfigPanelProps) {
   const router = useRouter();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState('');
+  const [submissionSuccess, setSubmissionSuccess] = useState('');
+  const [existingNames, setExistingNames] = useState<string[]>([]);
+
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
-    setAIConfig({ ...aiConfig, [id]: value });
+    setAIConfig(prevConfig => ({ ...prevConfig, [id]: value }));
+    setSubmissionSuccess('');
+    setSubmissionError('');
   };
 
   const handleSliderChange = (id: string) => (value: number[]) => {
     setAIConfig({ ...aiConfig, [id]: value[0] });
   };
 
+  const validateForm = () => {
+    if (!aiConfig.name.trim() || !aiConfig.role.trim() || !selectedModel.value.trim()) {
+      setSubmissionError('Please fill in all required fields.');
+      return false;
+    }
+
+    if (existingNames.includes(aiConfig.name)) {
+      setSubmissionError('An AI assistant with this name already exists.');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
     const token = window.localStorage.getItem('token');
 
     if (!token) {
@@ -59,12 +91,46 @@ export default function AIConfigPanel({
       return;
     }
     const selectedNamespaceValue = selectedNamespace?.value || '';
-    const response = await postAIConfig(
-      token,
-      aiConfig,
-      selectedNamespaceValue
-    );
+
+    try {
+      const response = await postAIConfig(
+        token,
+        aiConfig,
+        selectedNamespaceValue
+      );
+
+      if (response.error) {
+        setSubmissionError('Failed to save AI Config. Please try again.');
+      }
+
+      setSubmissionSuccess(response.message);
+      setAIConfig(prevConfig =>({ ...aiConfig, name: '' })); // Clear name field after success
+
+    } catch (error: any) {
+      setSubmissionError(error.message || 'An unexpected error occurred.');
+
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  useEffect(() => {
+    const fetchExistingNames = async () => {
+      const token = window.localStorage.getItem('token');
+      if (token) {
+        try {
+          const configs = await getAIConfigs(token);
+          setExistingNames(configs.map(config => config.name));
+        } catch (error) {
+          console.error('Failed to fetch existing AI configs:', error);
+        }
+      }
+    };
+    fetchExistingNames();
+  }, []);
+
+  const isButtonDisabled =
+    !aiConfig.name || !aiConfig.role || !selectedModel.value || isSubmitting;
 
   return (
     <Card className="w-full mx-auto shadow-lg bg-white">
@@ -73,6 +139,7 @@ export default function AIConfigPanel({
           Configure AI Assistant
         </CardTitle>
       </CardHeader>
+
       <CardContent className="bg-slate-100">
         <form onSubmit={handleSubmit} className="pt-6 pb-2 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -89,7 +156,6 @@ export default function AIConfigPanel({
                 required
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="role">Assistant Role</Label>
               <Input
@@ -102,7 +168,6 @@ export default function AIConfigPanel({
               />
             </div>
           </div>
-
           <div className="space-y-2">
             <Label htmlFor="namespace">Select RAG Namespace</Label>
             <CustomSelect
@@ -124,7 +189,6 @@ export default function AIConfigPanel({
               placeholder="Select RAG namespace"
             />
           </div>
-
           <div className="bg-slate-50 p-4 rounded-lg space-y-4">
             <div className="space-y-2">
               <label htmlFor="model" className="text-gray-700">
@@ -145,7 +209,6 @@ export default function AIConfigPanel({
                 placeholder="Select a model"
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="topP" className="text-gray-700">
                 Model Top P: {aiConfig.topP.toFixed(1)}
@@ -160,7 +223,6 @@ export default function AIConfigPanel({
                 className="w-full"
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="temperature" className="text-gray-700">
                 Model Temperature: {aiConfig.temperature.toFixed(1)}
@@ -176,7 +238,6 @@ export default function AIConfigPanel({
               />
             </div>
           </div>
-
           <div className="space-y-2">
             <Label htmlFor="basePrompt" className="text-gray-700">
               Enter Information You Want AI to Remember
@@ -190,12 +251,21 @@ export default function AIConfigPanel({
               className="w-full resize-none bg-gray-50"
             />
           </div>
-
+          {submissionError && (
+            <Notification type="error" message={submissionError} />
+          )}
+          {submissionSuccess && (
+            <Notification type="success" message={submissionSuccess} />
+          )}
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-indigo-100 via-gray-800  to-slate-600 text-white font-semibold py-2 px-4 rounded shadow-sm shadow-cyan-200 drop-shadow-sm"
+            className={cn(
+              'w-full bg-gradient-to-r from-indigo-100 via-gray-800  to-slate-600 text-white font-semibold py-2 px-4 rounded shadow-sm shadow-cyan-200 drop-shadow-sm ',
+              isButtonDisabled && 'cursor-not-allowed'
+            )}
+            disabled={isButtonDisabled}
           >
-            Save Configuration
+            {isSubmitting ? 'Submitting...' : 'Save Configuration'}
           </Button>
         </form>
       </CardContent>
