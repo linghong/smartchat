@@ -115,7 +115,7 @@ exports[`AIConfigPanel matches snapshot 1`] = `
               class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700"
               for="topP"
             >
-              Model Top P: 0.7
+              Model Top P: 0.70
             </label>
             <div>
               Slider
@@ -128,7 +128,7 @@ exports[`AIConfigPanel matches snapshot 1`] = `
               class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700"
               for="temperature"
             >
-              Model Temperature: 0.5
+              Model Temperature: 0.50
             </label>
             <div>
               Slider

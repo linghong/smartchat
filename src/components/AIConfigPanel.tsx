@@ -1,4 +1,11 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect, SetStateAction, Dispatch } from 'react';
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useState,
+  useEffect,
+  SetStateAction,
+  Dispatch
+} from 'react';
 import { useRouter } from 'next/router';
 
 import {
@@ -64,7 +71,11 @@ export default function AIConfigPanel({
   };
 
   const validateForm = () => {
-    if (!aiConfig.name.trim() || !aiConfig.role.trim() || !selectedModel.value.trim()) {
+    if (
+      !aiConfig.name.trim() ||
+      !aiConfig.role.trim() ||
+      !selectedModel.value.trim()
+    ) {
       setSubmissionError('Please fill in all required fields.');
       return false;
     }
@@ -104,11 +115,9 @@ export default function AIConfigPanel({
       }
 
       setSubmissionSuccess(response.message);
-      setAIConfig(prevConfig =>({ ...aiConfig, name: '' })); // Clear name field after success
-
+      setAIConfig(prevConfig => ({ ...aiConfig, name: '' })); // Clear name field after success
     } catch (error: any) {
       setSubmissionError(error.message || 'An unexpected error occurred.');
-
     } finally {
       setIsSubmitting(false);
     }
@@ -211,13 +220,13 @@ export default function AIConfigPanel({
             </div>
             <div className="space-y-2">
               <Label htmlFor="topP" className="text-gray-700">
-                Model Top P: {aiConfig.topP.toFixed(1)}
+                Model Top P: {aiConfig.topP.toFixed(2)}
               </Label>
               <Slider
                 id="topP"
                 min={0}
                 max={1}
-                step={0.1}
+                step={0.01}
                 value={[aiConfig.topP]}
                 onValueChange={handleSliderChange('topP')}
                 className="w-full"
@@ -225,7 +234,7 @@ export default function AIConfigPanel({
             </div>
             <div className="space-y-2">
               <Label htmlFor="temperature" className="text-gray-700">
-                Model Temperature: {aiConfig.temperature.toFixed(1)}
+                Model Temperature: {aiConfig.temperature.toFixed(2)}
               </Label>
               <Slider
                 id="temperature"

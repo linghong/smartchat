@@ -22,9 +22,15 @@ jest.mock('@/src/utils/sqliteAIConfigApiClient', () => ({
 // Mock the UI components
 jest.mock('@/src/components/ui/card', () => ({
   Card: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  CardHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  CardTitle: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  CardContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+  CardHeader: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  CardTitle: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  CardContent: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  )
 }));
 
 jest.mock('@/src/components/CustomSelect', () => ({
@@ -40,18 +46,18 @@ jest.mock('@/src/components/CustomSelect', () => ({
     value: string;
     onChange: (value: string) => void;
   }) => (
-      <select
-        id={id}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        aria-label={id}
-      >
-        {options.map(option => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+    <select
+      id={id}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      aria-label={id}
+    >
+      {options.map(option => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
   )
 }));
 
@@ -61,7 +67,9 @@ jest.mock('@/src/components/ui/slider', () => ({
 
 jest.mock('@/src/components/Notification', () => ({
   __esModule: true,
-  default: ({ type, message }: { type: string; message: string }) => <div data-testid={`notification-${type}`}>{message}</div>
+  default: ({ type, message }: { type: string; message: string }) => (
+    <div data-testid={`notification-${type}`}>{message}</div>
+  )
 }));
 
 describe('AIConfigPanel', () => {
@@ -143,13 +151,13 @@ describe('AIConfigPanel', () => {
       fireEvent.change(nameInput, { target: { value: 'New Name' } });
     });
     expect(mockProps.setAIConfig).toHaveBeenCalledWith(expect.any(Function));
-    
+
     // Get the function passed to setAIConfig
     const setAIConfigArg = mockProps.setAIConfig.mock.calls[0][0];
-    
+
     const mockPrevState = { ...mockProps.aiConfig };
     const result = setAIConfigArg(mockPrevState);
-    
+
     expect(result).toEqual(expect.objectContaining({ name: 'New Name' }));
   });
 
@@ -159,7 +167,7 @@ describe('AIConfigPanel', () => {
     });
     const select = screen.getByLabelText('Choose AI Model');
     await act(async () => {
-    fireEvent.change(select, { target: { value: 'model2' } });
+      fireEvent.change(select, { target: { value: 'model2' } });
     });
     expect(mockProps.handleModelChange).toHaveBeenCalledWith({
       value: 'model2',
@@ -168,14 +176,13 @@ describe('AIConfigPanel', () => {
   });
 
   it('calls handleNamespaceChange when namespace is selected', async () => {
-   
     await act(async () => {
       render(<AIConfigPanel {...mockProps} />);
     });
 
     const select = screen.getByLabelText('Select RAG Namespace');
     await act(async () => {
-    fireEvent.change(select, { target: { value: 'namespace2' } });
+      fireEvent.change(select, { target: { value: 'namespace2' } });
     });
     expect(mockProps.handleNamespaceChange).toHaveBeenCalledWith({
       value: 'namespace2',
@@ -183,16 +190,18 @@ describe('AIConfigPanel', () => {
     });
   });
 
-
   it('calls handleNamespaceChange when namespace is selected', async () => {
     await act(async () => {
       render(<AIConfigPanel {...mockProps} />);
     });
     const select = screen.getByLabelText('Select RAG Namespace');
     await act(async () => {
-    fireEvent.change(select, { target: { value: 'namespace2' } });
+      fireEvent.change(select, { target: { value: 'namespace2' } });
     });
-    expect(mockProps.handleNamespaceChange).toHaveBeenCalledWith({ value: 'namespace2', label: 'Namespace 2' });
+    expect(mockProps.handleNamespaceChange).toHaveBeenCalledWith({
+      value: 'namespace2',
+      label: 'Namespace 2'
+    });
   });
 
   it('submits the form with correct data', async () => {
@@ -204,12 +213,18 @@ describe('AIConfigPanel', () => {
     });
     const submitButton = screen.getByText('Save Configuration');
     await act(async () => {
-    fireEvent.click(submitButton);
+      fireEvent.click(submitButton);
     });
     await waitFor(() => {
-      expect(postAIConfig).toHaveBeenCalledWith('mock-token', mockAIConfig, 'namespace1');
+      expect(postAIConfig).toHaveBeenCalledWith(
+        'mock-token',
+        mockAIConfig,
+        'namespace1'
+      );
       expect(screen.getByTestId('notification-success')).toBeInTheDocument();
-      expect(screen.getByTestId('notification-success')).toHaveTextContent('AI Config saved successfully');
+      expect(screen.getByTestId('notification-success')).toHaveTextContent(
+        'AI Config saved successfully'
+      );
     });
   });
 
@@ -222,11 +237,13 @@ describe('AIConfigPanel', () => {
     });
     const submitButton = screen.getByText('Save Configuration');
     await act(async () => {
-    fireEvent.click(submitButton);
+      fireEvent.click(submitButton);
     });
     await waitFor(() => {
       expect(screen.getByTestId('notification-error')).toBeInTheDocument();
-      expect(screen.getByTestId('notification-error')).toHaveTextContent('Failed to save AI Config');
+      expect(screen.getByTestId('notification-error')).toHaveTextContent(
+        'Failed to save AI Config'
+      );
     });
   });
 
@@ -246,24 +263,29 @@ describe('AIConfigPanel', () => {
     });
     const submitButton = screen.getByText('Save Configuration');
     await act(async () => {
-    fireEvent.click(submitButton);
+      fireEvent.click(submitButton);
     });
     expect(mockPush).toHaveBeenCalledWith('/login');
   });
 
-  it('disables submit button when required fields are empty', async() => {
+  it('disables submit button when required fields are empty', async () => {
     await act(async () => {
-      const emptyConfig = { ...mockAIConfig, name: '', role: '' }; 
+      const emptyConfig = { ...mockAIConfig, name: '', role: '' };
       render(<AIConfigPanel {...mockProps} aiConfig={emptyConfig} />);
     });
     const submitButton = screen.getByText('Save Configuration');
-    expect(submitButton).toHaveAttribute('disabled')
+    expect(submitButton).toHaveAttribute('disabled');
   });
 
   it('shows error when submitting with existing name', async () => {
-    const { getAIConfigs, postAIConfig } = require('@/src/utils/sqliteAIConfigApiClient');
+    const {
+      getAIConfigs,
+      postAIConfig
+    } = require('@/src/utils/sqliteAIConfigApiClient');
     getAIConfigs.mockResolvedValue([{ name: 'TestBot' }]);
-    postAIConfig.mockRejectedValue(new Error('An AI assistant with this name already exists.' ));
+    postAIConfig.mockRejectedValue(
+      new Error('An AI assistant with this name already exists.')
+    );
 
     await act(async () => {
       render(<AIConfigPanel {...mockProps} />);
@@ -271,10 +293,12 @@ describe('AIConfigPanel', () => {
     const submitButton = screen.getByText('Save Configuration');
     await act(async () => {
       fireEvent.click(submitButton);
-    })
+    });
     await waitFor(() => {
       expect(screen.getByTestId('notification-error')).toBeInTheDocument();
-      expect(screen.getByTestId('notification-error')).toHaveTextContent('An AI assistant with this name already exists.');
+      expect(screen.getByTestId('notification-error')).toHaveTextContent(
+        'An AI assistant with this name already exists.'
+      );
     });
   });
 
@@ -286,5 +310,4 @@ describe('AIConfigPanel', () => {
     });
     expect(asFragment()).toMatchSnapshot();
   });
-
 });
