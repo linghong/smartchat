@@ -9,6 +9,7 @@ import {
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { SingleValue } from 'react-select';
+import { marked } from 'marked';
 
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ChatInput from '@/src/components/ChatInput';
@@ -228,11 +229,13 @@ const HomePage: React.FC<HomeProps> = ({
       }
 
       setLoading(false);
+      const content = selectedModel.category !== 'anthropic'? marked(data.answer) as string : data.answer;
+
       setMessageSubjectList(prevList => [...prevList, data.subject]);
 
       setChatHistory((prevHistory: Message[]) => [
         ...prevHistory.slice(0, -1), // remove the last one that only has user message,but no AI response
-        { question: question, answer: data.answer, model: selectedModel.label }
+        { question: question, answer: content, model: selectedModel.label }
       ]);
 
       // Retrieve the token just before making the API call
@@ -243,7 +246,9 @@ const HomePage: React.FC<HomeProps> = ({
         return;
       }
 
-      saveChatMessageToDb(question, fileSrc, data);
+      saveChatMessageToDb(question, fileSrc, {
+        answer: content, subject: data.subject
+      });
     } catch (error) {
       setError('Error on saving chats in database');
       console.error('error', error);

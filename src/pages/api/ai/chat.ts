@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { marked } from 'marked';
 
 import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone';
-
 import getClaudeChatCompletion from '@/src/services/llm/claude';
 import getGeminiChatCompletion from '@/src/services/llm/gemini';
 import { getGroqChatCompletion } from '@/src/services/llm/groq';
@@ -142,10 +140,8 @@ export default async function handler(
       answer = extractMessageContent(chatResponse);
       subject = extractSubjectTitle(chatResponse);
     }
-
-    const htmlAnswer = marked(answer);
-
-    res.status(200).json({ answer: htmlAnswer, subject });
+   
+    res.status(200).json({ answer, subject });
   } catch (error: any) {
     console.error('An error occurred: ', error);
     res.status(500).json({ error: error.message || 'Something went wrong' });
