@@ -58,15 +58,22 @@ const modelOptions: OptionType[] = [
     vision: false
   },
   {
-    value: 'gpt-4o-mini',
-    label: 'GPT-4o Mini',
+    value: 'gpt-4o-2024-08-06',
+    label: 'GPT-4o-2024-08-06',
     category: 'openai',
     contextWindow: 128000,
     vision: true
   },
   {
-    value: 'gpt-4o-2024-08-06',
+    value: 'gpt-4o',
     label: 'GPT-4o',
+    category: 'openai',
+    contextWindow: 128000,
+    vision: true
+  },
+  {
+    value: 'gpt-4o-mini',
+    label: 'GPT-4o Mini',
     category: 'openai',
     contextWindow: 128000,
     vision: true

@@ -6,6 +6,7 @@ export const isSupportedImage = (model: string, image: FileData) => {
 
   switch (model) {
     case 'gpt-4o':
+    case 'gpt-4o-2024-08-06':
     case 'gpt-4-turbo':
       // OpenAI requires image size < 20MB
       if (size >= 20 * 1024 * 1024) {
