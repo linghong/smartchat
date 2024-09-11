@@ -3,14 +3,12 @@ import { RefreshCw, Copy, Wand2 } from 'lucide-react';
 
 import { Button } from '@/src/components/ui/button';
 
-import AITextMessage, {
-  sanitizeAndFormate
-} from '@/src/components/AITextMessage';
+import AITextMessage, { format } from '@/src/components/AITextMessage';
 import CustomSelect from '@/src/components/CustomSelect';
 import FileListWithModal from '@/src/components/FileListWithModal';
 import { Message, FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-import { encodeHTMLEntities } from '@/src/utils/htmlEntities';
+import { encodeHTMLEntities } from '@/src/utils/guardrail';
 
 type ChatMessageProps = {
   isNew: boolean;
@@ -60,7 +58,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             <div
               className="user-question space-wrap"
               dangerouslySetInnerHTML={{
-                __html: sanitizeAndFormate(encodeHTMLEntities(message.question))
+                __html: encodeHTMLEntities(message.question)
               }}
             />
             {

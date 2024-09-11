@@ -21,6 +21,7 @@ import FileUploadIcon from '@/src/components/FileUploadIcon';
 import FileListWithModal from '@/src/components/FileListWithModal';
 import Notification from '@/src/components/Notification';
 
+import { sanitizeWithPreserveCode } from '@/src/utils/guardrail';
 import { fileToDataURLBase64 } from '@/src/utils/fileFetchAndConversion';
 import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
 
@@ -48,7 +49,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement> | KeyboardEvent) => {
       e.preventDefault();
-      const question: string = DOMPurify.sanitize(userInput.trim());
+      const question: string = userInput.trim();
 
       if (question.length === 0 && fileSrc.length === 0) return;
 
@@ -160,7 +161,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
 
-    setUserInput(newValue);
+    setUserInput(sanitizeWithPreserveCode(newValue));
 
     // Close config panel when user starts typing
     if (newValue.length >= 1 && isConfigPanelVisible) {

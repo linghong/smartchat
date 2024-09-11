@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 /**
  * Encodes special characters into their corresponding HTML entities.
  * This function is useful for safely displaying user input in HTML,
@@ -16,7 +18,7 @@ export const encodeHTMLEntities = (input: string) => {
 };
 
 /**
- * Decodes HTML entities back into their corresponding characters.
+ * Decodes HTML entities back to their corresponding characters.
  * This function is useful for converting encoded HTML entities like &lt;, &gt;, &amp;, etc.,
  * back into their plain text equivalents for display or processing.
  *
@@ -82,6 +84,34 @@ export const decodeHTMLEntities = (input: string) => {
   return input.replace(/&[a-zA-Z0-9#]+;/g, match => entityMap[match] || match);
 };
 
+/**
+ * Decodes HTML entities back to their original characters.
+ * @param input - The string with HTML entities to be decoded.
+ * @returns The input string with HTML entities converted back to characters.
+ */
+function decodeHTML(input: string): string {
+  return input
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&amp;/g, '&');
+}
+
 export const stripPreCodeTags = (input: string) => {
   return input.replace(/<\/?pre>/g, '').replace(/<\/?code>/g, '');
+};
+
+/**
+ * Sanitizes and preserves HTML/JSX code in the input.
+ * This function is safe to use for user input, AI-generated messages, and displaying text.
+ * @param input - The string containing HTML/JSX to be sanitized.
+ * @returns A sanitized version of the input with HTML/JSX structure preserved.
+ */
+export const sanitizeWithPreserveCode = (input: string): string => {
+  const encodedInput = encodeHTMLEntities(input);
+
+  const sanitizedInput = DOMPurify.sanitize(encodedInput);
+
+  return decodeHTML(sanitizedInput);
 };

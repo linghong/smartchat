@@ -1,4 +1,5 @@
 import {
+  FC,
   useState,
   useCallback,
   useEffect,
@@ -9,7 +10,6 @@ import {
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { SingleValue } from 'react-select';
-import { marked } from 'marked';
 
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ChatInput from '@/src/components/ChatInput';
@@ -43,7 +43,7 @@ interface HomeProps {
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
 }
 
-const HomePage: React.FC<HomeProps> = ({
+const HomePage: FC<HomeProps> = ({
   namespaces,
   setNamespacesList,
   selectedModel,
@@ -59,6 +59,9 @@ const HomePage: React.FC<HomeProps> = ({
   setIsConfigPanelVisible
 }) => {
   const router = useRouter();
+  // Derived state for namespace options
+  const fetchedCategoryOptions =
+    namespaces.map(ns => ({ value: ns, label: ns })) ?? [];
 
   // --- State Variables ---
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>(
@@ -76,10 +79,6 @@ const HomePage: React.FC<HomeProps> = ({
   const [isNewChat, setIsNewChat] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Derived state for namespace options
-  const fetchedCategoryOptions =
-    namespaces.map(ns => ({ value: ns, label: ns })) ?? [];
 
   // --- Handlers ---
   const handleModelChange = (selectedOption: SingleValue<OptionType>) => {
@@ -229,13 +228,12 @@ const HomePage: React.FC<HomeProps> = ({
       }
 
       setLoading(false);
-      const content = selectedModel.category !== 'anthropic'? marked(data.answer) as string : data.answer;
 
       setMessageSubjectList(prevList => [...prevList, data.subject]);
 
       setChatHistory((prevHistory: Message[]) => [
         ...prevHistory.slice(0, -1), // remove the last one that only has user message,but no AI response
-        { question: question, answer: content, model: selectedModel.label }
+        { question: question, answer: data.answer, model: selectedModel.label }
       ]);
 
       // Retrieve the token just before making the API call
@@ -247,7 +245,8 @@ const HomePage: React.FC<HomeProps> = ({
       }
 
       saveChatMessageToDb(question, fileSrc, {
-        answer: content, subject: data.subject
+        answer: data.answer,
+        subject: data.subject
       });
     } catch (error) {
       setError('Error on saving chats in database');

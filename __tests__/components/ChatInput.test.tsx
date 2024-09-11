@@ -3,10 +3,18 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import ChatInput from '@/src/components/ChatInput';
+import { sanitizeWithPreserveCode } from '@/src/utils/guardrail';
 
-// Mock the image validation utility
 jest.mock('@/src/utils/mediaValidationHelper', () => ({
   isSupportedImage: jest.fn().mockReturnValue([])
+}));
+
+jest.mock('@/src/utils/guardrail', () => ({
+  sanitizeWithPreserveCode: jest.fn(input => input)
+}));
+
+jest.mock('@/src/utils/fileFetchAndConversion', () => ({
+  fileToDataURLBase64: jest.fn().mockResolvedValue('mocked-base64-content')
 }));
 
 describe('ChatInput', () => {
@@ -305,6 +313,20 @@ describe('ChatInput', () => {
     expect(
       await screen.findByText('Unsupported file format')
     ).toBeInTheDocument();
+  });
+
+  it('sanitizes user input', () => {
+    render(<ChatInput {...defaultProps} />);
+    const input = screen.getByPlaceholderText(
+      'Click to send. Shift + Enter for a new line.'
+    );
+
+    fireEvent.change(input, {
+      target: { value: '<script>alert("XSS")</script>' }
+    });
+    expect(sanitizeWithPreserveCode).toHaveBeenCalledWith(
+      '<script>alert("XSS")</script>'
+    );
   });
 
   it('matches snapshot', () => {

@@ -97,7 +97,11 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
       class="flex-1 ai-answer space-wrap"
     >
       <span>
-        AI stands for Artificial Intelligence.
+        <p>
+          AI stands for Artificial Intelligence.
+        </p>
+        
+
       </span>
       <div
         class="flex justify-between items-center mt-2"

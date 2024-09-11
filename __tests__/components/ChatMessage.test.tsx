@@ -3,8 +3,8 @@ import { render, screen, act, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import ChatMessage from '@/src/components/ChatMessage';
-import { sanitizeAndFormate } from '@/src/components/AITextMessage';
-import { encodeHTMLEntities } from '@/src/utils/htmlEntities';
+import { format } from '@/src/components/AITextMessage';
+import { encodeHTMLEntities } from '@/src/utils/guardrail';
 import { Message, FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
@@ -198,7 +198,7 @@ describe('ChatMessage Component', () => {
         handleCopy={handleCopy}
       />
     );
-    const result = sanitizeAndFormate(encodeHTMLEntities(userMessage));
+    const result = format(encodeHTMLEntities(userMessage));
     expect(result).not.toContain('<script>');
     expect(result).toContain('sanitized');
 

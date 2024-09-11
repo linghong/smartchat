@@ -140,7 +140,7 @@ export default async function handler(
       answer = extractMessageContent(chatResponse);
       subject = extractSubjectTitle(chatResponse);
     }
-   
+
     res.status(200).json({ answer, subject });
   } catch (error: any) {
     console.error('An error occurred: ', error);
