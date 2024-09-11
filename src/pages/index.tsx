@@ -1,5 +1,4 @@
 import {
-  FC,
   useState,
   useCallback,
   useEffect,
@@ -14,6 +13,7 @@ import { SingleValue } from 'react-select';
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ChatInput from '@/src/components/ChatInput';
 import ChatMessageList from '@/src/components/ChatMessageList';
+import Modal from '@/src/components/Modal';
 import Notification from '@/src/components/Notification';
 import WithAuth from '@/src/components/WithAuth';
 
@@ -43,7 +43,7 @@ interface HomeProps {
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
 }
 
-const HomePage: FC<HomeProps> = ({
+const HomePage: React.FC<HomeProps> = ({
   namespaces,
   setNamespacesList,
   selectedModel,
@@ -59,6 +59,7 @@ const HomePage: FC<HomeProps> = ({
   setIsConfigPanelVisible
 }) => {
   const router = useRouter();
+
   // Derived state for namespace options
   const fetchedCategoryOptions =
     namespaces.map(ns => ({ value: ns, label: ns })) ?? [];
@@ -79,6 +80,11 @@ const HomePage: FC<HomeProps> = ({
   const [isNewChat, setIsNewChat] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [tags, setTags] = useState<string[]>([]);
+  const handleAddTag = (newTag: string) => {
+    setTags(prevTags => [...prevTags, newTag]);
+  };
 
   // --- Handlers ---
   const handleModelChange = (selectedOption: SingleValue<OptionType>) => {
@@ -226,7 +232,7 @@ const HomePage: FC<HomeProps> = ({
           return;
         }
       }
-
+      console.log('data.answer', data.answer);
       setLoading(false);
 
       setMessageSubjectList(prevList => [...prevList, data.subject]);
@@ -328,6 +334,19 @@ const HomePage: FC<HomeProps> = ({
         </div>
       )}
       <div className="flex-grow overflow-y-auto">
+        <div className="flex justify-end space-x-2 p-2">
+          {tags.length > 0 && (
+            <div className="px-4 py-2 bg-blue-100 text-gray-800">
+              Tags: {tags.join(', ')}
+            </div>
+          )}
+          <Modal
+            onAddTag={handleAddTag}
+            description="Enter a new tag name. Click save when you're done."
+            title="Add New Tag"
+            label="Tag"
+          />
+        </div>
         <ChatMessageList
           chatHistory={chatHistory}
           loading={loading}
@@ -340,7 +359,6 @@ const HomePage: FC<HomeProps> = ({
           handleRetry={handleRetry}
         />
       </div>
-
       <ChatInput
         onSubmit={handleSubmit}
         isVisionModel={!!selectedModel.vision}
@@ -348,7 +366,6 @@ const HomePage: FC<HomeProps> = ({
         isConfigPanelVisible={isConfigPanelVisible}
         setIsConfigPanelVisible={setIsConfigPanelVisible}
       />
-
       {error && <Notification type="error" message={error} />}
     </div>
   );
