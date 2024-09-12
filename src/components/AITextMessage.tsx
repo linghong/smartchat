@@ -1,5 +1,4 @@
 import CodeBlock from '@/src/components/CodeBlock';
-import { decodeHTMLEntities } from '@/src/utils/guardrail';
 import { marked } from 'marked';
 
 /**
@@ -48,6 +47,7 @@ export const format = (text: string) => {
 
 const AITextMessage: React.FC<{ content: string }> = ({ content }) => {
   const formattedContent = format(content);
+
   // separate text and code
   const parts = [];
 
@@ -71,13 +71,7 @@ const AITextMessage: React.FC<{ content: string }> = ({ content }) => {
     }
 
     const [, language, code] = match;
-    parts.push(
-      <CodeBlock
-        key={match.index}
-        code={decodeHTMLEntities(code)}
-        language={language}
-      />
-    );
+    parts.push(<CodeBlock key={match.index} code={code} language={language} />);
 
     lastIndex = match.index + match[0].length;
   }

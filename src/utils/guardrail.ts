@@ -25,7 +25,7 @@ export const encodeHTMLEntities = (input: string) => {
  * @param input - The string containing HTML entities to be decoded.
  * @returns The decoded string where HTML entities are replaced with their corresponding characters.
  */
-export const decodeHTMLEntities = (input: string) => {
+export const decodeHTMLEntitiesAndReferences = (input: string) => {
   const entityMap: { [key: string]: string } = {
     '&amp;': '&',
     '&lt;': '<',
@@ -34,56 +34,68 @@ export const decodeHTMLEntities = (input: string) => {
     '&#39;': "'",
     '&apos;': "'",
     '&nbsp;': ' ',
-    //LatinCharacters Symbols
-    '&copy;': '©', //copy right
-    '&reg;': '®', //registered trademark symbol
-    '&trade;': '™', //trademark
+    // Latin Characters Symbols
+    '&copy;': '©',
+    '&reg;': '®',
+    '&trade;': '™',
     '&euro;': '€',
     '&pound;': '£',
     '&yen;': '¥',
     '&cent;': '¢',
     '&sect;': '§',
-    '&deg;': '°', //degree symbol
+    '&deg;': '°',
     '&plusmn;': '±',
     '&frac12;': '½',
     '&frac14;': '¼',
     '&frac34;': '¾',
-    //mathematical Symbols
+    // Mathematical Symbols
     '&times;': '×',
     '&divide;': '÷',
     '&le;': '≤',
     '&ge;': '≥',
     '&ne;': '≠',
-    'approx;': '≈',
+    '&approx;': '≈',
     '&sup2;': '²',
     '&sup3;': '³',
     // Common Greek Letters
-    '&alpha': 'α', //lowercase alpha
-    '&beta;': 'β', //lowercase beta
-    '&gamma;': 'γ', //lowercase gamma
-    '&delta;': 'δ', //lowercase delta
-    '&epsilon;': 'ε', //lowercase epsilon
-    '&theta;': 'θ', //lowercase theta
-    '&lambda;': 'λ', //lowercase lambda
-    '&mu;': 'μ', //lowercase mu
-    '&pi;': 'π', //lowercase pi
-    '&sigma;': 'σ', //lowercase sigma
-    '&omega;': 'ω', //lowercase omega
-    //
+    '&alpha;': 'α',
+    '&beta;': 'β',
+    '&gamma;': 'γ',
+    '&delta;': 'δ',
+    '&epsilon;': 'ε',
+    '&theta;': 'θ',
+    '&lambda;': 'λ',
+    '&mu;': 'μ',
+    '&pi;': 'π',
+    '&sigma;': 'σ',
+    '&omega;': 'ω',
+    // Punctuation and Typography
     '&hellip;': '…',
     '&ndash;': '–',
     '&mdash;': '—',
-    '&lsquo;': '‘',
-    '&rsquo;': '’',
-    '&ldquo;': '“',
-    '&rdquo;': '”',
+    '&lsquo;': '\u2018', // Since the left single quotation mark character causes a type error, hence, replace it with Unicode Escape Sequence
+    '&rsquo;': '\u2019',
+    '&ldquo;': '“', // \u201C
+    '&rdquo;': '”', // \u201D
     '&bull;': '•',
     '&middot;': '·'
   };
 
-  return input.replace(/&[a-zA-Z0-9#]+;/g, match => entityMap[match] || match);
-};
+  let decodedStr = input.replace(
+    /&[a-zA-Z0-9#]+;/g,
+    match => entityMap[match] || match
+  );
 
+  // Now, handle numeric entities (decimal and hexadecimal)
+  decodedStr = decodedStr.replace(/&#(\d+);/g, (match, dec) =>
+    String.fromCharCode(parseInt(dec, 10))
+  );
+  decodedStr = decodedStr.replace(/&#x([a-fA-F0-9]+);/g, (match, hex) =>
+    String.fromCharCode(parseInt(hex, 16))
+  );
+
+  return decodedStr;
+};
 /**
  * Decodes HTML entities back to their original characters.
  * @param input - The string with HTML entities to be decoded.
@@ -110,8 +122,11 @@ export const stripPreCodeTags = (input: string) => {
  */
 export const sanitizeWithPreserveCode = (input: string): string => {
   const encodedInput = encodeHTMLEntities(input);
-
-  const sanitizedInput = DOMPurify.sanitize(encodedInput);
+  const config = {
+    ALLOWED_TAGS: ['p', 'strong', 'em', 'u', 'pre', 'code', 'br', 'a', 'img'],
+    ALLOWED_ATTR: ['href', 'src', 'alt']
+  };
+  const sanitizedInput = DOMPurify.sanitize(input, config);
 
   return decodeHTML(sanitizedInput);
 };
