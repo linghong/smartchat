@@ -1,22 +1,26 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
-import { Message, FileData } from '@/src/types/chat';
+import ChatMessage from '@/src/components/ChatMessage';
+import { getAIConfigs } from '@/src/utils/sqliteAIConfigApiClient';
+import { Message, FileData, AssistantOption } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-import ChatMessage from './ChatMessage';
+import { defaultAssistants } from '@/src/utils/initialData';
+
 interface ChatMessageListProps {
   chatHistory: Message[];
   loading: boolean;
   fileSrcHistory: FileData[][];
-  selectedModel: OptionType;
-  handleModelChange: (newValue: OptionType) => void;
+  selectedAssistant: AssistantOption;
+  handleAssistantChange: (newValue: AssistantOption) => void;
   modelOptions: OptionType[];
   handleFileDelete: (id: number) => void;
   handleRetry?: () => void;
   handleCopy: () => void;
 }
+
 const ChatMessageList: React.FC<ChatMessageListProps> = ({
-  selectedModel,
-  handleModelChange,
+  selectedAssistant,
+  handleAssistantChange,
   modelOptions,
   chatHistory,
   loading,
@@ -26,12 +30,47 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
   handleCopy
 }) => {
   const messagesRef = useRef<HTMLDivElement>(null);
+  const [assistantOptions, setAssistantOptions] =
+    useState<AssistantOption[]>(defaultAssistants);
+
   useEffect(() => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
   }, [chatHistory]);
+
+  useEffect(() => {
+    const fetchAssistants = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const fetchedAssistants = await getAIConfigs(token);
+
+        const customAssistants: AssistantOption[] = fetchedAssistants.map(
+          assistant => ({
+            value: assistant.id
+              ? assistant.id.toString()
+              : `custom-${assistant.name}`,
+            label: assistant.name,
+            isDefault: false,
+            config: assistant
+          })
+        );
+
+        const newAssistantOptions = [...defaultAssistants, ...customAssistants];
+        setAssistantOptions(newAssistantOptions);
+
+        // Set an initial selected assistant if none is selected
+        if (!selectedAssistant && newAssistantOptions.length > 0) {
+          handleAssistantChange(newAssistantOptions[0]);
+        }
+      }
+    };
+
+    fetchAssistants();
+  }, [modelOptions, selectedAssistant, handleAssistantChange]);
+
   const isNew = chatHistory[0].answer === 'Hi, how can I assist you?';
+
   return (
     <div className="flex-grow overflow-y-auto bg-white border-2 border-stone-200">
       <div
@@ -48,9 +87,9 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
             lastIndex={index === chatHistory.length - 1}
             loading={loading}
             fileSrc={fileSrcHistory[index]}
-            selectedModel={selectedModel}
-            handleModelChange={handleModelChange}
-            modelOptions={modelOptions}
+            selectedAssistant={selectedAssistant}
+            handleAssistantChange={handleAssistantChange}
+            assistantOptions={assistantOptions}
             handleFileDelete={handleFileDelete}
             handleCopy={handleCopy}
             handleRetry={
@@ -62,4 +101,5 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
     </div>
   );
 };
+
 export default ChatMessageList;

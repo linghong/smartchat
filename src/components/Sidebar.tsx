@@ -91,7 +91,7 @@ const Sidebar: FC<SidebarProps> = ({
       const newChatHistory: Message[] = chatMessages.map(m => ({
         question: m.userMessage,
         answer: m.aiMessage,
-        model: m.model
+        assistant: m.assistant.label
       }));
 
       const newFileSrcHistory: FileData[][] = chatMessages.map((msg: any) => {

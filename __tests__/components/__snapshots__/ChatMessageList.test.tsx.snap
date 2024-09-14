@@ -16,9 +16,7 @@ exports[`ChatMessageList matches snapshot 1`] = `
         <div
           class="ai"
         >
-          <div>
-            GPT-4
-          </div>
+          <div />
           <div>
             Hi, how can I assist you?
           </div>
@@ -40,6 +38,85 @@ exports[`ChatMessageList matches snapshot 1`] = `
           </div>
           <div>
             I'm doing well, thank you!
+          </div>
+          <div>
+            <button>
+              Retry
+            </button>
+            <button>
+              Copy
+            </button>
+            <select>
+              <option>
+                Default Gemini-1.5 Pro Exp
+              </option>
+              <option>
+                Default Gemini-1.5 Flash Exp
+              </option>
+              <option>
+                Default Gemini-1.5 Flash-8b Exp
+              </option>
+              <option>
+                Default Gemini-1.5 Pro
+              </option>
+              <option>
+                Default Gemini-1.5 Flash
+              </option>
+              <option>
+                Default Claude 3.5 Sonnet
+              </option>
+              <option>
+                Default Claude 3 Haiku
+              </option>
+              <option>
+                Default Claude 3 Opus
+              </option>
+              <option>
+                Default GPT-4o-2024-08-06
+              </option>
+              <option>
+                Default GPT-4o
+              </option>
+              <option>
+                Default GPT-4o Mini
+              </option>
+              <option>
+                Default GPT-4 Turbo
+              </option>
+              <option>
+                Default GPT-3.5 Turbo
+              </option>
+              <option>
+                Default GPT-4
+              </option>
+              <option>
+                Default Llama3.1 70b
+              </option>
+              <option>
+                Default Llama3.1 8b
+              </option>
+              <option>
+                Default Llama3 70b
+              </option>
+              <option>
+                Default Llama3 8b
+              </option>
+              <option>
+                Default Mixtral 8x7b
+              </option>
+              <option>
+                Default Gemma 7b
+              </option>
+              <option>
+                Default Gemma2 9b
+              </option>
+              <option>
+                Default Llama-2-7b-chat-hf
+              </option>
+              <option>
+                Default phi-1_5
+              </option>
+            </select>
           </div>
         </div>
       </div>

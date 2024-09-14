@@ -15,6 +15,7 @@ import {
   editChatTitle,
   fetchChatMessages
 } from '@/src/utils/sqliteChatIdApiClient';
+import { OptionType, FileData, Message } from '@/src/types/chat';
 
 // Mock the MenuItem component
 jest.mock('@/src/components/MenuItem', () => {
@@ -30,7 +31,7 @@ jest.mock('@/src/components/MenuItem', () => {
     setIsSidebarOpen
   }: {
     title: string;
-    itemList: any[];
+    itemList: OptionType[];
     link: string;
     defaultOpen: boolean;
     onItemClick?: (id: string) => void;
@@ -106,12 +107,12 @@ const mockSetChats = jest.fn();
 const mockSetChatHistory = jest.fn();
 const mockSetFileSrcHistory = jest.fn();
 
-const mockNamespacesList = [
+const mockNamespacesList: OptionType[] = [
   { label: 'Namespace 1', value: 'ns1' },
   { label: 'Namespace 2', value: 'ns2' }
 ];
 
-const mockChats = [
+const mockChats: OptionType[] = [
   { value: '1', label: 'Test Chat 1' },
   { value: '2', label: 'Test Chat 2' }
 ];
@@ -124,7 +125,7 @@ describe('Sidebar Component', () => {
       {
         userMessage: 'Hello',
         aiMessage: 'Hi there',
-        model: 'model1',
+        assistant: { label: 'Assistant 1' },
         files: []
       }
     ]);
@@ -274,19 +275,28 @@ describe('Sidebar Component', () => {
       {
         question: '',
         answer: 'Hi, how can I assist you?',
-        model: 'Gemini-1.5 Pro Exp'
+        assistant: 'Default Gemini-1.5 Pro Exp'
       }
     ]);
     expect(mockSetFileSrcHistory).toHaveBeenCalledWith([[]]);
   });
 
   it('handles chat messages with files correctly', async () => {
+    const mockFileData: FileData = {
+      base64Content: 'base64content',
+      type: 'image/jpeg',
+      size: 1024,
+      name: 'test.jpg',
+      width: 100,
+      height: 100
+    };
+
     (fetchChatMessages as jest.Mock).mockResolvedValue([
       {
         userMessage: 'Hello',
         aiMessage: 'Hi there',
-        model: 'model1',
-        files: [{ fileData: 'file1.jpg' }, { fileData: 'file2.jpg' }]
+        assistant: { label: 'Assistant 1' },
+        files: [{ fileData: mockFileData }, { fileData: mockFileData }]
       }
     ]);
 
@@ -300,7 +310,7 @@ describe('Sidebar Component', () => {
     });
 
     expect(mockSetFileSrcHistory).toHaveBeenCalledWith([
-      ['file1.jpg', 'file2.jpg']
+      [mockFileData, mockFileData]
     ]);
   });
 

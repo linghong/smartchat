@@ -18,10 +18,14 @@ import Notification from '@/src/components/Notification';
 import WithAuth from '@/src/components/WithAuth';
 
 import { modelOptions } from '@/config/modellist';
-import { Message, FileData, AIConfig } from '@/src/types/chat';
+import { Message, FileData, AIConfig, AssistantOption } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
-import { initialMessage, defaultModel } from '@/src/utils/initialData';
+import {
+  initialMessage,
+  defaultModel,
+  defaultAssistants
+} from '@/src/utils/initialData';
 import { updateChats } from '@/src/utils/sqliteChatApiClient';
 import { updateChatMessages } from '@/src/utils/sqliteChatIdApiClient';
 
@@ -65,10 +69,13 @@ const HomePage: React.FC<HomeProps> = ({
     namespaces.map(ns => ({ value: ns, label: ns })) ?? [];
 
   // --- State Variables ---
+  const [tags, setTags] = useState<string[]>([]);
+  const [selectedAssistant, setSelectedAssistant] = useState<AssistantOption>(
+    defaultAssistants[0]
+  );
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>(
     initialFileCategory
   );
-  const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
   const [aiConfig, setAIConfig] = useState<AIConfig>({
     name: '',
     role: '',
@@ -77,11 +84,12 @@ const HomePage: React.FC<HomeProps> = ({
     topP: 1,
     temperature: 0.1
   });
+
   const [isNewChat, setIsNewChat] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
 
-  const [tags, setTags] = useState<string[]>([]);
   const handleAddTag = (newTag: string) => {
     setTags(prevTags => [...prevTags, newTag]);
   };
@@ -99,6 +107,10 @@ const HomePage: React.FC<HomeProps> = ({
         }
       ]);
     }
+  };
+
+  const handleAssistantChange = (newAssistant: AssistantOption) => {
+    setSelectedAssistant(newAssistant);
   };
 
   const handleNamespaceChange = (selectedOption: OptionType | null) => {
@@ -181,7 +193,7 @@ const HomePage: React.FC<HomeProps> = ({
         chat.id,
         question,
         data.answer,
-        selectedModel.label,
+        selectedAssistant.label,
         fileSrc
       );
 
@@ -192,7 +204,7 @@ const HomePage: React.FC<HomeProps> = ({
         parseInt(chatId),
         question,
         data.answer,
-        selectedModel.label,
+        selectedAssistant.label,
         fileSrc
       );
     }
@@ -205,7 +217,7 @@ const HomePage: React.FC<HomeProps> = ({
 
     setChatHistory((prevHistory: Message[]) => [
       ...prevHistory,
-      { question: question, answer: '', model: selectedModel.label }
+      { question: question, answer: '', assistant: selectedAssistant.label }
     ]);
 
     try {
@@ -232,14 +244,18 @@ const HomePage: React.FC<HomeProps> = ({
           return;
         }
       }
-      console.log('data.answer', data.answer);
+
       setLoading(false);
 
       setMessageSubjectList(prevList => [...prevList, data.subject]);
 
       setChatHistory((prevHistory: Message[]) => [
         ...prevHistory.slice(0, -1), // remove the last one that only has user message,but no AI response
-        { question: question, answer: data.answer, model: selectedModel.label }
+        {
+          question: question,
+          answer: data.answer,
+          assistant: selectedAssistant.label
+        }
       ]);
 
       // Retrieve the token just before making the API call
@@ -353,8 +369,8 @@ const HomePage: React.FC<HomeProps> = ({
           fileSrcHistory={fileSrcHistory}
           handleFileDelete={handleFileDelete}
           modelOptions={modelOptions}
-          selectedModel={selectedModel}
-          handleModelChange={handleModelChange}
+          selectedAssistant={selectedAssistant}
+          handleAssistantChange={handleAssistantChange}
           handleCopy={handleCopy}
           handleRetry={handleRetry}
         />

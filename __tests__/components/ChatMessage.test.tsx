@@ -5,8 +5,7 @@ import '@testing-library/jest-dom';
 import ChatMessage from '@/src/components/ChatMessage';
 import { format } from '@/src/components/AITextMessage';
 import { encodeHTMLEntities } from '@/src/utils/guardrail';
-import { Message, FileData } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { Message, FileData, AssistantOption } from '@/src/types/chat';
 
 // Mock the console methods to suppress output during tests
 beforeAll(() => {
@@ -20,46 +19,79 @@ afterAll(() => {
 });
 
 describe('ChatMessage Component', () => {
-  let message: Message;
-  let loading: boolean;
-  let lastIndex: boolean;
-  let fileSrc: FileData[];
   let handleFileDelete: jest.Mock;
-  let selectedModel: OptionType;
-  let handleModelChange: jest.Mock;
-  let modelOptions: OptionType[];
+  let handleAssistantChange: jest.Mock;
   let handleRetry: jest.Mock;
   let handleCopy: jest.Mock;
 
-  beforeEach(() => {
-    message = {
-      question: 'What is AI?',
-      answer: 'AI stands for Artificial Intelligence.',
-      model: 'gpt-4'
-    };
-    loading = false;
-    lastIndex = true;
-    handleFileDelete = jest.fn();
-    fileSrc = [
-      {
-        base64Content: '/path/to/image1.png',
-        type: 'image/png',
-        size: 5000,
-        name: 'image1'
+  const message: Message = {
+    question: 'What is AI?',
+    answer: 'AI stands for Artificial Intelligence.',
+    model: 'gpt-4'
+  };
+  const loading = false;
+  const lastIndex = true;
+
+  const selectedAssistant: AssistantOption = {
+    isDefault: false,
+    value: 'GPT-4-assistant',
+    label: 'GPT-4 Assistant',
+    config: {
+      name: 'GPT-4-assistant',
+      role: 'coding',
+      model: {
+        value: 'gpt-4',
+        label: 'GPT-4',
+        category: 'openai',
+        contextWindow: 128000,
+        vision: true
       },
-      {
-        base64Content: 'path/to/image2.png',
-        type: 'image/png',
-        size: 8000,
-        name: 'image2'
+      basePrompt: '',
+      temperature: 0.1,
+      topP: 1.0
+    }
+  };
+  const assistantOptions: AssistantOption[] = [
+    {
+      isDefault: true,
+      value: 'default-gpt-3.5-turbo',
+      label: 'Default GPT-3.5 Turbo',
+      config: {
+        name: 'Default GPT-3.5 Turbo',
+        role: 'writing',
+        model: {
+          value: 'gpt-3.5-turbo',
+          label: 'GPT-3.5 Turbo',
+          category: 'openai',
+          contextWindow: 128000,
+          vision: false
+        },
+        basePrompt: '',
+        temperature: 0.4,
+        topP: 0.7
       }
-    ];
-    selectedModel = { value: 'gpt-4', label: 'GPT-4' };
-    handleModelChange = jest.fn();
-    modelOptions = [
-      { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
-      { value: 'gpt-4', label: 'GPT-4' }
-    ];
+    },
+    selectedAssistant
+  ];
+
+  const fileSrc: FileData[] = [
+    {
+      base64Content: '/path/to/image1.png',
+      type: 'image/png',
+      size: 5000,
+      name: 'image1'
+    },
+    {
+      base64Content: 'path/to/image2.png',
+      type: 'image/png',
+      size: 8000,
+      name: 'image2'
+    }
+  ];
+
+  beforeEach(() => {
+    handleFileDelete = jest.fn();
+    handleAssistantChange = jest.fn();
     handleRetry = jest.fn();
     handleCopy = jest.fn();
   });
@@ -76,9 +108,9 @@ describe('ChatMessage Component', () => {
         lastIndex={lastIndex}
         loading={loading}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -98,9 +130,9 @@ describe('ChatMessage Component', () => {
         lastIndex={lastIndex}
         loading={loading}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -119,9 +151,9 @@ describe('ChatMessage Component', () => {
           lastIndex={true}
           loading={true}
           fileSrc={fileSrc}
-          selectedModel={selectedModel}
-          handleModelChange={handleModelChange}
-          modelOptions={modelOptions}
+          selectedAssistant={selectedAssistant}
+          handleAssistantChange={handleAssistantChange}
+          assistantOptions={assistantOptions}
           handleFileDelete={handleFileDelete}
           handleRetry={handleRetry}
           handleCopy={handleCopy}
@@ -141,9 +173,9 @@ describe('ChatMessage Component', () => {
           lastIndex={true}
           loading={false}
           fileSrc={fileSrc}
-          selectedModel={selectedModel}
-          handleModelChange={handleModelChange}
-          modelOptions={modelOptions}
+          selectedAssistant={selectedAssistant}
+          handleAssistantChange={handleAssistantChange}
+          assistantOptions={assistantOptions}
           handleFileDelete={handleFileDelete}
           handleRetry={handleRetry}
           handleCopy={handleCopy}
@@ -160,12 +192,12 @@ describe('ChatMessage Component', () => {
       <ChatMessage
         isNew={true}
         message={message}
-        lastIndex={lastIndex}
-        loading={loading}
+        lastIndex={true}
+        loading={false}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -190,9 +222,9 @@ describe('ChatMessage Component', () => {
         lastIndex={lastIndex}
         loading={loading}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -215,9 +247,9 @@ describe('ChatMessage Component', () => {
         lastIndex={lastIndex}
         loading={loading}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -239,9 +271,9 @@ describe('ChatMessage Component', () => {
         lastIndex={lastIndex}
         loading={loading}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -263,9 +295,9 @@ describe('ChatMessage Component', () => {
         lastIndex={true}
         loading={false}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -287,9 +319,9 @@ describe('ChatMessage Component', () => {
         lastIndex={true}
         loading={false}
         fileSrc={[]}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -314,9 +346,9 @@ describe('ChatMessage Component', () => {
         lastIndex={lastIndex}
         loading={loading}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -337,9 +369,9 @@ describe('ChatMessage Component', () => {
         lastIndex={true}
         loading={false}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -349,7 +381,7 @@ describe('ChatMessage Component', () => {
     expect(screen.getByText('Copy')).toBeInTheDocument();
   });
 
-  it('renders model selector with selected model when lastIndex is true', () => {
+  it('renders assistant selector with selected assistant when lastIndex is true', () => {
     render(
       <ChatMessage
         isNew={false}
@@ -357,19 +389,19 @@ describe('ChatMessage Component', () => {
         lastIndex={true}
         loading={false}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
       />
     );
     // Check if the selected model text is present
-    expect(screen.getByText('GPT-4')).toBeInTheDocument();
+    expect(screen.getByText('GPT-4 Assistant')).toBeInTheDocument();
 
     // Check if the model selector button is present
-    const modelSelectorButton = screen.getByLabelText('Change Model');
+    const modelSelectorButton = screen.getByLabelText('Change Assistant');
     expect(modelSelectorButton).toBeInTheDocument();
   });
 
@@ -381,9 +413,9 @@ describe('ChatMessage Component', () => {
         lastIndex={true}
         loading={false}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -402,9 +434,9 @@ describe('ChatMessage Component', () => {
         lastIndex={true}
         loading={false}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -415,7 +447,7 @@ describe('ChatMessage Component', () => {
     expect(handleCopy).toHaveBeenCalledTimes(1);
   });
 
-  it('calls handleModelChange when a new model is selected', () => {
+  it('calls handleAssistantChange when a new model is selected', () => {
     render(
       <ChatMessage
         isNew={false}
@@ -423,24 +455,24 @@ describe('ChatMessage Component', () => {
         lastIndex={true}
         loading={false}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
       />
     );
 
-    const customSelectTrigger = screen.getByText('GPT-4');
+    const customSelectTrigger = screen.getByText('GPT-4 Assistant');
 
     // Simulate clicking the select trigger to open the dropdown
     fireEvent.click(customSelectTrigger);
 
-    const gpt35Option = screen.getByText('GPT-3.5 Turbo');
+    const gpt35Option = screen.getByText('Default GPT-3.5 Turbo');
     fireEvent.click(gpt35Option);
 
-    expect(handleModelChange).toHaveBeenCalledWith(modelOptions[0]);
+    expect(handleAssistantChange).toHaveBeenCalledWith(assistantOptions[0]);
   });
 
   it('does not render retry and copy buttons when lastIndex is false', () => {
@@ -451,9 +483,9 @@ describe('ChatMessage Component', () => {
         lastIndex={false}
         loading={false}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}
@@ -471,9 +503,9 @@ describe('ChatMessage Component', () => {
         lastIndex={lastIndex}
         loading={loading}
         fileSrc={fileSrc}
-        selectedModel={selectedModel}
-        handleModelChange={handleModelChange}
-        modelOptions={modelOptions}
+        selectedAssistant={selectedAssistant}
+        handleAssistantChange={handleAssistantChange}
+        assistantOptions={assistantOptions}
         handleFileDelete={handleFileDelete}
         handleRetry={handleRetry}
         handleCopy={handleCopy}

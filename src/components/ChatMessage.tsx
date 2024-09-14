@@ -1,13 +1,11 @@
+import React from 'react';
 import Image from 'next/image';
 import { RefreshCw, Copy, Wand2 } from 'lucide-react';
-
 import { Button } from '@/src/components/ui/button';
-
-import AITextMessage, { format } from '@/src/components/AITextMessage';
+import AITextMessage from '@/src/components/AITextMessage';
 import CustomSelect from '@/src/components/CustomSelect';
 import FileListWithModal from '@/src/components/FileListWithModal';
-import { Message, FileData } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { Message, FileData, AssistantOption } from '@/src/types/chat';
 import { encodeHTMLEntities } from '@/src/utils/guardrail';
 
 type ChatMessageProps = {
@@ -16,9 +14,9 @@ type ChatMessageProps = {
   lastIndex: boolean;
   loading: boolean;
   fileSrc: FileData[];
-  selectedModel: OptionType;
-  handleModelChange: (newValue: OptionType) => void;
-  modelOptions: OptionType[];
+  selectedAssistant: AssistantOption;
+  handleAssistantChange: (newValue: AssistantOption) => void;
+  assistantOptions: AssistantOption[];
   handleFileDelete: (e: any) => void;
   handleRetry?: () => void;
   handleCopy: () => void;
@@ -30,9 +28,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   fileSrc,
   lastIndex,
   loading,
-  selectedModel,
-  handleModelChange,
-  modelOptions,
+  selectedAssistant,
+  handleAssistantChange,
+  assistantOptions,
   handleFileDelete,
   handleRetry,
   handleCopy
@@ -83,7 +81,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             className={`h-8 w-8 mr-4 rounded-sm ${loading && lastIndex && 'animate-pulse'}`}
             priority
           />
-          <label className="text-xs">{message.model}</label>
+          <label className="text-xs">{message.assistant}</label>
         </div>
 
         <div className="flex-1 ai-answer space-wrap">
@@ -115,28 +113,31 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   </Button>
                 )}
               </div>
-
-              <Button
-                className="flex items-center p-1 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors duration-200"
-                aria-label="Change Model"
-                variant="ghost"
-              >
-                <Wand2 className="w-5 h-5 mr-1" />
-                <CustomSelect
-                  id="model"
-                  options={modelOptions}
-                  value={selectedModel.value}
-                  onChange={value => {
-                    const newSelectedModel = modelOptions.find(
-                      option => option.value === value
-                    );
-                    if (newSelectedModel) {
-                      handleModelChange(newSelectedModel);
-                    }
-                  }}
-                  placeholder="Select a model"
-                />
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button
+                  className="flex items-center p-1 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                  aria-label="Change Assistant"
+                  variant="ghost"
+                >
+                  <Wand2 className="w-5 h-5 mr-1" />
+                </Button>
+                <div className="w-80">
+                  <CustomSelect
+                    id="assistant"
+                    options={assistantOptions}
+                    value={selectedAssistant.value}
+                    onChange={(value: string) => {
+                      const newSelectedAssistant =
+                        assistantOptions.find(
+                          option => option.value === value
+                        ) || selectedAssistant;
+                      handleAssistantChange(newSelectedAssistant);
+                    }}
+                    placeholder="Select an assistant"
+                    selectedClass="w-full text-sm" // Add any additional classes for styling
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>

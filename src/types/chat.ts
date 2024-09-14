@@ -1,3 +1,4 @@
+import { OptionType } from '@/src/types/common';
 export interface Chat {
   id: number;
   title: string;
@@ -31,16 +32,8 @@ export interface FileData {
 export interface Message {
   question: string;
   answer: string;
-  model: string;
+  assistant: string;
 }
-
-type OptionType = {
-  value: string;
-  label: string;
-  category?: string;
-  contextWindow?: number;
-  vision?: boolean;
-};
 
 export interface textGenerationConfig {
   temperature: number;
@@ -51,6 +44,7 @@ export interface textGenerationConfig {
 }
 
 export interface AIConfig {
+  id?: string;
   name: string;
   role: string;
   model: OptionType;
@@ -60,6 +54,11 @@ export interface AIConfig {
   max_tokens?: number;
   frequency_penalty?: number;
   presence_penalty?: number;
+}
+
+export interface AssistantOption extends OptionType {
+  isDefault: boolean;
+  config: AIConfig;
 }
 
 export interface OpenAIChatContentImage {
