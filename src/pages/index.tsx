@@ -27,7 +27,10 @@ import {
   defaultAssistants
 } from '@/src/utils/initialData';
 import { updateChats } from '@/src/utils/sqliteChatApiClient';
-import { updateChatMessages } from '@/src/utils/sqliteChatIdApiClient';
+import {
+  updateChatMessages,
+  updateChat
+} from '@/src/utils/sqliteChatIdApiClient';
 
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
 
@@ -38,6 +41,7 @@ interface HomeProps {
   setSelectedModel: Dispatch<SetStateAction<OptionType | null>>;
   chatId: string;
   setChatId: Dispatch<SetStateAction<string>>;
+  chats: OptionType[];
   setChats: Dispatch<SetStateAction<OptionType[]>>;
   chatHistory: Message[];
   setChatHistory: Dispatch<SetStateAction<Message[]>>;
@@ -54,6 +58,7 @@ const HomePage: React.FC<HomeProps> = ({
   setSelectedModel,
   chatId,
   setChatId,
+  chats,
   setChats,
   chatHistory,
   setChatHistory,
@@ -90,8 +95,25 @@ const HomePage: React.FC<HomeProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
 
-  const handleAddTag = (newTag: string) => {
-    setTags(prevTags => [...prevTags, newTag]);
+  const handleAddTags = (newTags: string[]) => {
+    setTags(prevTags => {
+      const updatedTags = [...new Set([...prevTags, ...newTags])];
+
+      // Update the current chat in the chats state
+      setChats(prevChats =>
+        prevChats.map(chat =>
+          chat.value === chatId ? { ...chat, tags: updatedTags } : chat
+        )
+      );
+
+      const token = window.localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return [];
+      }
+      updateChat(token, chatId, { tags: updatedTags });
+      return updatedTags;
+    });
   };
 
   // --- Handlers ---
@@ -171,7 +193,7 @@ const HomePage: React.FC<HomeProps> = ({
     // when it is a new chat stream, create a new chat in db before save chat message
     // then add this new chat to chats
     if (chatHistory.length === 1 || !chatId) {
-      const chat = await updateChats(token, data.subject, {});
+      const chat = await updateChats(token, data.subject, tags, {});
 
       // Check if chat is null
       if (!chat || !chat.id) {
@@ -184,7 +206,8 @@ const HomePage: React.FC<HomeProps> = ({
       setChatId(chat.id);
       const newChat = {
         label: chat.title,
-        value: chat.id.toString()
+        value: chat.id.toString(),
+        tags: chat.tags
       };
       setChats(prevChats => [newChat, ...prevChats]); // add new chat to the first of the chat list
 
@@ -332,7 +355,7 @@ const HomePage: React.FC<HomeProps> = ({
     }
     // eslint-disable-next-line
   }, [isNewChat]);
-
+  const chatTags = chats.find(chat => chat.value === chatId)?.tags;
   return (
     <div className="flex flex-col w-full h-full mx-auto z-80">
       {isConfigPanelVisible && (
@@ -351,16 +374,16 @@ const HomePage: React.FC<HomeProps> = ({
       )}
       <div className="flex-grow overflow-y-auto">
         <div className="flex justify-end space-x-2 p-2">
-          {tags.length > 0 && (
+          {chatTags && chatTags?.length > 0 && (
             <div className="px-4 py-2 bg-blue-100 text-gray-800">
-              Tags: {tags.join(', ')}
+              Tags: {chatTags.join(', ')}
             </div>
           )}
           <Modal
-            onAddTag={handleAddTag}
-            description="Enter a new tag name. Click save when you're done."
-            title="Add New Tag"
-            label="Tag"
+            onAddTags={handleAddTags}
+            description="Enter new tag names, separated by commas. Click save when you're done."
+            title="Add New Tags"
+            label="Tags"
           />
         </div>
         <ChatMessageList

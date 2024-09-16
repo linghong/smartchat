@@ -1,10 +1,15 @@
-export type OptionType = {
+export interface OptionType {
   value: string;
   label: string;
+  tags?: string[];
   category?: string;
   contextWindow?: number;
   vision?: boolean;
-};
+}
+
+export interface ChatOption extends OptionType {
+  tags: string[];
+}
 
 export type ApiResponse = {
   message: string;

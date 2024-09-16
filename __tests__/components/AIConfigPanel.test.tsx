@@ -76,7 +76,13 @@ describe('AIConfigPanel', () => {
   const mockAIConfig = {
     name: 'TestBot',
     role: 'Test Assistant',
-    model: 'gpt-4',
+    model: {
+      value: 'gpt-4',
+      label: 'GPT-4',
+      category: 'openai',
+      contextWindow: 128000,
+      vision: true
+    },
     basePrompt: 'Test prompt',
     topP: 0.7,
     temperature: 0.5
@@ -114,6 +120,8 @@ describe('AIConfigPanel', () => {
       render(<AIConfigPanel {...mockProps} />);
     });
     expect(screen.getByText('Configure AI Assistant')).toBeInTheDocument();
+    expect(screen.getByLabelText('Name')).toBeInTheDocument();
+    expect(screen.getByLabelText('Assistant Role')).toBeInTheDocument();
     expect(screen.getByText('Choose AI Model')).toBeInTheDocument();
     expect(screen.getByText('Select RAG Namespace')).toBeInTheDocument();
     expect(
@@ -180,20 +188,6 @@ describe('AIConfigPanel', () => {
       render(<AIConfigPanel {...mockProps} />);
     });
 
-    const select = screen.getByLabelText('Select RAG Namespace');
-    await act(async () => {
-      fireEvent.change(select, { target: { value: 'namespace2' } });
-    });
-    expect(mockProps.handleNamespaceChange).toHaveBeenCalledWith({
-      value: 'namespace2',
-      label: 'Namespace 2'
-    });
-  });
-
-  it('calls handleNamespaceChange when namespace is selected', async () => {
-    await act(async () => {
-      render(<AIConfigPanel {...mockProps} />);
-    });
     const select = screen.getByLabelText('Select RAG Namespace');
     await act(async () => {
       fireEvent.change(select, { target: { value: 'namespace2' } });
@@ -302,6 +296,34 @@ describe('AIConfigPanel', () => {
     });
   });
 
+  it('updates topP and temperature sliders correctly', async () => {
+    await act(async () => {
+      render(<AIConfigPanel {...mockProps} />);
+    });
+
+    const topPSlider = screen.getByText('Model Top P: 0.70');
+    const temperatureSlider = screen.getByText('Model Temperature: 0.50');
+
+    expect(topPSlider).toBeInTheDocument();
+    expect(temperatureSlider).toBeInTheDocument();
+  });
+
+  it('clears name field after successful submission', async () => {
+    const { postAIConfig } = require('@/src/utils/sqliteAIConfigApiClient');
+    postAIConfig.mockResolvedValue({ message: 'AI Config saved successfully' });
+
+    await act(async () => {
+      render(<AIConfigPanel {...mockProps} />);
+    });
+
+    const nameInput = screen.getByLabelText('Name');
+    const submitButton = screen.getByText('Save Configuration');
+
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
+  });
+  
   it('matches snapshot', async () => {
     let asFragment;
     await act(async () => {

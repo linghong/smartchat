@@ -1,5 +1,5 @@
 import { Chat } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { ChatOption } from '@/src/types/common';
 
 /**
  * Create a new chat with the given title and metadata.
@@ -10,6 +10,7 @@ import { OptionType } from '@/src/types/common';
 export const updateChats = async (
   token: string,
   chatTitle: string,
+  tags: string[],
   metadata: any
 ) => {
   if (!token) return null;
@@ -22,6 +23,7 @@ export const updateChats = async (
       },
       body: JSON.stringify({
         title: chatTitle,
+        tags,
         metadata
       })
     });
@@ -43,7 +45,7 @@ export const updateChats = async (
  * Fetch all chats and return them as an array of OptionType.
  * @returns A Promise that resolves to an array of OptionType representing the chats.
  */
-export const fetchChats = async (token: string): Promise<OptionType[]> => {
+export const fetchChats = async (token: string): Promise<ChatOption[]> => {
   if (!token) return [];
   try {
     const response = await fetch('/api/chats', {
@@ -59,8 +61,10 @@ export const fetchChats = async (token: string): Promise<OptionType[]> => {
     const data = await response.json();
     const chats = data.map((d: Chat, i: number) => ({
       label: d.title,
-      value: d.id.toString()
+      value: d.id.toString(),
+      tags: d.tags || []
     }));
+
     return chats;
   } catch (error: any) {
     console.error(`Failed to fetch chats: ${error.message}`);

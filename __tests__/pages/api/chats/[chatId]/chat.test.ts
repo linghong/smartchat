@@ -54,12 +54,12 @@ describe('Chat API Handler', () => {
       where: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       getMany: jest.fn()
-    } as unknown as jest.Mocked;
+    } as unknown as jest.Mocked<SelectQueryBuilder<Chat>>;
 
     mockEntityManager = {
       findOne: jest.fn(),
       remove: jest.fn()
-    } as unknown as jest.Mocked;
+    } as unknown as jest.Mocked<EntityManager>;
 
     mockDataSource = {
       getRepository: jest.fn(),
@@ -72,22 +72,22 @@ describe('Chat API Handler', () => {
         release: jest.fn(),
         manager: mockEntityManager
       })
-    } as unknown as jest.Mocked;
+    } as unknown as jest.Mocked<DataSource>;
 
     mockChatRepository = {
       create: jest.fn(),
       save: jest.fn(),
       createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
       findOne: jest.fn()
-    } as unknown as jest.Mocked;
+    } as unknown as jest.Mocked<Repository<Chat>>;
 
     mockChatMessageRepository = {
       remove: jest.fn()
-    } as unknown as jest.Mocked;
+    } as unknown as jest.Mocked<Repository<ChatMessage>>;
 
     mockChatFileRepository = {
       remove: jest.fn()
-    } as unknown as jest.Mocked;
+    } as unknown as jest.Mocked<Repository<ChatFile>>;
 
     (getAppDataSource as jest.Mock).mockResolvedValue(mockDataSource);
     mockDataSource.getRepository.mockImplementation(entity => {
@@ -160,7 +160,7 @@ describe('Chat API Handler', () => {
     it('should delete a chat and associated data on DELETE request', async () => {
       mockReq.method = 'DELETE';
       mockReq.query = { chatId: '1' };
-      const mockChat: Partial = {
+      const mockChat = {
         id: 1,
         title: 'Test Chat',
         createdAt: new Date(),
@@ -276,7 +276,7 @@ describe('Chat API Handler', () => {
             id: 1,
             userMessage: 'User message 1',
             aiMessage: 'AI response 1',
-            model: 'gpt-3.5-turbo',
+            assistant: 'gpt-3.5-turbo',
             createdAt: new Date(),
             chat: {} as Chat,
             chatId: 1,
@@ -298,11 +298,13 @@ describe('Chat API Handler', () => {
   describe('PUT request', () => {
     beforeEach(() => {
       mockReq.method = 'PUT';
+      mockReq.query = { chatId: '1' };
+      // Reset mockChatRepository for each test
+      mockChatRepository.findOne.mockReset();
+      mockChatRepository.save.mockReset();
     });
 
     it('should update chat title on PUT request', async () => {
-      mockReq.method = 'PUT';
-      mockReq.query = { chatId: '1' };
       mockReq.body = { title: 'Updated Chat Title' };
       const mockChat: Partial<Chat> = { id: 1, title: 'Old Chat Title' };
       mockChatRepository.findOne.mockResolvedValue(mockChat as Chat);
@@ -321,33 +323,68 @@ describe('Chat API Handler', () => {
       });
     });
 
-    it('should return 400 if title is missing in PUT request', async () => {
-      mockReq.method = 'PUT';
-      mockReq.query = { chatId: '1' };
+    it('should update chat tags on PUT request', async () => {
+      mockReq.body = { tags: ['tag1', 'tag2'] };
+      const mockChat: Partial<Chat> = { id: 1, tags: ['oldTag'] };
+      mockChatRepository.findOne.mockResolvedValue(mockChat as Chat);
+
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockChatRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 1 }
+      });
+      expect(mockChatRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ tags: ['tag1', 'tag2'] })
+      );
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Chat title updated successfully'
+      });
+    });
+
+    it('should return 400 if neither title nor tags are provided in PUT request', async () => {
       mockReq.body = {};
+      const mockChat = { id: 1 };
+      mockChatRepository.findOne.mockResolvedValue(mockChat as Chat);
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
-        error: 'Title is required'
+        error: 'Title or tags must be provided'
       });
     });
 
     it('should return 400 if title is invalid in PUT request', async () => {
-      mockReq.body = {};
+      mockReq.body = { title: '' };
+      const mockChat = { id: 1 };
+      mockChatRepository.findOne.mockResolvedValue(mockChat as Chat);
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
-        error: 'Title is required'
+        error: 'Title must be a string between 1 and 255 characters'
+      });
+    });
+
+    it('should return 400 if tags are invalid in PUT request', async () => {
+      mockReq.body = { tags: 'not an array' };
+      const mockChat = { id: 1 };
+      mockChatRepository.findOne.mockResolvedValue(mockChat as Chat);
+
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: 'Tags must be an array of strings'
       });
     });
 
     it('should return 400 for PUT with a wrong type title', async () => {
-      mockReq.method = 'PUT';
       mockReq.body = { title: 123 }; // Intentionally wrong type
+      const mockChat = { id: 1 };
+      mockChatRepository.findOne.mockResolvedValue(mockChat as Chat);
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -358,7 +395,6 @@ describe('Chat API Handler', () => {
     });
 
     it('should return 404 if chat not found on PUT request', async () => {
-      mockReq.query = { chatId: '1' };
       mockReq.body = { title: 'Updated Chat Title' };
       mockChatRepository.findOne.mockResolvedValue(null);
 

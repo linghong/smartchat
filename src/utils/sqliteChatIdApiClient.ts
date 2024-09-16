@@ -30,15 +30,16 @@ export const deleteChat = async (token: string, chatId: string) => {
 };
 
 /**
- * Updates the title of a chat with the given chatId.
+ * Updates the chat with the given chatId, allowing changes to title and/or tags.
+ * @param token - The authentication token.
  * @param chatId - The ID of the chat to update.
- * @param newTitle - The new title for the chat.
+ * @param updates - An object containing the updates to apply (title and/or tags).
  * @returns A promise that resolves to the result of the update.
  */
-export const editChatTitle = async (
+export const updateChat = async (
   token: string,
   chatId: string,
-  newTitle: string
+  updates: { title?: string; tags?: string[] }
 ) => {
   if (!token) return null;
   try {
@@ -48,7 +49,7 @@ export const editChatTitle = async (
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ title: newTitle })
+      body: JSON.stringify(updates)
     });
 
     if (!res.ok) {
@@ -59,7 +60,7 @@ export const editChatTitle = async (
 
     return result;
   } catch (error) {
-    console.error('Failed to update chat title:', error);
+    console.error('Failed to update chat:', error);
     return null;
   }
 };
@@ -78,7 +79,7 @@ export const updateChatMessages = async (
   chatId: number,
   userMessage: string,
   aiMessage: string,
-  model: string,
+  assistant: string,
   fileSrc: FileData[]
 ) => {
   if (!token) return null;
@@ -93,7 +94,7 @@ export const updateChatMessages = async (
         chatId,
         userMessage,
         aiMessage,
-        model,
+        assistant,
         fileSrc
       })
     });

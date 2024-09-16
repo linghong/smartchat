@@ -56,28 +56,41 @@ const handlePutRequest = async (
   dataSource: DataSource,
   chatIdNum: number
 ) => {
-  const { title } = req.body;
+  const { title, tags } = req.body;
   const chatRepository = dataSource.getRepository(Chat);
 
-  if (!title) {
-    return res.status(400).json({ error: 'Title is required' });
-  }
-
-  if (typeof title !== 'string' || title.length < 1 || title.length > 255) {
-    return res
-      .status(400)
-      .json({ error: 'Title must be a string between 1 and 255 characters' });
-  }
-
-  // First, find the chat
+  // Find the chat
   const chat = await chatRepository.findOne({ where: { id: chatIdNum } });
 
   if (!chat) {
     return res.status(404).json({ error: 'Chat not found' });
   }
+  let isUpdated = false;
+  // Update title if provided
+  if (title !== undefined) {
+    if (typeof title !== 'string' || title.length < 1 || title.length > 255) {
+      return res
+        .status(400)
+        .json({ error: 'Title must be a string between 1 and 255 characters' });
+    }
+    chat.title = title;
+    isUpdated = true;
+  }
 
-  // Update the chat title
-  chat.title = title;
+  // Update tags if provided
+  if (tags !== undefined) {
+    if (!Array.isArray(tags) || !tags.every(tag => typeof tag === 'string')) {
+      return res
+        .status(400)
+        .json({ error: 'Tags must be an array of strings' });
+    }
+    chat.tags = tags;
+    isUpdated = true;
+  }
+  if (!isUpdated) {
+    return res.status(400).json({ error: 'Title or tags must be provided' });
+  }
+  // Save the updated chat
   await chatRepository.save(chat);
 
   res.status(200).json({ message: 'Chat title updated successfully' });

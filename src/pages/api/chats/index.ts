@@ -11,7 +11,7 @@ const handlePostRequest = async (
   dataSource: DataSource,
   userId: number
 ) => {
-  const { title, metadata } = req.body;
+  const { title, tags, metadata } = req.body;
 
   if (!title) {
     return res.status(400).json({ error: 'Missing title' });
@@ -20,6 +20,7 @@ const handlePostRequest = async (
   const chat = chatRepository.create({
     title,
     userId,
+    tags,
     metadata
   });
   await chatRepository.save(chat);
@@ -36,7 +37,7 @@ const handleGetRequest = async (
   const chatRepository = dataSource.getRepository(Chat);
   const chats = await chatRepository
     .createQueryBuilder('chat')
-    .select(['chat.id', 'chat.title', 'chat.createdAt'])
+    .select(['chat.id', 'chat.title', 'chat.tags', 'chat.createdAt'])
     .where('chat.userId = :userId', { userId })
     .orderBy('chat.createdAt', 'DESC')
     .getMany();

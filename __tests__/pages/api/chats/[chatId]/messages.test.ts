@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getAppDataSource, ChatMessage, ChatImage } from '@/src/db';
+import { getAppDataSource, ChatMessage, ChatFile } from '@/src/db';
 import handler from '@/src/pages/api/chats/[chatId]/messages';
 
 jest.mock('@/src/db');
@@ -40,7 +40,7 @@ describe('Messages API Handler', () => {
         body: {
           userMessage: 'Hello',
           aiMessage: 'Hi there!',
-          model: 'gpt-3.5-turbo',
+          assistant: 'gpt-3.5-turbo',
           chatId: 1
         }
       };
@@ -68,8 +68,8 @@ describe('Messages API Handler', () => {
       });
     });
 
-    it('should handle image creation when imageSrc is provided', async () => {
-      mockReq.body.imageSrc = ['image1.jpg', 'image2.jpg'];
+    it('should handle file creation when fileSrc is provided', async () => {
+      mockReq.body.fileSrc = [{ type: 'image', data: 'base64data' }];
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockStatus).toHaveBeenCalledWith(201);

@@ -27,7 +27,7 @@ describe('ChatMessage Component', () => {
   const message: Message = {
     question: 'What is AI?',
     answer: 'AI stands for Artificial Intelligence.',
-    model: 'gpt-4'
+    assistant: 'gpt-4'
   };
   const loading = false;
   const lastIndex = true;
@@ -337,7 +337,7 @@ describe('ChatMessage Component', () => {
       question: 'Give me a code example.',
       answer:
         'Here\'s a code example:\n<pre>><code class="python">print("Hello, World!")\n</code></pre>',
-      model: 'gpt-4'
+      assistant: 'gpt-4'
     };
     render(
       <ChatMessage

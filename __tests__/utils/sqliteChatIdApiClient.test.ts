@@ -1,7 +1,7 @@
 import fetchMock from 'jest-fetch-mock';
 import {
   deleteChat,
-  editChatTitle,
+  updateChat,
   updateChatMessages,
   fetchChatMessages
 } from '@/src/utils/sqliteChatIdApiClient';
@@ -44,23 +44,19 @@ describe('sqliteChatIdApiClient', () => {
     });
 
     it('should not make a request when no token is provided', async () => {
-      const result = await deleteChat(null, '1');
+      const result = await deleteChat('', '1');
       expect(result).toBeNull();
       expect(fetchMock).not.toHaveBeenCalled();
     });
   });
 
-  describe('editChatTitle', () => {
-    it('should edit a chat title successfully', async () => {
-      const mockResult = { id: 1, title: 'New Title' };
+  describe('updateChat', () => {
+    it('should update a chat successfully', async () => {
+      const mockResult = { id: 1, title: 'New Title', tags: ['tag1', 'tag2'] };
       fetchMock.mockResponseOnce(JSON.stringify(mockResult));
 
-      const result = await editChatTitle(
-        mockToken,
-        '1',
-        'New Title',
-        mockToken
-      );
+      const updates = { title: 'New Title', tags: ['tag1', 'tag2'] };
+      const result = await updateChat(mockToken, '1', updates);
       expect(result).toEqual(mockResult);
       expect(fetchMock).toHaveBeenCalledWith('/api/chats/1/chat', {
         method: 'PUT',
@@ -68,23 +64,23 @@ describe('sqliteChatIdApiClient', () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${mockToken}`
         },
-        body: JSON.stringify({ title: 'New Title' })
+        body: JSON.stringify(updates)
       });
     });
 
-    it('should handle errors when editing a chat title', async () => {
+    it('should handle errors when updating a chat', async () => {
       fetchMock.mockRejectOnce(new Error('Network error'));
 
-      const result = await editChatTitle(mockToken, '1', 'New Title');
+      const result = await updateChat(mockToken, '1', { title: 'New Title' });
       expect(result).toBeNull();
       expect(console.error).toHaveBeenCalledWith(
-        'Failed to update chat title:',
+        'Failed to update chat:',
         expect.any(Error)
       );
     });
 
     it('should not make a request when no token is provided', async () => {
-      const result = await editChatTitle(null, '1', 'New Title');
+      const result = await updateChat('', '1', { title: 'New Title' });
       expect(result).toBeNull();
       expect(fetchMock).not.toHaveBeenCalled();
     });
@@ -94,7 +90,7 @@ describe('sqliteChatIdApiClient', () => {
     it('should create a new chat message successfully', async () => {
       const mockChatMessage = {
         id: 1,
-        model: 'GPT-4',
+        assistant: 'Default GPT-4',
         userMessage: 'Hello',
         aiMessage: 'Hi there'
       };
@@ -105,7 +101,7 @@ describe('sqliteChatIdApiClient', () => {
         1,
         'Hello',
         'Hi there',
-        'GPT-4',
+        'Default GPT-4',
         []
       );
       expect(result).toEqual(mockChatMessage);
@@ -119,7 +115,7 @@ describe('sqliteChatIdApiClient', () => {
           chatId: 1,
           userMessage: 'Hello',
           aiMessage: 'Hi there',
-          model: 'GPT-4',
+          assistant: 'Default GPT-4',
           fileSrc: []
         })
       });
@@ -145,7 +141,7 @@ describe('sqliteChatIdApiClient', () => {
 
     it('should not make a request when no token is provided', async () => {
       const result = await updateChatMessages(
-        null,
+        '',
         1,
         'Hello',
         'Hi there',
@@ -193,7 +189,7 @@ describe('sqliteChatIdApiClient', () => {
     });
 
     it('should not make a request when no token is provided', async () => {
-      const result = await fetchChatMessages(null, 1);
+      const result = await fetchChatMessages('', 1);
       expect(result).toBeNull();
       expect(fetchMock).not.toHaveBeenCalled();
     });

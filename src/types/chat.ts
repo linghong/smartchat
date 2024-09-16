@@ -2,6 +2,7 @@ import { OptionType } from '@/src/types/common';
 export interface Chat {
   id: number;
   title: string;
+  tags: string[];
 }
 
 export type ChatRole = 'system' | 'assistant' | 'user';

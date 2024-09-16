@@ -16,7 +16,7 @@ import { OptionType } from '@/src/types/common';
 import { fetchChats } from '@/src/utils/sqliteChatApiClient';
 import {
   deleteChat,
-  editChatTitle,
+  updateChat,
   fetchChatMessages
 } from '@/src/utils/sqliteChatIdApiClient';
 
@@ -91,7 +91,7 @@ const Sidebar: FC<SidebarProps> = ({
       const newChatHistory: Message[] = chatMessages.map(m => ({
         question: m.userMessage,
         answer: m.aiMessage,
-        assistant: m.assistant.label
+        assistant: m.assistant
       }));
 
       const newFileSrcHistory: FileData[][] = chatMessages.map((msg: any) => {
@@ -134,6 +134,7 @@ const Sidebar: FC<SidebarProps> = ({
       console.error(`Failed to delete chat: ${error.message}`);
     }
   };
+
   const handleEditChat = async (id: string, newTitle: string) => {
     const token = window.localStorage.getItem('token');
     if (!token) {
@@ -142,7 +143,7 @@ const Sidebar: FC<SidebarProps> = ({
     }
 
     try {
-      await editChatTitle(token, id, newTitle);
+      await updateChat(token, id, { title: newTitle });
       setChats(prevChats =>
         prevChats.map(chat =>
           chat.value === id ? { ...chat, label: newTitle } : chat

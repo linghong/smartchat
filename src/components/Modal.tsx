@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tag, Folder } from 'lucide-react';
+import { Tag } from 'lucide-react';
 
 import { Button } from '@/src/components/ui/button';
 import {
@@ -13,28 +13,36 @@ import {
 } from '@/src/components/ui/dialog';
 import { Input } from '@/src/components/ui/input';
 import { Label } from '@/src/components/ui/label';
+
 interface TagModalProps {
-  onAddTag: (tag: string) => void;
+  onAddTags: (tags: string[]) => void;
   description: string;
   title: string;
   label: string;
 }
+
 export default function TagModal({
-  onAddTag,
+  onAddTags,
   description,
   title,
   label
 }: TagModalProps) {
   const [open, setOpen] = useState(false);
-  const [newTag, setNewTag] = useState('');
+  const [newTags, setNewTags] = useState('');
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newTag.trim()) {
-      onAddTag(newTag.trim());
-      setNewTag('');
+    if (newTags.trim()) {
+      const tagsArray = newTags
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(tag => tag !== '');
+      onAddTags(tagsArray);
+      setNewTags('');
       setOpen(false);
     }
   };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -55,9 +63,10 @@ export default function TagModal({
               </Label>
               <Input
                 id={label?.toLowerCase()}
-                value={newTag}
-                onChange={e => setNewTag(e.target.value)}
+                value={newTags}
+                onChange={e => setNewTags(e.target.value)}
                 className="col-span-3"
+                placeholder="Enter tags, separated by commas"
               />
             </div>
           </div>

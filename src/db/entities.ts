@@ -84,6 +84,9 @@ export class Chat {
   @Column('simple-json', { nullable: true })
   metadata?: { [key: string]: any };
 
+  @Column('simple-array', { nullable: true })
+  tags?: string[];
+
   @ManyToOne(() => User, user => user.chats)
   user!: User;
 
@@ -106,7 +109,7 @@ export class ChatMessage {
   aiMessage!: string;
 
   @Column('text')
-  model!: string;
+  assistant!: string;
 
   @CreateDateColumn()
   createdAt!: Date;

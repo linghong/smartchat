@@ -12,9 +12,9 @@ const handler = withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
   const chatFileRepository = dataSource.getRepository(ChatFile);
 
   if (req.method === 'POST') {
-    const { userMessage, aiMessage, model, chatId, fileSrc } = req.body;
+    const { userMessage, aiMessage, assistant, chatId, fileSrc } = req.body;
 
-    if (!userMessage || !aiMessage || !chatId) {
+    if (!userMessage || !aiMessage || !assistant || !chatId) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -22,7 +22,7 @@ const handler = withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
       const chatMessage = chatMessageRepository.create({
         userMessage,
         aiMessage,
-        model,
+        assistant,
         chat: { id: chatId }
       });
       await chatMessageRepository.save(chatMessage);

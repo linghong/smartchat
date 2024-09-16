@@ -12,7 +12,7 @@ import Sidebar from '@/src/components/Sidebar';
 import { fetchChats } from '@/src/utils/sqliteChatApiClient';
 import {
   deleteChat,
-  editChatTitle,
+  updateChat,
   fetchChatMessages
 } from '@/src/utils/sqliteChatIdApiClient';
 import { OptionType, FileData, Message } from '@/src/types/chat';
@@ -88,7 +88,7 @@ jest.mock('@/src/utils/sqliteChatApiClient', () => ({
 
 jest.mock('@/src/utils/sqliteChatIdApiClient', () => ({
   deleteChat: jest.fn(),
-  editChatTitle: jest.fn(),
+  updateChat: jest.fn(),
   fetchChatMessages: jest.fn()
 }));
 
@@ -255,7 +255,9 @@ describe('Sidebar Component', () => {
       fireEvent.click(editButton);
     });
 
-    expect(editChatTitle).toHaveBeenCalledWith('mock-token', '1', 'New Title');
+    expect(updateChat).toHaveBeenCalledWith('mock-token', '1', {
+      title: 'New Title'
+    });
     expect(mockSetChats).toHaveBeenCalled();
   });
 
