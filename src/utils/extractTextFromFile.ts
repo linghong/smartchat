@@ -89,35 +89,24 @@ export const convertFileToText = async (
   const base64String = base64Content.split(';base64,')[1];
   try {
     // .txt, .html, .js, .py, etc
-    if (
-      type === 'text' ||
-      type === 'octet-stream' ||
-      type === 'json' ||
-      type === 'yaml'
-    ) {
-      const text = extractTextFromFile(base64String);
-      return text;
-    } else if (type === 'pdf') {
-      const pdfText = await extractTextFromPDF(base64String);
-
-      if (
-        pdfText.startsWith('An error occurred') ||
-        pdfText.startsWith('The PDF file')
-      ) {
-        throw new Error(pdfText);
-      }
-      return pdfText;
-    } else if (type === 'office-doc') {
-      return await extractTextFromOfficeDoc(base64String);
-    } else if (type === 'office-sheet') {
-      return await extractTextFromOfficeSheet(base64String);
-    } else {
-      return 'Unsupported file';
+    switch (type) {
+      case 'text':
+      case 'octet-stream':
+      case 'json':
+      case 'yaml':
+        return extractTextFromFile(base64String);
+      case 'pdf':
+        return await extractTextFromPDF(base64String);
+      case 'office-document':
+        return await extractTextFromOfficeDoc(base64String);
+      case 'office-sheet':
+        return await extractTextFromOfficeSheet(base64String);
+      default:
+        return 'Unsupported file';
     }
   } catch (error) {
-    console.error('Error in convertFileToText:', error);
     if (error instanceof Error) {
-      return `Error processing file: ${error.message}`;
+      return error.message;
     }
     return 'An unknown error occurred while processing the file';
   }

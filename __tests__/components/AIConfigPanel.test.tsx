@@ -323,7 +323,7 @@ describe('AIConfigPanel', () => {
       fireEvent.click(submitButton);
     });
   });
-  
+
   it('matches snapshot', async () => {
     let asFragment;
     await act(async () => {
