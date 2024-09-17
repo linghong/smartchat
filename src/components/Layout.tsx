@@ -25,6 +25,7 @@ interface LayoutProps {
 interface HomePageProps {
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
+  isSearchChat: boolean;
   fileSrcHistory: FileData[][];
   setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
   chatHistory: Message[];
@@ -48,7 +49,7 @@ const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
   const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-
+  const [isSearchChat, setIsSearchChat] = useState(false);
   const token =
     typeof window !== 'undefined' ? window.localStorage.getItem('token') : null;
 
@@ -64,6 +65,7 @@ const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
         {
           isConfigPanelVisible,
           setIsConfigPanelVisible,
+          isSearchChat,
           fileSrcHistory,
           setFileSrcHistory,
           chatHistory,
@@ -111,6 +113,8 @@ const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
           <Sidebar
             isSidebarOpen={isSidebarOpen}
             setIsSidebarOpen={setIsSidebarOpen}
+            isSearchChat={isSearchChat}
+            setIsSearchChat={setIsSearchChat}
             namespacesList={namespacesList}
             chatId={chatId}
             setChatId={setChatId}
@@ -135,6 +139,8 @@ const Layout: FC<LayoutProps> = ({ children, namespacesList }) => {
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
+                isSearchChat={isSearchChat}
+                setIsSearchChat={setIsSearchChat}
                 namespacesList={namespacesList}
                 chatId={chatId}
                 setChatId={setChatId}

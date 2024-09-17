@@ -110,6 +110,27 @@ exports[`Layout Component should match Layout component snapshot 1`] = `
               <div
                 class="flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100"
               >
+                <button
+                  aria-label="Toggle search"
+                  class="mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                >
+                  <svg
+                    class="lucide lucide-filter text-gray-400 hover:text-indigo-300"
+                    fill="none"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polygon
+                      points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"
+                    />
+                  </svg>
+                </button>
                 <a
                   aria-current="page"
                   class="flex-grow px-2 transition-colors duration-200 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-300"

@@ -1,11 +1,18 @@
-import React, { useState, useCallback, FC, useMemo } from 'react';
+import React, {
+  useState,
+  useCallback,
+  FC,
+  useMemo,
+  Dispatch,
+  SetStateAction
+} from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
   ChevronDown,
   ChevronUp,
   Trash2,
-  Edit,
+  Filter,
   Check,
   Pencil
 } from 'lucide-react';
@@ -19,6 +26,8 @@ interface MenuItemProps {
   link?: string;
   itemList: OptionType[] | null;
   defaultOpen?: boolean;
+  isSearchChat?: boolean;
+  setIsSearchChat?: Dispatch<SetStateAction<boolean>>;
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
   onItemClick?: (id: string) => void;
   maxVisibleItem?: number;
@@ -37,7 +46,9 @@ const MenuItem: FC<MenuItemProps> = ({
   onItemClick,
   activeItemId,
   onDeleteClick,
-  onEditClick
+  onEditClick,
+  isSearchChat,
+  setIsSearchChat
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -47,6 +58,12 @@ const MenuItem: FC<MenuItemProps> = ({
   const isActive = link && router.pathname === link;
 
   const handleToggle = useCallback(() => setIsOpen(prev => !prev), []);
+
+  const handleToggleSearch = () => {
+    if (setIsSearchChat) {
+      setIsSearchChat(!isSearchChat);
+    }
+  };
 
   const handleItemListLinkClick = useCallback(
     async (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -170,6 +187,15 @@ const MenuItem: FC<MenuItemProps> = ({
       <div
         className={`flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100`}
       >
+        {title === 'Chat With AI' && (
+          <button
+            onClick={handleToggleSearch}
+            className="mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            aria-label="Toggle search"
+          >
+            <Filter className="text-gray-400 hover:text-indigo-300" size={18} />
+          </button>
+        )}
         {link ? (
           <Link
             href={link}
@@ -182,6 +208,7 @@ const MenuItem: FC<MenuItemProps> = ({
         ) : (
           <span className="flex-grow text-slate-50 ">{title}</span>
         )}
+
         <button
           className="cursor-pointer transition-colors duration-200 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-300"
           onClick={handleToggle}

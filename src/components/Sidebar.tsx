@@ -23,6 +23,8 @@ import {
 interface SidebarProps {
   isSidebarOpen: boolean;
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
+  isSearchChat: boolean;
+  setIsSearchChat: Dispatch<SetStateAction<boolean>>;
   setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
   namespacesList: OptionType[] | null;
   chatId: string;
@@ -48,6 +50,8 @@ const Sidebar: FC<SidebarProps> = ({
   isSidebarOpen,
   setIsConfigPanelVisible,
   setIsSidebarOpen,
+  isSearchChat,
+  setIsSearchChat,
   namespacesList,
   chatId,
   setChatId,
@@ -176,6 +180,8 @@ const Sidebar: FC<SidebarProps> = ({
           title="Chat With AI"
           link="/"
           itemList={chats}
+          isSearchChat={isSearchChat}
+          setIsSearchChat={setIsSearchChat}
           setIsSidebarOpen={setIsSidebarOpen}
           onItemClick={handleChatClick}
           activeItemId={chatId}

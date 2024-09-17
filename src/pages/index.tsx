@@ -14,6 +14,7 @@ import { Label } from '@/src/components/ui/label';
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ChatInput from '@/src/components/ChatInput';
 import ChatMessageList from '@/src/components/ChatMessageList';
+import ChatList from '@/src/components/ChatList';
 import CustomSelect from '@/src/components/CustomSelect';
 import Modal from '@/src/components/Modal';
 import Notification from '@/src/components/Notification';
@@ -51,6 +52,7 @@ interface HomeProps {
   setChatHistory: Dispatch<SetStateAction<Message[]>>;
   fileSrcHistory: FileData[][];
   setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
+  isSearchChat: boolean;
   isConfigPanelVisible: boolean;
   setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
 }
@@ -68,6 +70,7 @@ const HomePage: React.FC<HomeProps> = ({
   setChatHistory,
   fileSrcHistory,
   setFileSrcHistory,
+  isSearchChat,
   isConfigPanelVisible,
   setIsConfigPanelVisible
 }) => {
@@ -410,6 +413,7 @@ const HomePage: React.FC<HomeProps> = ({
           />
         </div>
       )}
+      {isSearchChat && <ChatList chats={chats} />}
       <div className="flex-grow overflow-y-auto">
         <div className="flex justify-between">
           <div className="flex  py-2 space-x-2">
