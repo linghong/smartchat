@@ -108,7 +108,7 @@ const HomePage: React.FC<HomeProps> = ({
   const handleAddTags = (newTags: string[]) => {
     setTags(prevTags => {
       const updatedTags = [...new Set([...prevTags, ...newTags])];
-
+      console.log('tags', updatedTags);
       // Update the current chat in the chats state
       setChats(prevChats =>
         prevChats.map(chat =>
@@ -395,7 +395,7 @@ const HomePage: React.FC<HomeProps> = ({
     }
     // eslint-disable-next-line
   }, [isNewChat]);
-  const chatTags = chats.find(chat => chat.value === chatId)?.tags;
+  const chatTags = chats.find(chat => chat.value === chatId.toString())?.tags;
 
   return (
     <div className="flex flex-col w-full h-full mx-auto z-80">
