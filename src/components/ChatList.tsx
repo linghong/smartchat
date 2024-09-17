@@ -13,6 +13,11 @@ const ChatList: React.FC<ChatListProps> = ({ chats }) => {
     setFilteredChats(newFilteredChats);
   }, []);
 
+  // Update filteredChats when the `chats` prop changes
+  React.useEffect(() => {
+    setFilteredChats(chats);
+  }, [chats]);
+
   return (
     <div>
       <TagSearch chats={chats} onFilterChats={handleFilterChats} />
@@ -28,7 +33,7 @@ const ChatList: React.FC<ChatListProps> = ({ chats }) => {
                     {chat.tags.map(tag => (
                       <span
                         key={tag}
-                        className="mr-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs"
+                        className="mr-2 px-2 py-1 bg-blue-50 text-blue-800 rounded-full text-xs"
                       >
                         {tag}
                       </span>
