@@ -24,7 +24,8 @@ jest.mock('@/src/components/ChatMessage', () => {
     handleAssistantChange,
     assistantOptions,
     handleCopy,
-    handleRetry
+    handleRetry,
+    handleFileDelete
   }: any) {
     return (
       <div data-testid={`chat-message`}>
@@ -39,6 +40,7 @@ jest.mock('@/src/components/ChatMessage', () => {
             fileSrc.map((file: FileData, i: number) => (
               <div key={i}>
                 {file.name} ({file.type})
+                <button onClick={() => handleFileDelete(i)}>Delete</button>
               </div>
             ))}
           {!isNew && lastIndex && (
@@ -52,7 +54,7 @@ jest.mock('@/src/components/ChatMessage', () => {
                   {assistantOptions.map((assistant: AssistantOption) => (
                     <option
                       key={assistant.value}
-                      onClick={handleAssistantChange}
+                      onClick={() => handleAssistantChange(assistant)}
                     >
                       {assistant.label}
                     </option>
@@ -72,6 +74,7 @@ describe('ChatMessageList', () => {
   const mockHandleAssistantChange = jest.fn();
   const mockHandleRetry = jest.fn();
   const mockHandleCopy = jest.fn();
+  const mockSetAssistantOptions = jest.fn();
   const defaultProps = {
     chatHistory: [
       {
@@ -88,6 +91,8 @@ describe('ChatMessageList', () => {
     loading: false,
     fileSrcHistory: [[]],
     selectedAssistant: defaultAssistants[0],
+    assistantOptions: defaultAssistants,
+    setAssistantOptions: mockSetAssistantOptions,
     modelOptions,
     handleAssistantChange: mockHandleAssistantChange,
     handleFileDelete: mockHandleFileDelete,
@@ -117,7 +122,7 @@ describe('ChatMessageList', () => {
     expect(screen.getByTestId('loading-indicator')).toBeInTheDocument();
   });
 
-  it('handles file src history', () => {
+  it('handles file src history and delete', () => {
     const customProps = {
       ...defaultProps,
       fileSrcHistory: [
@@ -142,6 +147,11 @@ describe('ChatMessageList', () => {
     render(<ChatMessageList {...customProps} />);
     expect(screen.getByText('test1.png (image/png)')).toBeInTheDocument();
     expect(screen.getByText('test2.jpg (image/jpeg)')).toBeInTheDocument();
+
+    const deleteButtons = screen.getAllByText('Delete');
+    expect(deleteButtons).toHaveLength(2);
+    deleteButtons[0].click();
+    expect(mockHandleFileDelete).toHaveBeenCalledWith(0);
   });
 
   it('indicates a new conversation', () => {
@@ -173,55 +183,14 @@ describe('ChatMessageList', () => {
     expect(copyButtons).toHaveLength(1);
   });
 
-  it('fetches AI configs when token is available', async () => {
-    localStorage.setItem('token', 'test-token');
-    const mockAIConfigs = [
-      { id: 1, name: 'Custom AI 1' },
-      { id: 2, name: 'Custom AI 2' }
-    ];
-    (getAIConfigs as jest.Mock).mockResolvedValue(mockAIConfigs);
-
-    await act(async () => {
-      render(<ChatMessageList {...defaultProps} />);
-    });
-
-    await waitFor(() => {
-      expect(getAIConfigs).toHaveBeenCalledWith('test-token');
-    });
-  });
-
-  it('does not fetch AI configs when token is not available', async () => {
-    localStorage.removeItem('token');
-
-    await act(async () => {
-      render(<ChatMessageList {...defaultProps} />);
-    });
-
-    expect(getAIConfigs).not.toHaveBeenCalled();
-  });
-
-  it('calls handleAssistantChange with first assistant when no assistant is selected', async () => {
-    localStorage.setItem('token', 'test-token');
-    const mockAIConfigs = [
-      { id: 1, name: 'Custom AI 1' },
-      { id: 2, name: 'Custom AI 2' }
-    ];
-    (getAIConfigs as jest.Mock).mockResolvedValue(mockAIConfigs);
-
-    const propsWithoutSelectedAssistant = {
-      ...defaultProps,
-      selectedAssistant: null
-    };
-
-    await act(async () => {
-      render(<ChatMessageList {...propsWithoutSelectedAssistant} />);
-    });
-
-    await waitFor(() => {
-      expect(mockHandleAssistantChange).toHaveBeenCalledWith(
-        defaultAssistants[0]
-      );
-    });
+  it('handles assistant change', () => {
+    render(<ChatMessageList {...defaultProps} />);
+    const select = screen.getByRole('combobox');
+    const options = screen.getAllByRole('option');
+    options[1].click();
+    expect(mockHandleAssistantChange).toHaveBeenCalledWith(
+      defaultAssistants[1]
+    );
   });
 
   it('matches snapshot', () => {

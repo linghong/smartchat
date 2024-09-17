@@ -10,11 +10,14 @@ import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { SingleValue } from 'react-select';
 
+import { Label } from '@/src/components/ui/label';
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ChatInput from '@/src/components/ChatInput';
 import ChatMessageList from '@/src/components/ChatMessageList';
+import CustomSelect from '@/src/components/CustomSelect';
 import Modal from '@/src/components/Modal';
 import Notification from '@/src/components/Notification';
+
 import WithAuth from '@/src/components/WithAuth';
 
 import { modelOptions } from '@/config/modellist';
@@ -26,6 +29,7 @@ import {
   defaultModel,
   defaultAssistants
 } from '@/src/utils/initialData';
+import { getAIConfigs } from '@/src/utils/sqliteAIConfigApiClient';
 import { updateChats } from '@/src/utils/sqliteChatApiClient';
 import {
   updateChatMessages,
@@ -78,9 +82,12 @@ const HomePage: React.FC<HomeProps> = ({
   const [selectedAssistant, setSelectedAssistant] = useState<AssistantOption>(
     defaultAssistants[0]
   );
+
   const [selectedNamespace, setSelectedNamespace] = useState<OptionType | null>(
     initialFileCategory
   );
+  const [assistantOptions, setAssistantOptions] =
+    useState<AssistantOption[]>(defaultAssistants);
   const [aiConfig, setAIConfig] = useState<AIConfig>({
     name: '',
     role: '',
@@ -346,6 +353,36 @@ const HomePage: React.FC<HomeProps> = ({
     setNamespacesList(fetchedCategoryOptions);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    const fetchAssistants = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const fetchedAssistants = await getAIConfigs(token);
+
+        const customAssistants: AssistantOption[] = fetchedAssistants.map(
+          assistant => ({
+            value: assistant.id
+              ? assistant.id.toString()
+              : `custom-${assistant.name}`,
+            label: assistant.name,
+            isDefault: false,
+            config: assistant
+          })
+        );
+
+        const newAssistantOptions = [...defaultAssistants, ...customAssistants];
+        setAssistantOptions(newAssistantOptions);
+
+        // Set an initial selected assistant if none is selected
+        if (!selectedAssistant && newAssistantOptions.length > 0) {
+          handleAssistantChange(newAssistantOptions[0]);
+        }
+      }
+    };
+
+    fetchAssistants();
+  }, [selectedAssistant]);
+
   // Reset chat history when starting a new chat
   useEffect(() => {
     if (isNewChat) {
@@ -356,6 +393,7 @@ const HomePage: React.FC<HomeProps> = ({
     // eslint-disable-next-line
   }, [isNewChat]);
   const chatTags = chats.find(chat => chat.value === chatId)?.tags;
+
   return (
     <div className="flex flex-col w-full h-full mx-auto z-80">
       {isConfigPanelVisible && (
@@ -373,25 +411,50 @@ const HomePage: React.FC<HomeProps> = ({
         </div>
       )}
       <div className="flex-grow overflow-y-auto">
-        <div className="flex justify-end space-x-2 p-2">
-          {chatTags && chatTags?.length > 0 && (
-            <div className="px-4 py-2 bg-blue-100 text-gray-800">
-              Tags: {chatTags.join(', ')}
-            </div>
-          )}
-          <Modal
-            onAddTags={handleAddTags}
-            description="Enter new tag names, separated by commas. Click save when you're done."
-            title="Add New Tags"
-            label="Tags"
-          />
+        <div className="flex justify-between">
+          <div className="flex  py-2 space-x-2">
+            {(!chatTags || (chatTags && chatTags?.length === 0)) && (
+              <>
+                <Label className="py-2 text-md">Assistant: </Label>
+                <CustomSelect
+                  id="assistant"
+                  options={assistantOptions}
+                  value={selectedAssistant.value}
+                  onChange={(value: string) => {
+                    const newSelectedAssistant =
+                      assistantOptions.find(option => option.value === value) ||
+                      selectedAssistant;
+                    handleAssistantChange(newSelectedAssistant);
+                  }}
+                  placeholder="Select an assistant"
+                  selectedClass="w-full text-sm w-56" // Add any additional classes for styling
+                />
+              </>
+            )}
+          </div>
+          <div className="flex justify-end space-x-2 p-2">
+            {chatTags && chatTags?.length > 0 && (
+              <div className="px-4 py-2 bg-blue-100 text-gray-800">
+                Tags: {chatTags.join(', ')}
+              </div>
+            )}
+            <Modal
+              onAddTags={handleAddTags}
+              description="Enter new tag names, separated by commas. Click save when you're done."
+              title="Add New Tags"
+              label="Tags"
+            />
+          </div>
         </div>
+
         <ChatMessageList
           chatHistory={chatHistory}
           loading={loading}
           fileSrcHistory={fileSrcHistory}
           handleFileDelete={handleFileDelete}
           modelOptions={modelOptions}
+          assistantOptions={assistantOptions}
+          setAssistantOptions={setAssistantOptions}
           selectedAssistant={selectedAssistant}
           handleAssistantChange={handleAssistantChange}
           handleCopy={handleCopy}

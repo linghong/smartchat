@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction
+} from 'react';
 
 import ChatMessage from '@/src/components/ChatMessage';
 import { getAIConfigs } from '@/src/utils/sqliteAIConfigApiClient';
@@ -10,6 +16,8 @@ interface ChatMessageListProps {
   chatHistory: Message[];
   loading: boolean;
   fileSrcHistory: FileData[][];
+  assistantOptions: AssistantOption[];
+  setAssistantOptions: Dispatch<SetStateAction<AssistantOption[]>>;
   selectedAssistant: AssistantOption;
   handleAssistantChange: (newValue: AssistantOption) => void;
   modelOptions: OptionType[];
@@ -19,6 +27,8 @@ interface ChatMessageListProps {
 }
 
 const ChatMessageList: React.FC<ChatMessageListProps> = ({
+  assistantOptions,
+  setAssistantOptions,
   selectedAssistant,
   handleAssistantChange,
   modelOptions,
@@ -30,44 +40,12 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
   handleCopy
 }) => {
   const messagesRef = useRef<HTMLDivElement>(null);
-  const [assistantOptions, setAssistantOptions] =
-    useState<AssistantOption[]>(defaultAssistants);
 
   useEffect(() => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
   }, [chatHistory]);
-
-  useEffect(() => {
-    const fetchAssistants = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        const fetchedAssistants = await getAIConfigs(token);
-
-        const customAssistants: AssistantOption[] = fetchedAssistants.map(
-          assistant => ({
-            value: assistant.id
-              ? assistant.id.toString()
-              : `custom-${assistant.name}`,
-            label: assistant.name,
-            isDefault: false,
-            config: assistant
-          })
-        );
-
-        const newAssistantOptions = [...defaultAssistants, ...customAssistants];
-        setAssistantOptions(newAssistantOptions);
-
-        // Set an initial selected assistant if none is selected
-        if (!selectedAssistant && newAssistantOptions.length > 0) {
-          handleAssistantChange(newAssistantOptions[0]);
-        }
-      }
-    };
-
-    fetchAssistants();
-  }, [modelOptions, selectedAssistant, handleAssistantChange]);
 
   const isNew = chatHistory[0].answer === 'Hi, how can I assist you?';
 
