@@ -12,6 +12,7 @@ import { SingleValue } from 'react-select';
 
 import { Label } from '@/src/components/ui/label';
 import AIConfigPanel from '@/src/components/AIConfigPanel';
+import ChatHeader from '@/src/components/ChatHeader';
 import ChatInput from '@/src/components/ChatInput';
 import ChatMessageList from '@/src/components/ChatMessageList';
 import ChatList from '@/src/components/ChatList';
@@ -414,65 +415,42 @@ const HomePage: React.FC<HomeProps> = ({
         </div>
       )}
       {isSearchChat && <ChatList chats={chats} />}
-      <div className="flex-grow overflow-y-auto">
-        <div className="flex justify-between">
-          <div className="flex  py-2 space-x-2">
-            {(!chatTags || (chatTags && chatTags?.length === 0)) && (
-              <>
-                <Label className="py-2 text-md">Assistant: </Label>
-                <CustomSelect
-                  id="assistant"
-                  options={assistantOptions}
-                  value={selectedAssistant.value}
-                  onChange={(value: string) => {
-                    const newSelectedAssistant =
-                      assistantOptions.find(option => option.value === value) ||
-                      selectedAssistant;
-                    handleAssistantChange(newSelectedAssistant);
-                  }}
-                  placeholder="Select an assistant"
-                  selectedClass="w-full text-sm w-56" // Add any additional classes for styling
-                />
-              </>
-            )}
-          </div>
-          <div className="flex justify-end space-x-2 p-2">
-            {chatTags && chatTags?.length > 0 && (
-              <div className="px-4 py-2 bg-blue-100 text-gray-800">
-                Tags: {chatTags.join(', ')}
-              </div>
-            )}
-            <Modal
-              onAddTags={handleAddTags}
-              description="Enter new tag names, separated by commas. Click save when you're done."
-              title="Add New Tags"
-              label="Tags"
-            />
-          </div>
+      {!isSearchChat && (
+        <div className="flex-grow overflow-y-auto">
+          <ChatHeader
+            chatTags={
+              chats.find(chat => chat.value === chatId.toString())?.tags
+            }
+            assistantOptions={assistantOptions}
+            selectedAssistant={selectedAssistant}
+            handleAssistantChange={handleAssistantChange}
+            handleAddTags={handleAddTags}
+          />
+          <ChatMessageList
+            chatHistory={chatHistory}
+            loading={loading}
+            fileSrcHistory={fileSrcHistory}
+            handleFileDelete={handleFileDelete}
+            modelOptions={modelOptions}
+            assistantOptions={assistantOptions}
+            setAssistantOptions={setAssistantOptions}
+            selectedAssistant={selectedAssistant}
+            handleAssistantChange={handleAssistantChange}
+            handleCopy={handleCopy}
+            handleRetry={handleRetry}
+          />
         </div>
-
-        <ChatMessageList
-          chatHistory={chatHistory}
-          loading={loading}
-          fileSrcHistory={fileSrcHistory}
-          handleFileDelete={handleFileDelete}
-          modelOptions={modelOptions}
-          assistantOptions={assistantOptions}
-          setAssistantOptions={setAssistantOptions}
-          selectedAssistant={selectedAssistant}
-          handleAssistantChange={handleAssistantChange}
-          handleCopy={handleCopy}
-          handleRetry={handleRetry}
+      )}
+      {!isSearchChat && (
+        <ChatInput
+          onSubmit={handleSubmit}
+          isVisionModel={!!selectedModel.vision}
+          selectedModel={selectedModel}
+          isConfigPanelVisible={isConfigPanelVisible}
+          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
-      </div>
-      <ChatInput
-        onSubmit={handleSubmit}
-        isVisionModel={!!selectedModel.vision}
-        selectedModel={selectedModel}
-        isConfigPanelVisible={isConfigPanelVisible}
-        setIsConfigPanelVisible={setIsConfigPanelVisible}
-      />
-      {error && <Notification type="error" message={error} />}
+      )}
+      {!isSearchChat && error && <Notification type="error" message={error} />}
     </div>
   );
 };
