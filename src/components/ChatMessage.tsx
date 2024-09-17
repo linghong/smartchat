@@ -81,7 +81,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             className={`h-8 w-8 mr-4 rounded-sm ${loading && lastIndex && 'animate-pulse'}`}
             priority
           />
-          <label className="text-xs">{message.assistant}</label>
+          {!isNew && <label className="text-xs">{message.assistant}</label>}
         </div>
 
         <div className="flex-1 ai-answer space-wrap">

@@ -57,9 +57,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             dropdownClass
           )}
         >
-          {options.map(option => (
+          {options.map((option, index) => (
             <li
-              key={option.value}
+              key={`${option.value}-${index}`}
               onClick={() => handleSelect(option)}
               className={cn(
                 'px-4 py-2 text-sm cursor-pointer hover:bg-gray-100',

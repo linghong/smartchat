@@ -19,6 +19,7 @@ export const defaultAssistants: AssistantOption[] = modelOptions.map(model => ({
 
 export const initialMessage = {
   question: '',
-  answer: 'Hi, how can I assist you?',
+  answer:
+    'Hi! Please start by asking a question. You can click tag icons to add tags once the chat begins.',
   assistant: defaultAssistants[0].label
 };

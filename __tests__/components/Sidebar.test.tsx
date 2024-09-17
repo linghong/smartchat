@@ -15,7 +15,9 @@ import {
   updateChat,
   fetchChatMessages
 } from '@/src/utils/sqliteChatIdApiClient';
-import { OptionType, FileData, Message } from '@/src/types/chat';
+import { FileData } from '@/src/types/chat';
+import { OptionType } from '@/src/types/common';
+import { initialMessage } from '@/src/utils/initialData';
 
 // Mock the MenuItem component
 jest.mock('@/src/components/MenuItem', () => {
@@ -273,13 +275,7 @@ describe('Sidebar Component', () => {
       fireEvent.click(chatItem);
     });
 
-    expect(mockSetChatHistory).toHaveBeenCalledWith([
-      {
-        question: '',
-        answer: 'Hi, how can I assist you?',
-        assistant: 'Default Gemini-1.5 Pro Exp'
-      }
-    ]);
+    expect(mockSetChatHistory).toHaveBeenCalledWith([initialMessage]);
     expect(mockSetFileSrcHistory).toHaveBeenCalledWith([[]]);
   });
 

@@ -10,7 +10,7 @@ import ChatMessage from '@/src/components/ChatMessage';
 import { getAIConfigs } from '@/src/utils/sqliteAIConfigApiClient';
 import { Message, FileData, AssistantOption } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-import { defaultAssistants } from '@/src/utils/initialData';
+import { initialMessage } from '@/src/utils/initialData';
 
 interface ChatMessageListProps {
   chatHistory: Message[];
@@ -47,7 +47,7 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
     }
   }, [chatHistory]);
 
-  const isNew = chatHistory[0].answer === 'Hi, how can I assist you?';
+  const isNew = chatHistory[0].answer === initialMessage.answer;
 
   return (
     <div className="flex-grow overflow-y-auto bg-white border-2 border-stone-200">

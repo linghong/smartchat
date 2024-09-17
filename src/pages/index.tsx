@@ -366,7 +366,7 @@ const HomePage: React.FC<HomeProps> = ({
           assistant => ({
             value: assistant.id
               ? assistant.id.toString()
-              : `custom-${assistant.name}`,
+              : assistant.name.split(' ').join(','),
             label: assistant.name,
             isDefault: false,
             config: assistant
