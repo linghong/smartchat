@@ -23,6 +23,7 @@ import { cn } from '@/src/lib/utils';
 
 import CustomSelect from '@/src/components/CustomSelect';
 import Notification from '@/src/components/Notification';
+import { useChatContext } from '@/src/context/ChatContext';
 import { OptionType } from '@/src/types/common';
 import { AIConfig } from '@/src/types/chat';
 import {
@@ -30,7 +31,6 @@ import {
   getAIConfigs
 } from '@/src/utils/sqliteAIConfigApiClient';
 interface AIConfigPanelProps {
-  selectedModel: OptionType;
   handleModelChange: (newValue: OptionType) => void;
   selectedNamespace: OptionType | null;
   handleNamespaceChange: (selectedOption: OptionType | null) => void;
@@ -41,7 +41,6 @@ interface AIConfigPanelProps {
 }
 
 export default function AIConfigPanel({
-  selectedModel,
   handleModelChange,
   selectedNamespace,
   handleNamespaceChange,
@@ -51,6 +50,8 @@ export default function AIConfigPanel({
   fileCategoryOptions
 }: AIConfigPanelProps) {
   const router = useRouter();
+
+  const { selectedModel } = useChatContext();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState('');

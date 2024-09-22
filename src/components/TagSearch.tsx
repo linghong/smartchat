@@ -1,13 +1,16 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { FC, useState, useEffect, useMemo } from 'react';
 import { Search, X } from 'lucide-react';
+
+import { useChatContext } from '@/src/context/ChatContext';
 import { OptionType } from '@/src/types/common';
 
 interface TagSearchProps {
-  chats: OptionType[];
   onFilterChats: (filteredChats: OptionType[]) => void;
 }
 
-const TagSearch: React.FC<TagSearchProps> = ({ chats, onFilterChats }) => {
+const TagSearch: FC<TagSearchProps> = ({ onFilterChats }) => {
+  const { chats } = useChatContext();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [suggestedTags, setSuggestedTags] = useState<string[]>([]);

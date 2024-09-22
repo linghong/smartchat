@@ -9,6 +9,7 @@ const ArrowButton: FC<ButtonProps> = ({ disabled = false }) => {
     <button
       type="submit"
       disabled={disabled}
+      aria-label="Send message"
       className={`p-1 border-none opacity-60 hover:stone-600 disabled:cursor-not-allowed`}
     >
       <svg

@@ -1,18 +1,12 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  FC,
-  Dispatch,
-  SetStateAction
-} from 'react';
+import { useEffect, useRef, FC, Dispatch, SetStateAction } from 'react';
 import { useRouter } from 'next/router';
 
 import MenuItem from '@/src/components/MenuItem';
 import AIHub from '@/src/components/AIHub';
+import { useChatContext } from '@/src/context/ChatContext';
 import { Message, FileData } from '@/src/types/chat';
-import { initialMessage } from '@/src/utils/initialData';
 import { OptionType } from '@/src/types/common';
+import { initialMessage } from '@/src/utils/initialData';
 import { fetchChats } from '@/src/utils/sqliteChatApiClient';
 import {
   deleteChat,
@@ -22,17 +16,8 @@ import {
 
 interface SidebarProps {
   isSidebarOpen: boolean;
-  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
-  isSearchChat: boolean;
-  setIsSearchChat: Dispatch<SetStateAction<boolean>>;
   setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
   namespacesList: OptionType[] | null;
-  chatId: string;
-  setChatId: Dispatch<SetStateAction<string>>;
-  chats: OptionType[];
-  setChats: Dispatch<SetStateAction<OptionType[]>>;
-  setChatHistory: Dispatch<SetStateAction<Message[]>>;
-  setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
 }
 
 const models = [
@@ -46,23 +31,20 @@ const models = [
   }
 ];
 
-const Sidebar: FC<SidebarProps> = ({
-  isSidebarOpen,
-  setIsConfigPanelVisible,
-  setIsSidebarOpen,
-  isSearchChat,
-  setIsSearchChat,
-  namespacesList,
-  chatId,
-  setChatId,
-  chats,
-  setChats,
-  setChatHistory,
-  setFileSrcHistory
-}) => {
+const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
   const isFetchingChats = useRef(false);
   const router = useRouter();
   const pathName = router.pathname;
+
+  const {
+    setIsConfigPanelVisible,
+    chatId,
+    setChatId,
+    chats,
+    setChats,
+    setChatHistory,
+    setFileSrcHistory
+  } = useChatContext();
 
   useEffect(() => {
     const fetchAllChats = async () => {
@@ -180,8 +162,6 @@ const Sidebar: FC<SidebarProps> = ({
           title="Chat With AI"
           link="/"
           itemList={chats}
-          isSearchChat={isSearchChat}
-          setIsSearchChat={setIsSearchChat}
           setIsSidebarOpen={setIsSidebarOpen}
           onItemClick={handleChatClick}
           activeItemId={chatId}

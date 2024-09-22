@@ -1,12 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import { OptionType } from '@/src/types/common';
+import { FC, useState, useEffect, useCallback } from 'react';
+
 import TagSearch from '@/src/components/TagSearch';
+import { useChatContext } from '@/src/context/ChatContext';
+import { OptionType } from '@/src/types/common';
 
-interface ChatListProps {
-  chats: OptionType[];
-}
+const ChatList: FC = () => {
+  const { chats } = useChatContext();
 
-const ChatList: React.FC<ChatListProps> = ({ chats }) => {
   const [filteredChats, setFilteredChats] = useState<OptionType[]>(chats);
 
   const handleFilterChats = useCallback((newFilteredChats: OptionType[]) => {
@@ -14,13 +14,13 @@ const ChatList: React.FC<ChatListProps> = ({ chats }) => {
   }, []);
 
   // Update filteredChats when the `chats` prop changes
-  React.useEffect(() => {
+  useEffect(() => {
     setFilteredChats(chats);
   }, [chats]);
 
   return (
     <div>
-      <TagSearch chats={chats} onFilterChats={handleFilterChats} />
+      <TagSearch onFilterChats={handleFilterChats} />
       <div className="flex-grow overflow-y-auto bg-white border-2 border-stone-200">
         {filteredChats.length > 0 ? (
           <div className="p-4">

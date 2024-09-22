@@ -85,8 +85,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         </div>
 
         <div className="flex-1 ai-answer space-wrap">
-          {<AITextMessage content={message.answer} />}
-
+          {lastIndex && loading ? (
+            <div aria-label="loading">Just a moment, I’m on it...</div>
+          ) : (
+            <AITextMessage content={message.answer} />
+          )}
           {!isNew && lastIndex && (
             <div className="flex justify-between items-center mt-2">
               <div className="flex space-x-2">
@@ -134,7 +137,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                       handleAssistantChange(newSelectedAssistant);
                     }}
                     placeholder="Select an assistant"
-                    selectedClass="w-full text-sm" // Add any additional classes for styling
+                    selectedClass="w-full text-sm"
                   />
                 </div>
               </div>

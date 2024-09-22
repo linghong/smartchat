@@ -1,4 +1,4 @@
-import react, { FC } from 'react';
+import { FC } from 'react';
 
 import FileThumbnail from '@/src/components/FileThumbnail';
 import { FileData } from '@/src/types/chat';

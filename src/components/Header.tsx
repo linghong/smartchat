@@ -10,31 +10,14 @@ import { Menu, SquarePen, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/router';
 
 import SignOut from '@/src/components/SignOut';
-import { Message, FileData } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
-import { initialMessage, defaultModel } from '@/src/utils/initialData';
+import { useChatContext } from '@/src/context/ChatContext';
 
 interface HeaderProps {
   isSidebarOpen: boolean;
   setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
-  isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
-  setChatId: Dispatch<SetStateAction<string>>;
-  setSelectedModel: Dispatch<SetStateAction<OptionType>>;
-  setChatHistory: Dispatch<SetStateAction<Message[]>>;
-  setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
 }
 
-const Header: FC<HeaderProps> = ({
-  isSidebarOpen,
-  setIsSidebarOpen,
-  isConfigPanelVisible,
-  setIsConfigPanelVisible,
-  setChatId,
-  setSelectedModel,
-  setChatHistory,
-  setFileSrcHistory
-}) => {
+const Header: FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const router = useRouter();
   const pathName = router.pathname;
 
@@ -43,6 +26,12 @@ const Header: FC<HeaderProps> = ({
     '/finetunemodel': 'Finetune AI Model',
     '/embedragfile': 'Embed RAG File'
   };
+  const {
+    isNewChat,
+    setIsNewChat,
+    isConfigPanelVisible,
+    setIsConfigPanelVisible
+  } = useChatContext();
 
   const [isLoggedOut, setIsLoggedOut] = useState(true);
 
@@ -61,10 +50,7 @@ const Header: FC<HeaderProps> = ({
     if (window.innerWidth < 640) {
       setIsSidebarOpen(false);
     }
-    setChatId('0');
-    setSelectedModel(defaultModel);
-    setChatHistory([initialMessage]);
-    setFileSrcHistory([[]]);
+    setIsNewChat(true);
   };
 
   const toggleSidebar = (e: MouseEvent<HTMLButtonElement>) => {
@@ -101,15 +87,19 @@ const Header: FC<HeaderProps> = ({
         <button
           onClick={toggleConfigPanel}
           className="flex items-center px-2 space-x-2 rounded-full hover:bg-slate-500 transition-colors duration-200"
-          aria-label={isConfigPanelVisible ? 'Hide Config' : 'Show Config'}
+          aria-label={
+            isConfigPanelVisible
+              ? 'Hide AI Assistant Config'
+              : 'Show AI Assistant Config'
+          }
         >
           {isConfigPanelVisible ? (
             <EyeOff size={20} className="text-white" />
           ) : (
             <Eye size={20} className="text-white" />
           )}
-          <span className="text-white text-sm hidden sm:inline">
-            {isConfigPanelVisible ? 'Hide' : 'Show'} AI Assistant Config
+          <span className="text-white text-sm sm:inline">
+            {isConfigPanelVisible ? 'Hide' : 'Show'} Assistant Config
           </span>
         </button>
         {!isLoggedOut && <SignOut />}

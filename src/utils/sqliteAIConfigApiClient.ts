@@ -1,5 +1,4 @@
-import { Chat, AIConfig } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { AIConfig } from '@/src/types/chat';
 
 /**
  * Create a new AIConfig with the given data.

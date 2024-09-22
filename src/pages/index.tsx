@@ -5,22 +5,18 @@ import {
   Dispatch,
   SetStateAction
 } from 'react';
-
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { SingleValue } from 'react-select';
 
-import { Label } from '@/src/components/ui/label';
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import ChatHeader from '@/src/components/ChatHeader';
 import ChatInput from '@/src/components/ChatInput';
-import ChatMessageList from '@/src/components/ChatMessageList';
 import ChatList from '@/src/components/ChatList';
-import CustomSelect from '@/src/components/CustomSelect';
-import Modal from '@/src/components/Modal';
+import ChatMessageList from '@/src/components/ChatMessageList';
 import Notification from '@/src/components/Notification';
-
 import WithAuth from '@/src/components/WithAuth';
+import { useChatContext } from '@/src/context/ChatContext';
 
 import { modelOptions } from '@/config/modellist';
 import { Message, FileData, AIConfig, AssistantOption } from '@/src/types/chat';
@@ -43,39 +39,27 @@ const initialFileCategory: OptionType = { value: 'none', label: 'None' };
 interface HomeProps {
   namespaces: string[];
   setNamespacesList: Dispatch<SetStateAction<OptionType[]>>;
-  selectedModel: OptionType;
-  setSelectedModel: Dispatch<SetStateAction<OptionType | null>>;
-  chatId: string;
-  setChatId: Dispatch<SetStateAction<string>>;
-  chats: OptionType[];
-  setChats: Dispatch<SetStateAction<OptionType[]>>;
-  chatHistory: Message[];
-  setChatHistory: Dispatch<SetStateAction<Message[]>>;
-  fileSrcHistory: FileData[][];
-  setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
-  isSearchChat: boolean;
-  isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
 }
 
-const HomePage: React.FC<HomeProps> = ({
-  namespaces,
-  setNamespacesList,
-  selectedModel,
-  setSelectedModel,
-  chatId,
-  setChatId,
-  chats,
-  setChats,
-  chatHistory,
-  setChatHistory,
-  fileSrcHistory,
-  setFileSrcHistory,
-  isSearchChat,
-  isConfigPanelVisible,
-  setIsConfigPanelVisible
-}) => {
+const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
   const router = useRouter();
+
+  const {
+    isNewChat,
+    setIsNewChat,
+    isConfigPanelVisible,
+    isSearchChat,
+    fileSrcHistory,
+    setFileSrcHistory,
+    chatHistory,
+    setChatHistory,
+    chatId,
+    setChatId,
+    chats,
+    setChats,
+    selectedModel,
+    setSelectedModel
+  } = useChatContext();
 
   // Derived state for namespace options
   const fetchedCategoryOptions =
@@ -101,7 +85,6 @@ const HomePage: React.FC<HomeProps> = ({
     temperature: 0.1
   });
 
-  const [isNewChat, setIsNewChat] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
@@ -109,7 +92,7 @@ const HomePage: React.FC<HomeProps> = ({
   const handleAddTags = (newTags: string[]) => {
     setTags(prevTags => {
       const updatedTags = [...new Set([...prevTags, ...newTags])];
-      console.log('tags', updatedTags);
+
       // Update the current chat in the chats state
       setChats(prevChats =>
         prevChats.map(chat =>
@@ -129,9 +112,10 @@ const HomePage: React.FC<HomeProps> = ({
 
   // --- Handlers ---
   const handleModelChange = (selectedOption: SingleValue<OptionType>) => {
+    if (!selectedOption) return defaultModel;
     setSelectedModel(selectedOption);
 
-    //when it  just start
+    //when it just start
     if (selectedOption && (isNewChat || chatHistory.length === 1)) {
       setChatHistory(prevHistory => [
         {
@@ -390,12 +374,15 @@ const HomePage: React.FC<HomeProps> = ({
   // Reset chat history when starting a new chat
   useEffect(() => {
     if (isNewChat) {
+      setChatId('0');
+      setSelectedModel(defaultModel);
       setChatHistory([initialMessage]);
       setFileSrcHistory([[]]); // Reset file history as well
       setIsNewChat(false);
     }
     // eslint-disable-next-line
   }, [isNewChat]);
+
   const chatTags = chats.find(chat => chat.value === chatId.toString())?.tags;
 
   return (
@@ -403,7 +390,6 @@ const HomePage: React.FC<HomeProps> = ({
       {isConfigPanelVisible && (
         <div className="flex-shrink-0 w-full px-4 pt-1 pb-4">
           <AIConfigPanel
-            selectedModel={selectedModel}
             handleModelChange={handleModelChange}
             selectedNamespace={selectedNamespace}
             handleNamespaceChange={handleNamespaceChange}
@@ -414,26 +400,20 @@ const HomePage: React.FC<HomeProps> = ({
           />
         </div>
       )}
-      {isSearchChat && <ChatList chats={chats} />}
+      {isSearchChat && <ChatList />}
       {!isSearchChat && (
         <div className="flex-grow overflow-y-auto">
           <ChatHeader
-            chatTags={
-              chats.find(chat => chat.value === chatId.toString())?.tags
-            }
+            chatTags={chatTags}
             assistantOptions={assistantOptions}
             selectedAssistant={selectedAssistant}
             handleAssistantChange={handleAssistantChange}
             handleAddTags={handleAddTags}
           />
           <ChatMessageList
-            chatHistory={chatHistory}
             loading={loading}
-            fileSrcHistory={fileSrcHistory}
             handleFileDelete={handleFileDelete}
-            modelOptions={modelOptions}
             assistantOptions={assistantOptions}
-            setAssistantOptions={setAssistantOptions}
             selectedAssistant={selectedAssistant}
             handleAssistantChange={handleAssistantChange}
             handleCopy={handleCopy}
@@ -445,9 +425,6 @@ const HomePage: React.FC<HomeProps> = ({
         <ChatInput
           onSubmit={handleSubmit}
           isVisionModel={!!selectedModel.vision}
-          selectedModel={selectedModel}
-          isConfigPanelVisible={isConfigPanelVisible}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
         />
       )}
       {!isSearchChat && error && <Notification type="error" message={error} />}

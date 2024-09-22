@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useCallback,
-  FC,
-  useMemo,
-  Dispatch,
-  SetStateAction
-} from 'react';
+import React, { useState, useCallback, FC, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
@@ -19,6 +12,7 @@ import {
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
+import { useChatContext } from '@/src/context/ChatContext';
 import { OptionType } from '@/src/types/common';
 
 interface MenuItemProps {
@@ -26,8 +20,6 @@ interface MenuItemProps {
   link?: string;
   itemList: OptionType[] | null;
   defaultOpen?: boolean;
-  isSearchChat?: boolean;
-  setIsSearchChat?: Dispatch<SetStateAction<boolean>>;
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
   onItemClick?: (id: string) => void;
   maxVisibleItem?: number;
@@ -46,16 +38,16 @@ const MenuItem: FC<MenuItemProps> = ({
   onItemClick,
   activeItemId,
   onDeleteClick,
-  onEditClick,
-  isSearchChat,
-  setIsSearchChat
+  onEditClick
 }) => {
+  const router = useRouter();
+  const isActive = link && router.pathname === link;
+
+  const { isSearchChat, setIsSearchChat } = useChatContext();
+
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
-
-  const router = useRouter();
-  const isActive = link && router.pathname === link;
 
   const handleToggle = useCallback(() => setIsOpen(prev => !prev), []);
 

@@ -5,11 +5,9 @@ import { useRouter } from 'next/router';
 
 import Layout from '@/src/components/Layout';
 import FullPageLayout from '@/src/components/FullPageLayout';
-import { Message, FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
 import '@/src/styles/globals.css';
-import { initialMessage, defaultModel } from '@/src/utils/initialData';
 
 const initialFileCategory: OptionType = { value: 'none', label: '1' };
 

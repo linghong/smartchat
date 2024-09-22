@@ -40,6 +40,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   return (
     <div id={id} className="relative">
       <div
+        role="combobox"
+        aria-controls="options"
+        aria-expanded="false"
         className={cn(
           'select-trigger w-full p-2 border border-gray-300 rounded-md cursor-pointer bg-gray-50 text-sm text-left',
           selectedClass
@@ -52,6 +55,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       </div>
       {isOpen && (
         <ul
+          id="options"
+          role="list"
           className={cn(
             'absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto',
             dropdownClass
@@ -60,6 +65,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           {options.map((option, index) => (
             <li
               key={`${option.value}-${index}`}
+              role="option"
+              aria-selected={option.value === selectedOption?.value}
               onClick={() => handleSelect(option)}
               className={cn(
                 'px-4 py-2 text-sm cursor-pointer hover:bg-gray-100',

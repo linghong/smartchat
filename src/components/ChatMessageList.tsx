@@ -1,26 +1,15 @@
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  Dispatch,
-  SetStateAction
-} from 'react';
+import React, { useRef, useEffect } from 'react';
 
 import ChatMessage from '@/src/components/ChatMessage';
-import { getAIConfigs } from '@/src/utils/sqliteAIConfigApiClient';
-import { Message, FileData, AssistantOption } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { useChatContext } from '@/src/context/ChatContext';
+import { AssistantOption } from '@/src/types/chat';
 import { initialMessage } from '@/src/utils/initialData';
 
-interface ChatMessageListProps {
-  chatHistory: Message[];
+export interface ChatMessageListProps {
   loading: boolean;
-  fileSrcHistory: FileData[][];
   assistantOptions: AssistantOption[];
-  setAssistantOptions: Dispatch<SetStateAction<AssistantOption[]>>;
   selectedAssistant: AssistantOption;
   handleAssistantChange: (newValue: AssistantOption) => void;
-  modelOptions: OptionType[];
   handleFileDelete: (id: number) => void;
   handleRetry?: () => void;
   handleCopy: () => void;
@@ -28,18 +17,16 @@ interface ChatMessageListProps {
 
 const ChatMessageList: React.FC<ChatMessageListProps> = ({
   assistantOptions,
-  setAssistantOptions,
   selectedAssistant,
   handleAssistantChange,
-  modelOptions,
-  chatHistory,
   loading,
-  fileSrcHistory,
   handleFileDelete,
   handleRetry,
   handleCopy
 }) => {
   const messagesRef = useRef<HTMLDivElement>(null);
+
+  const { fileSrcHistory, chatHistory } = useChatContext();
 
   useEffect(() => {
     if (messagesRef.current) {

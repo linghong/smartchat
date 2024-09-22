@@ -4,43 +4,32 @@ import React, {
   useCallback,
   useRef,
   ChangeEvent,
-  FormEvent,
-  Dispatch,
-  SetStateAction
+  FormEvent
 } from 'react';
 import DOMPurify from 'isomorphic-dompurify';
 import { RiScreenshot2Fill } from 'react-icons/ri';
 
-import { FileData } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
-
 import ArrowButton from '@/src/components/ArrowButton';
 import ButtonWithTooltip from '@/src/components/ButtonWithTooltip';
-import FileUploadIcon from '@/src/components/FileUploadIcon';
-
 import FileListWithModal from '@/src/components/FileListWithModal';
+import FileUploadIcon from '@/src/components/FileUploadIcon';
 import Notification from '@/src/components/Notification';
-
-import { sanitizeWithPreserveCode } from '@/src/utils/guardrail';
+import { useChatContext } from '@/src/context/ChatContext';
+import { FileData } from '@/src/types/chat';
 import { fileToDataURLBase64 } from '@/src/utils/fileFetchAndConversion';
+import { sanitizeWithPreserveCode } from '@/src/utils/guardrail';
 import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
 
 interface ChatInputProps {
   onSubmit: (question: string, fileSrc: FileData[]) => void;
   isVisionModel: boolean;
-  selectedModel: OptionType;
-  isConfigPanelVisible: boolean;
-  setIsConfigPanelVisible: Dispatch<SetStateAction<boolean>>;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({
-  onSubmit,
-  isVisionModel,
-  selectedModel,
-  isConfigPanelVisible,
-  setIsConfigPanelVisible
-}) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSubmit, isVisionModel }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const { selectedModel, isConfigPanelVisible, setIsConfigPanelVisible } =
+    useChatContext();
+
   const [userInput, setUserInput] = useState('');
   const [rows, setRows] = useState<number>(1);
   const [fileSrc, setFileSrc] = useState<FileData[]>([]);
@@ -89,33 +78,39 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   const handleFileUpload = async (file: File) => {
     if (!file) return;
+    try {
+      const base64Content = await fileToDataURLBase64(file);
+      if (!base64Content) {
+        setFileError(prev => [
+          ...prev,
+          'Error happened when extracting file data'
+        ]);
+        return;
+      }
+      const fileType = file.type
+        ? file.type
+        : base64Content.slice(5).split(';')[0];
 
-    const base64Content = await fileToDataURLBase64(file);
-    if (!base64Content) {
+      const fileData: FileData = {
+        base64Content: DOMPurify.sanitize(base64Content),
+        type: fileType,
+        size: file.size,
+        name: file.name
+      };
+
+      if (fileType.startsWith('image/')) {
+        await handleImageFile(fileData);
+      } else {
+        setFileSrc(prev => [...prev, fileData]);
+      }
+    } catch (error) {
+      console.error('Error:', error);
       setFileError(prev => [
         ...prev,
         'Error happened when extracting file data'
       ]);
-      return;
-    }
-    const fileType = file.type
-      ? file.type
-      : base64Content.slice(5).split(';')[0];
-
-    const fileData: FileData = {
-      base64Content: DOMPurify.sanitize(base64Content),
-      type: fileType,
-      size: file.size,
-      name: file.name
-    };
-
-    if (fileType.startsWith('image/')) {
-      await handleImageFile(fileData);
-    } else {
-      setFileSrc(prev => [...prev, fileData]);
     }
   };
-
   const handleScreenCapture = async () => {
     try {
       const response = await fetch('/api/tools/screenshot', { method: 'POST' });
@@ -164,7 +159,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     setUserInput(sanitizeWithPreserveCode(newValue));
 
     // Close config panel when user starts typing
-    if (newValue.length >= 1 && isConfigPanelVisible) {
+    if (newValue.length >= 0 && isConfigPanelVisible) {
       setIsConfigPanelVisible(false);
     }
 
