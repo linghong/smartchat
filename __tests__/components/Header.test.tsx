@@ -1,24 +1,29 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  waitFor
+} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { useRouter } from 'next/router';
 
 import Header from '@/src/components/Header';
-import { Message, ImageFile } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
-import { initialMessage } from '@/src/utils/initialData';
+import { renderWithContext } from '@/__tests__/test_utils/context';
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
 }));
 
-const setIsSidebarOpen = jest.fn();
-const setIsConfigPanelVisible = jest.fn();
-const setSelectedModel = jest.fn();
-const setChatId = jest.fn();
-const setChatHistory = jest.fn();
-const setFileSrcHistory = jest.fn();
+const mockSetIsSidebarOpen = jest.fn();
 const mockPush = jest.fn();
+const mockSetIsConfigPanelVisible = jest.fn();
+
+const defaultProps = {
+  isSidebarOpen: true,
+  setIsSidebarOpen: mockSetIsSidebarOpen
+};
 
 describe('Header Component', () => {
   beforeEach(() => {
@@ -31,18 +36,7 @@ describe('Header Component', () => {
   });
 
   it('should render the page title correctly', () => {
-    render(
-      <Header
-        isSidebarOpen={true}
-        setIsSidebarOpen={setIsSidebarOpen}
-        isConfigPanelVisible={false}
-        setIsConfigPanelVisible={setIsConfigPanelVisible}
-        setChatId={setChatId}
-        setSelectedModel={setSelectedModel}
-        setChatHistory={setChatHistory}
-        setFileSrcHistory={setFileSrcHistory}
-      />
-    );
+    renderWithContext(<Header {...defaultProps} />);
 
     // Check if the rendered header contains the correct page title
     expect(screen.getByText('Chat With My AI Assistant')).toBeInTheDocument();
@@ -61,18 +55,7 @@ describe('Header Component', () => {
         push: mockPush
       });
 
-      render(
-        <Header
-          isSidebarOpen={true}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      renderWithContext(<Header {...defaultProps} />);
 
       expect(screen.getByText(title)).toBeInTheDocument();
     });
@@ -80,23 +63,13 @@ describe('Header Component', () => {
 
   describe('Mouse focusing and hovering events', () => {
     beforeEach(() => {
-      render(
-        <Header
-          isSidebarOpen={true}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      renderWithContext(<Header {...defaultProps} />);
     });
 
     it('should change its background color when focusing on menu button and sidebar is open', async () => {
       const menuIcon = screen.getByLabelText('Toggle Sidebar');
       expect(menuIcon?.className).toMatch(/focus/);
+      expect(menuIcon).toHaveClass('transition-colors');
     });
 
     it('should show visual feedback when hovering over menu button and sidebar is open ', async () => {
@@ -112,18 +85,7 @@ describe('Header Component', () => {
 
   describe('Mouse click events on NewChat', () => {
     it('should navigate to the home page when NewChat button is clicked', async () => {
-      render(
-        <Header
-          isSidebarOpen={true}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      renderWithContext(<Header {...defaultProps} />);
 
       fireEvent.click(screen.getByLabelText('New Chat'));
       expect(mockPush).toHaveBeenCalledTimes(1);
@@ -132,185 +94,84 @@ describe('Header Component', () => {
 
     it('should not call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially open', () => {
       global.innerWidth = 480;
-      render(
-        <Header
-          isSidebarOpen={true}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      renderWithContext(<Header {...defaultProps} />);
 
       fireEvent.click(screen.getByLabelText('New Chat'));
       // Because router.push('/') is called instead
-      expect(setIsSidebarOpen).not.toHaveBeenCalled();
+      expect(mockSetIsSidebarOpen).not.toHaveBeenCalled();
     });
 
     it('should not call setIsSidebarOpen when NewChat button is clicked on desktop and sidebar is initially open', () => {
       global.innerWidth = 1024;
-      render(
-        <Header
-          isSidebarOpen={false}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      renderWithContext(<Header {...defaultProps} />);
 
       fireEvent.click(screen.getByLabelText('New Chat'));
-      expect(setIsSidebarOpen).not.toHaveBeenCalled();
+      expect(mockSetIsSidebarOpen).not.toHaveBeenCalled();
     });
 
     it('should not call setIsSidebarOpen when NewChat button is clicked on desktop and sidebar is initially closed', () => {
       global.innerWidth = 1024;
-      render(
-        <Header
-          isSidebarOpen={false}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      renderWithContext(<Header {...defaultProps} />);
 
       fireEvent.click(screen.getByLabelText('New Chat'));
-      expect(setIsSidebarOpen).not.toHaveBeenCalled();
+      expect(mockSetIsSidebarOpen).not.toHaveBeenCalled();
     });
 
     it('should not call setIsSidebarOpen when NewChat button is clicked on mobile and sidebar is initially closed', () => {
       global.innerWidth = 480;
-      render(
-        <Header
-          isSidebarOpen={false}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      renderWithContext(<Header {...defaultProps} />);
 
       fireEvent.click(screen.getByLabelText('New Chat'));
-      expect(setIsSidebarOpen).not.toHaveBeenCalled();
+      expect(mockSetIsSidebarOpen).not.toHaveBeenCalled();
     });
   });
 
   describe('Mouse click events on menu icon', () => {
     it('should call setIsSidebarOpen with true when initially closed and toggle button is clicked', () => {
-      render(
-        <Header
-          isSidebarOpen={false}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      renderWithContext(<Header {...defaultProps} isSidebarOpen={false} />);
 
       fireEvent.click(screen.getByLabelText('Toggle Sidebar'));
-      expect(setIsSidebarOpen).toHaveBeenCalledWith(true);
+      expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(true);
     });
 
     it('should call setIsSidebarOpen with false when initially open and toggle button is clicked', () => {
-      render(
-        <Header
-          isSidebarOpen={true}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      renderWithContext(<Header {...defaultProps} />);
 
       fireEvent.click(screen.getByLabelText('Toggle Sidebar'));
-      expect(setIsSidebarOpen).toHaveBeenCalledWith(false);
+      expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false);
     });
   });
 
   describe('Config panel visibility toggle', () => {
-    it('should toggle panel visibility when config button is clicked', () => {
-      render(
-        <Header
-          isSidebarOpen={false}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+    it('should show correct button text based on panel visibility', () => {
+      renderWithContext(<Header {...defaultProps} />);
 
-      fireEvent.click(screen.getByLabelText('Show Config'));
-      expect(setIsConfigPanelVisible).toHaveBeenCalledWith(true);
+      expect(screen.getByText('Show Assistant Config')).toBeInTheDocument();
+
+      // Update the context to have config panel visible
+      renderWithContext(<Header {...defaultProps} />, {
+        isConfigPanelVisible: true
+      });
+
+      expect(screen.getByText('Hide Assistant Config')).toBeInTheDocument();
     });
 
-    it('should show correct button text based on panel visibility', () => {
-      const { rerender } = render(
-        <Header
-          isSidebarOpen={false}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={false}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+    it('should call setIsConfigPanel when config button is clicked', async () => {
+      renderWithContext(<Header {...defaultProps} />, {
+        isConfigPanelVisible: false,
+        setIsConfigPanelVisible: mockSetIsConfigPanelVisible
+      });
 
-      expect(screen.getByText('Show AI Assistant Config')).toBeInTheDocument();
+      const showPanelButton = screen.getByLabelText('Show AI Assistant Config');
 
-      rerender(
-        <Header
-          isSidebarOpen={false}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isConfigPanelVisible={true}
-          setIsConfigPanelVisible={setIsConfigPanelVisible}
-          setChatId={setChatId}
-          setSelectedModel={setSelectedModel}
-          setChatHistory={setChatHistory}
-          setFileSrcHistory={setFileSrcHistory}
-        />
-      );
+      fireEvent.click(showPanelButton);
 
-      expect(screen.getByText('Hide AI Assistant Config')).toBeInTheDocument();
+      expect(mockSetIsConfigPanelVisible).toHaveBeenCalledWith(true);
     });
   });
 
   it('Header component snapshot', () => {
-    const { asFragment } = render(
-      <Header
-        isSidebarOpen={true}
-        setIsSidebarOpen={setIsSidebarOpen}
-        isConfigPanelVisible={false}
-        setIsConfigPanelVisible={setIsConfigPanelVisible}
-        setChatId={setChatId}
-        setSelectedModel={setSelectedModel}
-        setChatHistory={setChatHistory}
-        setFileSrcHistory={setFileSrcHistory}
-      />
-    );
+    const { asFragment } = renderWithContext(<Header {...defaultProps} />);
     expect(asFragment()).toMatchSnapshot();
   });
 });

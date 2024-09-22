@@ -33,19 +33,23 @@ describe('SignOut Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+
   it('renders correctly', () => {
     const { asFragment } = render(<SignOut />);
     expect(asFragment()).toMatchSnapshot();
   });
+
   it('displays the correct text', () => {
     render(<SignOut />);
     expect(screen.getByText('Log out')).toBeInTheDocument();
   });
+
   it('has the correct icon', () => {
     render(<SignOut />);
     const icon = document.querySelector('svg');
     expect(icon).toBeInTheDocument();
   });
+
   it('calls handleSignOut when clicked', () => {
     const pushMock = jest.fn();
     (useRouter as jest.Mock).mockReturnValue({

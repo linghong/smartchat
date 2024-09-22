@@ -93,6 +93,7 @@ exports[`ChatInput matches snapshot 1`] = `
           spellcheck="true"
         />
         <button
+          aria-label="Send message"
           class="p-1 border-none opacity-60 hover:stone-600 disabled:cursor-not-allowed"
           disabled=""
           type="submit"
@@ -154,7 +155,7 @@ exports[`ChatInput matches snapshot when isVisionModel is false 1`] = `
           <span
             class="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 hidden group-hover:block bg-gray-100 text-black text-xs rounded py-1 px-5 whitespace-nowrap"
           >
-            ai-model does not have vision feature
+            gemini-1.5-pro-exp-0827 does not have vision feature
           </span>
         </div>
         <div
@@ -211,6 +212,7 @@ exports[`ChatInput matches snapshot when isVisionModel is false 1`] = `
           spellcheck="true"
         />
         <button
+          aria-label="Send message"
           class="p-1 border-none opacity-60 hover:stone-600 disabled:cursor-not-allowed"
           disabled=""
           type="submit"

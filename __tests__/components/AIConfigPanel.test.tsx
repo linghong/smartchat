@@ -72,6 +72,13 @@ jest.mock('@/src/components/Notification', () => ({
   )
 }));
 
+// Mock the ChatContext
+jest.mock('@/src/context/ChatContext', () => ({
+  useChatContext: () => ({
+    selectedModel: { value: 'gpt-4', label: 'GPT-4' }
+  })
+}));
+
 describe('AIConfigPanel', () => {
   const mockAIConfig = {
     name: 'TestBot',
@@ -89,7 +96,6 @@ describe('AIConfigPanel', () => {
   };
 
   const mockProps = {
-    selectedModel: { value: 'model1', label: 'Model 1' },
     handleModelChange: jest.fn(),
     selectedNamespace: { value: 'namespace1', label: 'Namespace 1' },
     handleNamespaceChange: jest.fn(),

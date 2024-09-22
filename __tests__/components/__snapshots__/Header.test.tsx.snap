@@ -79,7 +79,7 @@ exports[`Header Component Header component snapshot 1`] = `
       class="flex space-x-6"
     >
       <button
-        aria-label="Show Config"
+        aria-label="Show AI Assistant Config"
         class="flex items-center px-2 space-x-2 rounded-full hover:bg-slate-500 transition-colors duration-200"
       >
         <svg
@@ -104,9 +104,9 @@ exports[`Header Component Header component snapshot 1`] = `
           />
         </svg>
         <span
-          class="text-white text-sm hidden sm:inline"
+          class="text-white text-sm sm:inline"
         >
-          Show AI Assistant Config
+          Show Assistant Config
         </span>
       </button>
     </div>

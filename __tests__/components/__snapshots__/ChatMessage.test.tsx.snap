@@ -228,7 +228,10 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
               id="assistant"
             >
               <div
+                aria-controls="options"
+                aria-expanded="false"
                 class="select-trigger p-2 border border-gray-300 rounded-md cursor-pointer bg-gray-50 text-left w-full text-sm"
+                role="combobox"
               >
                 <span
                   class="text-gray-900"

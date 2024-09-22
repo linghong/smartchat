@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChatList Component should match the snapshot 1`] = `
+<DocumentFragment>
+  <div>
+    <button
+      data-testid="mock-tag-search"
+    >
+      Mock TagSearch
+    </button>
+    <div
+      class="flex-grow overflow-y-auto bg-white border-2 border-stone-200"
+    >
+      <div
+        class="p-4"
+      >
+        <h3
+          class="font-bold mb-2"
+        >
+          Filtered Chats:
+        </h3>
+        <div
+          class="mb-2 p-2 bg-gray-100 rounded"
+        >
+          <p>
+            Chat 1
+          </p>
+          <div
+            class="mt-1"
+          >
+            <span
+              class="mr-2 px-2 py-1 bg-blue-50 text-blue-800 rounded-full text-xs"
+            >
+              tag1
+            </span>
+            <span
+              class="mr-2 px-2 py-1 bg-blue-50 text-blue-800 rounded-full text-xs"
+            >
+              tag2
+            </span>
+          </div>
+        </div>
+        <div
+          class="mb-2 p-2 bg-gray-100 rounded"
+        >
+          <p>
+            Chat 2
+          </p>
+          <div
+            class="mt-1"
+          >
+            <span
+              class="mr-2 px-2 py-1 bg-blue-50 text-blue-800 rounded-full text-xs"
+            >
+              tag2
+            </span>
+          </div>
+        </div>
+        <div
+          class="mb-2 p-2 bg-gray-100 rounded"
+        >
+          <p>
+            Chat 3
+          </p>
+          <div
+            class="mt-1"
+          >
+            <span
+              class="mr-2 px-2 py-1 bg-blue-50 text-blue-800 rounded-full text-xs"
+            >
+              tag3
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

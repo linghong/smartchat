@@ -9,6 +9,9 @@ jest.mock('pdf-parse', () => jest.fn());
 jest.mock('mammoth');
 jest.mock('xlsx');
 
+// Mock console.error
+console.error = jest.fn();
+
 describe('convertFileToText', () => {
   const mockFileData: FileData = {
     base64Content: 'data:application/octet-stream;base64,SGVsbG8gV29ybGQ=',
@@ -51,6 +54,10 @@ describe('convertFileToText', () => {
 
     const result = await convertFileToText(pdfFileData);
     expect(result).toBe('PDF parsing failed');
+    expect(console.error).toHaveBeenCalledWith(
+      'Error extracting text from PDF:',
+      expect.any(Error)
+    );
   });
 
   it('should extract text from Office document', async () => {
@@ -116,6 +123,10 @@ describe('convertFileToText', () => {
 
     const result = await convertFileToText(errorFileData);
     expect(result).toBe('PDF parsing error');
+    expect(console.error).toHaveBeenCalledWith(
+      'Error extracting text from PDF:',
+      expect.any(Error)
+    );
   });
 
   it('should handle JSON files', async () => {

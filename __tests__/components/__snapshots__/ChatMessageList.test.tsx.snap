@@ -23,7 +23,7 @@ exports[`ChatMessageList matches snapshot 1`] = `
         >
           <div />
           <div>
-            Hi, how can I assist you?
+            How can I assistant you?
           </div>
         </div>
       </div>
@@ -38,9 +38,7 @@ exports[`ChatMessageList matches snapshot 1`] = `
         <div
           class="ai"
         >
-          <div>
-            GPT-4
-          </div>
+          <div />
           <div>
             I'm doing well, thank you!
           </div>

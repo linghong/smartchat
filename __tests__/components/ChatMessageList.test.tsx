@@ -1,17 +1,13 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { modelOptions } from '@/config/modellist';
-import ChatMessageList from '@/src/components/ChatMessageList';
-import { Message, FileData, AssistantOption } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import ChatMessageList, {
+  ChatMessageListProps
+} from '@/src/components/ChatMessageList';
+import { FileData, AssistantOption } from '@/src/types/chat';
 import { defaultAssistants } from '@/src/utils/initialData';
-import { getAIConfigs } from '@/src/utils/sqliteAIConfigApiClient';
-
-jest.mock('@/src/utils/sqliteAIConfigApiClient', () => ({
-  getAIConfigs: jest.fn()
-}));
+import { renderWithContext } from '@/__tests__/test_utils/context';
 
 jest.mock('@/src/components/ChatMessage', () => {
   return function MockChatMessage({
@@ -31,11 +27,12 @@ jest.mock('@/src/components/ChatMessage', () => {
       <div data-testid={`chat-message`}>
         {!isNew && <div className="user">{message.question}</div>}
         <div className="ai">
-          {loading && lastIndex && (
-            <div data-testid="loading-indicator">Loading...</div>
-          )}
           <div>{message.model}</div>
-          <div>{message.answer}</div>
+          {lastIndex && loading ? (
+            <div aria-label="loading">Just a moment, I’m working on it...</div>
+          ) : (
+            <div>{message.answer}</div>
+          )}
           {fileSrc &&
             fileSrc.map((file: FileData, i: number) => (
               <div key={i}>
@@ -49,18 +46,16 @@ jest.mock('@/src/components/ChatMessage', () => {
               {handleCopy && message.answer !== '' && (
                 <button onClick={handleCopy}>Copy</button>
               )}
-              {
-                <select>
-                  {assistantOptions.map((assistant: AssistantOption) => (
-                    <option
-                      key={assistant.value}
-                      onClick={() => handleAssistantChange(assistant)}
-                    >
-                      {assistant.label}
-                    </option>
-                  ))}
-                </select>
-              }
+              <select>
+                {assistantOptions.map((assistant: AssistantOption) => (
+                  <option
+                    key={assistant.value}
+                    onClick={() => handleAssistantChange(assistant)}
+                  >
+                    {assistant.label}
+                  </option>
+                ))}
+              </select>
             </div>
           )}
         </div>
@@ -74,26 +69,11 @@ describe('ChatMessageList', () => {
   const mockHandleAssistantChange = jest.fn();
   const mockHandleRetry = jest.fn();
   const mockHandleCopy = jest.fn();
-  const mockSetAssistantOptions = jest.fn();
-  const defaultProps = {
-    chatHistory: [
-      {
-        question: 'Hello',
-        answer: 'Hi, how can I assist you?',
-        assistant: 'Default GPT-4'
-      },
-      {
-        question: 'How are you?',
-        answer: "I'm doing well, thank you!",
-        model: 'GPT-4'
-      }
-    ] as Message[],
+
+  const defaultProps: ChatMessageListProps = {
     loading: false,
-    fileSrcHistory: [[]],
     selectedAssistant: defaultAssistants[0],
     assistantOptions: defaultAssistants,
-    setAssistantOptions: mockSetAssistantOptions,
-    modelOptions,
     handleAssistantChange: mockHandleAssistantChange,
     handleFileDelete: mockHandleFileDelete,
     handleRetry: mockHandleRetry,
@@ -106,95 +86,120 @@ describe('ChatMessageList', () => {
   });
 
   it('renders correct number of ChatMessage components', () => {
-    render(<ChatMessageList {...defaultProps} />);
+    renderWithContext(<ChatMessageList {...defaultProps} />);
     const chatMessages = screen.getAllByTestId('chat-message');
     expect(chatMessages).toHaveLength(2);
   });
 
   it('renders correctly with chat history', () => {
-    render(<ChatMessageList {...defaultProps} />);
+    renderWithContext(<ChatMessageList {...defaultProps} />);
     expect(screen.getByText('How are you?')).toBeInTheDocument();
     expect(screen.getByText("I'm doing well, thank you!")).toBeInTheDocument();
   });
 
   it('renders correctly when loading', () => {
-    render(<ChatMessageList {...defaultProps} loading={true} />);
-    expect(screen.getByTestId('loading-indicator')).toBeInTheDocument();
+    renderWithContext(<ChatMessageList {...defaultProps} loading={true} />);
+    expect(screen.getByLabelText('loading')).toBeInTheDocument();
   });
 
   it('handles file src history and delete', () => {
-    const customProps = {
-      ...defaultProps,
-      fileSrcHistory: [
-        [
-          {
-            base64Content: 'data:image/png;base64,base64Imagetest1',
-            type: 'image/png',
-            size: 2 * 1024 * 1024, //2MB
-            name: 'test1.png'
-          }
-        ],
-        [
-          {
-            base64Content: 'data:image/png;base64,base64Imagetest2',
-            type: 'image/jpeg',
-            size: 2 * 1024 * 1024, //2MB
-            name: 'test2.jpg'
-          }
-        ]
-      ] as FileData[][]
-    };
-    render(<ChatMessageList {...customProps} />);
+    const fileSrcHistory = [
+      [
+        {
+          base64Content: 'data:image/png;base64,base64Imagetest1',
+          type: 'image/png',
+          size: 2 * 1024 * 1024, //2MB
+          name: 'test1.png'
+        }
+      ],
+      [
+        {
+          base64Content: 'data:image/png;base64,base64Imagetest2',
+          type: 'image/jpeg',
+          size: 2 * 1024 * 1024, //2MB
+          name: 'test2.jpg'
+        }
+      ]
+    ];
+
+    renderWithContext(<ChatMessageList {...defaultProps} />, {
+      fileSrcHistory
+    });
+
     expect(screen.getByText('test1.png (image/png)')).toBeInTheDocument();
     expect(screen.getByText('test2.jpg (image/jpeg)')).toBeInTheDocument();
 
     const deleteButtons = screen.getAllByText('Delete');
     expect(deleteButtons).toHaveLength(2);
-    deleteButtons[0].click();
+    fireEvent.click(deleteButtons[0]);
     expect(mockHandleFileDelete).toHaveBeenCalledWith(0);
   });
 
   it('indicates a new conversation', () => {
-    const newConversationProps = {
-      ...defaultProps,
+    const newChatMessageListContext = {
       chatHistory: [
         {
           question: '',
           answer: 'Hi, how can I assist you?',
           assistant: 'GPT-4 Assistant'
         }
-      ]
+      ],
+      firSrcHistory: [[]]
     };
-    render(<ChatMessageList {...newConversationProps} />);
+    renderWithContext(<ChatMessageList {...defaultProps} />, {
+      ...newChatMessageListContext
+    });
 
     expect(screen.getByText('Hi, how can I assist you?')).toBeInTheDocument();
     expect(screen.queryByTestId('chat-message')).not.toHaveTextContent('');
   });
 
   it('renders retry button for the last message', () => {
-    render(<ChatMessageList {...defaultProps} />);
-    const retryButtons = screen.getAllByText('Retry');
-    expect(retryButtons).toHaveLength(1);
+    renderWithContext(<ChatMessageList {...defaultProps} />);
+    const retryButton = screen.getByText('Retry');
+    expect(retryButton).toBeInTheDocument();
   });
 
-  it('renders copy button for all messages', () => {
-    render(<ChatMessageList {...defaultProps} />);
-    const copyButtons = screen.getAllByText('Copy');
-    expect(copyButtons).toHaveLength(1);
+  it('calls handleRetry when Retry button is clicked', () => {
+    renderWithContext(<ChatMessageList {...defaultProps} />);
+    const retryButton = screen.getByText('Retry');
+    fireEvent.click(retryButton);
+    expect(mockHandleRetry).toHaveBeenCalled();
+  });
+
+  it('renders copy button for the last message', () => {
+    renderWithContext(<ChatMessageList {...defaultProps} />);
+    const copyButton = screen.getByText('Copy');
+    expect(copyButton).toBeInTheDocument();
+  });
+
+  it('calls handleCopy when Copy button is clicked', () => {
+    renderWithContext(<ChatMessageList {...defaultProps} />);
+    const copyButton = screen.getByText('Copy');
+    fireEvent.click(copyButton);
+    expect(mockHandleCopy).toHaveBeenCalled();
   });
 
   it('handles assistant change', () => {
-    render(<ChatMessageList {...defaultProps} />);
-    const select = screen.getByRole('combobox');
+    renderWithContext(<ChatMessageList {...defaultProps} />);
+    const combobox = screen.getByRole('combobox');
+    expect(combobox).toBeInTheDocument();
+    expect(combobox).toHaveTextContent('Default Gemini-1.5 Pro Exp');
+
+    // simulate the selection process
+    fireEvent.click(combobox);
     const options = screen.getAllByRole('option');
-    options[1].click();
+    fireEvent.click(options[1]); // Select the second option
+
     expect(mockHandleAssistantChange).toHaveBeenCalledWith(
       defaultAssistants[1]
     );
   });
 
   it('matches snapshot', () => {
-    const { asFragment } = render(<ChatMessageList {...defaultProps} />);
+    const { asFragment } = renderWithContext(
+      <ChatMessageList {...defaultProps} />
+    );
     expect(asFragment()).toMatchSnapshot();
   });
 });

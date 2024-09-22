@@ -3,6 +3,7 @@
 exports[`ArrowButton Component renders correctly and matches the snapshot when disabled 1`] = `
 <DocumentFragment>
   <button
+    aria-label="Send message"
     class="p-1 border-none opacity-60 hover:stone-600 disabled:cursor-not-allowed"
     disabled=""
     type="submit"
@@ -27,6 +28,7 @@ exports[`ArrowButton Component renders correctly and matches the snapshot when d
 exports[`ArrowButton Component renders correctly and matches the snapshot when enabled 1`] = `
 <DocumentFragment>
   <button
+    aria-label="Send message"
     class="p-1 border-none opacity-60 hover:stone-600 disabled:cursor-not-allowed"
     type="submit"
   >

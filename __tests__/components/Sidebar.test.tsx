@@ -9,6 +9,7 @@ import {
 import '@testing-library/jest-dom';
 
 import Sidebar from '@/src/components/Sidebar';
+import { ChatContext } from '@/src/context/ChatContext';
 import { fetchChats } from '@/src/utils/sqliteChatApiClient';
 import {
   deleteChat,
@@ -74,13 +75,6 @@ jest.mock('@/src/components/MenuItem', () => {
         </ul>
       </div>
     );
-  };
-});
-
-// Mock the AIHub component
-jest.mock('@/src/components/AIHub', () => {
-  return function MockAIHub() {
-    return <div>AI Hub</div>;
   };
 });
 
@@ -151,18 +145,24 @@ describe('Sidebar Component', () => {
 
   const renderSidebar = (chatId = '0') =>
     render(
-      <Sidebar
-        isSidebarOpen={true}
-        setIsConfigPanelVisible={mockSetIsConfigPanelVisible}
-        setIsSidebarOpen={mockSetIsSidebarOpen}
-        namespacesList={mockNamespacesList}
-        chatId={chatId}
-        setChatId={mockSetChatId}
-        chats={mockChats}
-        setChats={mockSetChats}
-        setChatHistory={mockSetChatHistory}
-        setFileSrcHistory={mockSetFileSrcHistory}
-      />
+      <ChatContext.Provider
+        value={{
+          chatId,
+          setChatId: mockSetChatId,
+          chats: mockChats,
+          setChats: mockSetChats,
+          setChatHistory: mockSetChatHistory,
+          setFileSrcHistory: mockSetFileSrcHistory,
+          isConfigPanelVisible: false,
+          setIsConfigPanelVisible: mockSetIsConfigPanelVisible
+        }}
+      >
+        <Sidebar
+          isSidebarOpen={true}
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+        />
+      </ChatContext.Provider>
     );
 
   it('renders Sidebar component with all expected elements', async () => {

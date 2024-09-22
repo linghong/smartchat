@@ -1,7 +1,6 @@
-import React, { cloneElement } from 'react';
+import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
 import Layout from '@/src/components/Layout';
-import { OptionType } from '@/src/types/common';
 import { useRouter } from 'next/router';
 
 // Mock next/router

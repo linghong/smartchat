@@ -1,9 +1,17 @@
 import React from 'react';
-import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import {
+  fireEvent,
+  waitFor,
+  screen,
+  act,
+  render
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import ChatInput from '@/src/components/ChatInput';
 import { sanitizeWithPreserveCode } from '@/src/utils/guardrail';
+import { fileToDataURLBase64 } from '@/src/utils/fileFetchAndConversion';
+import { renderWithContext } from '@/__tests__/test_utils/context';
 
 jest.mock('@/src/utils/mediaValidationHelper', () => ({
   isSupportedImage: jest.fn().mockReturnValue([])
@@ -17,28 +25,31 @@ jest.mock('@/src/utils/fileFetchAndConversion', () => ({
   fileToDataURLBase64: jest.fn().mockResolvedValue('mocked-base64-content')
 }));
 
+const mockOnSubmit = jest.fn();
+const mockSetIsConfigPanelVisible = jest.fn();
+
+const defaultProps = {
+  onSubmit: mockOnSubmit,
+  isVisionModel: true
+};
+
+const mockContextValue = {
+  selectedModel: {
+    value: 'ai-model',
+    label: 'AI model',
+    contextWindow: 8192
+  },
+  isConfigPanelVisible: false,
+  setIsConfigPanelVisible: jest.fn()
+};
+
 describe('ChatInput', () => {
-  const mockOnSubmit = jest.fn();
-  const mockSetIsConfigPanelVisible = jest.fn();
-
-  const defaultProps = {
-    onSubmit: mockOnSubmit,
-    isVisionModel: true,
-    selectedModel: {
-      value: 'ai-model',
-      label: 'AI model',
-      contextWindow: 8192
-    },
-    isConfigPanelVisible: false,
-    setIsConfigPanelVisible: mockSetIsConfigPanelVisible
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('renders correctly', () => {
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
     expect(
       screen.getByPlaceholderText(
         'Click to send. Shift + Enter for a new line.'
@@ -48,17 +59,25 @@ describe('ChatInput', () => {
     expect(screen.getByLabelText('Upload File')).toBeInTheDocument();
   });
 
-  it('closes config panel when user starts typing', () => {
-    render(<ChatInput {...defaultProps} isConfigPanelVisible={true} />);
+  it('closes config panel when user starts typing', async () => {
+    const mockSetIsConfigPanelVisible = jest.fn();
+
+    renderWithContext(<ChatInput {...defaultProps} />, {
+      isConfigPanelVisible: true,
+      setIsConfigPanelVisible: mockSetIsConfigPanelVisible
+    });
     const input = screen.getByPlaceholderText(
       'Click to send. Shift + Enter for a new line.'
     );
-    fireEvent.change(input, { target: { value: 'T' } });
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'T' } });
+    });
+
     expect(mockSetIsConfigPanelVisible).toHaveBeenCalledWith(false);
   });
 
   it('handles text input correctly', () => {
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
     const input = screen.getByPlaceholderText(
       'Click to send. Shift + Enter for a new line.'
     );
@@ -66,18 +85,8 @@ describe('ChatInput', () => {
     expect(input).toHaveValue('Test message');
   });
 
-  it('submits the form when Enter is pressed', () => {
-    render(<ChatInput {...defaultProps} />);
-    const input = screen.getByPlaceholderText(
-      'Click to send. Shift + Enter for a new line.'
-    );
-    fireEvent.change(input, { target: { value: 'Test message' } });
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
-    expect(mockOnSubmit).toHaveBeenCalledWith('Test message', []);
-  });
-
   it('adds a new line when Shift+Enter is pressed', () => {
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
     const input = screen.getByPlaceholderText(
       'Click to send. Shift + Enter for a new line.'
     );
@@ -87,7 +96,7 @@ describe('ChatInput', () => {
   });
 
   it('adjusts textarea height as user types', () => {
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
     const textarea = screen.getByPlaceholderText(
       'Click to send. Shift + Enter for a new line.'
     );
@@ -99,8 +108,58 @@ describe('ChatInput', () => {
     expect(textarea.style.height).not.toBe(initialHeight);
   });
 
+  it('resets textarea height after form submission', async () => {
+    renderWithContext(<ChatInput {...defaultProps} />);
+    const textarea = screen.getByPlaceholderText(
+      'Click to send. Shift + Enter for a new line.'
+    );
+    fireEvent.change(textarea, { target: { value: 'Test message\nLine 2' } });
+
+    const initialHeight = textarea.style.height;
+
+    const submitButton = screen.getByLabelText('Send message');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(textarea.style.height).toBe('auto');
+      expect(textarea.style.height).not.toBe(initialHeight);
+    });
+  });
+
+  it('updates rows state when typing multiple lines', () => {
+    renderWithContext(<ChatInput {...defaultProps} />);
+    const textarea = screen.getByPlaceholderText(
+      'Click to send. Shift + Enter for a new line.'
+    );
+
+    fireEvent.change(textarea, { target: { value: 'Line 1\nLine 2\nLine 3' } });
+
+    expect((textarea as HTMLTextAreaElement).rows).toBe(3);
+  });
+
+  it('limits rows to a maximum of 8', () => {
+    renderWithContext(<ChatInput {...defaultProps} />);
+    const textarea = screen.getByPlaceholderText(
+      'Click to send. Shift + Enter for a new line.'
+    );
+
+    fireEvent.change(textarea, { target: { value: 'Line 1\n'.repeat(10) } });
+
+    expect((textarea as HTMLTextAreaElement).rows).toBe(8);
+  });
+
+  it('submits the form when Enter is pressed', () => {
+    renderWithContext(<ChatInput {...defaultProps} />);
+    const input = screen.getByPlaceholderText(
+      'Click to send. Shift + Enter for a new line.'
+    );
+    fireEvent.change(input, { target: { value: 'Test message' } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+    expect(mockOnSubmit).toHaveBeenCalledWith('Test message', []);
+  });
+
   it('enables submit button when there is input', () => {
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
     const input = screen.getByPlaceholderText(
       'Click to send. Shift + Enter for a new line.'
     );
@@ -111,14 +170,29 @@ describe('ChatInput', () => {
     expect(submitButton).not.toBeDisabled();
   });
 
-  it('disables screen capture feature when isVisionModel is false', () => {
-    render(<ChatInput {...defaultProps} isVisionModel={false} />);
-    expect(screen.getByLabelText('Capture Screenshot')).toBeDisabled();
+  it('enables submit button when there are files but no text input', async () => {
+    const user = userEvent.setup();
+    renderWithContext(<ChatInput {...defaultProps} />);
+    const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
+    const input = screen.getByLabelText('Upload file', {
+      selector: 'input[type="file"]'
+    });
+
+    await user.upload(input, file);
+
+    const submitButton = screen.getByLabelText('Send message');
+    expect(submitButton).not.toBeDisabled();
+  });
+
+  it('disables submit button when there is no input and no files', () => {
+    renderWithContext(<ChatInput {...defaultProps} />);
+    const submitButton = screen.getByLabelText('Send message');
+    expect(submitButton).toBeDisabled();
   });
 
   it('handles file upload correctly', async () => {
     const user = userEvent.setup();
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
 
     const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
     const input = screen.getByLabelText('Upload file', {
@@ -140,8 +214,7 @@ describe('ChatInput', () => {
   it('handles multiple files uploads', async () => {
     const user = userEvent.setup();
 
-    render(<ChatInput {...defaultProps} />);
-
+    renderWithContext(<ChatInput {...defaultProps} />);
     const file1 = new File(['dummy content 1'], 'test1.png', {
       type: 'image/png'
     });
@@ -169,7 +242,7 @@ describe('ChatInput', () => {
 
   it('handles file upload when isVisionModel is false', async () => {
     const user = userEvent.setup();
-    render(<ChatInput {...defaultProps} isVisionModel={false} />);
+    renderWithContext(<ChatInput {...defaultProps} isVisionModel={false} />);
 
     const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
     const input = screen.getByLabelText('Upload file', {
@@ -183,16 +256,15 @@ describe('ChatInput', () => {
     ).toBeInTheDocument();
   });
 
-  it('disables file upload when selectedModel.contextWindow is small', () => {
-    render(
-      <ChatInput
-        {...defaultProps}
-        selectedModel={{ ...defaultProps.selectedModel, contextWindow: 2000 }}
-      />
-    );
-
-    const uploadButton = screen.getByLabelText('Upload File');
-    expect(uploadButton).toBeDisabled();
+  it('disables file upload when selectedModel.contextWindow is small', async () => {
+    const user = userEvent.setup();
+    const selectedModel = {
+      ...mockContextValue.selectedModel,
+      contextWindow: 4000
+    };
+    renderWithContext(<ChatInput {...defaultProps} />, { selectedModel });
+    const uploadIcon = screen.getByLabelText('Upload File');
+    expect(uploadIcon).toBeDisabled();
 
     const tooltip = screen.getByText(
       "ai-model's context window is too small to add a file"
@@ -202,7 +274,7 @@ describe('ChatInput', () => {
 
   it('handles file deletion', async () => {
     const user = userEvent.setup();
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
     const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
     const input = screen.getByLabelText('Upload file', {
       selector: 'input[type="file"]'
@@ -236,7 +308,8 @@ describe('ChatInput', () => {
         })
     });
 
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
+
     const captureButton = screen.getByLabelText('Capture Screenshot');
     fireEvent.click(captureButton);
 
@@ -246,13 +319,17 @@ describe('ChatInput', () => {
       });
       expect(viewImageButton).toBeInTheDocument();
     });
+
+    // check if the captured image is added to fileSrc
+    expect(
+      screen.getAllByRole('button', { name: /Click to view larger file/i })
+    ).toHaveLength(1);
   });
 
-  it('handles screen capture when isVisionModel is false', async () => {
-    render(<ChatInput {...defaultProps} isVisionModel={false} />);
-    const captureButton = screen.getByLabelText('Capture Screenshot');
+  it('disables screen capture feature when isVisionModel is false', () => {
+    renderWithContext(<ChatInput {...defaultProps} isVisionModel={false} />);
 
-    expect(captureButton).toBeDisabled();
+    expect(screen.getByLabelText('Capture Screenshot')).toBeDisabled();
   });
 
   it('handles screen capture error', async () => {
@@ -264,7 +341,8 @@ describe('ChatInput', () => {
         })
     });
 
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
+
     const captureButton = screen.getByLabelText('Capture Screenshot');
     fireEvent.click(captureButton);
 
@@ -282,7 +360,8 @@ describe('ChatInput', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => {});
 
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
+
     const captureButton = screen.getByLabelText('Capture Screenshot');
     fireEvent.click(captureButton);
 
@@ -301,7 +380,8 @@ describe('ChatInput', () => {
     isSupportedImage.mockReturnValueOnce(['Unsupported file format']);
 
     const user = userEvent.setup();
-    render(<ChatInput {...defaultProps} />);
+
+    renderWithContext(<ChatInput {...defaultProps} />);
 
     const file = new File(['dummy content'], 'test.bmp', { type: 'image/bmp' });
     const input = screen.getByLabelText('Upload file', {
@@ -315,8 +395,37 @@ describe('ChatInput', () => {
     ).toBeInTheDocument();
   });
 
+  it('handles file upload error when fileToDataURLBase64 fails', async () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    (fileToDataURLBase64 as jest.Mock).mockRejectedValueOnce(
+      new Error('File conversion failed')
+    );
+
+    const user = userEvent.setup();
+
+    renderWithContext(<ChatInput {...defaultProps} />);
+
+    const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
+    const input = screen.getByLabelText('Upload file', {
+      selector: 'input[type="file"]'
+    });
+
+    await user.upload(input, file);
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith('Error:', expect.any(Error));
+      expect(
+        screen.getByText('Error happened when extracting file data')
+      ).toBeInTheDocument();
+    });
+
+    consoleSpy.mockRestore();
+  });
+
   it('sanitizes user input', () => {
-    render(<ChatInput {...defaultProps} />);
+    renderWithContext(<ChatInput {...defaultProps} />);
     const input = screen.getByPlaceholderText(
       'Click to send. Shift + Enter for a new line.'
     );
@@ -330,14 +439,15 @@ describe('ChatInput', () => {
   });
 
   it('matches snapshot', () => {
-    const { asFragment } = render(<ChatInput {...defaultProps} />);
+    const { asFragment } = renderWithContext(<ChatInput {...defaultProps} />);
     expect(asFragment()).toMatchSnapshot();
   });
 
   it('matches snapshot when isVisionModel is false', () => {
-    const { asFragment } = render(
+    const { asFragment } = renderWithContext(
       <ChatInput {...defaultProps} isVisionModel={false} />
     );
+
     expect(asFragment()).toMatchSnapshot();
   });
 });
