@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 
 import ChatMessage from '@/src/components/ChatMessage';
 import { useChatContext } from '@/src/context/ChatContext';
@@ -24,26 +24,48 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
   handleRetry,
   handleCopy
 }) => {
-  const messagesRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { fileSrcHistory, chatHistory } = useChatContext();
 
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
   useEffect(() => {
-    if (messagesRef.current) {
-      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    scrollToBottom();
+  }, [chatHistory, scrollToBottom]);
+
+  // Add a resize observer to handle dynamic content
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      if (scrollContainerRef.current) {
+        const { scrollHeight, clientHeight, scrollTop } =
+          scrollContainerRef.current;
+        const isScrolledToBottom = scrollHeight - clientHeight <= scrollTop + 1;
+        if (isScrolledToBottom) {
+          scrollToBottom();
+        }
+      }
+    });
+
+    if (scrollContainerRef.current) {
+      resizeObserver.observe(scrollContainerRef.current);
     }
-  }, [chatHistory]);
+
+    return () => resizeObserver.disconnect();
+  }, [scrollToBottom]);
 
   const isNew = chatHistory[0].answer === initialMessage.answer;
 
   return (
-    <div className="flex-grow overflow-y-auto bg-white border-2 border-stone-200">
-      <div
-        className="w-full h-full rounded-lg"
-        aria-live="polite"
-        aria-atomic="true"
-        ref={messagesRef}
-      >
+    <div
+      ref={scrollContainerRef}
+      className="flex-grow overflow-y-auto bg-white border-2 border-stone-200"
+      style={{ height: 'calc(100vh - 200px)', scrollBehavior: 'smooth' }}
+    >
+      <div className="w-full rounded-lg" aria-live="polite" aria-atomic="true">
         {chatHistory.map((chat, index) => (
           <ChatMessage
             key={index}
@@ -62,6 +84,7 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
             }
           />
         ))}
+        <div ref={messagesEndRef} />
       </div>
     </div>
   );

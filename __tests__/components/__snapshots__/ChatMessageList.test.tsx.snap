@@ -4,11 +4,12 @@ exports[`ChatMessageList matches snapshot 1`] = `
 <DocumentFragment>
   <div
     class="flex-grow overflow-y-auto bg-white border-2 border-stone-200"
+    style="height: calc(100vh - 200px); scroll-behavior: smooth;"
   >
     <div
       aria-atomic="true"
       aria-live="polite"
-      class="w-full h-full rounded-lg"
+      class="w-full rounded-lg"
     >
       <div
         data-testid="chat-message"
@@ -123,6 +124,7 @@ exports[`ChatMessageList matches snapshot 1`] = `
           </div>
         </div>
       </div>
+      <div />
     </div>
   </div>
 </DocumentFragment>
