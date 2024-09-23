@@ -39,7 +39,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   children
 }) => {
   const [isNewChat, setIsNewChat] = useState(true);
-  const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(true);
+  const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(false);
   const [isSearchChat, setIsSearchChat] = useState(false);
   const [fileSrcHistory, setFileSrcHistory] = useState<FileData[][]>([[]]);
   const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);

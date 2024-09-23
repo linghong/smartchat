@@ -51,6 +51,7 @@ const Header: FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
       setIsSidebarOpen(false);
     }
     setIsNewChat(true);
+    setIsConfigPanelVisible(false);
   };
 
   const toggleSidebar = (e: MouseEvent<HTMLButtonElement>) => {
