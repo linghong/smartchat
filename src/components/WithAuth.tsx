@@ -1,7 +1,7 @@
 import { useState, useEffect, FC } from 'react';
 import { useRouter } from 'next/router';
 
-function isTokenExpired(token: string): boolean {
+export function isTokenExpired(token: string): boolean {
   if (!token) return true;
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -43,7 +43,7 @@ const WithAuth = <P extends object>(Component: FC<P>): FC<P> => {
     }, [router]);
 
     if (isAuthenticated === null) {
-      return <div>Loading...</div>; // Show loading while checking authentication
+      return null;
     }
 
     if (!isAuthenticated) {
