@@ -6,6 +6,15 @@ import Anthropic from '@anthropic-ai/sdk';
 import { CLAUDE_API_KEY } from '@/config/env';
 import { Message, ImageFile, AIConfig } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
+import {
+  multimodalRole,
+  baseRole,
+  handleRAG,
+  beforeRespond,
+  subjectTitle,
+  beforePresent,
+  difficultQuestion
+} from '@/src/services/llm/prompt';
 
 export interface ImageBlockParam {
   type: 'image';
@@ -105,31 +114,29 @@ const getClaudeChatCompletion = async (
   //after testing, when max_token is larger than 4096, it produces an error
   const maxReturnMessageToken = 4096;
 
-  const systemBase = selectedModel.vision
-    ? `You are an muitimodal AI assistant with the capability to view and interpret images as well as provide text-based responses.`
-    : 'You are a responsible and knowledgeable AI assistant. ';
+  const systemBase = selectedModel.vision ? multimodalRole : baseRole;
 
-  const systemRAG =
-    fetchedText.length !== 0
-      ? `You are skilled and equipped with a specialized data source as well as a vast reservoir of general knowledge. When a user presents a question, they can prompt you to extract relevant information from this data source. If information is obtained, it will be flagged with '''fetchedStart and closed with fetchedEnd'''. Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response.`
-      : '';
+  const systemRAG = fetchedText.length !== 0 ? handleRAG : '';
 
-  const systemStrategery =
-    'For challenging or multi-step questions, break down your reasoning or solution process into clear steps, then solve it step-by-step.';
+  const specialFormating = `
+  When presenting your work, always insert an empty line between paragraphs, and between classes, functions, and logical sections in a code block. The empty lines serve as visual separators, helping to group related content and making it easier for humans to read and navigate through the presented information.
+  
+  `;
 
-  const systemSubjectTitle = `
-  Formatting:
-  Always include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}.`;
-
-  const systemHtmlTag = `
-  When providing responses that include HTML formatting, please ensure that all tags are properly nested and positioned. Double-check the opening and closing of tags, especially for list items within unordered lists. Pay particular attention to paragraph tags and make sure they don't inappropriately split other elements. Always review your HTML structure before finalizing your response to ensure proper formatting and readability.`;
+  const specialHtmlTag = `
+  When providing responses that include HTML formatting, ensure that all tags are properly nested and positioned. Double-check the opening and closing of tags, especially for list items within unordered lists. Pay particular attention to paragraph tags and make sure they don't inappropriately split other elements.
+  
+  `;
 
   const systemContent =
     systemBase +
     systemRAG +
-    +systemStrategery +
-    systemSubjectTitle +
-    systemHtmlTag;
+    beforeRespond +
+    subjectTitle +
+    specialFormating +
+    specialHtmlTag +
+    beforePresent +
+    difficultQuestion;
 
   const chatArray = buildChatArray(chatHistory);
 

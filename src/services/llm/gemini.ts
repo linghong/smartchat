@@ -4,6 +4,12 @@ import { GEMINI_API_KEY } from '@/config/env';
 import { Message, ImageFile, AIConfig } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { handleErrors } from '@/src/utils/fetchResponseRetry';
+import {
+  multimodalRole,
+  beforeRespond,
+  beforePresent,
+  difficultQuestion
+} from '@/src/services/llm/prompt';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
@@ -61,28 +67,43 @@ const getGeminiChatCompletion = async (
 
   const maxReturnMessageToken = 10000;
 
-  const systemBase =
-    'You are a responsible and knowledgeable muitimodal AI assistant with the capability to view and interpret images as well as provide text-based responses. When a user presents an image, you should analyze the image and describe its contents accurately. Additionally, you should acknowledge your ability to view and interpret images in your responses.';
+  const specialRule = `You strictly adhere to the requirement of system prompt. You prioritize accuracy over speed, hence, you always double check your response before send it out to users, even if it will take longer to produce your response. When a user presents an image, you should analyze the image and describe its contents accurately. If your user only provides text, just focus on providing responses relevant to the text input.
+  
+  `;
 
   const systemRAG =
     fetchedText.length !== 0
-      ? ` In addition, for some user questions, the system may provide you with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the markers "'''fetchedStart" and "fetchedEnd'''".
+      ? `
+      ## RAG
+      In addition, for some user questions, the system may provide you with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the markers "'''fetchedStart" and "fetchedEnd'''".
 
-  Your Task: 
-  Your primary goal is to provide the best possible answer to the user's question. If the text between "'''fetchedStart" and "fetchedEnd'''" is directly relevant and useful, incorporate it into your answer. If the provided text is not relevant or if no such text is provided, rely on your general knowledge to answer completely.`
+      Your Task: 
+      Your primary goal is to provide the best possible answer to the user's question. If the text between "'''fetchedStart" and "fetchedEnd'''" is directly relevant and useful, incorporate it into your answer. If the provided text is not relevant or if no such text is provided, rely on your general knowledge to answer completely.
+      
+      `
       : '';
 
-  const systemStrategery =
-    'For challenging or multi-step questions, break down your reasoning or solution process into clear steps, then solve it step-by-step.';
-
   const systemSubjectTitle = `
-  Formatting: 
-  Every message you send to users, no matter how simple, must include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}. This is absolutely critical. Otherwise, your messages will be displayed in the app without a title, which causes a bug.
+  ## Formatting:
+  Every message you send to users, no matter how simple, you must include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}. This is absolutely critical. Otherwise, your messages will be displayed in the app without a title, which will cause a serious bug.
+
+  `;
+
+  const specialFormatting = `
+  When a user question is not a simple question for which you can't quickly give an answer, your response should first acknowledge that you understand what the user wants you to do, then provide your solution.
+
+  When your solution is to modify content user provided to you, no matter it is fixing an error or modifying content, along with your solution, always give user a summarization about the changes you have made  and where you made the changes.
+  
   `;
 
   const systemContent =
-    systemBase + systemRAG + systemStrategery + systemSubjectTitle;
-
+    multimodalRole +
+    specialRule +
+    systemRAG +
+    beforeRespond +
+    systemSubjectTitle +
+    specialFormatting;
+  beforePresent + difficultQuestion;
 
   const userTextWithFetchedData =
     fetchedText !== ''

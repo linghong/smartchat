@@ -64,7 +64,7 @@ export const getGroqChatCompletion = async (
 
   const systemRAG =
     fetchedText.length !== 0
-      ? `In addition, for some user questions, the system may provide AI with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the tag pair "'''fetchedStart" and "fetchedEnd'''". This tag pair is for AI to know the source of the text. Ai assistant is not supposed to disclose the tag pair in your message.
+      ? `In addition, for some user questions, the system may provide AI with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the tag pair "'''fetchedStart" and "fetchedEnd'''". This tag pair is for AI to know the source of the text. AI assistant is not supposed to disclose the tag pair in the message.
   
   Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response.`
       : '';
