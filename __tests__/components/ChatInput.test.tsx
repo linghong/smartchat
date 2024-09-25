@@ -424,20 +424,6 @@ describe('ChatInput', () => {
     consoleSpy.mockRestore();
   });
 
-  it('sanitizes user input', () => {
-    renderWithContext(<ChatInput {...defaultProps} />);
-    const input = screen.getByPlaceholderText(
-      'Click to send. Shift + Enter for a new line.'
-    );
-
-    fireEvent.change(input, {
-      target: { value: '<script>alert("XSS")</script>' }
-    });
-    expect(sanitizeWithPreserveCode).toHaveBeenCalledWith(
-      '<script>alert("XSS")</script>'
-    );
-  });
-
   it('matches snapshot', () => {
     const { asFragment } = renderWithContext(<ChatInput {...defaultProps} />);
     expect(asFragment()).toMatchSnapshot();

@@ -54,9 +54,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           </div>
           <div className="flex-1 user-question">
             <div
-              className="user-question space-wrap"
+              className="user-question whitespace-pre-wrap"
               dangerouslySetInnerHTML={{
-                __html: encodeHTMLEntities(message.question)
+                __html: encodeHTMLEntities(`${message.question}`)
               }}
             />
             {

@@ -26,7 +26,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
       class="flex-1 user-question"
     >
       <div
-        class="user-question space-wrap"
+        class="user-question whitespace-pre-wrap"
       >
         What is AI?
       </div>

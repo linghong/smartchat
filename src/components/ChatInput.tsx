@@ -17,7 +17,6 @@ import Notification from '@/src/components/Notification';
 import { useChatContext } from '@/src/context/ChatContext';
 import { FileData } from '@/src/types/chat';
 import { fileToDataURLBase64 } from '@/src/utils/fileFetchAndConversion';
-import { sanitizeWithPreserveCode } from '@/src/utils/guardrail';
 import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
 
 interface ChatInputProps {
@@ -156,7 +155,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit, isVisionModel }) => {
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
 
-    setUserInput(sanitizeWithPreserveCode(newValue));
+    setUserInput(newValue);
 
     // Close config panel when user starts typing
     if (newValue.length >= 0 && isConfigPanelVisible) {
@@ -265,7 +264,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit, isVisionModel }) => {
             name="userInput"
             className="w-full max-h-96 placeholder-gray-400 overflow-y-auto p-3 focus:ring-stone-100 focus:outline-none"
             placeholder="Click to send. Shift + Enter for a new line."
-            value={userInput}
+            value={`${userInput}`}
             onChange={handleInputChange}
             aria-label="Enter your message here"
           />

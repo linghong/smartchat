@@ -2,7 +2,7 @@ import {
   encodeHTMLEntities,
   decodeHTMLEntitiesAndReferences,
   stripPreCodeTags,
-  sanitizeWithPreserveCode
+  sanitizeWithPreserveHTML
 } from '@/src/utils/guardrail';
 
 describe('Guardrail Functions', () => {
@@ -110,25 +110,25 @@ describe('Guardrail Functions', () => {
       const input =
         '<p>Hello <strong>World</strong></p><script>alert("XSS");</script>';
       const expected = '<p>Hello <strong>World</strong></p>';
-      expect(sanitizeWithPreserveCode(input)).toBe(expected);
+      expect(sanitizeWithPreserveHTML(input)).toBe(expected);
     });
 
     it('should handle plain text input', () => {
       const input = 'Just some plain text.';
       const expected = 'Just some plain text.';
-      expect(sanitizeWithPreserveCode(input)).toBe(expected);
+      expect(sanitizeWithPreserveHTML(input)).toBe(expected);
     });
 
     it('should preserve code blocks', () => {
       const input = '<pre><code>const x = 5;</code></pre>';
-      expect(sanitizeWithPreserveCode(input)).toBe(input);
+      expect(sanitizeWithPreserveHTML(input)).toBe(input);
     });
 
     it('should handle potentially malicious input', () => {
       const input =
         '<img src="x" onerror="alert(\'XSS\')"> <a href="javascript:alert(\'XSS\')">Click me</a>';
       const expected = '<img src="x"> <a>Click me</a>';
-      expect(sanitizeWithPreserveCode(input)).toBe(expected);
+      expect(sanitizeWithPreserveHTML(input)).toBe(expected);
     });
   });
 });

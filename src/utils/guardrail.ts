@@ -120,13 +120,62 @@ export const stripPreCodeTags = (input: string) => {
  * @param input - The string containing HTML/JSX to be sanitized.
  * @returns A sanitized version of the input with HTML/JSX structure preserved.
  */
-export const sanitizeWithPreserveCode = (input: string): string => {
-  const encodedInput = encodeHTMLEntities(input);
+export const sanitizeWithPreserveHTML = (input: string): string => {
   const config = {
-    ALLOWED_TAGS: ['p', 'strong', 'em', 'u', 'pre', 'code', 'br', 'a', 'img'],
-    ALLOWED_ATTR: ['href', 'src', 'alt']
+    ALLOWED_TAGS: [
+      'p',
+      'strong',
+      'em',
+      'u',
+      'pre',
+      'code',
+      'br',
+      'img',
+      'a',
+      'svg',
+      'figure',
+      'table',
+      'caption',
+      'thead',
+      'tr',
+      'th',
+      'tbody',
+      'td',
+      'span',
+      'div',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'textarea',
+      'ul',
+      'li',
+      'ol',
+      'button',
+      'select',
+      'option',
+      'article',
+      'section',
+      'form',
+      'input',
+      'label'
+    ],
+    ALLOWED_ATTR: [
+      'href',
+      'src',
+      'alt',
+      'class',
+      'rel',
+      'id',
+      'name',
+      'type',
+      'value',
+      'placeholder',
+      'for'
+    ]
   };
   const sanitizedInput = DOMPurify.sanitize(input, config);
 
-  return decodeHTML(sanitizedInput);
+  return `${sanitizedInput}`;
 };
