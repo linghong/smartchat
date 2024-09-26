@@ -102,8 +102,9 @@ const getGeminiChatCompletion = async (
     systemRAG +
     beforeRespond +
     systemSubjectTitle +
-    specialFormatting;
-  beforePresent + difficultQuestion;
+    specialFormatting +
+    beforePresent +
+    difficultQuestion;
 
   const userTextWithFetchedData =
     fetchedText !== ''
