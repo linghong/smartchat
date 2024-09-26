@@ -19,7 +19,9 @@ This AI chat platform allows you to select from a variety of Generative AI model
 1. From APIs:
 
    1. OpenAI: GPT-4o, gpt-4o-2024-08-06, GPT-4o Mini(i.e., gpt-4o-mini-2024-07-18), GPT4 Turbo, and GPT-4.
-   2. Google: Gemini-1.5-flash, Gemini-1.5-pro, and the three latest experiment models published on 08/27/2024: Gemini-1.5 Pro, Gemini-1.5 Pro and Gemini 1.5 Flash-8B.
+   2. Google:
+      latest production versions: Gemini-1.5-flash-002, gemini-1.5-pro-002,
+      latest experiment models: gemini-1.5-pro-exp-0827, gemini-1.5-flash-exp-0827 and gemini-1.5-flash-8b-exp-0924.
    3. Anthropic: Claude 3.5 Sonnet, Claude 3 Haiku, and Claude 3 Opus
    4. Open-source models hosted on Groq:
 
@@ -298,3 +300,7 @@ yarn test
 ### Issues Reports and Feature Requests
 
 If you encounter any problems or have suggestions for improvements, please open an issue. Provide as much detail as possible to help address it quickly.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=linghong/smartchat&type=Date)](https://star-history.com/#linghong/smartchat&Date)

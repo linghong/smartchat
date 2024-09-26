@@ -16,21 +16,21 @@ const modelOptions: OptionType[] = [
     vision: true
   },
   {
-    value: 'gemini-1.5-flash-8b-exp-0827',
+    value: 'gemini-1.5-flash-8b-exp-0924',
     label: 'Gemini-1.5 Flash-8b Exp',
     category: 'google',
     contextWindow: 1048576,
     vision: true
   },
   {
-    value: 'gemini-1.5-pro',
+    value: 'gemini-1.5-pro-002',
     label: 'Gemini-1.5 Pro',
     category: 'google',
     contextWindow: 2097512,
     vision: true
   },
   {
-    value: 'gemini-1.5-flash',
+    value: 'gemini-1.5-flash-002',
     label: 'Gemini-1.5 Flash',
     category: 'google',
     contextWindow: 1048576,
