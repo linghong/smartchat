@@ -1,4 +1,5 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act } from 'react';
+import { renderHook } from '@testing-library/react-hooks';
 import useInputChange from '@/src/hooks/useInputChange';
 
 describe('useInputChange Hook', () => {

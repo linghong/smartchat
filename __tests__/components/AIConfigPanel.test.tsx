@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
 
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import { OptionType } from '@/src/types/common';

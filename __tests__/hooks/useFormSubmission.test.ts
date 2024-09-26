@@ -1,4 +1,5 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act } from 'react';
+import { renderHook } from '@testing-library/react-hooks';
 import { useFormSubmission } from '@/src/hooks';
 import {
   enableFetchMocks,
@@ -29,7 +30,7 @@ describe('useFormSubmission Hook', () => {
     const successResponse = { success: true, id: '12345', error: null };
     mockResponseOnce(JSON.stringify(successResponse));
 
-    const { result, waitForNextUpdate } = renderHook(() => useFormSubmission());
+    const { result, waitFor } = renderHook(() => useFormSubmission());
 
     act(() => {
       result.current.handleFormSubmit(url, formData);
@@ -37,7 +38,7 @@ describe('useFormSubmission Hook', () => {
 
     // Expect isLoading to be true after form submission is initiated
     expect(result.current.isLoading).toBeTruthy();
-    await waitForNextUpdate();
+    await waitFor(() => !result.current.isLoading);
 
     // Expect isLoading to be false and successMessage to be set after successful form submission
     expect(result.current.isLoading).toBeFalsy();
@@ -53,13 +54,13 @@ describe('useFormSubmission Hook', () => {
     };
     mockResponseOnce(JSON.stringify(errorResponse));
 
-    const { result, waitForNextUpdate } = renderHook(() => useFormSubmission());
+    const { result, waitFor } = renderHook(() => useFormSubmission());
 
     act(() => {
       result.current.handleFormSubmit(url, formData);
     });
 
-    await waitForNextUpdate();
+    await waitFor(() => !result.current.isLoading);
 
     // Expect isLoading to be false and error to be set after unsuccessful form submission
     expect(result.current.isLoading).toBeFalsy();
@@ -70,13 +71,13 @@ describe('useFormSubmission Hook', () => {
   it('should handle a network error', async () => {
     mockRejectOnce(new Error('Network Error'));
 
-    const { result, waitForNextUpdate } = renderHook(() => useFormSubmission());
+    const { result, waitFor } = renderHook(() => useFormSubmission());
 
     act(() => {
       result.current.handleFormSubmit(url, formData);
     });
 
-    await waitForNextUpdate();
+    await waitFor(() => !result.current.isLoading);
 
     // Expect isLoading to be false and error to be set after a network error
     expect(result.current.isLoading).toBeFalsy();

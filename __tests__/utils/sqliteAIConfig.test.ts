@@ -1,19 +1,42 @@
 import { AIConfig } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-import { postAIConfig, getAIConfigs } from '@/src/utils/sqliteAIConfigApiClient';
+import {
+  postAIConfig,
+  getAIConfigs
+} from '@/src/utils/sqliteAIConfigApiClient';
 
 // Mock the fetch function
 global.fetch = jest.fn();
 
+// Mock console.error
+console.error = jest.fn();
+
 describe('sqliteAIConfigApiClient', () => {
   describe('postAIConfig', () => {
     it('should return an empty array if token is not provided', async () => {
-      const result = await postAIConfig('', { name: 'test', role: 'test', model: { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' } as OptionType, basePrompt: 'test', temperature: 0.5, topP: 0.5 } as AIConfig, 'test-namespace');
+      const result = await postAIConfig(
+        '',
+        {
+          name: 'test',
+          role: 'test',
+          model: {
+            value: 'gpt-3.5-turbo',
+            label: 'GPT-3.5 Turbo'
+          } as OptionType,
+          basePrompt: 'test',
+          temperature: 0.5,
+          topP: 0.5
+        } as AIConfig,
+        'test-namespace'
+      );
       expect(result).toEqual([]);
     });
 
     it('should post AI config successfully', async () => {
-      const mockResponse = { ok: true, json: () => Promise.resolve({ id: '1' }) };
+      const mockResponse = {
+        ok: true,
+        json: () => Promise.resolve({ id: '1' })
+      };
       (fetch as jest.Mock).mockResolvedValue(mockResponse);
 
       const token = 'test-token';
@@ -64,6 +87,11 @@ describe('sqliteAIConfigApiClient', () => {
         body: JSON.stringify({ ...aiConfig, metadata: { namespace } })
       });
       expect(result).toEqual('Error saving AI Config');
+
+      expect(console.error).toHaveBeenCalledWith(
+        'Error saving AI Config:',
+        new Error('Failed to save AI Config: Error')
+      );
     });
   });
 
@@ -78,7 +106,18 @@ describe('sqliteAIConfigApiClient', () => {
         ok: true,
         json: () =>
           Promise.resolve([
-            { id: '1', name: 'test', role: 'test', model: { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' } as OptionType, basePrompt: 'test', temperature: 0.5, topP: 0.5 }
+            {
+              id: '1',
+              name: 'test',
+              role: 'test',
+              model: {
+                value: 'gpt-3.5-turbo',
+                label: 'GPT-3.5 Turbo'
+              } as OptionType,
+              basePrompt: 'test',
+              temperature: 0.5,
+              topP: 0.5
+            }
           ] as AIConfig[])
       };
       (fetch as jest.Mock).mockResolvedValue(mockResponse);
@@ -93,7 +132,18 @@ describe('sqliteAIConfigApiClient', () => {
         }
       });
       expect(result).toEqual([
-        { id: '1', name: 'test', role: 'test', model: { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' } as OptionType, basePrompt: 'test', temperature: 0.5, topP: 0.5 }
+        {
+          id: '1',
+          name: 'test',
+          role: 'test',
+          model: {
+            value: 'gpt-3.5-turbo',
+            label: 'GPT-3.5 Turbo'
+          } as OptionType,
+          basePrompt: 'test',
+          temperature: 0.5,
+          topP: 0.5
+        }
       ] as AIConfig[]);
     });
 
@@ -111,6 +161,10 @@ describe('sqliteAIConfigApiClient', () => {
         }
       });
       expect(result).toEqual([]);
+      expect(console.error).toHaveBeenCalledWith(
+        'Error fetching AI Configs:',
+        new Error('Failed to fetch AI Configs: Error')
+      );
     });
   });
 });
