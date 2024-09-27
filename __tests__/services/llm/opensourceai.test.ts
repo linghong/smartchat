@@ -2,6 +2,8 @@ import getOpenModelChatCompletion from '@/src/services/llm/opensourceai';
 import { Message } from '@/src/types/chat';
 import fetchMock from 'jest-fetch-mock';
 
+import { assistant2 as selectedAssistant } from '@/__tests__/test_utils/chat';
+
 fetchMock.enableMocks();
 
 beforeEach(() => {
@@ -10,28 +12,11 @@ beforeEach(() => {
 });
 
 describe('getOpenModelChatCompletion', () => {
-  const aiConfig = {
-    name: 'gpt4-assistant-1',
-    role: 'writing',
-    model: {
-      value: 'gpt-4',
-      label: 'gpt 4',
-      contextWindow: 128000,
-      vision: true
-    },
-    basePrompt: 'Test base prompt',
-    topP: 1,
-    temperature: 0
-  };
   const chatHistory: Message[] = [
-    { question: 'user', answer: 'Hi', model: 'gpt-4' }
+    { question: 'user', answer: 'Hi', assistant: selectedAssistant.value }
   ];
   const userMessage = 'Hello, how are you?';
   const fetchedText = 'Sample text';
-  const selectedModel = {
-    value: 'test-model',
-    label: 'test model'
-  };
   const serverURL = 'http://localhost/api/chat';
   const serverSecretKey = process.env.NEXT_PUBLIC_SERVER_SECRET_KEY;
 
@@ -40,13 +25,14 @@ describe('getOpenModelChatCompletion', () => {
     fetchMock.mockResponseOnce(JSON.stringify(mockResponse));
 
     const response = await getOpenModelChatCompletion(
-      aiConfig,
       chatHistory,
       userMessage,
       fetchedText,
-      selectedModel,
+      selectedAssistant,
       serverURL
     );
+
+    const { basePrompt, model, temperature, topP } = selectedAssistant.config;
     expect(response).toEqual(mockResponse.message);
     expect(fetchMock).toHaveBeenCalledWith(serverURL, {
       method: 'POST',
@@ -56,10 +42,12 @@ describe('getOpenModelChatCompletion', () => {
       },
       body: JSON.stringify({
         question: userMessage,
-        basePrompt: aiConfig.basePrompt,
+        basePrompt: basePrompt,
         chatHistory,
-        selectedModel: selectedModel.value,
-        fetchedText
+        selectedModel: model.value,
+        fetchedText,
+        temperature: temperature,
+        topP: topP
       })
     });
   });
@@ -69,11 +57,10 @@ describe('getOpenModelChatCompletion', () => {
 
     await expect(
       getOpenModelChatCompletion(
-        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel,
+        selectedAssistant,
         serverURL
       )
     ).rejects.toThrow('Failed to connect');
@@ -87,11 +74,10 @@ describe('getOpenModelChatCompletion', () => {
 
     await expect(
       getOpenModelChatCompletion(
-        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel,
+        selectedAssistant,
         serverURL
       )
     ).rejects.toThrow('Network response was not ok: Internal Server Error');

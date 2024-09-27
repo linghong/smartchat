@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 interface Notification {
   type?: 'error' | 'loading' | 'success' | 'status';
-  message: string | null;
+  message: string | ReactNode | null;
 }
 
 const Notification: FC<Notification> = ({ type, message }) => {

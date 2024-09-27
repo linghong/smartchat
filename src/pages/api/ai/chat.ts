@@ -27,7 +27,7 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { aiConfig, namespace, selectedModel, chatHistory, fileSrc } = req.body;
+  const { namespace, selectedAssistant, chatHistory, fileSrc } = req.body;
 
   let { question } = req.body;
 
@@ -35,7 +35,7 @@ export default async function handler(
     return res.status(400).json({ message: 'No question in the request' });
   }
 
-  if (!selectedModel?.value) {
+  if (!selectedAssistant?.config.model.value) {
     return res.status(500).json('Model name is missing.');
   }
 
@@ -56,49 +56,45 @@ export default async function handler(
     }
 
     // get response from AI
-    const { category } = selectedModel;
+    const { category } = selectedAssistant.config.model;
     let chatResponse: string | undefined | null;
 
     switch (category) {
       case 'openai':
         chatResponse = await getOpenAIChatCompletion(
-          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
-          selectedModel,
+          selectedAssistant,
           base64ImageSrc
         );
         break;
 
       case 'groq':
         chatResponse = await getGroqChatCompletion(
-          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
-          selectedModel
+          selectedAssistant
         );
         break;
 
       case 'google':
         chatResponse = await getGeminiChatCompletion(
-          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
-          selectedModel,
+          selectedAssistant,
           base64ImageSrc
         );
         break;
 
       case 'anthropic':
         chatResponse = await getClaudeChatCompletion(
-          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
-          selectedModel,
+          selectedAssistant,
           base64ImageSrc
         );
         break;
@@ -113,16 +109,15 @@ export default async function handler(
           return res
             .status(500)
             .json(
-              `Url address for posting the data to ${selectedModel} is missing`
+              `Url address for posting the data to ${selectedAssistant.config.model.label} is missing`
             );
         }
         const url = `${baseUrl}/api/chat_${category === 'hf-small' ? 'cpu' : 'gpu'}`;
         chatResponse = await getOpenModelChatCompletion(
-          aiConfig,
           chatHistory,
           pretreatedQuestion,
           fetchedText,
-          selectedModel,
+          selectedAssistant,
           url
         );
         break;

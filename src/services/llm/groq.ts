@@ -1,28 +1,18 @@
 'use strict';
-import { buildChatArray } from '@/src/services/llm/openai';
 import { Groq } from 'groq-sdk';
 
 import { GROQ_API_KEY } from '@/config/env';
-import { Message, AIConfig } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { buildChatArray } from '@/src/services/llm/modelHelper';
+import { Message, AssistantOption } from '@/src/types/chat';
 
 const buildChatMessages = (
   basePrompt: string,
   systemContent: string,
   userMessage: string,
   fetchedText: string,
-  chatHistory: Message[],
-  selectedModel: OptionType,
-  maxReturnMessageToken: number
+  chatHistory: Message[]
 ): any[] => {
-  const chatArray = buildChatArray(
-    systemContent,
-    userMessage,
-    fetchedText,
-    chatHistory,
-    maxReturnMessageToken,
-    selectedModel.contextWindow
-  );
+  const chatArray = buildChatArray(chatHistory);
 
   const userMessageWithFetchedData =
     fetchedText !== ''
@@ -46,17 +36,15 @@ const buildChatMessages = (
 };
 
 export const getGroqChatCompletion = async (
-  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
-  selectedModel: OptionType
+  selectedAssistant: AssistantOption
 ) => {
   if (!GROQ_API_KEY) return undefined;
 
-  const groq = new Groq({
-    apiKey: GROQ_API_KEY
-  });
+  const { model, basePrompt, temperature, topP } = selectedAssistant.config;
+
   const maxReturnMessageToken = 4000;
 
   const systemBase =
@@ -81,24 +69,25 @@ export const getGroqChatCompletion = async (
 
   //gemma 7b think
   const messages = buildChatMessages(
-    aiConfig.basePrompt,
+    basePrompt,
     systemContent,
     userMessage,
     fetchedText,
-    chatHistory,
-    selectedModel,
-    maxReturnMessageToken
+    chatHistory
   );
 
+  const groq = new Groq({
+    apiKey: GROQ_API_KEY
+  });
   try {
     const completion = await groq.chat.completions.create({
       messages,
-      model: selectedModel.value,
-      temperature: aiConfig.temperature,
+      model: model.value,
+      temperature: temperature,
       max_tokens: maxReturnMessageToken,
       frequency_penalty: 0,
       presence_penalty: 0,
-      top_p: aiConfig.topP
+      top_p: topP
     });
 
     if (!completion || !completion.choices || !completion.choices.length) {

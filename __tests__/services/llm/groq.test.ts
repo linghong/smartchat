@@ -1,16 +1,6 @@
-import 'openai/shims/node';
 import { getGroqChatCompletion } from '@/src/services/llm/groq';
-import { Message } from '@/src/types/chat';
-
-jest.mock('openai', () => {
-  return {
-    OpenAI: jest.fn().mockImplementation(() => ({
-      createCompletion: jest.fn().mockResolvedValue({
-        choices: [{ message: { content: 'Mock openai response' } }]
-      })
-    }))
-  };
-});
+import { Message, AssistantOption } from '@/src/types/chat';
+import { assistant2 } from '@/__tests__/test_utils/chat';
 
 jest.mock('groq-sdk', () => ({
   Groq: jest.fn().mockImplementation(() => ({
@@ -23,28 +13,13 @@ jest.mock('groq-sdk', () => ({
 }));
 
 describe('getGroqChatCompletion', () => {
-  const aiConfig = {
-    name: 'gpt4-assistant-1',
-    role: 'writing',
-    model: {
-      value: 'gpt-4',
-      label: 'gpt 4',
-      contextWindow: 128000,
-      vision: true
-    },
-    basePrompt: 'Hello, how can I help?',
-    topP: 1,
-    temperature: 0
-  };
+  const mockAssistantOption: AssistantOption = assistant2;
+
   const chatHistory: Message[] = [
-    { question: 'Hello', answer: 'How are you?', model: 'gpt-4' }
+    { question: 'Hello', answer: 'How are you?', assistant: 'llama2-70b-4096' }
   ];
   const userMessage = "What's the weather like?";
   const fetchedText = 'Sunny and 75 degrees';
-  const selectedModel = {
-    value: 'llama3-8b',
-    label: 'LLama3 8b'
-  };
 
   let consoleSpy: jest.SpyInstance;
 
@@ -52,12 +27,10 @@ describe('getGroqChatCompletion', () => {
     jest.resetAllMocks();
     process.env.GROQ_API_KEY = 'fake-api-key';
 
-    // Mock console.error to prevent it from logging during tests
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    // Restore the original console.error after each test
     consoleSpy.mockRestore();
   });
 
@@ -68,7 +41,9 @@ describe('getGroqChatCompletion', () => {
           create: jest.fn().mockResolvedValue({
             choices: [
               {
-                message: { content: "It's sunny and 75 degrees" }
+                message: {
+                  content: "It's sunny and 75 degrees{{{Weather Update}}}"
+                }
               }
             ]
           })
@@ -77,32 +52,30 @@ describe('getGroqChatCompletion', () => {
     }));
 
     const response = await getGroqChatCompletion(
-      aiConfig,
       chatHistory,
       userMessage,
       fetchedText,
-      selectedModel
+      mockAssistantOption
     );
 
-    expect(response).toEqual("It's sunny and 75 degrees");
+    expect(response).toEqual("It's sunny and 75 degrees{{{Weather Update}}}");
   });
 
   it('should throw an error if the completion object is missing', async () => {
     require('groq-sdk').Groq.mockImplementation(() => ({
       chat: {
         completions: {
-          create: jest.fn().mockResolvedValue(undefined) // Explicitly return undefined
+          create: jest.fn().mockResolvedValue(undefined)
         }
       }
     }));
 
     await expect(
       getGroqChatCompletion(
-        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel
+        mockAssistantOption
       )
     ).rejects.toThrow('No completion choices returned from the server.');
   });
@@ -118,11 +91,10 @@ describe('getGroqChatCompletion', () => {
 
     await expect(
       getGroqChatCompletion(
-        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel
+        mockAssistantOption
       )
     ).rejects.toThrow('No completion choices returned from the server.');
   });
@@ -138,11 +110,10 @@ describe('getGroqChatCompletion', () => {
 
     await expect(
       getGroqChatCompletion(
-        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel
+        mockAssistantOption
       )
     ).rejects.toThrow('No completion choices returned from the server.');
   });
@@ -158,11 +129,10 @@ describe('getGroqChatCompletion', () => {
 
     await expect(
       getGroqChatCompletion(
-        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel
+        mockAssistantOption
       )
     ).rejects.toThrow('Failed to fetch response from Groq server: API failure');
   });

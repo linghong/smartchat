@@ -25,7 +25,7 @@ const beforeRespond = `
 
 const subjectTitle = `
 ## Formatting:
-
+### Message Title
 Always include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}.
 
 `;

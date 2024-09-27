@@ -4,8 +4,12 @@
 import Anthropic from '@anthropic-ai/sdk';
 
 import { CLAUDE_API_KEY } from '@/config/env';
-import { Message, ImageFile, AIConfig } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { Message, ImageFile, AssistantOption } from '@/src/types/chat';
+import {
+  buildChatArray,
+  ImageBlockParam,
+  TextBlockParam
+} from '@/src/services/llm/modelHelper';
 import {
   multimodalRole,
   baseRole,
@@ -16,47 +20,10 @@ import {
   difficultQuestion
 } from '@/src/services/llm/prompt';
 
-export interface ImageBlockParam {
-  type: 'image';
-  source: {
-    type: 'base64';
-    media_type: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp';
-    data: string;
-  };
-}
-export interface TextBlockParam {
-  type: 'text';
-  text: string;
-}
-
-export interface MessageParam {
-  role: 'user' | 'assistant';
-  content: string | Array<TextBlockParam | ImageBlockParam>;
-}
-
 export const anthropic = new Anthropic({
   apiKey: CLAUDE_API_KEY,
   timeout: 2 * 60 * 1000 // 2 minutes (default is 10 minutes)
 });
-
-export const buildChatArray = (chatHistory: Message[]) => {
-  const len = chatHistory.length;
-  let chatArray: MessageParam[] = [];
-
-  for (let i = 1; i < len; i++) {
-    const chat = chatHistory[i];
-    chatArray.push({
-      role: 'user',
-      content: chat.question
-    });
-    chatArray.push({
-      role: 'assistant',
-      content: chat.answer
-    });
-  }
-
-  return chatArray;
-};
 
 const isBase64 = (str: string): boolean => {
   try {
@@ -104,26 +71,32 @@ const contentForUserImage = (
 };
 
 const getClaudeChatCompletion = async (
-  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
-  selectedModel: OptionType,
+  selectedAssistant: AssistantOption,
   base64ImageSrc: ImageFile[] | undefined
 ): Promise<string | undefined> => {
   //after testing, when max_token is larger than 4096, it produces an error
   const maxReturnMessageToken = 4096;
 
-  const systemBase = selectedModel.vision ? multimodalRole : baseRole;
+  const { model, basePrompt, temperature, topP } = selectedAssistant.config;
+
+  const systemBase = model.vision ? multimodalRole : baseRole;
 
   const systemRAG = fetchedText.length !== 0 ? handleRAG : '';
 
   const specialFormating = `
-  When presenting your work, always insert an empty line between paragraphs, and between classes, functions, and logical sections in a code block. The empty lines serve as visual separators, helping to group related content and making it easier for humans to read and navigate through the presented information.
+  ### Empty Line 
+  Insert an empty line between paragraphs, as well as between classes, functions, and logical sections within code blocks. Follow these steps to determine where to insert an empty line: 
+  1.  Identify Paragraph Breaks: Detect transitions between paragraphs by analyzing sentence endings and looking for cues like changes in topic or indentation.
+  2.  Recognize Code Blocks: Identify code blocks by detecting code fences or indentation patterns.
+  3.  Parse Code Structure: Analyze the code within a code block to identify classes, functions, and logical sections.
   
   `;
 
   const specialHtmlTag = `
+  ### Special Html 
   When providing responses that include HTML formatting, ensure that all tags are properly nested and positioned. Double-check the opening and closing of tags, especially for list items within unordered lists. Pay particular attention to paragraph tags and make sure they don't inappropriately split other elements.
   
   `;
@@ -148,8 +121,8 @@ const getClaudeChatCompletion = async (
         fetchedText +
         " fetchedEnd'''" +
         '\n' +
-        aiConfig.basePrompt
-      : userMessage + '\n' + aiConfig.basePrompt;
+        basePrompt
+      : userMessage + '\n' + basePrompt;
 
   const currentUserContent =
     base64ImageSrc && base64ImageSrc?.length !== 0
@@ -164,11 +137,11 @@ const getClaudeChatCompletion = async (
 
   try {
     const message = await anthropic.messages.create({
-      model: selectedModel.value,
+      model: model.value,
       system: systemContent,
-      temperature: aiConfig.temperature,
+      temperature: temperature,
       max_tokens: maxReturnMessageToken,
-      top_p: aiConfig.topP,
+      top_p: topP,
       messages: [
         ...chatArray,
         {

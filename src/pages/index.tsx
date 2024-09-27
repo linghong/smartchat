@@ -3,7 +3,8 @@ import {
   useCallback,
   useEffect,
   Dispatch,
-  SetStateAction
+  SetStateAction,
+  ReactNode
 } from 'react';
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
@@ -86,15 +87,15 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
   });
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | ReactNode | null>(null);
   const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
 
   const handleAddTags = (newTags: string[]) => {
-    setTags(prevTags => {
+    setTags((prevTags: string[]) => {
       const updatedTags = [...new Set([...prevTags, ...newTags])];
 
       // Update the current chat in the chats state
-      setChats(prevChats =>
+      setChats((prevChats: OptionType[]) =>
         prevChats.map(chat =>
           chat.value === chatId ? { ...chat, tags: updatedTags } : chat
         )
@@ -117,7 +118,7 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
 
     //when it just start
     if (selectedOption && (isNewChat || chatHistory.length === 1)) {
-      setChatHistory(prevHistory => [
+      setChatHistory((prevHistory: Message[]) => [
         {
           ...prevHistory[0],
           model: selectedOption.label
@@ -138,7 +139,7 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
     async (
       question: string,
       fileSrc: FileData[],
-      selectedModel: OptionType,
+      selectedAssistant: AssistantOption,
       namespace: string
     ) => {
       try {
@@ -148,19 +149,17 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            aiConfig,
             question,
             fileSrc,
             chatHistory,
             namespace,
-            selectedModel
+            selectedAssistant
           })
         });
 
         if (!response.ok) {
           const errorData = await response.json();
           setError('There is a server-side error. Try it again later.');
-          throw new Error(errorData.message || 'Failed to fetch chat response');
         }
 
         const data = await response.json();
@@ -169,10 +168,12 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
       } catch (error) {
         console.error('Error fetching chat response:', error);
         setLoading(false);
-        setError('Problem fetch response from AI. Try again.');
+        setError(
+          `We're experiencing issues with fetching model response. Please try again later.`
+        );
       }
     },
-    [chatHistory, aiConfig]
+    [chatHistory]
   );
 
   const saveChatMessageToDb = async (
@@ -185,9 +186,12 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
       router.push('/login');
       return;
     }
-    // when it is a new chat stream, create a new chat in db before save chat message
+
+    // when it is a new chat stream, the chatId is set to '0',
+    // after it has a real chat message, it generate a new chat in db with an id
+    // this id is also be set as chatId in the front
     // then add this new chat to chats
-    if (chatHistory.length === 1 || !chatId) {
+    if (chatId === '0') {
       const chat = await updateChats(token, data.subject, tags, {});
 
       // Check if chat is null
@@ -204,7 +208,7 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
         value: chat.id.toString(),
         tags: chat.tags
       };
-      setChats(prevChats => [newChat, ...prevChats]); // add new chat to the first of the chat list
+      setChats((prevChats: OptionType[]) => [newChat, ...prevChats]); // add new chat to the first of the chat list
 
       updateChatMessages(
         token,
@@ -237,30 +241,34 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
       ...prevHistory,
       { question: question, answer: '', assistant: selectedAssistant.label }
     ]);
-
     try {
       const data = await fetchChatResponse(
         question,
         fileSrc,
-        selectedModel,
+        selectedAssistant,
         selectedNamespace?.value || 'none'
       );
 
       if (!data) {
         if (
-          selectedModel.category !== 'hf-large' &&
-          selectedModel.category !== 'hf-small'
+          selectedModel.category === 'hf-large' ||
+          selectedModel.category === 'hf-small'
         ) {
           setError(
-            `We're experiencing issues with ${selectedModel.label} AI service provided by ${selectedModel.category}.  Please try again later.`
+            <>
+              SmartChat-FastAPI app is required. Please make sure your{' '}
+              <a
+                href="http://github.com/githubusername/reponame"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                SmartChat-FastAPI
+              </a>{' '}
+              app is running.
+            </>
           );
-          return;
-        } else {
-          setError(
-            'Backend server error. Please check if your SmartChat-Python app is running.'
-          );
-          return;
         }
+        return;
       }
 
       setLoading(false);
@@ -313,8 +321,10 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
       const lastFileSrc = fileSrcHistory[fileSrcHistory.length - 1];
 
       // Remove the last message from the chat history
-      setChatHistory(prevHistory => prevHistory.slice(0, -1));
-      setFileSrcHistory(prevHistory => prevHistory.slice(0, -1));
+      setChatHistory((prevHistory: Message[]) => prevHistory.slice(0, -1));
+      setFileSrcHistory((prevFileSrcHistory: FileData[][]) =>
+        prevFileSrcHistory.slice(0, -1)
+      );
       // Resend the last user message
       handleSubmit(lastMessage.question, lastFileSrc);
     }
@@ -383,7 +393,9 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
     // eslint-disable-next-line
   }, [isNewChat]);
 
-  const chatTags = chats.find(chat => chat.value === chatId.toString())?.tags;
+  const chatTags = chats.find(
+    (chat: OptionType) => chat.value === chatId.toString()
+  )?.tags;
 
   return (
     <div className="flex flex-col w-full h-full mx-auto z-80">

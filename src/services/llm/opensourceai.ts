@@ -1,23 +1,24 @@
 import { NEXT_PUBLIC_SERVER_SECRET_KEY } from '@/config/env';
-import { Message, AIConfig } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { Message, AssistantOption } from '@/src/types/chat';
 
 const getOpenModelChatCompletion = async (
-  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
-  selectedModel: OptionType,
+  selectedAssistant: AssistantOption,
   serverURL: string
 ): Promise<string | undefined> => {
   if (!NEXT_PUBLIC_SERVER_SECRET_KEY) return undefined;
+  const { model, basePrompt, temperature, topP } = selectedAssistant.config;
 
   const data = {
     question: userMessage,
-    basePrompt: aiConfig.basePrompt,
+    basePrompt: basePrompt,
     chatHistory,
-    selectedModel: selectedModel.value,
-    fetchedText
+    selectedModel: model.value,
+    fetchedText,
+    temperature,
+    topP
   };
 
   try {

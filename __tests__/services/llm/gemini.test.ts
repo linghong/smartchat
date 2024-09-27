@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI, Part } from '@google/generative-ai';
 import { Message } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
+import { assistant1 as selectedAssistant } from '@/__tests__/test_utils/chat';
 import getGeminiChatCompletion, {
   getCurrentUserParts,
   buildChatArray
@@ -13,30 +13,16 @@ const mockGoogleGenerativeAI = GoogleGenerativeAI as jest.MockedClass<
 >;
 
 describe('getGeminiChatCompletion', () => {
-  const aiConfig = {
-    name: 'gpt4-assistant-1',
-    role: 'writing',
-    model: {
-      value: 'gpt-4',
-      label: 'gpt 4',
-      contextWindow: 128000,
-      vision: true
-    },
-    basePrompt: 'Test base prompt',
-    topP: 1,
-    temperature: 0
-  };
   const chatHistory: Message[] = [
     {
       question: '',
       answer: 'I am an AI assistant. Do you need help?',
-      model: 'gpt-4'
+      assistant: 'gemini1.5-pro-1'
     },
-    { question: 'Question 1', answer: 'Answer 1', model: 'gpt-4' }
+    { question: 'Question 1', answer: 'Answer 1', assistant: 'gemini-pro' }
   ];
   const userMessage = 'User Message';
   const fetchedText = 'Fetched Text';
-  const selectedModel: OptionType = { value: 'model-id', label: 'Model Label' };
   const imageSrc = [
     {
       base64Image: 'base64Image1',
@@ -86,7 +72,12 @@ describe('getGeminiChatCompletion', () => {
             text: jest.fn().mockReturnValue('Generated Response')
           }
         })
-      })
+      }),
+      generationConfig: {
+        maxOutputTokens: 10000,
+        temperature: 0,
+        topP: 1
+      }
     };
     mockGoogleGenerativeAI.mockImplementation(
       () =>
@@ -96,11 +87,10 @@ describe('getGeminiChatCompletion', () => {
     );
 
     const result = await getGeminiChatCompletion(
-      aiConfig,
       chatHistory,
       userMessage,
       fetchedText,
-      selectedModel,
+      selectedAssistant,
       imageSrc
     );
     expect(result).toBe('Generated Response');
@@ -121,15 +111,14 @@ describe('getGeminiChatCompletion', () => {
 
     await expect(
       getGeminiChatCompletion(
-        aiConfig,
         chatHistory,
         userMessage,
         fetchedText,
-        selectedModel,
+        selectedAssistant,
         imageSrc
       )
     ).rejects.toThrow(
-      'Failed to fetch response from Google model-id model. Error: API Error'
+      'Failed to fetch response from Google gemini-pro model. Error: API Error'
     );
   });
 });

@@ -3,15 +3,6 @@ import { encode } from 'gpt-tokenizer';
 
 import { OPENAI_API_KEY } from '@/config/env';
 import {
-  Message,
-  ChatType,
-  ChatRole,
-  ImageFile,
-  AIConfig
-} from '@/src/types/chat';
-import { OpenAIChatContentImage } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
-import {
   multimodalRole,
   baseRole,
   handleRAG,
@@ -20,6 +11,13 @@ import {
   beforePresent,
   difficultQuestion
 } from '@/src/services/llm/prompt';
+import {
+  Message,
+  ChatType,
+  ChatRole,
+  ImageFile,
+ OpenAIChatContentImage, AssistantOption } from '@/src/types/chat';
+
 export const openaiClient = new OpenAI({
   apiKey: OPENAI_API_KEY
 });
@@ -88,25 +86,27 @@ const contentForUserImage = (
   }));
 
 export const getOpenAIChatCompletion = async (
-  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
-  selectedModel: OptionType,
+  selectedAssistant: AssistantOption,
   base64ImageSrc: ImageFile[] | undefined
 ): Promise<string | undefined> => {
-  const maxReturnMessageToken = selectedModel.contextWindow ? 4096 : 2000;
+  const { model, basePrompt, temperature, topP } = selectedAssistant.config;
 
-  const systemBase = selectedModel.vision ? multimodalRole : baseRole;
+  const maxReturnMessageToken = model.contextWindow ? 4096 : 2000;
+
+  const systemBase = model.vision ? multimodalRole : baseRole;
 
   const specialHtmlTag = `
+  ### Special Html Formatting
   When presenting information, please ensure to split your responses into paragraphs using <p> HTML tag. If you are providing a list, use the <ul> and <li> tags for unordered lists, <ol> and <li> tags for ordered lists. Highlight the important points using <strong> tag for bold text. Always remember to close any HTML tags that you open.
   
   `;
 
   const systemRAG = fetchedText.length !== 0 ? handleRAG : '';
 
-  const systemHtmlTag = selectedModel.value === 'gpt-4' ? specialHtmlTag : '';
+  const systemHtmlTag = model.value === 'gpt-4' ? specialHtmlTag : '';
 
   const systemContent =
     systemBase +
@@ -123,7 +123,7 @@ export const getOpenAIChatCompletion = async (
     fetchedText,
     chatHistory,
     maxReturnMessageToken,
-    selectedModel.contextWindow
+    model.contextWindow
   );
 
   const userTextWithFetchedData =
@@ -134,8 +134,8 @@ export const getOpenAIChatCompletion = async (
         fetchedText +
         " fetchedEnd'''" +
         '\n' +
-        aiConfig.basePrompt
-      : userMessage + '\n' + aiConfig.basePrompt;
+        basePrompt
+      : userMessage + '\n' + basePrompt;
 
   const imageContent =
     base64ImageSrc && base64ImageSrc?.length !== 0
@@ -144,12 +144,12 @@ export const getOpenAIChatCompletion = async (
 
   try {
     const completion = await openaiClient.chat.completions.create({
-      model: selectedModel.value,
-      temperature: aiConfig.temperature,
+      model: model.value,
+      temperature: temperature,
       max_tokens: maxReturnMessageToken,
       frequency_penalty: 0,
       presence_penalty: 0,
-      top_p: aiConfig.topP,
+      top_p: topP,
       messages: [
         { role: 'system', content: systemContent },
         ...chatArray,
@@ -170,14 +170,12 @@ export const getOpenAIChatCompletion = async (
     if (!completion.usage)
       throw new Error('Chat completion data is undefined.');
     if (completion.choices[0].finish_reason !== 'stop')
-      console.log(`AI message isn't complete.`);
+      console.warn(`AI message isn't complete.`);
 
     let message = completion.choices[0].message?.content ?? '';
 
     message =
-      selectedModel.value === 'gpt-4'
-        ? message
-        : message.replace(/\n/g, '<br>');
+      model.value === 'gpt-4' ? message : message.replace(/\n/g, '<br>');
 
     return message;
   } catch (error: any) {

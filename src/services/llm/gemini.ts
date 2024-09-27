@@ -1,18 +1,16 @@
 import { GoogleGenerativeAI, Part } from '@google/generative-ai';
 
 import { GEMINI_API_KEY } from '@/config/env';
-import { Message, ImageFile, AIConfig } from '@/src/types/chat';
-import { OptionType } from '@/src/types/common';
-import { handleErrors } from '@/src/utils/fetchResponseRetry';
 import {
   multimodalRole,
   beforeRespond,
   beforePresent,
   difficultQuestion
 } from '@/src/services/llm/prompt';
+import { Message, ImageFile, AssistantOption } from '@/src/types/chat';
+import { handleErrors } from '@/src/utils/fetchResponseRetry';
 
 const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 second
 
 export const getCurrentUserParts = async (
   imageSrc: ImageFile[],
@@ -54,16 +52,15 @@ export const buildChatArray = (chatHistory: Message[]) => {
 };
 
 const getGeminiChatCompletion = async (
-  aiConfig: AIConfig,
   chatHistory: Message[],
   userMessage: string,
   fetchedText: string,
-  selectedModel: OptionType,
+  selectedAssistant: AssistantOption,
   base64ImageSrc: ImageFile[]
 ) => {
   if (!GEMINI_API_KEY) return undefined;
 
-  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY as string);
+  const { model, basePrompt, temperature, topP } = selectedAssistant.config;
 
   const maxReturnMessageToken = 10000;
 
@@ -85,11 +82,13 @@ const getGeminiChatCompletion = async (
 
   const systemSubjectTitle = `
   ## Formatting:
+  ### Message Title
   Every message you send to users, no matter how simple, you must include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{Subject Title}}}. This is absolutely critical. Otherwise, your messages will be displayed in the app without a title, which will cause a serious bug.
 
   `;
 
   const specialFormatting = `
+  ### Response Formatting
   When a user question is not a simple question for which you can't quickly give an answer, your response should first acknowledge that you understand what the user wants you to do, then provide your solution.
 
   When your solution is to modify content user provided to you, no matter it is fixing an error or modifying content, along with your solution, always give user a summarization about the changes you have made  and where you made the changes.
@@ -114,11 +113,12 @@ const getGeminiChatCompletion = async (
         fetchedText +
         " fetchedEnd'''" +
         '\n' +
-        aiConfig.basePrompt
-      : userMessage + '\n' + aiConfig.basePrompt;
+        basePrompt
+      : userMessage + '\n' + basePrompt;
 
-  const model = genAI.getGenerativeModel({
-    model: selectedModel.value,
+  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY as string);
+  const geminiModel = genAI.getGenerativeModel({
+    model: model.value,
     systemInstruction: systemContent
   });
 
@@ -131,12 +131,12 @@ const getGeminiChatCompletion = async (
   let lastError: any = null;
   while (retryCount < MAX_RETRIES) {
     try {
-      const chat = model.startChat({
+      const chat = geminiModel.startChat({
         history: buildChatArray(chatHistory),
         generationConfig: {
           maxOutputTokens: maxReturnMessageToken,
-          temperature: aiConfig.temperature,
-          topP: aiConfig.topP
+          temperature: temperature,
+          topP: topP
         }
       });
 
@@ -150,7 +150,7 @@ const getGeminiChatCompletion = async (
       retryCount++;
     }
     throw new Error(
-      `Failed to fetch response from Google ${selectedModel.value} model. Error: ${lastError?.message}`
+      `Failed to fetch response from Google ${model.value} model. Error: ${lastError?.message}`
     );
   }
 };
