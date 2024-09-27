@@ -86,31 +86,52 @@ const modelOptions: OptionType[] = [
     vision: true
   },
   {
-    value: 'gpt-3.5-turbo',
-    label: 'GPT-3.5 Turbo',
-    category: 'openai',
-    contextWindow: 16385,
-    vision: false
-  },
-  {
     value: 'gpt-4',
     label: 'GPT-4',
     category: 'openai',
     contextWindow: 8192,
     vision: false
   },
+  /*{
+    value: 'llama-3.2-11b-vision-preview',
+    label: 'Llama3.2 11b vision',
+    category: 'groq',
+    contextWindow: 8000, //contextwindow: 128000, but limited to 8k by groq
+    vision: true
+  },*/
+  {
+    value: 'llama-3.2-90b-text-preview',
+    label: 'Llama3.2 90b',
+    category: 'groq',
+    contextWindow: 8000, //contextwindow: 128000, but limited to 8k by groq
+    vision: false
+  },
+  {
+    value: 'llama-3.2-3b-preview',
+    label: 'Llama3.2 3b',
+    category: 'groq',
+    contextWindow: 8000, //contextwindow: 128000, but limited to 8k by groq
+    vision: false
+  },
+  {
+    value: 'llama-3.2-1b-preview',
+    label: 'Llama3.2 1b',
+    category: 'groq',
+    contextWindow: 8000, //contextwindow: 128000, but limited to 8k by groq
+    vision: false
+  },
   {
     value: 'llama-3.1-70b-versatile',
     label: 'Llama3.1 70b',
     category: 'groq',
-    contextWindow: 128000,
+    contextWindow: 8000, //contextWindow: 131072, but limited to 8k by groq
     vision: false
   },
   {
     value: 'llama-3.1-8b-instant',
     label: 'Llama3.1 8b',
     category: 'groq',
-    contextWindow: 128000,
+    contextWindow: 8000, //contextWindow: 131072, but limited to 8k by groq
     vision: false
   },
   {
@@ -148,6 +169,13 @@ const modelOptions: OptionType[] = [
     contextWindow: 8192,
     vision: false
   },
+  /*{
+    value: 'llava-v1.5-7b-4096-preview',
+    label: 'LLaVA 1.5 7b',
+    category: 'groq',
+    contextWindow: 4096,
+    vision: true
+  },*/
   {
     value: 'meta-llama/Llama-2-7b-chat-hf',
     label: 'Llama-2-7b-chat-hf',

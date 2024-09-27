@@ -25,7 +25,7 @@ This AI chat platform allows you to select from a variety of Generative AI model
    3. Anthropic: Claude 3.5 Sonnet, Claude 3 Haiku, and Claude 3 Opus
    4. Open-source models hosted on Groq:
 
-   - Meta's Llama3.1-8b Instruct, Llama3.1-70b Instruct, Llama3-8b Instruct and Llama3-70b Instruct
+   - Meta's Llama3.2-90b, llama3.2 3b, llama3.2 1b, Llama3.1-70b, Llama3.1-8b, Llama3-70b and Llama3-8b
    - Mistral's Mixtral 8x7b
    - Google's Gemma 7b and Gemma2 9b
 
