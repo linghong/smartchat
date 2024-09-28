@@ -9,7 +9,6 @@ import {
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import ChatInput from '@/src/components/ChatInput';
-import { sanitizeWithPreserveCode } from '@/src/utils/guardrail';
 import { fileToDataURLBase64 } from '@/src/utils/fileFetchAndConversion';
 import { renderWithContext } from '@/__tests__/test_utils/context';
 

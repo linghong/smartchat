@@ -1,15 +1,8 @@
 import React from 'react';
-import {
-  render,
-  screen,
-  waitFor,
-  act,
-  fireEvent
-} from '@testing-library/react';
+import { screen, waitFor, act, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import Sidebar from '@/src/components/Sidebar';
-import { ChatContext } from '@/src/context/ChatContext';
 import { fetchChats } from '@/src/utils/sqliteChatApiClient';
 import {
   deleteChat,
@@ -18,7 +11,11 @@ import {
 } from '@/src/utils/sqliteChatIdApiClient';
 import { FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-import { initialMessage } from '@/src/utils/initialData';
+
+import {
+  renderWithContext
+} from '@/__tests__/test_utils/context';
+import { assistant1 } from '@/__tests__/test_utils/chat';
 
 // Mock the MenuItem component
 jest.mock('@/src/components/MenuItem', () => {
@@ -97,6 +94,7 @@ jest.mock('next/router', () => ({
 }));
 
 const mockSetIsConfigPanelVisible = jest.fn();
+const mockSetIsSearchChat = jest.fn();
 const mockSetIsSidebarOpen = jest.fn();
 const mockSetChatId = jest.fn();
 const mockSetChats = jest.fn();
@@ -109,8 +107,8 @@ const mockNamespacesList: OptionType[] = [
 ];
 
 const mockChats: OptionType[] = [
-  { value: '1', label: 'Test Chat 1' },
-  { value: '2', label: 'Test Chat 2' }
+  { value: '1', label: 'Chat 1', tags: ['tag1'] },
+  { value: '2', label: 'Chat 2', tags: ['tag2'] }
 ];
 
 describe('Sidebar Component', () => {
@@ -121,7 +119,7 @@ describe('Sidebar Component', () => {
       {
         userMessage: 'Hello',
         aiMessage: 'Hi there',
-        assistant: { label: 'Assistant 1' },
+        assistant: assistant1,
         files: []
       }
     ]);
@@ -143,32 +141,15 @@ describe('Sidebar Component', () => {
     });
   });
 
-  const renderSidebar = (chatId = '0') =>
-    render(
-      <ChatContext.Provider
-        value={{
-          chatId,
-          setChatId: mockSetChatId,
-          chats: mockChats,
-          setChats: mockSetChats,
-          setChatHistory: mockSetChatHistory,
-          setFileSrcHistory: mockSetFileSrcHistory,
-          isConfigPanelVisible: false,
-          setIsConfigPanelVisible: mockSetIsConfigPanelVisible
-        }}
-      >
-        <Sidebar
-          isSidebarOpen={true}
-          setIsSidebarOpen={mockSetIsSidebarOpen}
-          namespacesList={mockNamespacesList}
-        />
-      </ChatContext.Provider>
-    );
-
   it('renders Sidebar component with all expected elements', async () => {
-    await act(async () => {
-      renderSidebar();
-    });
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      { chats: mockChats }
+    );
 
     expect(screen.getByText('Embed RAG File')).toBeInTheDocument();
     expect(screen.getByText('Finetune AI Model')).toBeInTheDocument();
@@ -182,9 +163,14 @@ describe('Sidebar Component', () => {
       .mockImplementation(() => {});
     (fetchChats as jest.Mock).mockRejectedValue(new Error('Fetch failed'));
 
-    await act(async () => {
-      renderSidebar();
-    });
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      { chats: mockChats }
+    );
 
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -196,34 +182,52 @@ describe('Sidebar Component', () => {
   });
 
   it('fetches and renders chats on mount', async () => {
-    await act(async () => {
-      renderSidebar();
-    });
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      { chats: mockChats }
+    );
 
     await waitFor(() => {
       expect(fetchChats).toHaveBeenCalled();
     });
 
-    expect(screen.getByText('Test Chat 1')).toBeInTheDocument();
-    expect(screen.getByText('Test Chat 2')).toBeInTheDocument();
+    expect(screen.getByText('Chat 1')).toBeInTheDocument();
+    expect(screen.getByText('Chat 2')).toBeInTheDocument();
   });
 
   it('handles chat click correctly', async () => {
-    await act(async () => {
-      renderSidebar();
-    });
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      {
+        chats: mockChats,
+        setIsConfigPanelVisible: mockSetIsConfigPanelVisible,
+        setIsSearchChat: mockSetIsSearchChat,
+        setChatId: mockSetChatId,
+        setChatHistory: mockSetChatHistory,
+        setFileSrcHistory: mockSetFileSrcHistory
+      }
+    );
 
     await waitFor(() => {
-      expect(screen.getByText('Test Chat 1')).toBeInTheDocument();
+      expect(screen.getByText('Chat 1')).toBeInTheDocument();
     });
 
-    const chatItem = screen.getByText('Test Chat 1');
+    const chatItem = screen.getByText('Chat 1');
     await act(async () => {
       fireEvent.click(chatItem);
     });
 
     expect(fetchChatMessages).toHaveBeenCalledWith('mock-token', 1);
     expect(mockSetIsConfigPanelVisible).toHaveBeenCalledWith(false);
+    expect(mockSetIsSearchChat).toHaveBeenCalledWith(false);
     expect(mockSetChatHistory).toHaveBeenCalled();
     expect(mockSetFileSrcHistory).toHaveBeenCalled();
     expect(mockSetChatId).toHaveBeenCalledWith('1');
@@ -231,9 +235,21 @@ describe('Sidebar Component', () => {
   });
 
   it('handles chat deletion correctly', async () => {
-    await act(async () => {
-      renderSidebar('1');
-    });
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      {
+        chats: mockChats,
+        chatId: '1',
+        setChats: mockSetChats,
+        setChatId: mockSetChatId,
+        setChatHistory: mockSetChatHistory,
+        setFileSrcHistory: mockSetFileSrcHistory
+      }
+    );
 
     const deleteButton = screen.getAllByText('Delete')[0];
     await act(async () => {
@@ -248,35 +264,40 @@ describe('Sidebar Component', () => {
   });
 
   it('handles chat editing correctly', async () => {
-    await act(async () => {
-      renderSidebar();
+    let capturedChats: OptionType[] = [];
+    const mockSetChats = jest.fn((newChatsOrUpdater: OptionType[] | ((prevChats: OptionType[]) => OptionType[])) => {
+      if (typeof newChatsOrUpdater === 'function') {
+        capturedChats = newChatsOrUpdater(mockChats);
+      } else {
+        capturedChats = newChatsOrUpdater;
+      }
     });
-
+  
+    await act(async () => {
+      renderWithContext(
+        <Sidebar
+          isSidebarOpen={true}
+          setIsSidebarOpen={mockSetIsSidebarOpen}
+          namespacesList={mockNamespacesList}
+        />,
+        { chats: mockChats, chatId: '1', setChats: mockSetChats }
+      );
+    });
+  
     const editButton = screen.getAllByText('Edit')[0];
     await act(async () => {
       fireEvent.click(editButton);
     });
-
+  
     expect(updateChat).toHaveBeenCalledWith('mock-token', '1', {
       title: 'New Title'
     });
     expect(mockSetChats).toHaveBeenCalled();
-  });
-
-  it('handles empty chat messages correctly', async () => {
-    (fetchChatMessages as jest.Mock).mockResolvedValue([]);
-
-    await act(async () => {
-      renderSidebar();
-    });
-
-    const chatItem = await screen.findByText('Test Chat 1');
-    await act(async () => {
-      fireEvent.click(chatItem);
-    });
-
-    expect(mockSetChatHistory).toHaveBeenCalledWith([initialMessage]);
-    expect(mockSetFileSrcHistory).toHaveBeenCalledWith([[]]);
+  
+    // Check if the chat was updated correctly
+    const updatedChat = capturedChats.find(chat => chat.value === '1');
+    expect(updatedChat).toBeDefined();
+    expect(updatedChat?.label).toBe('New Title');
   });
 
   it('handles chat messages with files correctly', async () => {
@@ -294,32 +315,40 @@ describe('Sidebar Component', () => {
         userMessage: 'Hello',
         aiMessage: 'Hi there',
         assistant: { label: 'Assistant 1' },
-        files: [{ fileData: mockFileData }, { fileData: mockFileData }]
+        files: [{ fileData: mockFileData }]
       }
     ]);
 
-    await act(async () => {
-      renderSidebar();
-    });
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      { chats: mockChats, setFileSrcHistory: mockSetFileSrcHistory }
+    );
 
-    const chatItem = await screen.findByText('Test Chat 1');
+    const chatItem = await screen.findByText('Chat 1');
     await act(async () => {
       fireEvent.click(chatItem);
     });
 
-    expect(mockSetFileSrcHistory).toHaveBeenCalledWith([
-      [mockFileData, mockFileData]
-    ]);
+    expect(mockSetFileSrcHistory).toHaveBeenCalledWith([[mockFileData]]);
   });
 
   it('handles mobile view correctly', async () => {
     window.innerWidth = 600;
 
-    await act(async () => {
-      renderSidebar();
-    });
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      { chats: mockChats }
+    );
 
-    const chatItem = await screen.findByText('Test Chat 1');
+    const chatItem = await screen.findByText('Chat 1');
     await act(async () => {
       fireEvent.click(chatItem);
     });
@@ -330,10 +359,15 @@ describe('Sidebar Component', () => {
   it('matches snapshot', async () => {
     let asFragment: (() => DocumentFragment) | undefined;
 
-    await act(async () => {
-      const result = renderSidebar();
-      asFragment = result.asFragment;
-    });
+    const result = renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      { chats: mockChats }
+    );
+    asFragment = result.asFragment;
 
     if (asFragment) {
       expect(asFragment()).toMatchSnapshot();

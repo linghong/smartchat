@@ -35,7 +35,6 @@ describe('ChatList Component', () => {
     { value: '2', label: 'Chat 2', tags: ['tag2'] },
     { value: '3', label: 'Chat 3', tags: ['tag3'] }
   ];
-
   const emptyChats: OptionType[] = [];
 
   beforeEach(() => {

@@ -38,6 +38,7 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
 
   const {
     setIsConfigPanelVisible,
+    setIsSearchChat,
     chatId,
     setChatId,
     chats,
@@ -95,6 +96,7 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
 
       setChatHistory(newChatHistory);
       setFileSrcHistory(newFileSrcHistory);
+      setIsSearchChat(false);
     } else {
       // Handle the case where there are no chat messages
       setChatHistory([initialMessage]);

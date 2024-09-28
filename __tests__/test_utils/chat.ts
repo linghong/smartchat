@@ -1,4 +1,5 @@
 import { AssistantOption } from '@/src/types/chat';
+import { OptionType } from '@/src/types/common';
 
 export const assistant1: AssistantOption = {
   isDefault: false,
@@ -37,3 +38,14 @@ export const assistant2: AssistantOption = {
     temperature: 0.6
   }
 };
+
+export const chats1: OptionType[] = [
+  { value: '1', label: 'Chat 1', tags: ['tag1', 'tag2'] },
+  { value: '2', label: 'Chat 2', tags: ['tag2'] },
+  { value: '3', label: 'Chat 3', tags: ['tag3'] }
+];
+
+export const chats2: OptionType[] = [
+  { value: '1', label: 'Chat 1', tags: ['tag1'] },
+  { value: '2', label: 'Chat 2', tags: ['tag2'] }
+];
