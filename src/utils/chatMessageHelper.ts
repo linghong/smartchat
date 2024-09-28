@@ -31,7 +31,9 @@ const extractTitleClosingPatterns = [
   '\\}\\}\\}\\*\\*',
   '\\}\\}\\}+',
   '\\}\\}+',
-  '\\}\\}</strong></p>'
+  '\\}\\}</strong></p>',
+  '\\}\\}\\}\\.', // New pattern to match }}}. directly
+  '\\}\\}\\}'
 ];
 
 /**

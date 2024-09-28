@@ -52,17 +52,25 @@ export const getGroqChatCompletion = async (
 
   const systemRAG =
     fetchedText.length !== 0
-      ? `In addition, for some user questions, the system may provide AI with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the tag pair "'''fetchedStart" and "fetchedEnd'''". This tag pair is for AI to know the source of the text. AI assistant is not supposed to disclose the tag pair in the message.
+      ? `
+      ## Handling Information Retrieval (RAG):
+      In addition, for some user questions, the system may provide AI with text retrieved from a specialized data source using RAG (Retrieval Augmented Generation). This retrieved text will be enclosed between the tag pair "'''fetchedStart" and "fetchedEnd'''". This tag pair is for AI to know the source of the text. AI assistant is not supposed to disclose the tag pair in the message.
   
-  Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response.`
+  Only use the fetched data if it is directly relevant to the user's question and can contribute to a reasonable correct answer. Otherwise, rely on your pre-existing knowledge to provide the best possible response.
+  
+  `
       : '';
 
   const systemStrategery = 'For difficult problems, solve it step-by-step.';
 
-  const systemSubjectTitle = `
-  Formatting: 
-  Every message AI assistant sends to users, no matter how simple, must include a concise subject title at the end of each response, enclosed within triple curly braces like this: {{{write your subject title here}}}. This is absolutely critical because message without title could crash the site.
-  `;
+  const systemSubjectTitle =
+    selectedAssistant.config.model.value !== 'llama-3.2-1b-preview'
+      ? `
+ ## Formatting:
+  For every message you send to users, no matter how simple, you must include a very concise subject title at the END of your response. This title should come after all other content in your message. Enclose the title within triple curly braces like this: {{{Subject Title Goes Here}}}. This placement at the end is absolutely critical.
+  
+  `
+      : '';
 
   const systemContent =
     systemBase + systemRAG + systemStrategery + systemSubjectTitle;

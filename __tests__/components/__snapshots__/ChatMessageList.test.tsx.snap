@@ -88,10 +88,16 @@ exports[`ChatMessageList matches snapshot 1`] = `
                 Default GPT-4 Turbo
               </option>
               <option>
-                Default GPT-3.5 Turbo
+                Default GPT-4
               </option>
               <option>
-                Default GPT-4
+                Default Llama3.2 90b
+              </option>
+              <option>
+                Default Llama3.2 3b
+              </option>
+              <option>
+                Default Llama3.2 1b
               </option>
               <option>
                 Default Llama3.1 70b

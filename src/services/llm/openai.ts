@@ -16,7 +16,9 @@ import {
   ChatType,
   ChatRole,
   ImageFile,
- OpenAIChatContentImage, AssistantOption } from '@/src/types/chat';
+  OpenAIChatContentImage,
+  AssistantOption
+} from '@/src/types/chat';
 
 export const openaiClient = new OpenAI({
   apiKey: OPENAI_API_KEY
