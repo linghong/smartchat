@@ -104,17 +104,17 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
 
       </span>
       <div
-        class="flex justify-between items-center mt-2"
+        class="flex justify-between items-center text-xs"
       >
         <div
-          class="flex space-x-2"
+          class="flex space-x-1"
         >
           <button
             aria-label="Retry AI response"
-            class="justify-center whitespace-nowrap text-sm font-medium ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 h-10 flex items-center p-1 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+            class="justify-center whitespace-nowrap text-sm font-medium ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 h-9 flex items-center p-1 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors duration-200"
           >
             <svg
-              class="lucide lucide-refresh-cw w-5 h-5 mr-1"
+              class="lucide lucide-refresh-cw w-4 h-4 mr-1"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -138,16 +138,18 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
                 d="M8 16H3v5"
               />
             </svg>
-            <span>
+            <span
+              class="text-xs"
+            >
               Retry
             </span>
           </button>
           <button
             aria-label="Copy AI response"
-            class="justify-center whitespace-nowrap text-sm font-medium ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 h-10 flex items-center p-1 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+            class="justify-center whitespace-nowrap text-sm font-medium ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 h-9 flex items-center p-1 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors duration-200"
           >
             <svg
-              class="lucide lucide-copy w-5 h-5 mr-1"
+              class="lucide lucide-copy w-4 h-4 mr-1"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -170,7 +172,9 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
                 d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
               />
             </svg>
-            <span>
+            <span
+              class="text-xs"
+            >
               Copy
             </span>
           </button>
@@ -183,7 +187,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
             class="justify-center whitespace-nowrap text-sm font-medium ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 h-10 flex items-center p-1 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors duration-200"
           >
             <svg
-              class="lucide lucide-wand-sparkles w-5 h-5 mr-1"
+              class="lucide lucide-wand-sparkles w-4 h-4 mr-1"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -221,7 +225,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
             </svg>
           </button>
           <div
-            class="w-80"
+            class="w-72"
           >
             <div
               class="relative"
@@ -230,7 +234,7 @@ exports[`ChatMessage Component ChatMessage component snapshot 1`] = `
               <div
                 aria-controls="options"
                 aria-expanded="false"
-                class="select-trigger p-2 border border-gray-300 rounded-md cursor-pointer bg-gray-50 text-left w-full text-sm"
+                class="select-trigger w-full p-2 border border-gray-300 rounded-md cursor-pointer bg-gray-50 text-left text-xs py-2"
                 role="combobox"
               >
                 <span

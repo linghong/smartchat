@@ -86,22 +86,23 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
         <div className="flex-1 ai-answer space-wrap">
           {lastIndex && loading ? (
-            <div aria-label="loading">Just a moment, I’m on it...</div>
+            <div aria-label="loading" className="mb-8">Just a moment, I’m working on it...</div>
           ) : (
             <AITextMessage content={message.answer} />
           )}
           {!isNew && lastIndex && (
-            <div className="flex justify-between items-center mt-2">
-              <div className="flex space-x-2">
+            <div className="flex justify-between items-center text-xs">
+              <div className="flex space-x-1">
                 {handleRetry && (
                   <Button
                     onClick={handleRetry}
                     className="flex items-center p-1 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors duration-200"
                     aria-label="Retry AI response"
                     variant="ghost"
+                    size="sm"
                   >
-                    <RefreshCw className="w-5 h-5 mr-1" />
-                    <span>Retry</span>
+                    <RefreshCw className="w-4 h-4 mr-1" />
+                    <span className="text-xs">Retry</span>
                   </Button>
                 )}
                 {handleCopy && message.answer !== '' && (
@@ -110,9 +111,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                     className="flex items-center p-1 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors duration-200"
                     aria-label="Copy AI response"
                     variant="ghost"
+                    size="sm"
                   >
-                    <Copy className="w-5 h-5 mr-1" />
-                    <span>Copy</span>
+                    <Copy className="w-4 h-4 mr-1" />
+                    <span className="text-xs">Copy</span>
                   </Button>
                 )}
               </div>
@@ -122,9 +124,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   aria-label="Change Assistant"
                   variant="ghost"
                 >
-                  <Wand2 className="w-5 h-5 mr-1" />
+                  <Wand2 className="w-4 h-4 mr-1" />
                 </Button>
-                <div className="w-80">
+                <div className="w-72">
                   <CustomSelect
                     id="assistant"
                     options={assistantOptions}
@@ -137,7 +139,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                       handleAssistantChange(newSelectedAssistant);
                     }}
                     placeholder="Select an assistant"
-                    selectedClass="w-full text-sm"
+                    selectedClass="text-xs py-2"
+                    dropdownItemClass="text-xs py-1"
                   />
                 </div>
               </div>
