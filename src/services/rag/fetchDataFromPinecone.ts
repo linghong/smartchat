@@ -1,5 +1,5 @@
 import { PINECONE_INDEX_NAME } from '@/config/env';
-import { pineconeClient } from '@/src/services/pineconeClient';
+import { pineconeClient } from '@/src/services/rag/pineconeClient';
 interface Metadata {
   'loc.lines.from'?: number;
   'loc.lines.to'?: number;

@@ -3,7 +3,7 @@ import * as formidable from 'formidable';
 import fs from 'fs';
 
 import { OptionType } from '@/src/types/common';
-import ingestDataToPinecone from '@/src/services/ingestDataToPinecone';
+import ingestDataToPinecone from '@/src/services/rag/ingestDataToPinecone';
 
 export const config = {
   api: {

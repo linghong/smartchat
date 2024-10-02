@@ -1,15 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone';
-import getClaudeChatCompletion from '@/src/services/llm/claude';
-import getGeminiChatCompletion from '@/src/services/llm/gemini';
-import { getGroqChatCompletion } from '@/src/services/llm/groq';
 import {
-  createEmbedding,
-  getOpenAIChatCompletion
-} from '@/src/services/llm/openai';
-import getOpenModelChatCompletion from '@/src/services/llm/opensourceai';
-
+  OPENAI_API_KEY,
+  CLAUDE_API_KEY,
+  GEMINI_API_KEY,
+  GROQ_API_KEY
+} from '@/config/env';
+import { AIProviderFactory } from '@/src/services/llm/AIProviderFactory';
+import { fetchDataFromPinecone } from '@/src/services/rag/fetchDataFromPinecone';
+import { createEmbedding } from '@/src/services/rag/embedding';
 import {
   processImageFiles,
   processNonMediaFiles
@@ -57,74 +56,55 @@ export default async function handler(
 
     // get response from AI
     const { category } = selectedAssistant.config.model;
-    let chatResponse: string | undefined | null;
 
+    let apiKey: string | undefined;
+    let baseUrl: string | undefined;
     switch (category) {
       case 'openai':
-        chatResponse = await getOpenAIChatCompletion(
-          chatHistory,
-          pretreatedQuestion,
-          fetchedText,
-          selectedAssistant,
-          base64ImageSrc
-        );
+        apiKey = OPENAI_API_KEY;
         break;
-
-      case 'groq':
-        chatResponse = await getGroqChatCompletion(
-          chatHistory,
-          pretreatedQuestion,
-          fetchedText,
-          selectedAssistant
-        );
-        break;
-
-      case 'google':
-        chatResponse = await getGeminiChatCompletion(
-          chatHistory,
-          pretreatedQuestion,
-          fetchedText,
-          selectedAssistant,
-          base64ImageSrc
-        );
-        break;
-
       case 'anthropic':
-        chatResponse = await getClaudeChatCompletion(
-          chatHistory,
-          pretreatedQuestion,
-          fetchedText,
-          selectedAssistant,
-          base64ImageSrc
-        );
+        apiKey = CLAUDE_API_KEY;
         break;
-
+      case 'google':
+        apiKey = GEMINI_API_KEY;
+        break;
+      case 'groq':
+        apiKey = GROQ_API_KEY;
+        break;
       case 'hf-small':
       case 'hf-large':
-        const baseUrl =
+        apiKey = process.env.NEXT_PUBLIC_SERVER_SECRET_KEY;
+        baseUrl =
           category === 'hf-small'
             ? process.env.NEXT_PUBLIC_SERVER_URL
             : process.env.NEXT_PUBLIC_SERVER_GPU_URL;
         if (!baseUrl) {
-          return res
-            .status(500)
-            .json(
-              `Url address for posting the data to ${selectedAssistant.config.model.label} is missing`
-            );
+          return res.status(500).json(`Base URL for ${category} is missing`);
         }
-        const url = `${baseUrl}/api/chat_${category === 'hf-small' ? 'cpu' : 'gpu'}`;
-        chatResponse = await getOpenModelChatCompletion(
-          chatHistory,
-          pretreatedQuestion,
-          fetchedText,
-          selectedAssistant,
-          url
-        );
         break;
-
       default:
         return res.status(500).json('Invalid model category');
     }
+
+    if (!apiKey) {
+      return res.status(500).json(`API key for ${category} is missing`);
+    }
+
+    const aiProvider = AIProviderFactory.createProvider(
+      category,
+      apiKey,
+      baseUrl
+    );
+
+    const chatResponse: string | undefined | null =
+      await aiProvider.getChatCompletion(
+        chatHistory,
+        pretreatedQuestion,
+        fetchedText,
+        selectedAssistant,
+        base64ImageSrc
+      );
 
     let answer: string;
     let subject: string;

@@ -3,7 +3,7 @@ import { GetStaticProps } from 'next';
 import { ActionMeta } from 'react-select';
 import Link from 'next/link';
 
-import DropDownSelect from '@/src/components/DropdownSelect';
+import DropdownSelect from '@/src/components/DropdownSelect';
 import FieldSet from '@/src/components/FieldSet';
 import Notifications from '@/src/components/Notifications';
 import PlusIcon from '@/src/components/PlusIcon';
@@ -255,7 +255,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
           />
           <div className="flex flex-col lg:flex-row">
             <div className="w-full lg:w-6/12">
-              <DropDownSelect
+              <DropdownSelect
                 name="fileCategory"
                 selectedOption={selectedDropDown.fileCategory}
                 onChange={handleDropDownChange}
@@ -328,7 +328,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
         </FieldSet>
         <FieldSet>
           <div className="flex justify-start">
-            <DropDownSelect
+            <DropdownSelect
               name="embeddingModel"
               selectedOption={selectedDropDown.embeddingModel}
               onChange={handleDropDownChange}

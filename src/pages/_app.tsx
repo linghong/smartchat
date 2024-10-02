@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 
 import Layout from '@/src/components/Layout';
 import FullPageLayout from '@/src/components/FullPageLayout';
-import { isTokenExpired } from '@/src/components/WithAuth'
+import { isTokenExpired } from '@/src/components/WithAuth';
 
 import '@/src/styles/globals.css';
 
@@ -31,7 +31,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   }, [router]);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   const isFullPagePage = router.pathname === '/login';

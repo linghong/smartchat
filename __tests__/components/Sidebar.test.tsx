@@ -12,10 +12,8 @@ import {
 import { FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 
-import {
-  renderWithContext
-} from '@/__tests__/test_utils/context';
-import { assistant1 } from '@/__tests__/test_utils/chat';
+import { renderWithContext } from '@/__tests__/test_utils/context';
+import { assistantGemini } from '@/__tests__/test_utils/chat';
 
 // Mock the MenuItem component
 jest.mock('@/src/components/MenuItem', () => {
@@ -119,7 +117,7 @@ describe('Sidebar Component', () => {
       {
         userMessage: 'Hello',
         aiMessage: 'Hi there',
-        assistant: assistant1,
+        assistant: assistantGemini,
         files: []
       }
     ]);
@@ -265,14 +263,20 @@ describe('Sidebar Component', () => {
 
   it('handles chat editing correctly', async () => {
     let capturedChats: OptionType[] = [];
-    const mockSetChats = jest.fn((newChatsOrUpdater: OptionType[] | ((prevChats: OptionType[]) => OptionType[])) => {
-      if (typeof newChatsOrUpdater === 'function') {
-        capturedChats = newChatsOrUpdater(mockChats);
-      } else {
-        capturedChats = newChatsOrUpdater;
+    const mockSetChats = jest.fn(
+      (
+        newChatsOrUpdater:
+          | OptionType[]
+          | ((prevChats: OptionType[]) => OptionType[])
+      ) => {
+        if (typeof newChatsOrUpdater === 'function') {
+          capturedChats = newChatsOrUpdater(mockChats);
+        } else {
+          capturedChats = newChatsOrUpdater;
+        }
       }
-    });
-  
+    );
+
     await act(async () => {
       renderWithContext(
         <Sidebar
@@ -283,17 +287,17 @@ describe('Sidebar Component', () => {
         { chats: mockChats, chatId: '1', setChats: mockSetChats }
       );
     });
-  
+
     const editButton = screen.getAllByText('Edit')[0];
     await act(async () => {
       fireEvent.click(editButton);
     });
-  
+
     expect(updateChat).toHaveBeenCalledWith('mock-token', '1', {
       title: 'New Title'
     });
     expect(mockSetChats).toHaveBeenCalled();
-  
+
     // Check if the chat was updated correctly
     const updatedChat = capturedChats.find(chat => chat.value === '1');
     expect(updatedChat).toBeDefined();

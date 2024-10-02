@@ -15,7 +15,7 @@ interface CustomSelectProps {
   containerClass?: string;
   selectedClass?: string;
   dropdownClass?: string;
-  dropdownItemClass?: string; 
+  dropdownItemClass?: string;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -41,7 +41,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const selectedOption = options.find(option => option.value === value);
 
   return (
-    <div id={id} className={cn("relative", containerClass)}>
+    <div id={id} className={cn('relative', containerClass)}>
       <div
         role="combobox"
         aria-controls="options"
@@ -75,7 +75,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                 'px-4 py-2 text-sm cursor-pointer hover:bg-gray-100',
                 option.value === value
                   ? 'bg-slate-200 text-slate-900'
-                  : 'text-gray-900', 
+                  : 'text-gray-900',
                 dropdownItemClass
               )}
             >

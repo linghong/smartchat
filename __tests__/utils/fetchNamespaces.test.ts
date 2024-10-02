@@ -1,8 +1,8 @@
 import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
-import { getNamespaces } from '@/src/services/pineconeClient';
+import { getNamespaces } from '@/src/services/rag/pineconeClient';
 import * as env from '@/config/env';
 
-jest.mock('@/src/services/pineconeClient', () => ({
+jest.mock('@/src/services/rag/pineconeClient', () => ({
   getNamespaces: jest.fn()
 }));
 

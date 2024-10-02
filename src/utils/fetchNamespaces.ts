@@ -1,4 +1,4 @@
-import { getNamespaces } from '@/src/services/pineconeClient';
+import { getNamespaces } from '@/src/services/rag/pineconeClient';
 import { PINECONE_INDEX_NAME } from '@/config/env';
 
 export const fetchNamespaces = async () => {

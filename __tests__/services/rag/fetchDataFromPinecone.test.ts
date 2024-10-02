@@ -1,7 +1,7 @@
-import { fetchDataFromPinecone } from '@/src/services/fetchDataFromPinecone';
-import { pineconeClient } from '@/src/services/pineconeClient';
+import { fetchDataFromPinecone } from '@/src/services/rag/fetchDataFromPinecone';
+import { pineconeClient } from '@/src/services/rag/pineconeClient';
 
-jest.mock('@/src/services/pineconeClient', () => {
+jest.mock('@/src/services/rag/pineconeClient', () => {
   return {
     pineconeClient: {
       Index: jest.fn().mockReturnValue({

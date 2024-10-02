@@ -86,7 +86,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
         <div className="flex-1 ai-answer space-wrap">
           {lastIndex && loading ? (
-            <div aria-label="loading" className="mb-8">Just a moment, I’m working on it...</div>
+            <div aria-label="loading" className="mb-8">
+              Just a moment, I’m working on it...
+            </div>
           ) : (
             <AITextMessage content={message.answer} />
           )}
