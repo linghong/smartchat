@@ -11,7 +11,7 @@ import {
 } from '@/src/utils/sqliteChatIdApiClient';
 import { FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-
+import { initialMessage } from '@/src/utils/initialData';
 import { renderWithContext } from '@/__tests__/test_utils/context';
 import { assistantGemini } from '@/__tests__/test_utils/chat';
 
@@ -56,12 +56,12 @@ jest.mock('@/src/components/MenuItem', () => {
               >
                 {item.label}
                 {onDeleteClick && (
-                  <button onClick={() => onDeleteClick(item.value)}>
+                  <button onClick={() => onDeleteClick(item.value)} aria-label={`Delete ${item.label}`}>
                     Delete
                   </button>
                 )}
                 {onEditClick && (
-                  <button onClick={() => onEditClick(item.value, 'New Title')}>
+                  <button onClick={() => onEditClick(item.value, 'New Title')}   aria-label={`Edit ${item.label}`}>
                     Edit
                   </button>
                 )}
@@ -233,6 +233,54 @@ describe('Sidebar Component', () => {
     expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false);
   });
 
+  it('redirects to login if token is missing in handleChatClick', async () => {
+  window.localStorage.getItem = jest.fn(() => null); // Simulate no token
+  const pushSpy = jest.spyOn(require('next/router').useRouter(), 'push');
+
+  renderWithContext(
+    <Sidebar
+      isSidebarOpen={true}
+      setIsSidebarOpen={mockSetIsSidebarOpen}
+      namespacesList={mockNamespacesList}
+    />,
+    {
+      chats: mockChats,
+      activeChat: mockChats[0]
+    }
+  );
+
+  const chatItem = await screen.findByText('Chat 1');
+  await act(async () => {
+    fireEvent.click(chatItem);
+  });
+
+  expect(pushSpy).toHaveBeenCalledWith('/login');
+});
+
+it('redirects to login if token is missing in handleDeleteChat', async () => {
+  window.localStorage.getItem = jest.fn(() => null);
+  const pushSpy = jest.spyOn(require('next/router').useRouter(), 'push');
+
+  renderWithContext(
+    <Sidebar
+      isSidebarOpen={true}
+      setIsSidebarOpen={mockSetIsSidebarOpen}
+      namespacesList={mockNamespacesList}
+    />,
+    {
+      chats: mockChats,
+      activeChat: mockChats[0]
+    }
+  );
+
+  const deleteButton = screen.getAllByLabelText('Delete Chat 1')[0];
+  await act(async () => {
+    fireEvent.click(deleteButton);
+  });
+
+  expect(pushSpy).toHaveBeenCalledWith('/login');
+});
+
   it('handles chat deletion correctly', async () => {
     renderWithContext(
       <Sidebar
@@ -314,6 +362,8 @@ describe('Sidebar Component', () => {
     expect(updatedChat?.label).toBe('New Title');
   });
 
+
+
   it('handles chat messages with files correctly', async () => {
     const mockFileData: FileData = {
       base64Content: 'base64content',
@@ -378,6 +428,73 @@ describe('Sidebar Component', () => {
 
     expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false);
   });
+
+  it('handles empty chat messages by resetting to default values', async () => {
+    (fetchChatMessages as jest.Mock).mockResolvedValue([]); // Simulate empty chat messages
+  
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      {
+        chats: mockChats,
+        activeChat: mockChats[0],
+        setActiveChat: mockSetActiveChat,
+        setChatHistory: mockSetChatHistory,
+        setFileSrcHistory: mockSetFileSrcHistory,
+      }
+    );
+  
+    const chatItem = await screen.findByText('Chat 1');
+    await act(async () => {
+      fireEvent.click(chatItem);
+    });
+  
+    expect(mockSetActiveChat).toHaveBeenCalledWith({ label: '0', value: '0', tags: [] });
+    expect(mockSetChatHistory).toHaveBeenCalledWith([initialMessage]);
+    expect(mockSetFileSrcHistory).toHaveBeenCalledWith([[]]);
+  });
+
+  it('logs an error when deleteChat fails', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    (deleteChat as jest.Mock).mockRejectedValue(new Error('Delete failed'));
+  
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />,
+      {
+        chats: mockChats, activeChat: mockChats[0], setActiveChat: mockSetActiveChat
+      }
+    );
+  
+    const deleteButton = screen.getAllByLabelText('Delete Chat 1')[0];
+    await act(async () => {
+      fireEvent.click(deleteButton);
+    });
+  
+    expect(consoleSpy).toHaveBeenCalledWith('Failed to delete chat: Delete failed');
+    consoleSpy.mockRestore();
+  });
+  
+  it('does not fetch chats when token is missing in useEffect', () => {
+    window.localStorage.getItem = jest.fn(() => null); // Simulate no token
+  
+    renderWithContext(
+      <Sidebar
+        isSidebarOpen={true}
+        setIsSidebarOpen={mockSetIsSidebarOpen}
+        namespacesList={mockNamespacesList}
+      />, {chats: mockChats, activeChat: mockChats[0]}
+    );
+  
+    expect(fetchChats).not.toHaveBeenCalled();
+  });
+  
 
   it('matches snapshot', async () => {
     let asFragment: (() => DocumentFragment) | undefined;

@@ -41,10 +41,14 @@ exports[`Sidebar Component matches snapshot 1`] = `
             data-active="true"
           >
             Chat 1
-            <button>
+            <button
+              aria-label="Delete Chat 1"
+            >
               Delete
             </button>
-            <button>
+            <button
+              aria-label="Edit Chat 1"
+            >
               Edit
             </button>
           </li>
@@ -52,10 +56,14 @@ exports[`Sidebar Component matches snapshot 1`] = `
             data-active="false"
           >
             Chat 2
-            <button>
+            <button
+              aria-label="Delete Chat 2"
+            >
               Delete
             </button>
-            <button>
+            <button
+              aria-label="Edit Chat 2"
+            >
               Edit
             </button>
           </li>
