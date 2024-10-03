@@ -23,8 +23,8 @@ export interface ChatContextType {
   setFileSrcHistory: Dispatch<SetStateAction<FileData[][]>>;
   chatHistory: Message[];
   setChatHistory: Dispatch<SetStateAction<Message[]>>;
-  chatId: string;
-  setChatId: Dispatch<SetStateAction<string>>;
+  activeChat: OptionType;
+  setActiveChat: Dispatch<SetStateAction<OptionType>>;
   chats: OptionType[];
   setChats: Dispatch<SetStateAction<OptionType[]>>;
   selectedModel: OptionType;
@@ -43,7 +43,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const [isSearchChat, setIsSearchChat] = useState(false);
   const [fileSrcHistory, setFileSrcHistory] = useState<FileData[][]>([[]]);
   const [chatHistory, setChatHistory] = useState<Message[]>([initialMessage]);
-  const [chatId, setChatId] = useState<string>('0');
+  const [activeChat, setActiveChat] = useState<OptionType>({
+    value: '0',
+    label: '0',
+    tags: []
+  }); //new chat
   const [chats, setChats] = useState<OptionType[]>([]);
   const [selectedModel, setSelectedModel] = useState<OptionType>(defaultModel);
 
@@ -60,8 +64,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         setFileSrcHistory,
         chatHistory,
         setChatHistory,
-        chatId,
-        setChatId,
+        activeChat,
+        setActiveChat,
         chats,
         setChats,
         selectedModel,

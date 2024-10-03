@@ -1,6 +1,6 @@
 // MenuItem.test.tsx
 import React from 'react';
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/router';
 
 import MenuItem from '@/src/components/MenuItem';
@@ -101,6 +101,7 @@ describe('MenuItem Component', () => {
     renderWithContext(
       <MenuItem
         title="Chat With AI"
+        isSearchMenu={true}
         itemList={[
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }

@@ -54,8 +54,8 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
     setFileSrcHistory,
     chatHistory,
     setChatHistory,
-    chatId,
-    setChatId,
+    activeChat,
+    setActiveChat,
     chats,
     setChats,
     selectedModel,
@@ -67,7 +67,6 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
     namespaces.map(ns => ({ value: ns, label: ns })) ?? [];
 
   // --- State Variables ---
-  const [tags, setTags] = useState<string[]>([]);
   const [selectedAssistant, setSelectedAssistant] = useState<AssistantOption>(
     defaultAssistants[0]
   );
@@ -89,27 +88,6 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | ReactNode | null>(null);
   const [messageSubjectList, setMessageSubjectList] = useState<string[]>([]);
-
-  const handleAddTags = (newTags: string[]) => {
-    setTags((prevTags: string[]) => {
-      const updatedTags = [...new Set([...prevTags, ...newTags])];
-
-      // Update the current chat in the chats state
-      setChats((prevChats: OptionType[]) =>
-        prevChats.map(chat =>
-          chat.value === chatId ? { ...chat, tags: updatedTags } : chat
-        )
-      );
-
-      const token = window.localStorage.getItem('token');
-      if (!token) {
-        router.push('/login');
-        return [];
-      }
-      updateChat(token, chatId, { tags: updatedTags });
-      return updatedTags;
-    });
-  };
 
   // --- Handlers ---
   const handleModelChange = (selectedOption: SingleValue<OptionType>) => {
@@ -191,8 +169,13 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
     // after it has a real chat message, it generate a new chat in db with an id
     // this id is also be set as chatId in the front
     // then add this new chat to chats
-    if (chatId === '0') {
-      const chat = await updateChats(token, data.subject, tags, {});
+    if (activeChat.value === '0') {
+      const chat = await updateChats(
+        token,
+        data.subject,
+        activeChat.tags || [],
+        {}
+      );
 
       // Check if chat is null
       if (!chat || !chat.id) {
@@ -202,12 +185,12 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
       }
 
       // update chat state
-      setChatId(chat.id);
       const newChat = {
         label: chat.title,
         value: chat.id.toString(),
         tags: chat.tags
       };
+      setActiveChat(newChat);
       setChats((prevChats: OptionType[]) => [newChat, ...prevChats]); // add new chat to the first of the chat list
 
       updateChatMessages(
@@ -223,7 +206,7 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
     } else {
       updateChatMessages(
         token,
-        parseInt(chatId),
+        parseInt(activeChat.value),
         question,
         data.answer,
         selectedAssistant.label,
@@ -384,7 +367,7 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
   // Reset chat history when starting a new chat
   useEffect(() => {
     if (isNewChat) {
-      setChatId('0');
+      setActiveChat({ value: '0', label: '0', tags: [] });
       setSelectedModel(defaultModel);
       setChatHistory([initialMessage]);
       setFileSrcHistory([[]]); // Reset file history as well
@@ -392,10 +375,6 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
     }
     // eslint-disable-next-line
   }, [isNewChat]);
-
-  const chatTags = chats.find(
-    (chat: OptionType) => chat.value === chatId.toString()
-  )?.tags;
 
   return (
     <div className="flex flex-col w-full h-full mx-auto z-80">
@@ -416,11 +395,9 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
       {!isSearchChat && (
         <div className="flex-grow overflow-y-auto">
           <ChatHeader
-            chatTags={chatTags}
             assistantOptions={assistantOptions}
             selectedAssistant={selectedAssistant}
             handleAssistantChange={handleAssistantChange}
-            handleAddTags={handleAddTags}
           />
           <ChatMessageList
             loading={loading}

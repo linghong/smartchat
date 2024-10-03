@@ -39,8 +39,8 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
   const {
     setIsConfigPanelVisible,
     setIsSearchChat,
-    chatId,
-    setChatId,
+    activeChat,
+    setActiveChat,
     chats,
     setChats,
     setChatHistory,
@@ -71,6 +71,9 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
       router.push('/login');
       return;
     }
+    const newActiveChat = chats.find(chat => chat.value === chatId.toString());
+    if (!newActiveChat) return;
+
     const chatMessages = await fetchChatMessages(token, parseInt(chatId));
 
     // Check if chatMessages is an array and not empty
@@ -92,13 +95,15 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
       }
 
       setIsConfigPanelVisible(false);
-      setChatId(chatId);
-
+      setActiveChat(newActiveChat);
       setChatHistory(newChatHistory);
       setFileSrcHistory(newFileSrcHistory);
+
+      //when it was in Search Tag page and click the sidebar
       setIsSearchChat(false);
     } else {
       // Handle the case where there are no chat messages
+      setActiveChat({ label: '0', value: '0', tags: [] });
       setChatHistory([initialMessage]);
       setFileSrcHistory([[]]);
     }
@@ -113,8 +118,8 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
     try {
       await deleteChat(token, id);
       setChats(prevChats => prevChats.filter(chat => chat.value !== id));
-      if (chatId === id) {
-        setChatId('');
+      if (activeChat.value === id) {
+        setActiveChat({ label: '0', value: '0', tags: [] });
         setChatHistory([initialMessage]);
         setFileSrcHistory([[]]);
       }
@@ -123,7 +128,7 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
     }
   };
 
-  const handleEditChat = async (id: string, newTitle: string) => {
+  const handleEditChatTitle = async (id: string, newTitle: string) => {
     const token = window.localStorage.getItem('token');
     if (!token) {
       router.push('/login');
@@ -162,14 +167,15 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
         <MenuItem
           key="chatwithai"
           title="Chat With AI"
+          isSearchMenu={true}
           link="/"
           itemList={chats}
           setIsSidebarOpen={setIsSidebarOpen}
           onItemClick={handleChatClick}
-          activeItemId={chatId}
+          activeItemId={activeChat.value}
           defaultOpen={true}
           onDeleteClick={handleDeleteChat}
-          onEditClick={handleEditChat}
+          onEditClick={handleEditChatTitle}
         />
       </ul>
       <AIHub />

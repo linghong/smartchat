@@ -18,6 +18,7 @@ import { OptionType } from '@/src/types/common';
 interface MenuItemProps {
   title: string;
   link?: string;
+  isSearchMenu?: boolean;
   itemList: OptionType[] | null;
   defaultOpen?: boolean;
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
@@ -31,6 +32,7 @@ interface MenuItemProps {
 const MenuItem: FC<MenuItemProps> = ({
   title,
   link,
+  isSearchMenu,
   itemList,
   defaultOpen = false,
   setIsSidebarOpen,
@@ -49,7 +51,7 @@ const MenuItem: FC<MenuItemProps> = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
 
-  const handleToggle = useCallback(() => setIsOpen(prev => !prev), []);
+  const handleToggleMenuItem = useCallback(() => setIsOpen(prev => !prev), []);
 
   const handleToggleSearch = () => {
     if (setIsSearchChat) {
@@ -78,6 +80,8 @@ const MenuItem: FC<MenuItemProps> = ({
       if (!itemList) return null;
       const item = itemList[index];
 
+      // click menuItem to display it
+      //for example click chat title to display that chat
       const handleItemPageClick = (id: string) => {
         setEditingId(null);
         setEditingTitle('');
@@ -179,7 +183,7 @@ const MenuItem: FC<MenuItemProps> = ({
       <div
         className={`flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100`}
       >
-        {title === 'Chat With AI' && (
+        {isSearchMenu && (
           <button
             onClick={handleToggleSearch}
             className="mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
@@ -203,7 +207,7 @@ const MenuItem: FC<MenuItemProps> = ({
 
         <button
           className="cursor-pointer transition-colors duration-200 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-          onClick={handleToggle}
+          onClick={handleToggleMenuItem}
           aria-expanded={isOpen}
           aria-controls={`menuitem-list-${title.toLowerCase().replace(/\s+/g, '-')}`}
         >

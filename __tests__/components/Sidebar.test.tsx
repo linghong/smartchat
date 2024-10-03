@@ -94,7 +94,7 @@ jest.mock('next/router', () => ({
 const mockSetIsConfigPanelVisible = jest.fn();
 const mockSetIsSearchChat = jest.fn();
 const mockSetIsSidebarOpen = jest.fn();
-const mockSetChatId = jest.fn();
+const mockSetActiveChat = jest.fn();
 const mockSetChats = jest.fn();
 const mockSetChatHistory = jest.fn();
 const mockSetFileSrcHistory = jest.fn();
@@ -146,7 +146,7 @@ describe('Sidebar Component', () => {
         setIsSidebarOpen={mockSetIsSidebarOpen}
         namespacesList={mockNamespacesList}
       />,
-      { chats: mockChats }
+      { chats: mockChats, activeChat: mockChats[0] }
     );
 
     expect(screen.getByText('Embed RAG File')).toBeInTheDocument();
@@ -167,7 +167,7 @@ describe('Sidebar Component', () => {
         setIsSidebarOpen={mockSetIsSidebarOpen}
         namespacesList={mockNamespacesList}
       />,
-      { chats: mockChats }
+      { chats: mockChats, activeChat: mockChats[0] }
     );
 
     await waitFor(() => {
@@ -186,7 +186,7 @@ describe('Sidebar Component', () => {
         setIsSidebarOpen={mockSetIsSidebarOpen}
         namespacesList={mockNamespacesList}
       />,
-      { chats: mockChats }
+      { chats: mockChats, activeChat: mockChats[0] }
     );
 
     await waitFor(() => {
@@ -206,9 +206,10 @@ describe('Sidebar Component', () => {
       />,
       {
         chats: mockChats,
+        activeChat: mockChats[0],
         setIsConfigPanelVisible: mockSetIsConfigPanelVisible,
         setIsSearchChat: mockSetIsSearchChat,
-        setChatId: mockSetChatId,
+        setActiveChat: mockSetActiveChat,
         setChatHistory: mockSetChatHistory,
         setFileSrcHistory: mockSetFileSrcHistory
       }
@@ -228,7 +229,7 @@ describe('Sidebar Component', () => {
     expect(mockSetIsSearchChat).toHaveBeenCalledWith(false);
     expect(mockSetChatHistory).toHaveBeenCalled();
     expect(mockSetFileSrcHistory).toHaveBeenCalled();
-    expect(mockSetChatId).toHaveBeenCalledWith('1');
+    expect(mockSetActiveChat).toHaveBeenCalledWith(mockChats[0]);
     expect(mockSetIsSidebarOpen).toHaveBeenCalledWith(false);
   });
 
@@ -241,9 +242,9 @@ describe('Sidebar Component', () => {
       />,
       {
         chats: mockChats,
-        chatId: '1',
+        activeChat: mockChats[0],
         setChats: mockSetChats,
-        setChatId: mockSetChatId,
+        setActiveChat: mockSetActiveChat,
         setChatHistory: mockSetChatHistory,
         setFileSrcHistory: mockSetFileSrcHistory
       }
@@ -256,7 +257,11 @@ describe('Sidebar Component', () => {
 
     expect(deleteChat).toHaveBeenCalledWith('mock-token', '1');
     expect(mockSetChats).toHaveBeenCalled();
-    expect(mockSetChatId).toHaveBeenCalledWith('');
+    expect(mockSetActiveChat).toHaveBeenCalledWith({
+      label: '0',
+      value: '0',
+      tags: []
+    });
     expect(mockSetChatHistory).toHaveBeenCalled();
     expect(mockSetFileSrcHistory).toHaveBeenCalled();
   });
@@ -284,7 +289,12 @@ describe('Sidebar Component', () => {
           setIsSidebarOpen={mockSetIsSidebarOpen}
           namespacesList={mockNamespacesList}
         />,
-        { chats: mockChats, chatId: '1', setChats: mockSetChats }
+        {
+          chats: mockChats,
+          activeChat: mockChats[0],
+          setActiveChat: mockSetActiveChat,
+          setChats: mockSetChats
+        }
       );
     });
 
@@ -329,7 +339,12 @@ describe('Sidebar Component', () => {
         setIsSidebarOpen={mockSetIsSidebarOpen}
         namespacesList={mockNamespacesList}
       />,
-      { chats: mockChats, setFileSrcHistory: mockSetFileSrcHistory }
+      {
+        chats: mockChats,
+        activeChat: mockChats[0],
+        setActiveChat: mockSetActiveChat,
+        setFileSrcHistory: mockSetFileSrcHistory
+      }
     );
 
     const chatItem = await screen.findByText('Chat 1');
@@ -349,7 +364,11 @@ describe('Sidebar Component', () => {
         setIsSidebarOpen={mockSetIsSidebarOpen}
         namespacesList={mockNamespacesList}
       />,
-      { chats: mockChats }
+      {
+        chats: mockChats,
+        activeChat: mockChats[0],
+        setActiveChat: mockSetActiveChat
+      }
     );
 
     const chatItem = await screen.findByText('Chat 1');
@@ -369,7 +388,11 @@ describe('Sidebar Component', () => {
         setIsSidebarOpen={mockSetIsSidebarOpen}
         namespacesList={mockNamespacesList}
       />,
-      { chats: mockChats }
+      {
+        chats: mockChats,
+        activeChat: mockChats[0],
+        setActiveChat: mockSetActiveChat
+      }
     );
     asFragment = result.asFragment;
 

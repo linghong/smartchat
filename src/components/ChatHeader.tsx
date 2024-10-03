@@ -1,28 +1,56 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
+import { useRouter } from 'next/router';
+
 import { Label } from '@/src/components/ui/label';
 import CustomSelect from '@/src/components/CustomSelect';
 import Modal from '@/src/components/Modal';
+import { useChatContext } from '@/src/context/ChatContext';
+import { updateChat } from '@/src/utils/sqliteChatIdApiClient';
 import { AssistantOption } from '@/src/types/chat';
+import { OptionType } from '@/src/types/common';
 
 interface ChatHeaderProps {
-  chatTags: string[] | undefined;
   assistantOptions: AssistantOption[];
   selectedAssistant: AssistantOption;
   handleAssistantChange: (assistant: AssistantOption) => void;
-  handleAddTags: (newTags: string[]) => void;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
-  chatTags,
   assistantOptions,
   selectedAssistant,
-  handleAssistantChange,
-  handleAddTags
+  handleAssistantChange
 }) => {
+  const router = useRouter();
+
+  const { activeChat, setActiveChat, chats, setChats } = useChatContext();
+
+  const handleAddTags = (newTags: string[]) => {
+    const token = window.localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return [];
+    }
+
+    const chatTags = activeChat.tags || [];
+    const updatedTags = [...new Set([...chatTags, ...newTags])];
+
+    setActiveChat({ ...activeChat, tags: updatedTags });
+
+    // Update the current chat in the chats state
+    setChats((prevChats: OptionType[]) =>
+      prevChats.map(chat =>
+        chat.value === activeChat.value ? { ...chat, tags: updatedTags } : chat
+      )
+    );
+
+    updateChat(token, activeChat.value, { tags: updatedTags });
+    return updatedTags;
+  };
+  console.log(activeChat.tags);
   return (
     <div className="flex justify-between">
       <div className="flex py-2 space-x-2">
-        {(!chatTags || chatTags.length === 0) && (
+        {(!activeChat.tags || activeChat.tags.length === 0) && (
           <>
             <Label className="py-2 text-md">Assistant: </Label>
             <CustomSelect
@@ -42,9 +70,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         )}
       </div>
       <div className="flex justify-end space-x-2 p-2">
-        {chatTags && chatTags.length > 0 && (
+        {activeChat.tags && activeChat.tags.length > 0 && (
           <div className="px-4 py-2 bg-blue-100 text-gray-800">
-            Tags: {chatTags.join(', ')}
+            Tags: {activeChat.tags?.join(', ') || ''}
           </div>
         )}
         <Modal

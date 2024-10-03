@@ -38,7 +38,7 @@ exports[`Sidebar Component matches snapshot 1`] = `
         </a>
         <ul>
           <li
-            data-active="false"
+            data-active="true"
           >
             Chat 1
             <button>
