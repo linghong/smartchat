@@ -242,9 +242,9 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
   };
 
   return (
-    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 mx-auto">
-      <form className="flex flex-col p-3">
-        <FieldSet>
+    <div className="flex flex-col w-full h-full mx-auto">
+      <form className="flex flex-col space-y-6">
+      <FieldSet>
           <UploadFile
             label="Upload File: "
             fileType=".pdf"
@@ -253,8 +253,8 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
             setUploadErrors={setUploadErrors}
             setSelectedUpload={setSelectedUpload}
           />
-          <div className="flex flex-col lg:flex-row">
-            <div className="w-full lg:w-6/12">
+          <div className="flex flex-col sm:flex-row sm:space-x-4">
+            <div className="w-full sm:w-1/2">
               <DropdownSelect
                 name="fileCategory"
                 selectedOption={selectedDropDown.fileCategory}
@@ -264,22 +264,22 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
               />
             </div>
             {showAddNewCategory && (
-              <div className="w-full lg:w-6/12 my-2">
+              <div className="w-full sm:w-1/2 mt-4 sm:mt-0">
                 <label
                   htmlFor="newCategoryOption"
-                  className="w-full font-bold mr-5"
+                  className="block font-bold mb-2"
                 >
                   Add New Category:
                 </label>
-                <div className="">
+                <div className="flex">
                   <input
                     type="text"
                     name="newFileCategory"
-                    className="bg-transparent hover:bg-slate-100 text-stone-700 font-semibold px-4 py-1.5 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-blue-500 focus:outline-none"
+                    className="flex-grow bg-transparent hover:bg-slate-100 text-stone-700 font-semibold px-4 py-2 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
                     onChange={handleInputChange}
                   />
                   <button
-                    className="py-1.5 mx-2"
+                    className="ml-2 p-2 rounded-xl hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-stone-100 focus:border-blue-500 focus:ring-opacity-50"
                     aria-label="Add New Category"
                     onClick={handleAddCategoryToDropDown}
                   >
@@ -291,11 +291,11 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
           </div>
         </FieldSet>
         <FieldSet>
-          <div className="flex flex-col lg:flex-row justify-start ">
-            <div className="w-full lg:w-6/12 py-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
               <label
                 htmlFor="chunkSize"
-                className="w-full lg:w-20 font-bold mr-2 py-1.5"
+                className="block font-bold mb-2"
               >
                 Chunk Size:
               </label>
@@ -303,15 +303,15 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
                 type="number"
                 name="chunkSize"
                 value={selectedInput.chunkSize?.toString()}
-                className="w-11/12 lg:w-80 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+                className="w-full bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-2 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
               />
             </div>
-            <div className="w-full lg:w-6/12 py-2 justify-start">
+            <div>
               <label
                 htmlFor="chunkOverlapSize"
-                className="w-full lg:w-20 font-bold mr-2 py-1.5"
+                className="block font-bold mb-2"
               >
                 Chunk Overlap:
               </label>
@@ -319,7 +319,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
                 type="number"
                 name="chunkOverlap"
                 value={selectedInput.chunkOverlap?.toString()}
-                className="w-11/12 lg:w-80 bg-transparent hover:bg-slate-100 text-stone-700 font-semibold mr-20 py-1.5 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
+                className="w-full bg-transparent hover:bg-slate-100 text-stone-700 font-semibold py-2 px-4 border-2 border-stone-400 hover:border-transparent rounded-xl focus:border-sky-800 focus:outline-none"
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
               />
@@ -327,7 +327,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
           </div>
         </FieldSet>
         <FieldSet>
-          <div className="flex justify-start">
+          <div className="mb-4">
             <DropdownSelect
               name="embeddingModel"
               selectedOption={selectedDropDown.embeddingModel}
@@ -336,29 +336,28 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
               label="Embedding Model:"
             />
           </div>
-          <span className="text-sm">
+          <p className="text-sm">
             Are you dissatisfied with closed embedding models? Discover a
             variety of{' '}
             <a
               href="https://huggingface.co/spaces/mteb/leaderboard"
-              className="text-blue-500"
+              className="text-blue-500 hover:underline"
             >
               embedding models
             </a>{' '}
             on Hugging Face. You can host the model using{' '}
             <a
               href="https://github.com/linghong/smartchat-fastapi"
-              className="text-blue-500"
+              className="text-blue-500 hover:underline"
             >
-              {' '}
-              SmartChat-FastAPI{' '}
+              SmartChat-FastAPI
             </a>
-            , or submit finetune your model on{' '}
-            <Link href="/finetunemodel" className="text-blue-500">
+            , or submit finetune your model on the{' '}
+            <Link href="/finetunemodel" className="text-blue-500 hover:underline">
               Finetune AI model page
             </Link>
             .
-          </span>
+          </p>
         </FieldSet>
         <div className="flex justify-end py-5 mr-5">
           <button

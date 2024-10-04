@@ -230,7 +230,7 @@ const FinetuneModel: FC = () => {
   }, [isChecked, setSelectedInput]);
 
   return (
-    <div className="flex flex-col w-full xs:w-11/12 sm:w-10/12 xl:w-9/12 mx-auto">
+    <div className="flex flex-col w-full h-full mx-auto">
       <form className="flex flex-col p-3">
         <FieldSet>
           <div className="flex justify-start">
