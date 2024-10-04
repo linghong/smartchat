@@ -332,7 +332,7 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
 
   useEffect(() => {
     setNamespacesList(fetchedCategoryOptions);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const fetchAssistants = async () => {

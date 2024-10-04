@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
 
 import { Label } from '@/src/components/ui/label';
@@ -46,7 +46,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     updateChat(token, activeChat.value, { tags: updatedTags });
     return updatedTags;
   };
-  console.log(activeChat.tags);
+
   return (
     <div className="flex justify-between">
       <div className="flex py-2 space-x-2">

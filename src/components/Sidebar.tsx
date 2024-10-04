@@ -34,7 +34,6 @@ const models = [
 const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
   const isFetchingChats = useRef(false);
   const router = useRouter();
-  const pathName = router.pathname;
 
   const {
     setIsConfigPanelVisible,
@@ -49,10 +48,10 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
 
   useEffect(() => {
     const fetchAllChats = async () => {
-      const token = window.localStorage.getItem('token');
+      const token = localStorage.getItem('token');
 
       if (!token || isFetchingChats.current) return;
-
+      console.log('go');
       try {
         const chats = await fetchChats(token);
 
@@ -63,10 +62,10 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
     };
 
     fetchAllChats();
-  }, []); //ensure this runs again if token changes
+  }, []);
 
   const handleChatClick = async (chatId: string) => {
-    const token = window.localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
       return;
@@ -74,39 +73,54 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
     const newActiveChat = chats.find(chat => chat.value === chatId.toString());
     if (!newActiveChat) return;
 
-    const chatMessages = await fetchChatMessages(token, parseInt(chatId));
+    try {
+      const chatMessages = await fetchChatMessages(token, parseInt(chatId));
 
-    // Check if chatMessages is an array and not empty
-    if (Array.isArray(chatMessages) && chatMessages.length > 0) {
-      const newChatHistory: Message[] = chatMessages.map(m => ({
-        question: m.userMessage,
-        answer: m.aiMessage,
-        assistant: m.assistant
-      }));
+      // Check if chatMessages is an array and not empty
+      if (Array.isArray(chatMessages) && chatMessages.length > 0) {
+        const newChatHistory: Message[] = chatMessages.map(m => ({
+          question: m.userMessage,
+          answer: m.aiMessage,
+          assistant: m.assistant
+        }));
 
-      const newFileSrcHistory: FileData[][] = chatMessages.map((msg: any) => {
-        // Assuming msg.files is an array of { fileData: ... } objects
-        if (!msg.files || !Array.isArray(msg.files)) return;
-        return msg.files.map((file: any) => file.fileData);
-      });
-      // On mobile or narrow screen size, only either the sidebar or chat content is visible at a time
-      if (window.innerWidth < 640) {
-        setIsSidebarOpen(false);
+        const newFileSrcHistory: FileData[][] = chatMessages.map((msg: any) => {
+          // Assuming msg.files is an array of { fileData: ... } objects
+          if (!msg.files || !Array.isArray(msg.files)) return;
+          return msg.files.map((file: any) => file.fileData);
+        });
+
+        // First, navigate to the chat page if we're not already there
+        if (router.pathname !== '/') {
+          await router.push('/');
+        }
+
+        // On mobile or narrow screen size, only either the sidebar or chat content is visible at a time
+        if (window.innerWidth < 640) {
+          setIsSidebarOpen(false);
+        }
+
+        //when it was displaying Search Tag component
+        setIsSearchChat(false);
+
+        setIsConfigPanelVisible(false);
+        setActiveChat(newActiveChat);
+        setChatHistory(newChatHistory);
+        setFileSrcHistory(newFileSrcHistory);
+      } else {
+        // Handle the case where there are no chat messages
+        resetChatState();
       }
-
-      setIsConfigPanelVisible(false);
-      setActiveChat(newActiveChat);
-      setChatHistory(newChatHistory);
-      setFileSrcHistory(newFileSrcHistory);
-
-      //when it was in Search Tag page and click the sidebar
-      setIsSearchChat(false);
-    } else {
-      // Handle the case where there are no chat messages
-      setActiveChat({ label: '0', value: '0', tags: [] });
-      setChatHistory([initialMessage]);
-      setFileSrcHistory([[]]);
+    } catch (error) {
+      console.error('Failed to fetch chat messages:', error);
+      resetChatState();
     }
+  };
+
+  const resetChatState = () => {
+    setActiveChat({ label: '0', value: '0', tags: [] });
+    setChatHistory([initialMessage]);
+    setFileSrcHistory([[]]);
   };
 
   const handleDeleteChat = async (id: string) => {
@@ -119,9 +133,7 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
       await deleteChat(token, id);
       setChats(prevChats => prevChats.filter(chat => chat.value !== id));
       if (activeChat.value === id) {
-        setActiveChat({ label: '0', value: '0', tags: [] });
-        setChatHistory([initialMessage]);
-        setFileSrcHistory([[]]);
+        resetChatState();
       }
     } catch (error: any) {
       console.error(`Failed to delete chat: ${error.message}`);
@@ -129,7 +141,7 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
   };
 
   const handleEditChatTitle = async (id: string, newTitle: string) => {
-    const token = window.localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
       return;

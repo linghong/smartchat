@@ -244,7 +244,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
   return (
     <div className="flex flex-col w-full h-full mx-auto">
       <form className="flex flex-col space-y-6">
-      <FieldSet>
+        <FieldSet>
           <UploadFile
             label="Upload File: "
             fileType=".pdf"
@@ -293,10 +293,7 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
         <FieldSet>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label
-                htmlFor="chunkSize"
-                className="block font-bold mb-2"
-              >
+              <label htmlFor="chunkSize" className="block font-bold mb-2">
                 Chunk Size:
               </label>
               <input
@@ -353,7 +350,10 @@ const UploadFilePage: FC<{ namespaces: string[] }> = ({ namespaces }) => {
               SmartChat-FastAPI
             </a>
             , or submit finetune your model on the{' '}
-            <Link href="/finetunemodel" className="text-blue-500 hover:underline">
+            <Link
+              href="/finetunemodel"
+              className="text-blue-500 hover:underline"
+            >
               Finetune AI model page
             </Link>
             .
