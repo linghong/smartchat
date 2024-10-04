@@ -18,10 +18,10 @@ import { OptionType } from '@/src/types/common';
 interface MenuItemProps {
   title: string;
   link?: string;
-  isSearchMenu?: boolean;
   itemList: OptionType[] | null;
   defaultOpen?: boolean;
   setIsSidebarOpen?: (isSidebarOpen: boolean) => void;
+  isAdvanced?: boolean;
   onItemClick?: (id: string) => void;
   maxVisibleItem?: number;
   activeItemId?: string;
@@ -32,7 +32,7 @@ interface MenuItemProps {
 const MenuItem: FC<MenuItemProps> = ({
   title,
   link,
-  isSearchMenu,
+  isAdvanced,
   itemList,
   defaultOpen = false,
   setIsSidebarOpen,
@@ -137,26 +137,28 @@ const MenuItem: FC<MenuItemProps> = ({
               >
                 {item.label}
               </button>
-              <div className="flex space-x-1">
-                <button
-                  className="cursor-pointer hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-                  onClick={() => onDeleteClick && onDeleteClick(item.value)}
-                  aria-label={`Delete ${item.label}`}
-                >
-                  <Trash2 size={14} color="#f1f0f5" fill="#e7e7f5" />
-                </button>
-                <button
-                  className="cursor-pointer hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                  onClick={() => handleEditStart(item.value, item.label)}
-                  aria-label={`Edit ${item.label}`}
-                >
-                  <Pencil
-                    size={14}
-                    color="#f1f0f5"
-                    className="pl-1 border-b 2px white"
-                  />
-                </button>
-              </div>
+              {isAdvanced && (
+                <div className="flex space-x-1">
+                  <button
+                    className="cursor-pointer hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    onClick={() => onDeleteClick && onDeleteClick(item.value)}
+                    aria-label={`Delete ${item.label}`}
+                  >
+                    <Trash2 size={14} color="#f1f0f5" fill="#e7e7f5" />
+                  </button>
+                  <button
+                    className="cursor-pointer hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    onClick={() => handleEditStart(item.value, item.label)}
+                    aria-label={`Edit ${item.label}`}
+                  >
+                    <Pencil
+                      size={14}
+                      color="#f1f0f5"
+                      className="pl-1 border-b 2px white"
+                    />
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -183,7 +185,7 @@ const MenuItem: FC<MenuItemProps> = ({
       <div
         className={`flex justify-between items-center px-1 py-1 border-b text-slate-100 cursor-pointer transition-colors duration-200 hover:bg-slate-500 focus:bg-indigo-100`}
       >
-        {isSearchMenu && (
+        {isAdvanced && (
           <button
             onClick={handleToggleSearch}
             className="mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"

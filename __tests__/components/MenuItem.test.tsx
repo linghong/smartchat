@@ -101,7 +101,7 @@ describe('MenuItem Component', () => {
     renderWithContext(
       <MenuItem
         title="Chat With AI"
-        isSearchMenu={true}
+        isAdvanced={true}
         itemList={[
           { label: 'Item 1', value: '1' },
           { label: 'Item 2', value: '2' }
@@ -323,7 +323,7 @@ describe('MenuItem Component', () => {
     expect(mockOnItemClick).toHaveBeenCalledWith('2');
   });
 
-  it('should call onDeleteClick when delete icon is clicked', () => {
+  it('should call onDeleteClick in advanced menuItem when delete icon is clicked', () => {
     renderWithContext(
       <MenuItem
         title="Test Title"
@@ -334,6 +334,7 @@ describe('MenuItem Component', () => {
         maxVisibleItem={5}
         onDeleteClick={mockOnDeleteClick}
         defaultOpen={true}
+        isAdvanced={true}
       />
     );
 
@@ -342,7 +343,7 @@ describe('MenuItem Component', () => {
     expect(mockOnDeleteClick).toHaveBeenCalledWith('1');
   });
 
-  it('should enter edit mode when edit icon is clicked', () => {
+  it('should enter edit mode in advanced menuItem when edit icon is clicked', () => {
     renderWithContext(
       <MenuItem
         title="Test Title"
@@ -353,6 +354,7 @@ describe('MenuItem Component', () => {
         maxVisibleItem={5}
         onEditClick={mockOnEditClick}
         defaultOpen={true}
+        isAdvanced={true}
       />
     );
 
@@ -361,7 +363,7 @@ describe('MenuItem Component', () => {
     expect(screen.getByDisplayValue('Item 1')).toBeInTheDocument();
   });
 
-  it('should call onEditClick when edit is submitted', () => {
+  it('should call onEditClick in advanced menuItem when edit is submitted', () => {
     renderWithContext(
       <MenuItem
         title="Test Title"
@@ -372,6 +374,7 @@ describe('MenuItem Component', () => {
         maxVisibleItem={5}
         onEditClick={mockOnEditClick}
         defaultOpen={true}
+        isAdvanced={true}
       />
     );
     const editButtons = screen.getAllByLabelText(/Edit Item \d/);

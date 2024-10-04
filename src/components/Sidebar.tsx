@@ -167,7 +167,7 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
         <MenuItem
           key="chatwithai"
           title="Chat With AI"
-          isSearchMenu={true}
+          isAdvanced={true}
           link="/"
           itemList={chats}
           setIsSidebarOpen={setIsSidebarOpen}
