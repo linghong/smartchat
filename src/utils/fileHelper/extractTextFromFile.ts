@@ -5,7 +5,7 @@ import pdfParse from 'pdf-parse';
 import * as xlsx from 'xlsx'; // for XLSX parsing
 
 import { FileData } from '@/src/types/chat';
-import { fileType } from '@/src/utils/fileTypeChecker';
+import { fileType } from '@/src/utils/fileHelper/fileTypeChecker';
 
 const extractTextFromFile = (base64String: string) => {
   return Buffer.from(base64String, 'base64').toString('utf-8');

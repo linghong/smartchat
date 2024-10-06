@@ -22,18 +22,18 @@ import { useChatContext } from '@/src/context/ChatContext';
 import { modelOptions } from '@/config/modellist';
 import { Message, FileData, AIConfig, AssistantOption } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
-import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
+import { fetchNamespaces } from '@/src/utils/dataServer/pinecone';
 import {
   initialMessage,
   defaultModel,
   defaultAssistants
 } from '@/src/utils/initialData';
-import { getAIConfigs } from '@/src/utils/sqliteAIConfigApiClient';
-import { updateChats } from '@/src/utils/sqliteChatApiClient';
+import { getAIConfigs } from '@/src/utils/dataClient/sqliteAIConfigApiClient';
+import { updateChats } from '@/src/utils/dataClient/sqliteChatApiClient';
 import {
   updateChatMessages,
   updateChat
-} from '@/src/utils/sqliteChatIdApiClient';
+} from '@/src/utils/dataClient/sqliteChatIdApiClient';
 
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
 

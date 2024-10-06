@@ -1,7 +1,7 @@
 import { GeminiProvider } from '@/src/services/llm/GeminiProvider';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Message, AssistantOption } from '@/src/types/chat';
-import * as fetchResponseRetry from '@/src/utils/fetchResponseRetry';
+import * as fetchResponseRetry from '@/src/utils/guardrails/fetchResponseRetry';
 import { assistantGemini, mockImageFile } from '@/__tests__/test_utils/chat';
 
 jest.mock('@google/generative-ai');

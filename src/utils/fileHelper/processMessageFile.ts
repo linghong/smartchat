@@ -1,5 +1,5 @@
 import { FileData, ImageFile } from '@/src/types/chat';
-import { convertFileToText } from '@/src/utils/extractTextFromFile';
+import { convertFileToText } from '@/src/utils/fileHelper/extractTextFromFile';
 
 export const processImageFiles = (fileSrc: FileData[]) => {
   let base64ImageSrc: ImageFile[] = [];

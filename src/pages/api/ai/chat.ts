@@ -12,11 +12,11 @@ import { createEmbedding } from '@/src/services/rag/embedding';
 import {
   processImageFiles,
   processNonMediaFiles
-} from '@/src/utils/processMessageFile';
+} from '@/src/utils/fileHelper/processMessageFile';
 import {
   extractMessageContent,
   extractSubjectTitle
-} from '@/src/utils/chatMessageHelper';
+} from '@/src/utils/guardrails/chatMessageHelper';
 
 export default async function handler(
   req: NextApiRequest,

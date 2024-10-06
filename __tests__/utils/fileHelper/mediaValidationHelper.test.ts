@@ -1,5 +1,5 @@
-import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
-import { ImageFile } from '@/src/types/chat';
+import { FileData } from '@/src/types/chat';
+import { isSupportedImage } from '@/src/utils/fileHelper/mediaValidationHelper';
 
 describe('isSupportedImage', () => {
   const createImageFile = (
@@ -10,7 +10,7 @@ describe('isSupportedImage', () => {
     size,
     type,
     name,
-    base64Image:
+    base64Content:
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACklEQVR42mP8/wcAAgUBAXkGKD8AAAAASUVORK5CYII=' // Example base64 string
   });
 

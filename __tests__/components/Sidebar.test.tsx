@@ -3,12 +3,12 @@ import { screen, waitFor, act, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import Sidebar from '@/src/components/Sidebar';
-import { fetchChats } from '@/src/utils/sqliteChatApiClient';
+import { fetchChats } from '@/src/utils/dataClient/sqliteChatApiClient';
 import {
   deleteChat,
   updateChat,
   fetchChatMessages
-} from '@/src/utils/sqliteChatIdApiClient';
+} from '@/src/utils/dataClient/sqliteChatIdApiClient';
 import { FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { initialMessage } from '@/src/utils/initialData';
@@ -79,11 +79,11 @@ jest.mock('@/src/components/MenuItem', () => {
   };
 });
 
-jest.mock('@/src/utils/sqliteChatApiClient', () => ({
+jest.mock('@/src/utils/dataClient/sqliteChatApiClient', () => ({
   fetchChats: jest.fn()
 }));
 
-jest.mock('@/src/utils/sqliteChatIdApiClient', () => ({
+jest.mock('@/src/utils/dataClient/sqliteChatIdApiClient', () => ({
   deleteChat: jest.fn(),
   updateChat: jest.fn(),
   fetchChatMessages: jest.fn()

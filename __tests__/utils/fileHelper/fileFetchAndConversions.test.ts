@@ -3,7 +3,7 @@ import {
   fileToDataURLBase64,
   fetchImageAsBase64,
   getImageDimensions
-} from '@/src/utils/fileFetchAndConversion';
+} from '@/src/utils/fileHelper/fileFetchAndConversion';
 
 // Mock the fetch function
 global.fetch = jest.fn(() =>

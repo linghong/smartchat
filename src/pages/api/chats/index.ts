@@ -23,6 +23,7 @@ const handlePostRequest = async (
     tags,
     metadata
   });
+
   await chatRepository.save(chat);
 
   res.status(201).json(chat);

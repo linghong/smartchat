@@ -3,7 +3,7 @@ import { OptionType } from '@/src/types/common';
 import {
   postAIConfig,
   getAIConfigs
-} from '@/src/utils/sqliteAIConfigApiClient';
+} from '@/src/utils/dataClient/sqliteAIConfigApiClient';
 
 // Mock the fetch function
 global.fetch = jest.fn();

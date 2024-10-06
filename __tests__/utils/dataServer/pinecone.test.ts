@@ -1,4 +1,4 @@
-import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
+import { fetchNamespaces } from '@/src/utils/dataServer/pinecone';
 import { getNamespaces } from '@/src/services/rag/pineconeClient';
 import * as env from '@/config/env';
 
@@ -26,11 +26,12 @@ describe('fetchNamespaces', () => {
   });
 
   it('should return an empty array when PINECONE_INDEX_NAME is not defined', async () => {
+    // remove module caching and refetchNamespaces, otherwise fetchNamespaces would still use previous PINECONE_INDEX_NAME
     jest.resetModules();
     jest.mock('@/config/env', () => ({
       PINECONE_INDEX_NAME: undefined
     }));
-    const { fetchNamespaces } = require('@/src/utils/fetchNamespaces');
+    const { fetchNamespaces } = require('@/src/utils/dataServer/pinecone');
 
     const consoleSpy = jest
       .spyOn(console, 'error')

@@ -16,7 +16,7 @@ import {
   UploadData,
   UploadErrors
 } from '@/src/types/common';
-import { fetchNamespaces } from '@/src/utils/fetchNamespaces';
+import { fetchNamespaces } from '@/src/utils/dataServer/pinecone';
 
 interface DropDownData {
   fileCategory: {

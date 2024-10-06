@@ -1,5 +1,5 @@
-import { fileType } from '@/src/utils/fileTypeChecker';
 import { FileData } from '@/src/types/chat';
+import { fileType } from '@/src/utils/fileHelper/fileTypeChecker';
 
 describe('fileType', () => {
   it('should return "image" for image types', () => {

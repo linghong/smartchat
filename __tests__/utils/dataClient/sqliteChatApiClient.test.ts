@@ -1,5 +1,8 @@
 import fetchMock from 'jest-fetch-mock';
-import { updateChats, fetchChats } from '@/src/utils/sqliteChatApiClient';
+import {
+  updateChats,
+  fetchChats
+} from '@/src/utils/dataClient/sqliteChatApiClient';
 
 fetchMock.enableMocks();
 

@@ -4,6 +4,10 @@ import '@testing-library/jest-dom';
 
 import AIConfigPanel from '@/src/components/AIConfigPanel';
 import { OptionType } from '@/src/types/common';
+import {
+  getAIConfigs,
+  postAIConfig
+} from '@/src/utils/dataClient/sqliteAIConfigApiClient';
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
@@ -13,7 +17,7 @@ jest.mock('next/router', () => ({
 }));
 
 // Mock the postAIConfig function
-jest.mock('@/src/utils/sqliteAIConfigApiClient', () => ({
+jest.mock('@/src/utils/dataClient/sqliteAIConfigApiClient', () => ({
   postAIConfig: jest.fn(),
   getAIConfigs: jest.fn().mockResolvedValue([])
 }));
@@ -204,7 +208,6 @@ describe('AIConfigPanel', () => {
   });
 
   it('submits the form with correct data', async () => {
-    const { postAIConfig } = require('@/src/utils/sqliteAIConfigApiClient');
     postAIConfig.mockResolvedValue({ message: 'AI Config saved successfully' });
 
     await act(async () => {
@@ -228,7 +231,6 @@ describe('AIConfigPanel', () => {
   });
 
   it('shows error notification on submission failure', async () => {
-    const { postAIConfig } = require('@/src/utils/sqliteAIConfigApiClient');
     postAIConfig.mockRejectedValue(new Error('Failed to save AI Config'));
 
     await act(async () => {
@@ -277,10 +279,6 @@ describe('AIConfigPanel', () => {
   });
 
   it('shows error when submitting with existing name', async () => {
-    const {
-      getAIConfigs,
-      postAIConfig
-    } = require('@/src/utils/sqliteAIConfigApiClient');
     getAIConfigs.mockResolvedValue([{ name: 'TestBot' }]);
     postAIConfig.mockRejectedValue(
       new Error('An AI assistant with this name already exists.')
@@ -314,7 +312,6 @@ describe('AIConfigPanel', () => {
   });
 
   it('clears name field after successful submission', async () => {
-    const { postAIConfig } = require('@/src/utils/sqliteAIConfigApiClient');
     postAIConfig.mockResolvedValue({ message: 'AI Config saved successfully' });
 
     await act(async () => {

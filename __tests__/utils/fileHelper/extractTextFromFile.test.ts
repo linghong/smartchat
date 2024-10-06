@@ -1,8 +1,9 @@
-import { convertFileToText } from '@/src/utils/extractTextFromFile';
-import { FileData } from '@/src/types/chat';
 import * as mammoth from 'mammoth';
 import pdfParse from 'pdf-parse';
 import * as xlsx from 'xlsx';
+
+import { convertFileToText } from '@/src/utils/fileHelper/extractTextFromFile';
+import { FileData } from '@/src/types/chat';
 
 // Mock the entire pdf-parse module
 jest.mock('pdf-parse', () => jest.fn());

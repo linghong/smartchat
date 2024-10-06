@@ -5,7 +5,7 @@ import { Label } from '@/src/components/ui/label';
 import CustomSelect from '@/src/components/CustomSelect';
 import Modal from '@/src/components/Modal';
 import { useChatContext } from '@/src/context/ChatContext';
-import { updateChat } from '@/src/utils/sqliteChatIdApiClient';
+import { updateChat } from '@/src/utils/dataClient/sqliteChatIdApiClient';
 import { AssistantOption } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 

@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 
 import ChatMessage from '@/src/components/ChatMessage';
 import { format } from '@/src/components/AITextMessage';
-import { encodeHTMLEntities } from '@/src/utils/guardrail';
+import { encodeHTMLEntities } from '@/src/utils/guardrails/htmlEncodeDecode';
 import { Message, FileData, AssistantOption } from '@/src/types/chat';
 
 // Mock the console methods to suppress output during tests

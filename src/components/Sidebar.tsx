@@ -7,12 +7,12 @@ import { useChatContext } from '@/src/context/ChatContext';
 import { Message, FileData } from '@/src/types/chat';
 import { OptionType } from '@/src/types/common';
 import { initialMessage } from '@/src/utils/initialData';
-import { fetchChats } from '@/src/utils/sqliteChatApiClient';
+import { fetchChats } from '@/src/utils/dataClient/sqliteChatApiClient';
 import {
   deleteChat,
   updateChat,
   fetchChatMessages
-} from '@/src/utils/sqliteChatIdApiClient';
+} from '@/src/utils/dataClient/sqliteChatIdApiClient';
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -51,7 +51,7 @@ const Sidebar: FC<SidebarProps> = ({ setIsSidebarOpen, namespacesList }) => {
       const token = localStorage.getItem('token');
 
       if (!token || isFetchingChats.current) return;
-      console.log('go');
+
       try {
         const chats = await fetchChats(token);
 

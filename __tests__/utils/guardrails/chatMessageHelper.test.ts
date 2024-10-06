@@ -1,7 +1,7 @@
 import {
   extractMessageContent,
   extractSubjectTitle
-} from '@/src/utils/chatMessageHelper';
+} from '@/src/utils/guardrails/chatMessageHelper';
 
 describe('extractMessageContent', () => {
   it('should remove {{{...}}} tags and subject title from the message', () => {

@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 import FileThumbnail from '@/src/components/FileThumbnail';
 import { FileData } from '@/src/types/chat';
-import { fileType } from '@/src/utils/fileTypeChecker';
+import { fileType } from '@/src/utils/fileHelper/fileTypeChecker';
 
 const FileThumbnailSelector: FC<{ fileData: FileData }> = ({ fileData }) => {
   return (

@@ -2,7 +2,7 @@ import { GroqProvider } from '@/src/services/llm/GroqProvider';
 import { Message } from '@/src/types/chat';
 import { Groq } from 'groq-sdk';
 import { assistantGroq } from '@/__tests__/test_utils/chat';
-import * as fetchResponseRetry from '@/src/utils/fetchResponseRetry';
+import * as fetchResponseRetry from '@/src/utils/guardrails/fetchResponseRetry';
 
 jest.mock('groq-sdk', () => {
   return {

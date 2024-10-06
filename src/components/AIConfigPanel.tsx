@@ -29,7 +29,7 @@ import { AIConfig } from '@/src/types/chat';
 import {
   postAIConfig,
   getAIConfigs
-} from '@/src/utils/sqliteAIConfigApiClient';
+} from '@/src/utils/dataClient/sqliteAIConfigApiClient';
 interface AIConfigPanelProps {
   handleModelChange: (newValue: OptionType) => void;
   selectedNamespace: OptionType | null;

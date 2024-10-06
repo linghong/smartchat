@@ -1,26 +1,22 @@
 import React from 'react';
-import {
-  fireEvent,
-  waitFor,
-  screen,
-  act,
-  render
-} from '@testing-library/react';
+import { fireEvent, waitFor, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+
 import ChatInput from '@/src/components/ChatInput';
-import { fileToDataURLBase64 } from '@/src/utils/fileFetchAndConversion';
+import { fileToDataURLBase64 } from '@/src/utils/fileHelper/fileFetchAndConversion';
+import { isSupportedImage } from '@/src/utils/fileHelper/mediaValidationHelper';
 import { renderWithContext } from '@/__tests__/test_utils/context';
 
-jest.mock('@/src/utils/mediaValidationHelper', () => ({
+jest.mock('@/src/utils/fileHelper/mediaValidationHelper', () => ({
   isSupportedImage: jest.fn().mockReturnValue([])
 }));
 
-jest.mock('@/src/utils/guardrail', () => ({
+jest.mock('@/src/utils/guardrails/htmlEncodeDecode', () => ({
   sanitizeWithPreserveCode: jest.fn(input => input)
 }));
 
-jest.mock('@/src/utils/fileFetchAndConversion', () => ({
+jest.mock('@/src/utils/fileHelper/fileFetchAndConversion', () => ({
   fileToDataURLBase64: jest.fn().mockResolvedValue('mocked-base64-content')
 }));
 
@@ -375,7 +371,6 @@ describe('ChatInput', () => {
   });
 
   it('handles file upload error for unsupported image format', async () => {
-    const { isSupportedImage } = require('@/src/utils/mediaValidationHelper');
     isSupportedImage.mockReturnValueOnce(['Unsupported file format']);
 
     const user = userEvent.setup();

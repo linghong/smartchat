@@ -6,7 +6,7 @@ import AITextMessage from '@/src/components/AITextMessage';
 import CustomSelect from '@/src/components/CustomSelect';
 import FileListWithModal from '@/src/components/FileListWithModal';
 import { Message, FileData, AssistantOption } from '@/src/types/chat';
-import { encodeHTMLEntities } from '@/src/utils/guardrail';
+import { encodeHTMLEntities } from '@/src/utils/guardrails/htmlEncodeDecode';
 
 type ChatMessageProps = {
   isNew: boolean;

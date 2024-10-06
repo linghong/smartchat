@@ -1,5 +1,8 @@
 import { Message, ImageFile, AssistantOption } from '@/src/types/chat';
-import { handleRetry, MAX_ATTEMPTS } from '@/src/utils/fetchResponseRetry';
+import {
+  handleRetry,
+  MAX_ATTEMPTS
+} from '@/src/utils/guardrails/fetchResponseRetry';
 
 export interface AIProvider {
   getChatCompletion(

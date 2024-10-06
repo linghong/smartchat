@@ -160,7 +160,7 @@ export class OpenAIProvider extends BaseAIProvider {
         return message;
       },
       `Failed to fetch response from OpenAI ${model.value} model`,
-      2 // maxattempts is 2
+      2 // maxAttempts
     );
   }
 }

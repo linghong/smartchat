@@ -3,7 +3,7 @@ import {
   decodeHTMLEntitiesAndReferences,
   stripPreCodeTags,
   sanitizeWithPreserveHTML
-} from '@/src/utils/guardrail';
+} from '@/src/utils/guardrails/htmlEncodeDecode';
 
 describe('Guardrail Functions', () => {
   describe('encodeHTMLEntities', () => {

@@ -3,7 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 
 import { FileData } from '@/src/types/chat';
-import { fileType } from '@/src/utils/fileTypeChecker';
+import { fileType } from '@/src/utils/fileHelper/fileTypeChecker';
 interface FileModalProps {
   fileData: FileData;
   onClose: () => void;

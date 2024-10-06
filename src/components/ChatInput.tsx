@@ -16,8 +16,8 @@ import FileUploadIcon from '@/src/components/FileUploadIcon';
 import Notification from '@/src/components/Notification';
 import { useChatContext } from '@/src/context/ChatContext';
 import { FileData } from '@/src/types/chat';
-import { fileToDataURLBase64 } from '@/src/utils/fileFetchAndConversion';
-import { isSupportedImage } from '@/src/utils/mediaValidationHelper';
+import { fileToDataURLBase64 } from '@/src/utils/fileHelper/fileFetchAndConversion';
+import { isSupportedImage } from '@/src/utils/fileHelper/mediaValidationHelper';
 
 interface ChatInputProps {
   onSubmit: (question: string, fileSrc: FileData[]) => void;

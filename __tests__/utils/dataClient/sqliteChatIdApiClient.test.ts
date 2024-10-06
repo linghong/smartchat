@@ -4,7 +4,7 @@ import {
   updateChat,
   updateChatMessages,
   fetchChatMessages
-} from '@/src/utils/sqliteChatIdApiClient';
+} from '@/src/utils/dataClient/sqliteChatIdApiClient';
 
 fetchMock.enableMocks();
 

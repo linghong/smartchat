@@ -6,7 +6,7 @@ import {
   checkIndexExists,
   createPineconeIndex
 } from '@/src/services/rag/pineconeClient';
-import loadAndSplit from '@/src/utils/pdfLoadAndSplit';
+import loadAndSplit from '@/src/services/rag/pdfLoadAndSplit';
 
 const ingestDataToPinecone = async (
   filePath: string,
