@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI, Part } from '@google/generative-ai';
 import { Message, ImageFile, AssistantOption } from '@/src/types/chat';
 import { BaseAIProvider } from '@/src/services/llm/BaseAIProvider';
+import { AIProviderError, AppError } from '@/src/services/llm/CustomErrorTypes';
 import {
   multimodalRole,
   beforeRespond,
@@ -113,18 +114,24 @@ export class GeminiProvider extends BaseAIProvider {
 
     return this.retryOperation(
       async () => {
-        const chat = geminiModel.startChat({
-          //the parent buildChatArray isn't correct
-          history: this.buildChatArray(chatHistory),
-          generationConfig: {
-            maxOutputTokens: maxReturnMessageToken,
-            temperature,
-            topP
-          }
-        });
+        try {
+          const chat = geminiModel.startChat({
+            history: this.buildChatArray(chatHistory),
+            generationConfig: {
+              maxOutputTokens: maxReturnMessageToken,
+              temperature,
+              topP
+            }
+          });
 
-        const result = await chat.sendMessage(currentUserParts);
-        return result?.response?.text() || '';
+          const result = await chat.sendMessage(currentUserParts);
+          if (!result?.response?.text()) {
+            throw new AIProviderError('Empty response from Gemini');
+          }
+          return result.response.text();
+        } catch (error) {
+          return this.handleError(error, 'Gemini');
+        }
       },
       `Failed to fetch response from Google ${model.value} model`,
       4 //maxAttempts

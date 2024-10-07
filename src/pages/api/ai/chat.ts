@@ -44,7 +44,8 @@ export default async function handler(
 
   // Replace multiple newlines with a single newline to avoid excessive spacing
   const pretreatedQuestion = question.trim().replace(/\n\s*\n/g, '\n');
-
+  // get response from AI
+  const { category } = selectedAssistant.config.model;
   try {
     let fetchedText = '';
 
@@ -53,9 +54,6 @@ export default async function handler(
       const embeddedQuery = await createEmbedding(question);
       fetchedText = await fetchDataFromPinecone(embeddedQuery, namespace);
     }
-
-    // get response from AI
-    const { category } = selectedAssistant.config.model;
 
     let apiKey: string | undefined;
     let baseUrl: string | undefined;
@@ -118,7 +116,19 @@ export default async function handler(
 
     res.status(200).json({ answer, subject });
   } catch (error: any) {
-    console.error('An error occurred: ', error);
-    res.status(500).json({ error: error.message || 'Something went wrong' });
+    let errorMessage = 'Something went wrong';
+    
+    if (error.message.includes('Unsupported AI provider type')) {
+      errorMessage = `The server for running ${selectedAssistant?.config.model.value} model is not running. Please turn it on and try again.`;
+    }
+
+    if (
+      errorMessage === 'Something went wrong' &&
+      (category === 'hf-small' || category === 'hf-large')
+    )
+      errorMessage =
+        'This AI model requires a self-hosting service. Please ensure the service is running before making any queries.';
+
+    res.status(500).json({ error: errorMessage });
   }
 }

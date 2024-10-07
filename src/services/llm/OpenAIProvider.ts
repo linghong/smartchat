@@ -124,40 +124,45 @@ export class OpenAIProvider extends BaseAIProvider {
 
     return this.retryOperation(
       async () => {
-        const completion = await this.openai.chat.completions.create({
-          model: model.value,
-          temperature,
-          max_tokens: maxReturnMessageToken,
-          frequency_penalty: 0,
-          presence_penalty: 0,
-          top_p: topP,
-          messages: [
-            { role: 'system', content: systemContent },
-            ...chatArray,
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'text',
-                  text: userTextWithFetchedData
-                },
-                ...imageContent
-              ]
-            }
-          ]
-        });
+        try {
+          const completion = await this.openai.chat.completions.create({
+            model: model.value,
+            temperature,
+            max_tokens: maxReturnMessageToken,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+            top_p: topP,
+            messages: [
+              { role: 'system', content: systemContent },
+              ...chatArray,
+              {
+                role: 'user',
+                content: [
+                  {
+                    type: 'text',
+                    text: userTextWithFetchedData
+                  },
+                  ...imageContent
+                ]
+              }
+            ]
+          });
 
-        if (!completion) throw new Error('Chat completion data is undefined.');
-        if (!completion.usage)
-          throw new Error('Chat completion usage data is undefined.');
-        if (completion.choices[0].finish_reason !== 'stop')
-          console.warn(`AI message isn't complete.`);
+          if (!completion)
+            throw new Error('Chat completion data is undefined.');
+          if (!completion.usage)
+            throw new Error('Chat completion usage data is undefined.');
+          if (completion.choices[0].finish_reason !== 'stop')
+            console.warn(`AI message isn't complete.`);
 
-        let message = completion.choices[0].message?.content ?? '';
-        message =
-          model.value === 'gpt-4' ? message : message.replace(/\n/g, '<br>');
+          let message = completion.choices[0].message?.content ?? '';
+          message =
+            model.value === 'gpt-4' ? message : message.replace(/\n/g, '<br>');
 
-        return message;
+          return message;
+        } catch (error) {
+          return this.handleError(error, 'OpenAI');
+        }
       },
       `Failed to fetch response from OpenAI ${model.value} model`,
       2 // maxAttempts

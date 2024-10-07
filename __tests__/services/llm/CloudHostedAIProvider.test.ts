@@ -179,7 +179,9 @@ describe('CloudHostedAIProvider', () => {
         mockFetchedText,
         mockSelectedAssistant
       )
-    ).rejects.toThrow(networkError);
+    ).rejects.toThrow(
+      `App Error in CloudHosted AI Provider: Persistent Network Error`
+    );
 
     expect(global.fetch).toHaveBeenCalledTimes(4);
     expect(fetchResponseRetry.handleRetry).toHaveBeenCalledTimes(3);

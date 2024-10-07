@@ -4,6 +4,7 @@ import { ClaudeProvider } from '@/src/services/llm/ClaudeProvider';
 import { GeminiProvider } from '@/src/services/llm/GeminiProvider';
 import { GroqProvider } from '@/src/services/llm/GroqProvider';
 import { CloudHostedAIProvider } from '@/src/services/llm/CloudHostedAIProvider';
+import { UserInputError, AppError } from '@/src/services/llm/CustomErrorTypes';
 
 jest.mock('@/src/services/llm/OpenAIProvider');
 jest.mock('@/src/services/llm/ClaudeProvider');
@@ -45,7 +46,7 @@ describe('AIProviderFactory', () => {
 
   it('creates a CloudHostedAIProvider for self-hosted-small', () => {
     const provider = AIProviderFactory.createProvider(
-      'self-hosted-small',
+      'hf-small',
       apiKey,
       baseUrl
     );
@@ -55,7 +56,7 @@ describe('AIProviderFactory', () => {
 
   it('creates a CloudHostedAIProvider for self-hosted-large', () => {
     const provider = AIProviderFactory.createProvider(
-      'self-hosted-large',
+      'hf-large',
       apiKey,
       baseUrl
     );
@@ -63,15 +64,42 @@ describe('AIProviderFactory', () => {
     expect(CloudHostedAIProvider).toHaveBeenCalledWith(apiKey, baseUrl);
   });
 
-  it('throws an error for unsupported provider type', () => {
+  it('throws a UserInputError for unsupported provider type', () => {
+    expect(() =>
+      AIProviderFactory.createProvider('unsupported', apiKey)
+    ).toThrow(UserInputError);
     expect(() =>
       AIProviderFactory.createProvider('unsupported', apiKey)
     ).toThrow('Unsupported AI provider type: unsupported');
   });
 
-  it('throws an error for self-hosted models without base URL', () => {
-    expect(() =>
-      AIProviderFactory.createProvider('self-hosted-small', apiKey)
-    ).toThrow('Base URL is required for self-hosted models');
+  it('throws a UserInputError for self-hosted models without base URL', () => {
+    expect(() => AIProviderFactory.createProvider('hf-small', apiKey)).toThrow(
+      UserInputError
+    );
+    expect(() => AIProviderFactory.createProvider('hf-small', apiKey)).toThrow(
+      'Base URL is required for self-hosted models'
+    );
+  });
+
+  it('throws an AppError for other errors during provider creation', () => {
+    const mockError = new Error('Unexpected error');
+    (
+      OpenAIProvider as jest.MockedClass<typeof OpenAIProvider>
+    ).mockImplementationOnce(() => {
+      throw mockError;
+    });
+
+    expect(() => {
+      AIProviderFactory.createProvider('openai', apiKey);
+    }).toThrow(AppError);
+
+    try {
+      AIProviderFactory.createProvider('openai', apiKey);
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      expect((error as AppError).message).toMatch(/Error creating AI provider/);
+      expect((error as AppError).message).toContain(mockError.message);
+    }
   });
 });

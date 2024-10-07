@@ -115,32 +115,36 @@ export class ClaudeProvider extends BaseAIProvider {
 
     return this.retryOperation(
       async () => {
-        const message = await this.anthropic.messages.create({
-          model: model.value,
-          system: systemContent,
-          temperature,
-          max_tokens: maxReturnMessageToken,
-          top_p: topP,
-          messages: [
-            ...chatArray,
-            {
-              role: 'user',
-              content: currentUserContent
-            }
-          ]
-        });
+        try {
+          const message = await this.anthropic.messages.create({
+            model: model.value,
+            system: systemContent,
+            temperature,
+            max_tokens: maxReturnMessageToken,
+            top_p: topP,
+            messages: [
+              ...chatArray,
+              {
+                role: 'user',
+                content: currentUserContent
+              }
+            ]
+          });
 
-        if (!message || !message.content) {
-          throw new Error('Chat completion data is undefined.');
-        }
+          if (!message || !message.content) {
+            throw new Error('Chat completion data is undefined.');
+          }
 
-        if (Array.isArray(message.content)) {
-          let responseContent = message.content
-            .map(block => ('text' in block ? block.text : ''))
-            .join('');
-          return responseContent.replace(/\n{2,}/g, '\n');
-        } else {
-          return message.content;
+          if (Array.isArray(message.content)) {
+            let responseContent = message.content
+              .map(block => ('text' in block ? block.text : ''))
+              .join('');
+            return responseContent.replace(/\n{2,}/g, '\n');
+          } else {
+            return message.content;
+          }
+        } catch (error) {
+          return this.handleError(error, 'Claude');
         }
       },
       'Failed to fetch response from Claude model',

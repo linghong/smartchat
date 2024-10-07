@@ -3,6 +3,11 @@ import {
   handleRetry,
   MAX_ATTEMPTS
 } from '@/src/utils/guardrails/fetchResponseRetry';
+import {
+  AppError,
+  AIProviderError,
+  NetworkError
+} from '@/src/services/llm/CustomErrorTypes';
 
 export interface AIProvider {
   getChatCompletion(
@@ -35,6 +40,33 @@ export abstract class BaseAIProvider implements AIProvider {
       : `${userMessage}\n${basePrompt}`;
   }
 
+  protected handleError(error: any, providerName: string): never {
+    console.error(`Error in ${providerName}:`, error);
+
+    if (error instanceof AIProviderError || error instanceof NetworkError) {
+      throw error;
+    } else if (error instanceof Error) {
+      if (error.message.includes('API') || error.message.includes('auth')) {
+        throw new AIProviderError(
+          `${providerName} API Error: ${error.message}`
+        );
+      } else if (
+        error.message.includes('network') ||
+        error.message.includes('timeout')
+      ) {
+        throw new NetworkError(
+          `Network error with ${providerName} API: ${error.message}`
+        );
+      } else {
+        throw new AppError(
+          `App Error in ${providerName} Provider: ${error.message}`
+        );
+      }
+    } else {
+      throw new AppError(`Unknown error in ${providerName} Provider`);
+    }
+  }
+
   protected async retryOperation<T>(
     operation: () => Promise<T>,
     errorMessage: string,
@@ -53,10 +85,5 @@ export abstract class BaseAIProvider implements AIProvider {
     }
     // This line should never be reached, but TypeScript requires it
     throw new Error(`${errorMessage} after ${maxAttempts} attempts.`);
-  }
-
-  protected handleError(error: any): never {
-    console.error(error?.response?.data || error);
-    throw new Error(error.message || 'Something went wrong');
   }
 }

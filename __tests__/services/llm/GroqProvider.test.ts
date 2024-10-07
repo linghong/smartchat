@@ -200,7 +200,7 @@ describe('GroqProvider', () => {
           fetchedText,
           mockSelectedAssistant
         )
-      ).rejects.toThrow(apiError);
+      ).rejects.toThrow(`Groq API ${apiError}`);
 
       expect(mockGroq.chat.completions.create).toHaveBeenCalledTimes(2);
       expect(fetchResponseRetry.handleRetry).toHaveBeenCalledTimes(1); // Number of retries

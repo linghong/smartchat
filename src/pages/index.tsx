@@ -34,6 +34,7 @@ import {
   updateChatMessages,
   updateChat
 } from '@/src/utils/dataClient/sqliteChatIdApiClient';
+import { AIProviderError, AppError } from '@/src/services/llm/CustomErrorTypes';
 
 const initialFileCategory: OptionType = { value: 'none', label: 'None' };
 
@@ -137,18 +138,23 @@ const HomePage: React.FC<HomeProps> = ({ namespaces, setNamespacesList }) => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          setError('There is a server-side error. Try it again later.');
+          throw new AIProviderError(errorData.error || 'An error occurred');
         }
 
         const data = await response.json();
-
+        console.log(response);
         return data;
       } catch (error) {
         console.error('Error fetching chat response:', error);
         setLoading(false);
-        setError(
-          `We're experiencing issues with fetching model response. Please try again later.`
-        );
+
+        if (error instanceof AIProviderError) {
+          setError(`AI Provider Error: ${error.message}`);
+        } else if (error instanceof AppError) {
+          setError(`Application Error: ${error.message}`);
+        } else {
+          setError('An unknown error occurred. Please try again later.');
+        }
       }
     },
     [chatHistory]

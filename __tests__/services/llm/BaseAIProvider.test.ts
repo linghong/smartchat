@@ -1,6 +1,11 @@
 // Because BaseAIProvider is an abstract, so we use a mock
 import { MockAIProvider } from '@/__tests__/test_utils/MockAIProvider';
 import { handleRetry } from '@/src/utils/guardrails/fetchResponseRetry';
+import {
+  AppError,
+  AIProviderError,
+  NetworkError
+} from '@/src/services/llm/CustomErrorTypes';
 
 jest.mock('@/src/utils/guardrails/fetchResponseRetry', () => ({
   MAX_ATTEMPTS: 3,
@@ -93,7 +98,7 @@ describe('BaseAIProvider', () => {
   });
 
   describe('handleError', () => {
-    let consoleSpy: jest.SpyInstance;
+    /*let consoleSpy: jest.SpyInstance;
 
     beforeEach(() => {
       consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -133,6 +138,64 @@ describe('BaseAIProvider', () => {
         'Something went wrong'
       );
       expect(consoleSpy).toHaveBeenCalledWith({});
+    });*/
+
+    it('should throw AIProviderError for API-related errors', () => {
+      const error = new Error('API authentication failed');
+      expect(() =>
+        (provider as any).handleError(error, 'TestProvider')
+      ).toThrow(AIProviderError);
+      expect(() =>
+        (provider as any).handleError(error, 'TestProvider')
+      ).toThrow('TestProvider API Error: API authentication failed');
+    });
+
+    it('should throw NetworkError for network-related errors', () => {
+      const error = new Error('Network timeout');
+      expect(() =>
+        (provider as any).handleError(error, 'TestProvider')
+      ).toThrow(NetworkError);
+      expect(() =>
+        (provider as any).handleError(error, 'TestProvider')
+      ).toThrow('Network error with TestProvider API: Network timeout');
+    });
+
+    it('should throw AppError for other types of errors', () => {
+      const error = new Error('Unknown error');
+      expect(() =>
+        (provider as any).handleError(error, 'TestProvider')
+      ).toThrow(AppError);
+      expect(() =>
+        (provider as any).handleError(error, 'TestProvider')
+      ).toThrow('App Error in TestProvider Provider: Unknown error');
+    });
+
+    it('should rethrow AIProviderError and NetworkError', () => {
+      const aiProviderError = new AIProviderError('AI provider error');
+      expect(() =>
+        (provider as any).handleError(aiProviderError, 'TestProvider')
+      ).toThrow(AIProviderError);
+      expect(() =>
+        (provider as any).handleError(aiProviderError, 'TestProvider')
+      ).toThrow('AI provider error');
+
+      const networkError = new NetworkError('Network error');
+      expect(() =>
+        (provider as any).handleError(networkError, 'TestProvider')
+      ).toThrow(NetworkError);
+      expect(() =>
+        (provider as any).handleError(networkError, 'TestProvider')
+      ).toThrow('Network error');
+    });
+
+    it('should throw AppError for unknown error types', () => {
+      const unknownError = { randomProperty: 'value' };
+      expect(() =>
+        (provider as any).handleError(unknownError, 'TestProvider')
+      ).toThrow(AppError);
+      expect(() =>
+        (provider as any).handleError(unknownError, 'TestProvider')
+      ).toThrow('Unknown error in TestProvider Provider');
     });
   });
 });

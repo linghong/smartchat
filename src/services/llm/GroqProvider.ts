@@ -68,21 +68,29 @@ export class GroqProvider extends BaseAIProvider {
 
     return this.retryOperation(
       async () => {
-        const completion = await this.groq.chat.completions.create({
-          messages,
-          model: model.value,
-          temperature: temperature,
-          max_tokens: maxReturnMessageToken,
-          frequency_penalty: 0,
-          presence_penalty: 0,
-          top_p: topP
-        });
+        try {
+          const completion = await this.groq.chat.completions.create({
+            messages,
+            model: model.value,
+            temperature: temperature,
+            max_tokens: maxReturnMessageToken,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+            top_p: topP
+          });
 
-        if (!completion || !completion.choices || !completion.choices.length) {
-          throw new Error('No completion choices returned from the server.');
+          if (
+            !completion ||
+            !completion.choices ||
+            !completion.choices.length
+          ) {
+            throw new Error('No completion choices returned from the server.');
+          }
+
+          return completion.choices[0]?.message?.content || '';
+        } catch (error) {
+          return this.handleError(error, 'Groq');
         }
-
-        return completion.choices[0]?.message?.content || '';
       },
       'Failed to fetch response from Groq model',
       2 // maxAttempt = 2

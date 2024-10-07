@@ -37,20 +37,24 @@ export class CloudHostedAIProvider
 
     return this.retryOperation(
       async () => {
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.apiKey
-          },
-          body: JSON.stringify(data)
-        });
+        try {
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + this.apiKey
+            },
+            body: JSON.stringify(data)
+          });
 
-        if (!res.ok) {
-          throw new Error(`Network response was not ok: ${res.statusText}`);
+          if (!res.ok) {
+            throw new Error(`Network response was not ok: ${res.statusText}`);
+          }
+
+          return (await res.json()).message;
+        } catch (error) {
+          return this.handleError(error, 'CloudHosted AI');
         }
-
-        return (await res.json()).message;
       },
       `Failed to fetch response from CloudHosted ${model.value} model`,
       4 // maxAttempts
