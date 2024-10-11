@@ -1,5 +1,5 @@
 import { useState, FC } from 'react';
-import { RiCloseLargeFill } from 'react-icons/ri';
+import { X } from 'lucide-react';
 
 import FileModal from '@/src/components/FileModal';
 import FileThumbnailSelector from '@/src/components/FileThumbnailSelector';
@@ -29,6 +29,7 @@ const FileListWithModal: FC<FileListWithModalProps> = ({
     setModalOpen(false);
     setSelectedFile(undefined);
   };
+
   if (!fileSrc || fileSrc.length === 0) {
     return null;
   }
@@ -56,7 +57,7 @@ const FileListWithModal: FC<FileListWithModalProps> = ({
                 aria-label={`Delete file ${i + 1}`}
                 role="button"
               >
-                <RiCloseLargeFill className="text-gray-600" />
+                <X className="text-gray-600" />
               </button>
             )}
           </div>

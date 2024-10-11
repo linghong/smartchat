@@ -1,5 +1,5 @@
 import React, { useRef, ChangeEvent, FC } from 'react';
-import { RiAttachment2 } from 'react-icons/ri';
+import { Paperclip } from 'lucide-react';
 
 interface FileUploadIconProps {
   onFileUpload: (file: File) => void;
@@ -41,7 +41,7 @@ const FileUploadIcon: FC<FileUploadIconProps> = ({
         accept={accept}
         aria-label="Upload file"
       />
-      <RiAttachment2
+      <Paperclip
         size={26}
         style={{
           background: '#fafafb',

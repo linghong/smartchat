@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter/dist/cjs/prism';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import { RiFileCopyLine, RiCheckLine, RiTextWrap } from 'react-icons/ri';
+import { Copy, Check, WrapText } from 'lucide-react';
 
 interface CodeBlockProps {
   code: string;
@@ -39,7 +39,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
             className="p-1 rounded-md hover:bg-gray-200 transition-colors"
             title={wrapLine ? 'Unwrap lines' : 'Wrap lines'}
           >
-            <RiTextWrap
+            <WrapText
               size={18}
               className={wrapLine ? 'text-blue-500' : ''}
               role="img"
@@ -52,14 +52,14 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
             title="Copy code"
           >
             {copied ? (
-              <RiCheckLine
+              <Check
                 size={18}
                 className="text-green-500"
                 role="img"
                 aria-label="Copy code"
               />
             ) : (
-              <RiFileCopyLine size={18} role="img" aria-label="Copy code" />
+              <Copy size={18} role="img" aria-label="Copy code" />
             )}
           </button>
         </div>

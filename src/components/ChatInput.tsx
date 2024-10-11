@@ -24,6 +24,37 @@ interface ChatInputProps {
   isVisionModel: boolean;
 }
 
+const SnapshotIcon: React.FC<{ size?: number }> = ({ size = 30 }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 26 26"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    className="lucide lucide-camera"
+    width={size}
+    height={size}
+  >
+    <rect
+      x="1"
+      y="2"
+      width="24"
+      height="21"
+      stroke-dasharray="2 2"
+      fill="none"
+    />
+
+    <path
+      d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"
+      fill="#5A5C62"
+      stroke="black"
+    />
+    <circle cx="12" cy="13" r="3" fill="white" />
+  </svg>
+);
+
 const ChatInput: React.FC<ChatInputProps> = ({ onSubmit, isVisionModel }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { selectedModel, isConfigPanelVisible, setIsConfigPanelVisible } =
@@ -230,7 +261,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit, isVisionModel }) => {
       <div className="flex w-full justify-around items-center border-2 border-indigo-300 bg-indigo-200 bg-opacity-30 rounded-lg">
         <div className="flex w-3/12 ms:w-2/12 sm:w-1/12 items-center justify-around md:mx-1">
           <ButtonWithTooltip
-            icon={<RiScreenshot2Fill size={28} aria-hidden="true" />}
+            icon={<SnapshotIcon size={28} aria-hidden="true" />}
             onClick={handleScreenCapture}
             ariaLabel="Capture Screenshot"
             tooltipText="Capture Screenshot"
