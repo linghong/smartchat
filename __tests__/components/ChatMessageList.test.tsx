@@ -32,7 +32,7 @@ jest.mock('@/src/components/ChatMessage', () => {
         <div className="ai">
           <div>{message.model}</div>
           {lastIndex && loading ? (
-            <div aria-label="loading">Just a moment, I’m working on it...</div>
+            <div aria-label="loading">Just a moment, I'm working on it...</div>
           ) : (
             <div>{message.answer}</div>
           )}
@@ -172,7 +172,6 @@ describe('ChatMessageList', () => {
       renderWithContext(<ChatMessageList {...defaultProps} />);
       const combobox = screen.getByRole('combobox');
       expect(combobox).toBeInTheDocument();
-      expect(combobox).toHaveTextContent('Default Gemini-1.5 Pro Exp');
 
       // simulate the selection process
       fireEvent.click(combobox);

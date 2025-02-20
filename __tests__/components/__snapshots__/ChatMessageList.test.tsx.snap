@@ -52,19 +52,19 @@ exports[`ChatMessageList matches snapshot 1`] = `
             </button>
             <select>
               <option>
-                Default Gemini-1.5 Pro Exp
+                Default Gemini-2.0 Flash
               </option>
               <option>
-                Default Gemini-1.5 Flash Exp
-              </option>
-              <option>
-                Default Gemini-1.5 Flash-8b Exp
+                Default Gemini-2.0 Flash-Lite Preview
               </option>
               <option>
                 Default Gemini-1.5 Pro
               </option>
               <option>
                 Default Gemini-1.5 Flash
+              </option>
+              <option>
+                Default Gemini-1.5 Flash-8b
               </option>
               <option>
                 Default Claude 3.5 Sonnet

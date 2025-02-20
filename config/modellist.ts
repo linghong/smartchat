@@ -2,36 +2,36 @@ import { OptionType } from '@/src/types/common';
 
 const modelOptions: OptionType[] = [
   {
-    value: 'gemini-1.5-pro-exp-0827',
-    label: 'Gemini-1.5 Pro Exp',
-    category: 'google',
-    contextWindow: 2097512,
-    vision: true
-  },
-  {
-    value: 'gemini-1.5-flash-exp-0827',
-    label: 'Gemini-1.5 Flash Exp',
+    value: 'gemini-2.0-flash',
+    label: 'Gemini-2.0 Flash',
     category: 'google',
     contextWindow: 1048576,
     vision: true
   },
   {
-    value: 'gemini-1.5-flash-8b-exp-0924',
-    label: 'Gemini-1.5 Flash-8b Exp',
+    value: 'gemini-2.0-flash-lite-preview-02-05',
+    label: 'Gemini-2.0 Flash-Lite Preview',
     category: 'google',
     contextWindow: 1048576,
     vision: true
   },
   {
-    value: 'gemini-1.5-pro-002',
+    value: 'gemini-1.5-pro',
     label: 'Gemini-1.5 Pro',
     category: 'google',
     contextWindow: 2097512,
     vision: true
   },
   {
-    value: 'gemini-1.5-flash-002',
+    value: 'gemini-1.5-flash',
     label: 'Gemini-1.5 Flash',
+    category: 'google',
+    contextWindow: 1048576,
+    vision: true
+  },
+  {
+    value: 'gemini-1.5-flash-8b',
+    label: 'Gemini-1.5 Flash-8b',
     category: 'google',
     contextWindow: 1048576,
     vision: true

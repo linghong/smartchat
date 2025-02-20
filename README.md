@@ -20,8 +20,8 @@ This AI chat platform allows you to select from a variety of Generative AI model
 
    1. OpenAI: GPT-4o, gpt-4o-2024-08-06, GPT-4o Mini(i.e., gpt-4o-mini-2024-07-18), GPT4 Turbo, and GPT-4.
    2. Google:
-      latest production versions: Gemini-1.5-flash-002, gemini-1.5-pro-002,
-      latest experiment models: gemini-1.5-pro-exp-0827, gemini-1.5-flash-exp-0827 and gemini-1.5-flash-8b-exp-0924.
+      latest production 1.5 versions: 'gemini-1.5-flash-8b', 'gemini-1.5-flash', 'gemini-1.5-pro',
+      latest 2.0 models: 'gemini-2.0-flash', 'gemini-2.0-flash-lite-preview-02-05'.
    3. Anthropic: Claude 3.5 Sonnet, Claude 3 Haiku, and Claude 3 Opus
    4. Open-source models hosted on Groq:
 
