@@ -7,7 +7,6 @@ import React, {
   FormEvent
 } from 'react';
 import DOMPurify from 'isomorphic-dompurify';
-import { RiScreenshot2Fill } from 'react-icons/ri';
 
 import ArrowButton from '@/src/components/ArrowButton';
 import ButtonWithTooltip from '@/src/components/ButtonWithTooltip';
@@ -275,7 +274,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit, isVisionModel }) => {
                 isDisabled={isFileUploadIconDisabled}
               />
             }
-            onClick={() => {}}
+            onClick={() => { }}
             ariaLabel="Upload File"
             tooltipText="Upload File"
             isDisabled={isFileUploadIconDisabled}
