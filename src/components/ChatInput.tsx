@@ -29,9 +29,9 @@ const SnapshotIcon: React.FC<{ size?: number }> = ({ size = 30 }) => (
     viewBox="0 0 26 26"
     fill="none"
     stroke="currentColor"
-    stroke-width="1"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    strokeWidth="1"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className="lucide lucide-camera"
     width={size}
     height={size}
@@ -41,7 +41,7 @@ const SnapshotIcon: React.FC<{ size?: number }> = ({ size = 30 }) => (
       y="2"
       width="24"
       height="21"
-      stroke-dasharray="2 2"
+      strokeDasharray="2 2"
       fill="none"
     />
 

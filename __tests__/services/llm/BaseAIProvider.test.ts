@@ -15,9 +15,17 @@ jest.mock('@/src/utils/guardrails/fetchResponseRetry', () => ({
 describe('BaseAIProvider', () => {
   const apiKey = 'test-api-key';
   let provider: MockAIProvider;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
+    // Spy on console.error to suppress logs during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
     provider = new MockAIProvider(apiKey);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   describe('formatUserMessage', () => {
@@ -93,81 +101,48 @@ describe('BaseAIProvider', () => {
       ).rejects.toThrow('Failure');
 
       expect(operation).toHaveBeenCalledTimes(3);
-      expect(handleRetry).toHaveBeenCalledTimes(3);
+      expect(handleRetry).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('handleError', () => {
-    /*let consoleSpy: jest.SpyInstance;
-
-    beforeEach(() => {
-      consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    });
-
-    afterEach(() => {
-      consoleSpy.mockRestore();
-    });
-
-    it('should log error response data and throw error with message', () => {
-      const error = {
-        response: {
-          data: 'Error response data'
-        },
-        message: 'An error occurred'
-      };
-
-      expect(() => (provider as any).handleError(error)).toThrow(
-        'An error occurred'
-      );
-      expect(consoleSpy).toHaveBeenCalledWith('Error response data');
-    });
-
-    it('should log error and throw error with message when response data is undefined', () => {
-      const error = new Error('An error occurred');
-
-      expect(() => (provider as any).handleError(error)).toThrow(
-        'An error occurred'
-      );
-      expect(consoleSpy).toHaveBeenCalledWith(error);
-    });
-
-    it('should throw generic error message when error message is undefined', () => {
-      const error = {};
-
-      expect(() => (provider as any).handleError(error)).toThrow(
-        'Something went wrong'
-      );
-      expect(consoleSpy).toHaveBeenCalledWith({});
-    });*/
-
     it('should throw AIProviderError for API-related errors', () => {
       const error = new Error('API authentication failed');
+
       expect(() =>
         (provider as any).handleError(error, 'TestProvider')
       ).toThrow(AIProviderError);
       expect(() =>
         (provider as any).handleError(error, 'TestProvider')
       ).toThrow('TestProvider API Error: API authentication failed');
+
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should throw NetworkError for network-related errors', () => {
       const error = new Error('Network timeout');
+
       expect(() =>
         (provider as any).handleError(error, 'TestProvider')
       ).toThrow(NetworkError);
       expect(() =>
         (provider as any).handleError(error, 'TestProvider')
       ).toThrow('Network error with TestProvider API: Network timeout');
+
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should throw AppError for other types of errors', () => {
       const error = new Error('Unknown error');
+
       expect(() =>
         (provider as any).handleError(error, 'TestProvider')
       ).toThrow(AppError);
       expect(() =>
         (provider as any).handleError(error, 'TestProvider')
       ).toThrow('App Error in TestProvider Provider: Unknown error');
+
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should rethrow AIProviderError and NetworkError', () => {
@@ -178,6 +153,7 @@ describe('BaseAIProvider', () => {
       expect(() =>
         (provider as any).handleError(aiProviderError, 'TestProvider')
       ).toThrow('AI provider error');
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
 
       const networkError = new NetworkError('Network error');
       expect(() =>
@@ -186,16 +162,20 @@ describe('BaseAIProvider', () => {
       expect(() =>
         (provider as any).handleError(networkError, 'TestProvider')
       ).toThrow('Network error');
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(4);
     });
 
     it('should throw AppError for unknown error types', () => {
       const unknownError = { randomProperty: 'value' };
+
       expect(() =>
         (provider as any).handleError(unknownError, 'TestProvider')
       ).toThrow(AppError);
       expect(() =>
         (provider as any).handleError(unknownError, 'TestProvider')
       ).toThrow('Unknown error in TestProvider Provider');
+
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

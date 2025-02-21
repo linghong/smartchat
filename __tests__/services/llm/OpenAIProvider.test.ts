@@ -13,6 +13,8 @@ jest.mock('gpt-tokenizer');
 describe('OpenAIProvider', () => {
   let provider: OpenAIProvider;
   let mockOpenAI: jest.Mocked<OpenAI>;
+  let consoleErrorSpy: jest.SpyInstance;
+  let mockCreateCompletion: jest.Mock;
 
   const mockApiKey = 'test-api-key';
   const mockChatHistory: Message[] = [
@@ -24,21 +26,28 @@ describe('OpenAIProvider', () => {
   const mockAssistantOption: AssistantOption = assistantOpenAI;
 
   beforeEach(() => {
+    // Spy on console.error to suppress logs during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
     jest.clearAllMocks();
     mockOpenAI = new OpenAI({ apiKey: mockApiKey }) as jest.Mocked<OpenAI>;
-    // Mock the 'chat.completions.create' method
-    mockOpenAI.chat.completions.create = jest.fn();
+
+    mockCreateCompletion = jest.fn();
+    mockOpenAI.chat.completions.create = mockCreateCompletion;
 
     // Mock 'encode' function
     (encode as jest.MockedFunction<typeof encode>).mockReturnValue(
       new Array(10)
     );
 
-    // Instantiate provider
     provider = new OpenAIProvider(mockApiKey);
 
-    // Replace the 'openai' instance with mock
     (provider as any).openai = mockOpenAI;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   describe('getChatCompletion', () => {
@@ -49,7 +58,7 @@ describe('OpenAIProvider', () => {
         ],
         usage: { total_tokens: 100 }
       };
-      (mockOpenAI.chat.completions.create as jest.Mock).mockResolvedValue(
+      (mockCreateCompletion as jest.Mock).mockResolvedValue(
         mockCompletion as any
       );
 
@@ -60,7 +69,7 @@ describe('OpenAIProvider', () => {
         mockAssistantOption
       );
 
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
+      expect(mockCreateCompletion).toHaveBeenCalledWith(
         expect.objectContaining({
           model: 'gpt-4',
           temperature: 0.7,
@@ -100,7 +109,7 @@ describe('OpenAIProvider', () => {
         ],
         usage: { total_tokens: 100 }
       };
-      (mockOpenAI.chat.completions.create as jest.Mock).mockResolvedValue(
+      (mockCreateCompletion as jest.Mock).mockResolvedValue(
         mockCompletion as any
       );
 
@@ -112,7 +121,7 @@ describe('OpenAIProvider', () => {
         [mockImageFile]
       );
 
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith(
+      expect(mockCreateCompletion).toHaveBeenCalledWith(
         expect.objectContaining({
           messages: expect.arrayContaining([
             expect.objectContaining({
@@ -134,7 +143,7 @@ describe('OpenAIProvider', () => {
     });
 
     it('should handle API errors and retry', async () => {
-      (mockOpenAI.chat.completions.create as jest.Mock)
+      (mockCreateCompletion as jest.Mock)
         .mockRejectedValueOnce(new Error('API Error'))
         .mockResolvedValueOnce({
           choices: [
@@ -150,12 +159,12 @@ describe('OpenAIProvider', () => {
         mockAssistantOption
       );
 
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledTimes(2);
+      expect(mockCreateCompletion).toHaveBeenCalledTimes(2);
       expect(result).toBe('Retry success');
     });
 
     it('should throw an error after maximum retries', async () => {
-      (mockOpenAI.chat.completions.create as jest.Mock).mockRejectedValue(
+      (mockCreateCompletion as jest.Mock).mockRejectedValue(
         new Error('API Error')
       );
 
@@ -168,7 +177,65 @@ describe('OpenAIProvider', () => {
         )
       ).rejects.toThrow('API Error');
 
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledTimes(2);
+      expect(mockCreateCompletion).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('error handling', () => {
+    it('should handle errors and retry', async () => {
+      mockCreateCompletion
+        .mockRejectedValueOnce(new Error('API Error'))
+        .mockResolvedValueOnce({
+          choices: [{
+            message: { content: 'Retry successful' },
+            finish_reason: 'stop'
+          }],
+          usage: { total_tokens: 100 }
+        } as any);
+
+      const result = await provider.getChatCompletion(
+        mockChatHistory,
+        mockUserMessage,
+        mockFetchedText,
+        mockAssistantOption
+      );
+
+      expect(result).toBe('Retry successful');
+      expect(mockCreateCompletion).toHaveBeenCalledTimes(2);
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw an error after max retries', async () => {
+      mockCreateCompletion.mockRejectedValue(new Error('API Error'));
+
+      await expect(
+        provider.getChatCompletion(
+          mockChatHistory,
+          mockUserMessage,
+          mockFetchedText,
+          mockAssistantOption
+        )
+      ).rejects.toThrow('API Error');
+
+      expect(mockCreateCompletion).toHaveBeenCalledTimes(2);
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should handle non-200 responses', async () => {
+      mockCreateCompletion.mockRejectedValue({
+        response: { status: 400, data: { error: 'Bad Request' } }
+      });
+
+      await expect(
+        provider.getChatCompletion(
+          mockChatHistory,
+          mockUserMessage,
+          mockFetchedText,
+          mockAssistantOption
+        )
+      ).rejects.toThrow();
+
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

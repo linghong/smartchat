@@ -11,8 +11,12 @@ describe('GeminiProvider', () => {
   let provider: GeminiProvider;
   let mockGenerativeModel: any;
   let mockChat: any;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
+    // Spy on console.error to suppress logs during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
     mockChat = {
       sendMessage: jest.fn().mockResolvedValue({
         response: {
@@ -26,12 +30,11 @@ describe('GeminiProvider', () => {
     (GoogleGenerativeAI as jest.Mock).mockImplementation(() => ({
       getGenerativeModel: jest.fn().mockReturnValue(mockGenerativeModel)
     }));
-    // Use jest.spyOn to mock handleRetry
+
     jest
       .spyOn(fetchResponseRetry, 'handleRetry')
       .mockImplementation(() => Promise.resolve());
 
-    // Create provider with 3 retries
     provider = new GeminiProvider(apiKey);
   });
 
@@ -43,8 +46,8 @@ describe('GeminiProvider', () => {
   const mockSelectedAssistant: AssistantOption = assistantGemini;
 
   afterEach(() => {
-    jest.restoreAllMocks(); // Restores all spies created with jest.spyOn
-    jest.clearAllMocks(); // Clears the call history of all mocks
+    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should initialize with the provided API key', () => {
@@ -108,6 +111,7 @@ describe('GeminiProvider', () => {
     expect(result).toBe('Success after retry');
     expect(mockChat.sendMessage).toHaveBeenCalledTimes(4);
     expect(fetchResponseRetry.handleRetry).toHaveBeenCalledTimes(3);
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should throw an error after 3 retries', async () => {
@@ -125,5 +129,6 @@ describe('GeminiProvider', () => {
 
     expect(mockChat.sendMessage).toHaveBeenCalledTimes(4);
     expect(fetchResponseRetry.handleRetry).toHaveBeenCalledTimes(3);
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(4);
   });
 });

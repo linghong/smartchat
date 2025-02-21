@@ -17,14 +17,19 @@ describe('ClaudeProvider', () => {
   let claudeProvider: ClaudeProvider;
   const mockApiKey = 'test-api-key';
   let mockAnthropicCreate: jest.Mock;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
+    // Spy on console.error to suppress logs during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
     claudeProvider = new ClaudeProvider(mockApiKey);
     mockAnthropicCreate = (claudeProvider as any).anthropic.messages
       .create as jest.Mock;
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
     jest.clearAllMocks();
   });
 
@@ -119,6 +124,7 @@ describe('ClaudeProvider', () => {
 
       expect(result).toBe('Retry successful');
       expect(mockAnthropicCreate).toHaveBeenCalledTimes(2);
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should throw an error after max retries', async () => {
@@ -132,6 +138,8 @@ describe('ClaudeProvider', () => {
           mockAssistantOption
         )
       ).rejects.toThrow('API Error');
+
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

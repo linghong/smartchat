@@ -10,8 +10,12 @@ describe('CloudHostedAIProvider', () => {
   const apiKey = 'test-api-key';
   const baseUrl = 'http://test-base-url.com';
   let provider: CloudHostedAIProvider;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
+    // Spy on console.error to suppress logs during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
     provider = new CloudHostedAIProvider(apiKey, baseUrl);
     (global.fetch as jest.Mock).mockClear();
 
@@ -118,6 +122,8 @@ describe('CloudHostedAIProvider', () => {
         mockSelectedAssistant
       )
     ).rejects.toThrow('Network error');
+
+    expect(consoleErrorSpy).toHaveBeenCalled();
   }, 30000);
 
   it('should handle non-OK responses', async () => {
@@ -134,6 +140,8 @@ describe('CloudHostedAIProvider', () => {
         mockSelectedAssistant
       )
     ).rejects.toThrow('Network response was not ok: Internal Server Error');
+
+    expect(consoleErrorSpy).toHaveBeenCalled();
   }, 30000);
 
   it('should return undefined if API key is not provided', async () => {
@@ -166,6 +174,7 @@ describe('CloudHostedAIProvider', () => {
     expect(result).toBe('Retry response');
     expect(global.fetch).toHaveBeenCalledTimes(2);
     expect(fetchResponseRetry.handleRetry).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should throw an error after maximum retries are exceeded', async () => {
@@ -185,5 +194,6 @@ describe('CloudHostedAIProvider', () => {
 
     expect(global.fetch).toHaveBeenCalledTimes(4);
     expect(fetchResponseRetry.handleRetry).toHaveBeenCalledTimes(3);
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(4);
   });
 });

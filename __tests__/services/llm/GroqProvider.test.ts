@@ -20,6 +20,7 @@ describe('GroqProvider', () => {
   const apiKey = 'fake-api-key';
   let provider: GroqProvider;
   let mockGroq: jest.Mocked<Groq>;
+  let consoleErrorSpy: jest.SpyInstance;
 
   const mockSelectedAssistant = assistantGroq;
 
@@ -30,6 +31,9 @@ describe('GroqProvider', () => {
   const fetchedText = 'Sunny and 75 degrees';
 
   beforeEach(() => {
+    // Spy on console.error to suppress logs during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
     jest.clearAllMocks();
     provider = new GroqProvider(apiKey);
     mockGroq = (provider as any).groq;
@@ -99,6 +103,8 @@ describe('GroqProvider', () => {
           mockSelectedAssistant
         )
       ).rejects.toThrow('No completion choices returned from the server.');
+
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should handle API failures correctly', async () => {
@@ -114,6 +120,8 @@ describe('GroqProvider', () => {
           mockSelectedAssistant
         )
       ).rejects.toThrow('API failure');
+
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should format user message with fetched text correctly', async () => {
@@ -185,6 +193,7 @@ describe('GroqProvider', () => {
       expect(response).toEqual("It's sunny and 75 degrees{{{Weather Update}}}");
       expect(mockGroq.chat.completions.create).toHaveBeenCalledTimes(2);
       expect(fetchResponseRetry.handleRetry).toHaveBeenCalledTimes(1);
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should throw an error after maximum retries are exceeded', async () => {
@@ -203,7 +212,8 @@ describe('GroqProvider', () => {
       ).rejects.toThrow(`Groq API ${apiError}`);
 
       expect(mockGroq.chat.completions.create).toHaveBeenCalledTimes(2);
-      expect(fetchResponseRetry.handleRetry).toHaveBeenCalledTimes(1); // Number of retries
+      expect(fetchResponseRetry.handleRetry).toHaveBeenCalledTimes(1);
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
     });
   });
 });
